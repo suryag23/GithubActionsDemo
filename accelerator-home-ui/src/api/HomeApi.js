@@ -72,7 +72,7 @@ export default class HomeApi {
       appsMetaData = appListInfoOffline;
     }
 
-    return appsMetaData;
+    return JSON.parse(JSON.stringify(appsMetaData)) ;
   }
 
   /**
@@ -93,7 +93,7 @@ export default class HomeApi {
    * Function to get details for lightning showcase apps.
    */
   getShowCaseApps() {
-    return showCaseApps;
+    return JSON.parse(JSON.stringify(showCaseApps));
   }
 
   /**
@@ -137,11 +137,11 @@ export default class HomeApi {
   }
 
   getOfflineMetroApps() {
-    return metroAppsInfoOffline;
+    return JSON.parse(JSON.stringify(metroAppsInfoOffline));
   }
 
   getOnlineMetroApps() {
-    return metroAppsInfo;
+    return JSON.parse(JSON.stringify(metroAppsInfo));
   }
 
   /**

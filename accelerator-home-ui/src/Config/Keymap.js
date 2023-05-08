@@ -28,16 +28,6 @@ const keyMap = {
     "7": 55,
     "8": 56,
     "9": 57,
-    "F1": 112,
-    "F2": 113,
-    "F3": 114,
-    "F4": 115,
-    "F5": 116,
-    "Amazon": 117, //F6
-    "Netflix": 118, //F7
-    "Youtube": 119, //F8
-    "F11": 122,
-    "F12": 123,
     "q": 81,
     "w": 87,
     "e": 69,
@@ -90,10 +80,14 @@ const keyMap = {
     "B": 66,
     "N": 78,
     "M": 77,
+    "Backspace": 8,
     "Enter": 13,
     "Space": 32,
-    "ArrowUp": 38,
+    "PageUp": 33,
+    "PageDown": 34,
+    "Home": 36,
     "ArrowLeft": 37,
+    "ArrowUp": 38,
     "ArrowRight": 39,
     "ArrowDown": 40,
     "AudioVolumeDown": 174,
@@ -105,17 +99,19 @@ const keyMap = {
     "MediaTrackNext": 176,
     "Escape": 27,
     "Pause": 179,
-    "Backspace": 8,
     "MediaRewind": 227,
     "MediaFastForward": 228,
-    "Power": 116, // F5
-    "PageUp": 33,
-    "PageDown": 34,
-    "Home": 36,
-    "Settings_Shortcut": 121,
-    "Guide_Shortcut": 120,
+    "F1": 112,
     "Inputs_Shortcut": 113, //F2
     "Picture_Setting_Shortcut": 114, //F3
+    "Youtube": 115, //F4
+    "Power": 116, // F5
+    "Amazon": 117, //F6
+    "Netflix": 118, //F7, F8 Voice RCU Key
+    "Settings_Shortcut": 121, // F10
+    "Guide_Shortcut": 120, // F9
+    "AppCarousel":122, // F11
+    "F12": 123
 }
 
 export default keyMap

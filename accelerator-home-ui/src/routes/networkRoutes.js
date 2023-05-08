@@ -25,47 +25,53 @@ import NetworkInfo from "../screens/OtherSettingsScreens/NetworkInfoScreen"
 import NetworkInterfaceScreen from "../screens/OtherSettingsScreens/NetworkInterfaceScreen"
 import WifiPairingScreen from "../screens/WiFiPairingScreen"
 import WiFiScreen from "../screens/WifiScreen"
+import RCVolumeInfoScreen from '../screens/RcInformationScreen'
 
 const networkRoutes = [
     {
         path: 'settings/network',
         component: NetworkConfigurationScreen,
-        widgets: ['Menu', 'Volume'],
+        widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
         path: 'settings/network/info',
         component: NetworkInfo,
-        widgets: ['Menu', 'Volume']
+        widgets: ['Menu', 'Volume', "AppCarousel"]
     },
     {
         path: 'settings/network/interface',
         component: NetworkInterfaceScreen,
-        widgets: ['Menu', 'Volume']
+        widgets: ['Menu', 'Volume', "AppCarousel"]
     },
     {
         path: 'settings/network/interface/wifi',
         component: WiFiScreen,
-        widgets: ['Menu', 'Fail', 'Volume']
+        widgets: ['Menu', 'Fail', 'Volume', "AppCarousel"]
     },
     {
         path: 'settings/network/interface/wifi/connect',
         component: WifiPairingScreen,
-        widgets: ['Volume']
+        widgets: ['Volume', "AppCarousel"]
     },
     {
         path: 'settings/network/interface/wifi/another',
         component: JoinAnotherNetworkComponent,
-        widgets: ['Volume']
+        widgets: ['Volume', "AppCarousel"]
     },
     {
         path: 'settings/bluetooth',
         component: BluetoothScreen,
-        widgets: ['Menu', 'Fail', 'Volume']
+        widgets: ['Menu', 'Fail', 'Volume', "AppCarousel"]
     },
     {
         path: 'settings/bluetooth/pairing',
         component: BluetoothPairingScreen,
-        widgets: ['Volume']
+        widgets: ['Volume', "AppCarousel"]
+    },
+    {
+        path: 'settings/bluetooth/RCVolumeInfoScreen',
+        component: RCVolumeInfoScreen,
+        widgets: ["Menu",'Volume', "Fail","AppCarousel"] 
     }
 ]
 

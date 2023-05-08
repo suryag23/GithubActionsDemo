@@ -39,7 +39,7 @@ export default class HdmiOutputScreen extends Lightning.Component {
             w: 1920,
             h: 1080,
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             HdmiOutputScreenContents: {
                 x: 200,
                 y: 275,
@@ -58,7 +58,7 @@ export default class HdmiOutputScreen extends Lightning.Component {
                     h: 90,
                     mount: 0.5,
                     zIndex: 4,
-                    src: Utils.asset("images/settings/Loading.gif"),
+                    src: Utils.asset("images/settings/Loading.png"),
                     visible: true,
                 },
             }
@@ -127,7 +127,9 @@ export default class HdmiOutputScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/audio')
+        }
     }
 
 

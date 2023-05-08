@@ -29,6 +29,9 @@ import FirmwareScreen from '../screens/OtherSettingsScreens/FirmwareScreen'
 import RebootConfirmationScreen from '../screens/OtherSettingsScreens/RebootConfirmationScreen'
 import TimeZone from '../screens/OtherSettingsScreens/TimeZone'
 import TimeItems from '../items/TimeItems'
+import FactoryResetConfirmationScreen from '../screens/OtherSettingsScreens/FactoryResetConfirmationScreen'
+import SreenSaverScreen from '../screens/ScreenSaverTimer'
+
 
 
 export default {
@@ -36,67 +39,76 @@ export default {
     {
       path: 'settings/other',
       component: OtherSettingsScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/other/timer',
       component: SleepTimerScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/other/energy',
       component: EnergySaverScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/other/language',
       component: LanguageScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/other/privacy',
       component: PrivacyScreen,
-      widgets: ['Menu', 'Volume'],
-    },
-    {
-      path: 'settings/other/privacyPolicy',
-      component: PrivacyPolicyScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"]
     },
 
     {
       path: 'settings/advanced',
       component: AdvancedSettingsScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/advanced/device',
       component: DeviceScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/advanced/device/info',
       component: DeviceInformationScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/advanced/device/timezone',
       component: TimeZone,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/advanced/device/timezone/item',
       component: TimeItems,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/advanced/device/firmware',
       component: FirmwareScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'settings/advanced/device/reboot',
       component: RebootConfirmationScreen,
     },
+    {
+      path: 'settings/advanced/device/factoryReset',
+      component: FactoryResetConfirmationScreen,
+    },
+    {
+      path: 'settings/other/ScreenSaver',
+      component: SreenSaverScreen,
+      widgets: ['Menu', 'Volume', "AppCarousel"],
+    },
+    {
+      path:'settings/other/privacyPolicy',
+      component:PrivacyPolicyScreen,
+      widgets: ['Menu', 'Volume', "AppCarousel"],
+    }
   ]
 }

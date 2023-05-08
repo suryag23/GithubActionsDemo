@@ -33,7 +33,7 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
     static _template() {
         return {
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             w: 1920,
             h: 1080,
             NetworkConfigurationScreenContents: {
@@ -109,7 +109,7 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
                         mountX: 1,
                         y: 45,
                         mountY: 0.5,
-                        src: Utils.asset('images/settings/Loading.gif'),
+                        src: Utils.asset('images/settings/Loading.png'),
                         visible: false,
                     },
                 },
@@ -178,7 +178,9 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings')
+        }
     }
     _onChanged() {
         this.widgets.menu.updateTopPanelText(Language.translate('Settings  Network Configuration'))
@@ -197,7 +199,9 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
                     this._setState('NetworkInterface')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/network/info')
+                    }
 
                 }
             },
@@ -232,7 +236,7 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
                     this._setState('NetworkInterface')
                 }
                 _handleDown() {
-                    this._setState('NetworkInfo')
+                    // this._setState('NetworkInfo')
                 }
                 _handleEnter() {
                     this.loadingAnimation.start()
@@ -267,7 +271,7 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
                     this._setState('NetworkInfo')
                 }
                 _handleEnter() {
-                   
+
                 }
             },
         ]

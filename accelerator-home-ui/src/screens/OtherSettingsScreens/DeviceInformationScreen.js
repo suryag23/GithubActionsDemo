@@ -42,7 +42,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
             rect: true,
             h: 1080,
             w: 1920,
-            color: 0xff000000,
+            color: 0xCC000000,
             DeviceInfoContents: {
                 x: 200,
                 y: 275,
@@ -358,6 +358,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
                     }
                 }).catch(err => {
                     console.error(`Netflix : error while getting netflix plugin status ie. `, JSON.stringify(err))
+                    self.netflixESN = `Youtube: NA \nAmazon Prime: NA \nNetflix ESN: "Not Detected"`;
                 })
         }
 
@@ -371,7 +372,9 @@ export default class DeviceInformationScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/advanced/device')
+        }
     }
 
     _handleDown() {

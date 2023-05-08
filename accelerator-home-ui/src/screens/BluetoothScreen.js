@@ -36,7 +36,7 @@ export default class BluetoothScreen extends Lightning.Component {
   static _template() {
     return {
       rect: true,
-      color: 0xff000000,
+      color: 0xCC000000,
       w: 1920,
       h: 1080,
       Bluetooth: {
@@ -100,7 +100,7 @@ export default class BluetoothScreen extends Lightning.Component {
             mountX: 1,
             y: 45,
             mountY: 0.5,
-            src: Utils.asset('images/settings/Loading.gif'),
+            src: Utils.asset('images/settings/Loading.png'),
           },
         },
         Networks: {
@@ -191,6 +191,7 @@ export default class BluetoothScreen extends Lightning.Component {
   }
 
   _focus() {
+
     this._setState('AddADevice')
     this._enable()
     if (this._bluetooth) {
@@ -203,7 +204,9 @@ export default class BluetoothScreen extends Lightning.Component {
   }
 
   _handleBack() {
-    Router.navigate('settings')
+    if(!Router.isNavigating()){
+      Router.navigate('settings')
+      }
   }
   /**
    * Function to be excuted when the Bluetooth screen is enabled.
@@ -604,12 +607,12 @@ export default class BluetoothScreen extends Lightning.Component {
         let btName = notification.name
         if (notification.connected) {
           if (this.widgets.fail) {
-            this.widgets.fail.notify({ title: btName, msg: 'CONNECTION SUCCESS' })
+            this.widgets.fail.notify({ title: btName, msg: 'CONNECTED' })
             Router.focusWidget('Fail')
           }
         } else {
           if (this.widgets.fail) {
-            this.widgets.fail.notify({ title: btName, msg: 'CONNECTION FAILED' })
+            this.widgets.fail.notify({ title: btName, msg: 'DISCONNECTED' })
             Router.focusWidget('Fail')
           }
         }

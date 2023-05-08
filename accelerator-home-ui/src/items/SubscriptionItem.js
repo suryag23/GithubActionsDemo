@@ -157,11 +157,14 @@ export default class SubscriptionItem extends Lightning.Component {
   _handleEnter() {
     // this.handleDone()
     if (this._item.host["_@attribute"].toLowerCase() === "youtube") {
-      Storage.set('applicationType', 'Cobalt');
       let appApi = new AppApi()
       console.log(this._item.url);
-      appApi.launchCobalt(this._item.url).catch(err => { });
-      appApi.setVisibility('ResidentApp', false);
+      let params = {
+        url: this._item.url,
+        launchLocation: "gracenote" , 
+        appIdentifier: 'n:3'
+      }
+      appApi.launchApp("Cobalt", params).catch((err) => {});
     }
   }
   _handleRight() {

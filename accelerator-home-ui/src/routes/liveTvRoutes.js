@@ -26,17 +26,17 @@ const liveTvRoutes = [
     {
         path: 'settings/livetv',
         component: LiveTVSettings,
-        widgets: ['Menu', 'Volume'],
+        widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
         path: 'settings/livetv/scan',
         component: LiveTVScan,
-        widgets: ['Menu', 'Volume'],
+        widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
         path: 'settings/livetv/scan/dvb-s-scan',
         component: DvbSScan,
-        widgets: ['Menu', 'Volume'],
+        widgets: ['Menu', 'Volume', "AppCarousel"],
     },
 ]
 

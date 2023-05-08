@@ -32,23 +32,19 @@ export default class HDMIApi {
         this._events = new Map();
         this.callsign = 'org.rdk.HdmiInput'
 
+        // Updated as per https://github.com/rdkcentral/ThunderInterfaces/blob/master/interfaces/IPlayerInfo.h: PlaybackResolution
         this.resolution = {
             ResolutionUnknown: [1920, 1080],
-            Resolution480I: [640, 480],
-            Resolution480P: [640, 480],
-            Resolution576I: [768, 576],
-            Resolution576P: [768, 576],
-            Resolution720P: [1280, 720],
-            Resolution1080I: [1920, 1080],
-            Resolution1080P: [1920, 1080],
-            Resolution2160P30: [3840, 2160],
-            Resolution2160P60: [3840, 2160]
+            Resolution480: [640, 480],
+            Resolution576: [768, 576],
+            Resolution720: [1280, 720],
+            Resolution1080: [1920, 1080],
+            Resolution2160: [3840, 2160]
         }
     }
 
     activate() {
         return new Promise((resolve, reject) => {
-            // resolve(true)//#forTesting
             this._thunder
                 .call('Controller', 'activate', { callsign: this.callsign })
                 .then(result => {
@@ -106,6 +102,11 @@ export default class HDMIApi {
             this._thunder.call('Controller.1', 'status@' + plugin)
                 .then(res => {
                     console.log(JSON.stringify(res))
+                    resolve(res)
+                })
+                .catch(err=>{
+                    console.error(JSON.stringify(err))
+                    reject(err)
                 })
         })
     }
@@ -116,7 +117,9 @@ export default class HDMIApi {
             this._thunder
                 .call('PlayerInfo', 'resolution')
                 .then(result => {
-                    resolve(this.resolution[result])
+                    // We need only the Width & Height for rectangle.
+                    let result1 = result.slice(0, result.indexOf(((result.indexOf('I') !== -1)?'I':'P')))
+                    resolve(this.resolution[result1])
                 })
                 .catch(err => {
                     console.log('Failed to fetch dimensions', err)

@@ -44,7 +44,7 @@ export default class Epg extends Lightning.Component {
         mount: 0.5,
         w: 100,
         h: 100,
-        src: Utils.asset("images/settings/Loading.gif"),
+        src: Utils.asset("images/settings/Loading.png"),
         visible: true,
       },
       Wrapper: {
@@ -226,25 +226,6 @@ export default class Epg extends Lightning.Component {
     this.appApi = new AppApi();
   }
 
-  launchApp(appName) {
-    const apps = { //mapping from channel.shortname to application name
-      "Youtube": "Cobalt",
-      "Netflix": "Netflix",
-      "Amazon Prime": "Amazon",
-    };
-    const app = apps[appName];
-    this.appApi.getPluginStatus(app).then(() => {
-      Storage.set("applicationType", app);
-      if (app === "Cobalt") {
-        this.appApi.launchCobalt("https://www.youtube.com/tv").catch(err => { });
-      } else {
-        this.appApi.launchPremiumApp(app).catch(() => { });
-      }
-      this.appApi.setVisibility("ResidentApp", false);
-    }).catch(err => {
-      console.log(appName, " NOT supported: ", JSON.stringify(err))
-    })
-  }
 
   _handleBack() {
     Router.navigate("menu")
@@ -253,12 +234,37 @@ export default class Epg extends Lightning.Component {
   _handleEnter() {
     let channel = this.getCurrentChannel();
     if (channel.dvburi === "OTT") {
-      this.launchApp(channel.shortname);// check mapping in launchApp method
+      let params = {
+        launchLocation: "epgScreen",
+        url: channel.url
+      }
+      const appIdentifiers = {
+        "Cobalt": "n:3",
+        "Netflix": "n:1",
+        "Amazon": "n:2",
+      } //callsign to identifier mapping
+      const appIdentifier = appIdentifiers[channel.callsign]
+      if(appIdentifier){
+        params.appIdentifier = appIdentifier
+      }
+      this.appApi.launchApp(channel.callsign,params)
+    } else if(channel.dvburi.startsWith("C_")){
+      if (!Router.isNavigating()) {
+        let playerParams = {
+          url: channel.iptvuri, //video url for playing
+          isChannel: true,
+          channelName: channel.channelName,
+          showName: this.gridInstance[this.currentCellIndex].insText, 
+          showDescription: this.gridInstance[this.currentCellIndex].description, 
+          channelIndex: this.D - 8 + this.currentlyFocusedRow 
+        }
+        Router.navigate("player",playerParams)
+      }
     } else {
       if (!Router.isNavigating()) {
         this.DTV.launchChannel(channel.dvburi).then(res => {
           console.log("launchChannel method successful: ", JSON.stringify(res));
-          this.widgets.channeloverlay.$focusChannel(this.D - 11 + this.currentlyFocusedRow);// -11 = -8 + -3(3 to accomodate apps which won't be shown on the overlay)
+          this.widgets.channeloverlay.$focusChannel(this.D - 8 + this.currentlyFocusedRow);
           Router.navigate("dtvplayer");
         }).catch(err => {
           console.log("launchChannel method failed: ", JSON.stringify(err));

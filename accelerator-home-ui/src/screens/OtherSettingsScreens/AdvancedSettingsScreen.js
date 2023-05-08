@@ -47,7 +47,7 @@ export default class AdvanceSettingsScreen extends Lightning.Component {
     static _template() {
         return {
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             w: 1920,
             h: 1080,
             AdvanceScreenContents: {
@@ -195,7 +195,9 @@ export default class AdvanceSettingsScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/other')
+        }
     }
 
     performOTPAction() {
@@ -329,7 +331,9 @@ export default class AdvanceSettingsScreen extends Lightning.Component {
                     //this._setState('UI Voice')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/advanced/device')
+                    }
                 }
             },
         ]

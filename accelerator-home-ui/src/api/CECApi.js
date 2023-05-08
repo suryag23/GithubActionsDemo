@@ -28,8 +28,7 @@ const thunder = ThunderJS(config)
 export default class CECApi {
     activate() {
         return new Promise((resolve, reject) => {
-            const systemcCallsign = 'org.rdk.HdmiCec_2'
-            thunder.Controller.activate({ callsign: systemcCallsign })
+            thunder.Controller.activate({ callsign: 'org.rdk.HdmiCec_2' })
                 .then(() => {
                     resolve(true)
                 })
@@ -40,8 +39,7 @@ export default class CECApi {
     }
     deactivate() {
         return new Promise((resolve, reject) => {
-            const systemcCallsign = 'org.rdk.HdmiCec_2'
-            thunder.Controller.deactivate({ callsign: systemcCallsign })
+            thunder.Controller.deactivate({ callsign: 'org.rdk.HdmiCec_2' })
                 .then(() => {
                     resolve(true)
                 })
@@ -85,6 +83,19 @@ export default class CECApi {
                     console.error('CEC Otp Error', err)
                     resolve({ success: false })
                 })
+        })
+    }
+
+    getActiveSourceStatus() {
+        return new Promise((resolve, reject) => {
+          thunder.call('org.rdk.HdmiCec_2', 'getActiveSourceStatus')
+            .then(result => {
+              resolve(result.status)
+            })
+            .catch(err => {
+              console.error("CECApi HdmiCec_2 getActiveSourceStatus failed." + err);
+              reject(err)
+            })
         })
     }
 }

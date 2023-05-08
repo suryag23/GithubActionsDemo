@@ -26,6 +26,25 @@ const thunder = ThunderJS(config);
 const systemcCallsign = "DTV";
 let playerID = -1; //set to -1 to indicate nothing is currently playing
 
+let customServiceList = []; //list containing all channel details
+let customEventList = {}; //object with dvduri mapping to eventlist on that channel
+const getCustomServiceList = async () => {
+  try {
+    let response = await fetch(
+      "http://127.0.0.1:50050/lxresui/static/moreChannels/ChannelData.json"
+    );
+    response = await response.json();
+    customServiceList = response.serviceList;
+    customEventList = response.eventList;
+    console.log("customServiceList: ", customServiceList);
+    console.log("customEventList: ", customEventList);
+  } catch (err) {
+    console.log("Failed to read Custom Channel Data: ", err);
+  }
+};
+
+getCustomServiceList(); //call this method in activate
+
 //plugin is activated by default, no need to call explicitly
 export default class DTVApi {
   activate() {
@@ -84,10 +103,14 @@ export default class DTVApi {
   //returns the list of services(channels with name, uri and other details)
   serviceList() {
     let arr = [
-      { shortname: 'Amazon Prime', dvburi: 'OTT', lcn: 0 },
-      { shortname: 'Netflix', dvburi: 'OTT', lcn: 0 },
-      { shortname: 'Youtube', dvburi: 'OTT', lcn: 0 }
+      { shortname: "Amazon Prime", callsign: "Amazon", url:"", dvburi: "OTT", lcn: 0 },
+      { shortname: "Netflix", callsign: "Netflix", url:"", dvburi: "OTT", lcn: 0 },
+      { shortname: "Youtube", callsign: "Cobalt", url:"", dvburi: "OTT", lcn: 0 },
     ];
+    if(customServiceList){
+      arr = arr.concat(JSON.parse(JSON.stringify(customServiceList)));
+    }
+    console.log("arr from serviceList: ",arr)
     return new Promise((resolve, reject) => {
       thunder
         .call(systemcCallsign, "serviceList@dvbs")
@@ -107,20 +130,36 @@ export default class DTVApi {
   scheduleEvents(dvburi) {
     let method = 'scheduleEvents@' + dvburi
     return new Promise((resolve, reject) => {
-      thunder
-        .call(systemcCallsign, method)
-        .then((result) => {
-          console.log("scheduleEventsResult: ", JSON.stringify(result));
-          for (let show of result) {
+      if (dvburi.startsWith("C_")) {
+        let data = customEventList[dvburi];
+        if (data) {
+          // resolve([]); //need to pass actual data here
+          data = JSON.parse(JSON.stringify(data))
+          for (let show of data) {
             show.starttime *= 1000;
             show.duration *= 1000;
           }
-          resolve(result);
-        })
-        .catch((err) => {
-          console.log("Error: scheduleEvents: ", JSON.stringify(err));
-          reject(err);
-        });
+          resolve(data);
+        } else {
+          console.log("Error: getting schedule from custom channels");
+          resolve([]);
+        }
+      } else {
+        thunder
+          .call(systemcCallsign, method)
+          .then((result) => {
+            console.log("scheduleEventsResult: ", JSON.stringify(result));
+            for (let show of result) {
+              show.starttime *= 1000;
+              show.duration *= 1000;
+            }
+            resolve(result);
+          })
+          .catch((err) => {
+            console.log("Error: scheduleEvents: ", JSON.stringify(err));
+            reject(err);
+          });
+      }
     });
   }
 
@@ -131,6 +170,9 @@ export default class DTVApi {
       thunder
         .call(systemcCallsign, "satelliteList")
         .then((result) => {
+          if (result.length === 0) {
+            result = [{ "name": "Astra 28.2E", "longitude": 282, "lnb": "Universal" }]
+          }
           resolve(result);
         })
         .catch((err) => {

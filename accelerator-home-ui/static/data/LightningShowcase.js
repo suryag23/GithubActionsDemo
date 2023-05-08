@@ -1,5 +1,5 @@
 /**
- * If not stated otherwise in this file or this component's LICENSE
+ * If not stated otherwise in this file or this component"s LICENSE
  * file the following copyright and licenses apply:
  *
  * Copyright 2020 RDK Management
@@ -19,15 +19,17 @@
 
 export var showCaseApps = [
     {
-        displayName: "Strike Benchmark",
-        applicationType: "Lightning",
-        uri: "https://strike.lightningjs.io/es6/#home",
-        url: "/images/lightningApps/strike_app.png"
+      displayName: 'Strike Benchmark',
+      applicationType: 'LightningApp',
+      uri: 'https://strike.lightningjs.io/es6/#home',
+      url: '/images/lightningApps/strike_app.png',
+      appIdentifier: 's:0'
     },
     {
-        displayName: "TMBD App",
-        applicationType: "Lightning",
-        uri: "https://lightningjs.io/tmdb/#splash",
-        url: "/images/lightningApps/tmbd.png"
-    },
-]
+      displayName: 'TMBD App',
+      applicationType: 'LightningApp',
+      uri: 'https://lightningjs.io/tmdb/#splash',
+      url: '/images/lightningApps/tmbd.png',
+      appIdentifier: 's:1'
+    }
+  ]

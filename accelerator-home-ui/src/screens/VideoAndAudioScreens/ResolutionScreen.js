@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router, Utils, Language } from '@lightningjs/sdk'
+import { Lightning, Router, Utils, Storage, Language } from '@lightningjs/sdk'
 import VideoAndAudioItem from '../../items/VideoAndAudioItem'
 import AppApi from '../../api/AppApi'
 import thunderJS from 'ThunderJS';
@@ -46,7 +46,7 @@ export default class ResolutionScreen extends Lightning.Component {
             w: 1920,
             h: 1080,
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             ResolutionScreenContents: {
                 x: 200,
                 y: 275,
@@ -67,14 +67,12 @@ export default class ResolutionScreen extends Lightning.Component {
                     h: 90,
                     mount: 0.5,
                     zIndex: 4,
-                    src: Utils.asset("images/settings/Loading.gif")
+                    src: Utils.asset("images/settings/Loading.png")
                 },
             },
 
         }
     }
-
-
 
     _firstEnable() {
         this.appApi = new AppApi();
@@ -84,7 +82,13 @@ export default class ResolutionScreen extends Lightning.Component {
             actions: [{ p: 'rotation', v: { sm: 0, 0: 0, 1: 2 * Math.PI } }]
         });
 
+        thunder.on('org.rdk.DisplaySettings', 'resolutionPreChange', notification => {
+            console.log(new Date().toISOString() + " ResolutionScreen got resolutionPreChange");
+            Storage.set("ResolutionChangeInProgress", true);
+        })
+
         thunder.on('org.rdk.DisplaySettings', 'resolutionChanged', notification => {
+            console.log(new Date().toISOString() + " ResolutionScreen got resolutionChanged");
             const items = this.tag('List').items
             items.forEach(element => {
                 element.tag('Item.Tick').visible = false
@@ -92,6 +96,7 @@ export default class ResolutionScreen extends Lightning.Component {
                     element.tag('Item.Tick').visible = true
                 }
             });
+            Storage.set("ResolutionChangeInProgress", false);
         })
     }
 
@@ -102,7 +107,9 @@ export default class ResolutionScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/video')
+        }
     }
 
     _focus() {

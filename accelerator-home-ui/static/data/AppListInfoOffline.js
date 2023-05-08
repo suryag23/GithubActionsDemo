@@ -20,35 +20,47 @@
  * Class which contains data for app listings.
  */
  export var appListInfoOffline = [
-    {
-      displayName: 'USB',
-      applicationType: '',
-      uri: 'USB',
-      url: '/images/usb/USB_Featured_Item.jpg',
-    }, //the first item should be usb
-    {
-      displayName: 'Amazon Prime video',
-      applicationType: 'Amazon',
-      uri: '',
-      url: '/images/apps/App_Amazon_Prime_454x255.png',
-    },
-    {
-      displayName: 'Youtube',
-      applicationType: 'Cobalt',
-      uri: 'https://www.youtube.com/tv',
-      url: '/images/apps/App_YouTube_454x255.png',
-    },
-    {
-      displayName: 'Xumo',
-      applicationType: 'WebApp',
-      uri: 'https://x1box-app.xumo.com/index.html',
-      url: '/images/apps/App_Xumo_454x255.png',
-    },
-    {
-      displayName: 'Netflix',
-      applicationType: 'Netflix',
-      uri: '',
-      url: '/images/apps/App_Netflix_454x255.png',
-    },
-  ]
-  
+  {
+    displayName: 'USB',
+    applicationType: '',
+    uri: 'USB',
+    url: '/images/usb/USB_Featured_Item.jpg',        
+    appIdentifier: 'n:0'
+  },
+  {
+    displayName: 'Netflix',
+    applicationType: 'Netflix',
+    uri: '',
+    url: '/images/apps/App_Netflix_454x255.png',     
+    appIdentifier: 'n:1'
+  },
+  {
+    displayName: 'Amazon Prime video',
+    applicationType: 'Amazon',
+    uri: '',
+    url: '/images/apps/App_Amazon_Prime_454x255.png',
+    appIdentifier: 'n:2'
+  },
+  {
+    displayName: 'Youtube',
+    applicationType: 'Cobalt',
+    uri: '',
+    url: '/images/apps/App_YouTube_454x255.png',
+    appIdentifier: 'n:3'
+  },
+  {
+    displayName: 'Peacock',
+    applicationType: 'LightningApp',
+    uri: '',
+    url: '/images/apps/App_Peacock_454x255.png',
+    appIdentifier: 'n:4'
+  },
+  {
+    displayName: 'Xumo',
+    applicationType: 'HtmlApp',
+    uri: 'https://x1box-app.xumo.com/index.html',
+    url: '/images/apps/App_Xumo_454x255.png',
+    appIdentifier: 'n:5'
+  }
+]
+

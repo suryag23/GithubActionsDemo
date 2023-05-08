@@ -44,7 +44,7 @@ export default class LanguageScreen extends Lightning.Component {
   static _template() {
     return {
       rect: true,
-      color: 0xff000000,
+      color: 0xCC000000,
       w: 1920,
       h: 1080,
       LanguageScreenContents: {
@@ -104,7 +104,9 @@ export default class LanguageScreen extends Lightning.Component {
   }
 
   _handleBack() {
+    if(!Router.isNavigating()){
     Router.navigate('settings/other')
+    }
   }
 
   static _states() {

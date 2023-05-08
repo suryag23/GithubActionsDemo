@@ -39,7 +39,7 @@ export default class OtherSettingsScreen extends Lightning.Component {
     static _template() {
         return {
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             w: 1920,
             h: 1080,
             OtherSettingsScreenContents: {
@@ -95,7 +95,7 @@ export default class OtherSettingsScreen extends Lightning.Component {
                     },
                 },
                 ScreenSaver: {
-                    alpha: 0.3, // disabled
+                  //  alpha: 0.3, // disabled
                     y: 180,
                     type: SettingsMainItem,
                     Title: {
@@ -231,6 +231,9 @@ export default class OtherSettingsScreen extends Lightning.Component {
     $sleepTimerText(text) {
         this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + text
     }
+    $screenSaverTime(text){
+        this.tag('ScreenSaver.Title').text.text = Language.translate('Screen-Saver: ') + text
+    }
 
     _focus() {
         this._setState(this.state)
@@ -254,7 +257,9 @@ export default class OtherSettingsScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings')
+        }
     }
 
     static _states() {
@@ -268,14 +273,16 @@ export default class OtherSettingsScreen extends Lightning.Component {
                     this.tag('SleepTimer')._unfocus()
                 }
                 _handleUp() {
-                    this._setState('AdvancedSettings')
+                    // this._setState('AdvancedSettings')
                 }
                 _handleDown() {
                     // this._setState('RemoteControl')
-                    this._setState('EnergySaver')
+                    this._setState('ScreenSaver')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/other/timer')
+                    }
                 }
             },
 
@@ -304,13 +311,15 @@ export default class OtherSettingsScreen extends Lightning.Component {
                     this.tag('ScreenSaver')._unfocus()
                 }
                 _handleUp() {
-                    this._setState('RemoteControl')
+                    this._setState('SleepTimer')
                 }
                 _handleDown() {
                     this._setState('EnergySaver')
                 }
                 _handleEnter() {
-                    // 
+                    if(!Router.isNavigating()){
+                    Router.navigate('settings/other/ScreenSaver')
+                    }
                 }
             },
             class EnergySaver extends this {
@@ -321,14 +330,16 @@ export default class OtherSettingsScreen extends Lightning.Component {
                     this.tag('EnergySaver')._unfocus()
                 }
                 _handleUp() {
-                    this._setState('SleepTimer')
+                    this._setState('ScreenSaver')
                 }
                 _handleDown() {
                     // this._setState('Theme')
                     this._setState('Language')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/other/energy')
+                    }
                 }
             },
 
@@ -346,7 +357,9 @@ export default class OtherSettingsScreen extends Lightning.Component {
                     this._setState('Privacy')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/other/language')
+                    }
                 }
             },
             class Privacy extends this {
@@ -363,7 +376,9 @@ export default class OtherSettingsScreen extends Lightning.Component {
                     this._setState('AdvancedSettings')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/other/privacy')
+                    }
                 }
             },
             class AdvancedSettings extends this {
@@ -377,10 +392,12 @@ export default class OtherSettingsScreen extends Lightning.Component {
                     this._setState('Privacy')
                 }
                 _handleDown() {
-                    this._setState('SleepTimer')
+                    // this._setState('SleepTimer')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/advanced')
+                    }
                 }
             },
         ]

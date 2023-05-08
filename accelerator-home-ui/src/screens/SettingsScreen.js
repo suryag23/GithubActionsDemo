@@ -16,11 +16,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils, Language, Router } from '@lightningjs/sdk'
+import { Lightning, Utils, Language, Router, Storage } from '@lightningjs/sdk'
+import ThunderJS from 'ThunderJS';
 import { COLORS } from '../colors/Colors'
 import SettingsMainItem from '../items/SettingsMainItem'
 import { CONFIG } from '../Config/Config'
 import DTVApi from '../api/DTVApi';
+import AppApi from '../api/AppApi';
+
+const config = {
+  host: '127.0.0.1',
+  port: 9998,
+  default: 1,
+};
+var thunder = ThunderJS(config);
+
 
 /**
  * Class for settings screen.
@@ -38,7 +48,7 @@ export default class SettingsScreen extends Lightning.Component {
   static _template() {
     return {
       rect: true,
-      color: 0xff000000,
+      color: 0xCC000000,
       w: 1920,
       h: 1080,
       SettingsScreenContents: {
@@ -163,9 +173,37 @@ export default class SettingsScreen extends Lightning.Component {
             src: Utils.asset('images/settings/Arrow.png'),
           },
         },
-        DTVSettings: {
-          alpha:0.3,
+
+
+        NFRStatus: {
           y: 450,
+          type: SettingsMainItem,
+          Title: {
+            x: 10,
+            y: 45,
+            mountY: 0.5,
+            text: {
+              text: Language.translate('Native Frame Rate'),
+              textColor: COLORS.titleColor,
+              fontFace: CONFIG.language.font,
+              fontSize: 25,
+            }
+          },
+          Button: {
+            h: 45,
+            w: 67,
+            x: 1600,
+            mountX: 1,
+            y: 45,
+            mountY: 0.5,
+            src: Utils.asset('images/settings/ToggleOffWhite.png'),
+          },
+        },
+
+
+        DTVSettings: {
+          alpha: 0.3,
+          y: 630,
           type: SettingsMainItem,
           Title: {
             x: 10,
@@ -188,29 +226,73 @@ export default class SettingsScreen extends Lightning.Component {
             src: Utils.asset('images/settings/Arrow.png'),
           },
         },
+
+        VoiceRemoteControl: {
+          y: 540,
+          type: SettingsMainItem,
+          Title: {
+            x: 10,
+            y: 45,
+            mountY: 0.5,
+            text: {
+              text: Language.translate('Voice Remote Control'),
+              textColor: COLORS.titleColor,
+              fontFace: CONFIG.language.font,
+              fontSize: 25,
+            }
+          },
+          Button: {
+            h: 45,
+            w: 45,
+            x: 1600,
+            mountX: 1,
+            y: 45,
+            mountY: 0.5,
+            src: Utils.asset('images/settings/Arrow.png'),
+          },
+        },
+
+
+
       },
     }
   }
 
   _init() {
+
+    let self = this;
+    this.appApi = new AppApi();
     this._setState('NetworkConfiguration')
   }
   _focus() {
     this._setState(this.state)
   }
   _firstActive() {
+
+    if (Storage.get("NFRStatus")) {
+      console.log(`Netflix : NFRStatus is found to be enabled`)
+      this.tag("NFRStatus.Button").src = "static/images/settings/ToggleOnOrange.png"
+    }
+    else {
+      console.log(`Netflix : NFRStatus is found to be disabled`)
+      this.tag("NFRStatus.Button").src = "static/images/settings/ToggleOffWhite.png"
+    }
+
+
     this.dtvApi = new DTVApi();
     this.dtvPlugin = false; //plugin availability
     this.dtvApi.activate().then((res) => {
       // if (res){
-        this.dtvPlugin=true;
-        this.tag("DTVSettings").alpha = 1;
+      this.dtvPlugin = true;
+      this.tag("DTVSettings").alpha = 1;
       // }
     })
   }
 
   _handleBack() {
-    Router.navigate('menu')
+    if(!Router.isNavigating()){
+      Router.navigate('menu')
+      }
   }
 
   static _states() {
@@ -226,7 +308,9 @@ export default class SettingsScreen extends Lightning.Component {
           this._setState('Bluetooth')
         }
         _handleEnter() {
+          if(!Router.isNavigating()){
           Router.navigate('settings/network')
+          }
         }
       },
       class Bluetooth extends this {
@@ -245,7 +329,9 @@ export default class SettingsScreen extends Lightning.Component {
         _handleLeft() {
         }
         _handleEnter() {
+          if(!Router.isNavigating()){
           Router.navigate('settings/bluetooth')
+          }
         }
       },
 
@@ -263,7 +349,9 @@ export default class SettingsScreen extends Lightning.Component {
           this._setState('Audio')
         }
         _handleEnter() {
+          if(!Router.isNavigating()){
           Router.navigate('settings/video')
+          }
         }
 
       },
@@ -279,7 +367,9 @@ export default class SettingsScreen extends Lightning.Component {
           this._setState('Video')
         }
         _handleEnter() {
+          if(!Router.isNavigating()){
           Router.navigate('settings/audio')
+          }
         }
         _handleDown() {
           this._setState('OtherSettings')
@@ -297,14 +387,59 @@ export default class SettingsScreen extends Lightning.Component {
           this._setState('Audio')
         }
         _handleEnter() {
+          if(!Router.isNavigating()){
           Router.navigate('settings/other')
-        }
-        _handleDown() {
-          if(this.dtvPlugin){
-            this._setState('DTVSettings')
           }
         }
+        _handleDown() {
+          this._setState("NFRStatus")
+        }
       },
+
+      class NFRStatus extends this{
+        $enter() {
+          this.tag('NFRStatus')._focus()
+        }
+        $exit() {
+          this.tag('NFRStatus')._unfocus()
+        }
+        _handleUp() {
+          this._setState('OtherSettings')
+        }
+        _handleDown() {
+          this._setState('VoiceRemoteControl')
+        }
+        _handleEnter() {
+          //handle Switch
+          let self = this;
+          if (Storage.get("NFRStatus")) {
+
+            thunder.call("Netflix.1", "nfrstatus", { "params": "disable" }).then(nr => {
+              self.tag("NFRStatus.Button").src = "static/images/settings/ToggleOffWhite.png"
+              Storage.set("NFRStatus", false)
+              console.log(`Netflix : nfr disable updation results in ${nr}`)
+            }).catch(nerr => {
+              console.error(`Netflix : error while updating nfrstatus`)
+              console.error(nerr)
+            })
+
+          }
+          else {
+
+            thunder.call("Netflix.1", "nfrstatus", { "params": "enable" }).then(nr => {
+              self.tag("NFRStatus.Button").src = "static/images/settings/ToggleOnOrange.png"
+              Storage.set("NFRStatus", true)
+              console.log(`Netflix : nfr enable results in ${nr}`)
+            }).catch(nerr => {
+              console.error(`Netflix : error while updating nfrstatus `)
+              console.error(nerr)
+            })
+
+          }
+
+        }
+      },
+
       class DTVSettings extends this{
         $enter() {
           this.tag('DTVSettings')._focus()
@@ -313,11 +448,35 @@ export default class SettingsScreen extends Lightning.Component {
           this.tag('DTVSettings')._unfocus()
         }
         _handleUp() {
-          this._setState('OtherSettings')
+          this._setState('NFRStatus')
         }
         _handleEnter() {
-          if(this.dtvPlugin){
+          if (this.dtvPlugin) {
             Router.navigate('settings/livetv')
+          }
+          // dtvApi.activate().then(res =>{
+          //   this.tag('DTVSettings.Title').text.text = 'DTV Settings: Activtion'+ res
+          // })
+        }
+      },
+      class VoiceRemoteControl extends this{
+        $enter() {
+          this.tag('VoiceRemoteControl')._focus()
+        }
+        $exit() {
+          this.tag('VoiceRemoteControl')._unfocus()
+        }
+        _handleUp() {
+          this._setState('NFRStatus')
+        }
+        _handleDown(){
+          if (this.dtvPlugin) {
+            this._setState('DTVSettings')
+          }
+        }
+        _handleEnter() {
+          if(!Router.isNavigating()){
+            Router.navigate('settings/bluetooth/RCVolumeInfoScreen')
           }
           // dtvApi.activate().then(res =>{
           //   this.tag('DTVSettings.Title').text.text = 'DTV Settings: Activtion'+ res

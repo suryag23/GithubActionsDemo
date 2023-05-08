@@ -60,11 +60,12 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
   startConnectForAnotherNetwork(device, passphrase) {
     wifi.connect({ ssid: device.ssid, security: device.security }, passphrase).then(() => {
       wifi.saveSSID(device.ssid, passphrase, device.security).then((response) => {
-        if(response.result===0){
-          // console.log(response);
-          // Router.back()
-        }
-        else if(response.result!==0){
+        if (response.result === 0 && response.success === true) {
+          wifi.SaveSSIDKey(this._item.ssid).then((persistenceResponse)=>{console.log(persistenceResponse)})
+        // console.log(response);
+        // Router.back()
+      }
+        else if (response.result !== 0) {
           wifi.clearSSID().then((response) => {
             // console.log(response)
             // Router.back()
@@ -82,7 +83,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         w: 1920,
         h: 1080,
         rect: true,
-        color: 0xff000000,
+        color: 0xCC000000,
       },
       Text: {
         x: 758,
@@ -231,7 +232,9 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
   }
 
   _handleBack() {
-    Router.back()
+    if(!Router.isNavigating()){
+      Router.back()
+      }
   }
   static _states() {
     return [

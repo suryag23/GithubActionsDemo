@@ -35,7 +35,7 @@ export default class RebootConfirmationScreen extends Lightning.Component {
             w: 1920,
             h: 2000,
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             RebootScreen: {
                 x: 950,
                 y: 270,
@@ -104,7 +104,7 @@ export default class RebootConfirmationScreen extends Lightning.Component {
                     w: 90,
                     h: 90,
                     zIndex: 2,
-                    src: Utils.asset("images/settings/Loading.gif"),
+                    src: Utils.asset("images/settings/Loading.png"),
                     visible: false
                 },
             }
@@ -122,7 +122,9 @@ export default class RebootConfirmationScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/advanced/device')
+        }
     }
 
 
@@ -174,7 +176,9 @@ export default class RebootConfirmationScreen extends Lightning.Component {
                     this._focus()
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.back()
+                    }
                 }
                 _handleLeft() {
                     this._setState('Confirm')

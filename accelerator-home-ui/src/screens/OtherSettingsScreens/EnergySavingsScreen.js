@@ -36,7 +36,7 @@ export default class EnergySavingsScreen extends Lightning.Component {
     static _template() {
         return {
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             w: 1920,
             h: 1080,
             EnerygySavingContents: {
@@ -59,7 +59,7 @@ export default class EnergySavingsScreen extends Lightning.Component {
                     h: 90,
                     mount: 0.5,
                     zIndex: 4,
-                    src: Utils.asset("images/settings/Loading.gif"),
+                    src: Utils.asset("images/settings/Loading.png"),
                     visible: true,
                 },
             },
@@ -80,7 +80,9 @@ export default class EnergySavingsScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/other')
+        }
     }
 
     static _states() {

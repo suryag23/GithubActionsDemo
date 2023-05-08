@@ -33,7 +33,7 @@ export default class SleepTimerScreen extends Lightning.Component {
     static _template() {
         return {
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             w: 1920,
             h: 1080,
             SleepTimer: {
@@ -80,17 +80,19 @@ export default class SleepTimerScreen extends Lightning.Component {
             }
         })
         this.tag('List').getElement(index).tag('Tick').visible = true
-        this.fireAncestors('$registerInactivityMonitoringEvents').then(res=>{
+        this.fireAncestors('$registerInactivityMonitoringEvents').then(res => {
             this.fireAncestors('$resetSleepTimer', timeoutInterval);
-        }).catch(err=>{
+        }).catch(err => {
             console.error(`error while registering the inactivity monitoring event`)
         })
-        
+
         this._setState('Options')
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/other')
+        }
     }
 
     static _states() {

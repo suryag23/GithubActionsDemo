@@ -35,9 +35,9 @@ import AppStore from '../views/AppStore'
 import detailsScreenRoutes from './detailsScreenRoutes'
 import liveTvRoutes from './liveTvRoutes'
 import TvOverlayScreen from '../tvOverlay/TvOverlayScreen'
-import Volume from '../tvOverlay/components/Volume'
 import EPGScreen from "../screens/EpgScreens/Epg"
 import DTVPlayer from '../MediaPlayer/DTVPlayer'
+import AppLauncherScreen from '../screens/AppLauncherScreen'
 
 let api = null
 
@@ -64,7 +64,7 @@ export default {
     {
       path: 'settings',
       component: SettingsScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume' , "AppCarousel"],
     },
     {
       path: 'failscreen',
@@ -73,42 +73,42 @@ export default {
     {
       path: 'videoplayer',
       component: LightningPlayerControls,
-      widgets: ['Volume']
+      widgets: ['Volume' , "AppCarousel", "VideoInfoChange"]
     },
     {
       path: 'usb',
       component: UsbAppsScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume' , "AppCarousel"],
     },
     {
       path: 'epg',
       component: EPGScreen,
-      widgets: ['Menu', 'Volume'],
+      widgets: ['Menu', 'Volume' , "AppCarousel"],
     },
     {
       path: 'apps',
       component: AppStore,
-      widgets: ['Menu', 'Volume']
+      widgets: ['Menu', 'Volume', "AppCarousel"]
     },
     {
       path: 'usb/player',
       component: AAMPVideoPlayer,
-      widgets: ['Volume']
+      widgets: ['Volume',"SettingsOverlay", "AppCarousel"]
     },
     {
       path: 'usb/image',
       component: ImageViewer,
-      widgets: ['Volume']
+      widgets: ['Volume' , "AppCarousel" ]
     },
     {
       path: 'image',
       component: ImageViewer,
-      widgets: ['Volume']
+      widgets: ['Volume', "AppCarousel"]
     },
     {
       path: 'ui',
       component: UIList,
-      widgets: ['Volume']
+      widgets: ['Volume', "AppCarousel"]
     },
     {
       path: 'menu',
@@ -122,7 +122,7 @@ export default {
         }
         return Promise.resolve()
       },
-      widgets: ['Menu', 'Fail', 'Volume'],
+      widgets: ['Menu', 'Fail', 'Volume', "AppCarousel","VideoInfoChange"],
     },
     {
       path: 'tv-overlay/:type',
@@ -132,18 +132,19 @@ export default {
       }
     },
     {
-      path: 'overlay/volume',
-      component: Volume
+      path: 'applauncher',
+      component: AppLauncherScreen,
+      widgets: ['Volume','SettingsOverlay', "AppCarousel"] //other overlays needs to be added to improve ovelay functionality.
     },
     {
       path: 'player',
       component: AAMPVideoPlayer,
-      widgets: ['Volume']
+      widgets: ['Volume',"SettingsOverlay", "AppCarousel"]
     },
     {
       path:'dtvplayer',
       component: DTVPlayer,
-      widgets: ['Volume', 'TvOverlays', 'ChannelOverlay']
+      widgets: ['Volume', 'TvOverlays', 'ChannelOverlay',"SettingsOverlay", "AppCarousel"]
     },
     {
       path: '!',

@@ -41,7 +41,7 @@ export default class DeviceScreen extends Lightning.Component {
     static _template() {
         return {
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             w: 1920,
             h: 1080,
             DeviceScreenContents: {
@@ -135,7 +135,6 @@ export default class DeviceScreen extends Lightning.Component {
                 },
                 Reset: {
                     y: 360,
-                    alpha: 0.3, // disabled
                     type: SettingsMainItem,
                     Title: {
                         x: 10,
@@ -174,7 +173,9 @@ export default class DeviceScreen extends Lightning.Component {
     }
 
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/advanced')
+        }
     }
 
     static _states() {
@@ -187,13 +188,15 @@ export default class DeviceScreen extends Lightning.Component {
                     this.tag('Info')._unfocus()
                 }
                 _handleUp() {
-                    this._setState('Reboot');
+                    // this._setState('Reboot');
                 }
                 _handleDown() {
                     this._setState('TimeZone')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/advanced/device/info')
+                    }
                 }
             },
             class TimeZone extends this{
@@ -210,7 +213,9 @@ export default class DeviceScreen extends Lightning.Component {
                     this._setState('Firmware')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/advanced/device/timezone')
+                    }
                 }
             },
             class Firmware extends this{
@@ -221,13 +226,15 @@ export default class DeviceScreen extends Lightning.Component {
                     this.tag('Firmware')._unfocus()
                 }
                 _handleUp() {
-                    this._setState('Info');
+                    this._setState('TimeZone');
                 }
                 _handleDown() {
                     this._setState('Reboot')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/advanced/device/firmware')
+                    }
                 }
             },
             class Reboot extends this{
@@ -241,10 +248,12 @@ export default class DeviceScreen extends Lightning.Component {
                     this._setState('Firmware');
                 }
                 _handleDown() {
-                    this._setState('Info')
+                    this._setState('Reset')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/advanced/device/reboot')
+                    }
                 }
             },
             class Reset extends this{
@@ -255,13 +264,15 @@ export default class DeviceScreen extends Lightning.Component {
                     this.tag('Reset')._unfocus()
                 }
                 _handleUp() {
-                    //this._setState('Reboot');
+                    this._setState('Reboot');
                 }
                 _handleDown() {
                     //this._setState('Info')
                 }
                 _handleEnter() {
-
+                    if(!Router.isNavigating()){
+                    Router.navigate('settings/advanced/device/factoryReset')
+                    }
                 }
             },
         ]

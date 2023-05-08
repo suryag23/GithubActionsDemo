@@ -17,6 +17,7 @@
  * limitations under the License.
  **/
 import { Lightning, Registry, Router } from '@lightningjs/sdk'
+import AppApi from '../api/AppApi';
 import DTVApi from '../api/DTVApi'
 import ChannelItem from './ChannelItem'
 
@@ -53,12 +54,12 @@ export default class ChannelOverlay extends Lightning.Component {
   }
   _firstEnable(){
     this.dtvApi = new DTVApi();
+    this.appApi = new AppApi();
     this.options = [];
     this.overlayTimeout = null;
     this.timeoutDuration = 10000;
     this.dtvApi.serviceList().then(channels => {
-      const [amazon,netflix,youtube, ...others] = channels;//to remove apps from the channel overlay
-      this.options = others;
+      this.options = channels;
       this.tag('Channels').items = this.options.map((item, index) => {
         return {
           type: ChannelItem,
@@ -117,36 +118,76 @@ export default class ChannelOverlay extends Lightning.Component {
   }
 
   _handleBack() {
+    if(Router.getActiveHash() === "player"){ //for normal video player channel overlay is not a widget
+      return false; //handleback of parent class will be executed
+    }
     Router.focusPage();
   }
 
   _handleLeft() {
-    this._handleBack();
+    if(Router.getActiveHash() === "player"){ //for normal video player channel overlay is not a widget
+      return false; //handleback of parent class will be executed
+    }
+    Router.focusPage();
   }
 
   _handleRight() {
-    this._handleBack();
+    if(Router.getActiveHash() === "player"){ //for normal video player channel overlay is not a widget
+      return false; //handleback of parent class will be executed
+    }
+    Router.focusPage();
   }
 
   _handleEnter() {
     this.resetTimeout()
     let focusedChannelIdx = this.tag("Channels").index;
-    if (focusedChannelIdx !== this.activeChannelIdx) {
-      this.dtvApi.exitChannel().then( res => {
-        console.log("Current channel exit successful, launching new channel: ", JSON.stringify(res));
-        this.dtvApi
-        .launchChannel(this.options[focusedChannelIdx].dvburi)
-        .then((res) => {
-          console.log("Change Channel successfull: ", JSON.stringify(res));
-          this.activeChannelIdx = focusedChannelIdx;
-        })
-        .catch((err) => {
-          console.log("Failed to launch new channel",JSON.stringify(err));
-        });
+    let channel = this.options[focusedChannelIdx];
+    if (channel.dvburi === "OTT") {
+      let params = {
+        launchLocation: "epgScreen",
+        url: channel.url
+      }
+      this.appApi.launchApp(channel.callsign,params).then(res => {
+        this.dtvApi.exitChannel()
       }).catch(err => {
-        console.log("Failed to exit current playing channel: ", JSON.stringify(err));
+        this.dtvApi.exitChannel() //to exit previous channel regardless the app launch succeeds or fails
       })
-      
+    }else if(channel.dvburi.startsWith("C_")){
+      if (!Router.isNavigating()) {
+        let playerParams = {
+          url: channel.iptvuri, //video url for playing
+          isChannel: true,
+          channelName: channel.channelName,
+          showName: "sample show name",
+          showDescription: "sample description",
+          channelIndex: focusedChannelIdx
+        }
+        if(Router.getActiveHash() === "player"){
+          this.activeChannelIdx = focusedChannelIdx;
+          this.fireAncestors("$changeChannel",channel.iptvuri,playerParams.showName,playerParams.channelName)
+        } else {
+          Router.navigate("player",playerParams);
+        }
+      }
+    } else {
+      if (focusedChannelIdx !== this.activeChannelIdx) {
+        this.dtvApi.exitChannel().then( res => {
+          console.log("Current channel exit successful, launching new channel: ", JSON.stringify(res));
+          this.dtvApi
+          .launchChannel(this.options[focusedChannelIdx].dvburi)
+          .then((res) => {
+            console.log("Change Channel successfull: ", JSON.stringify(res));
+            this.activeChannelIdx = focusedChannelIdx;
+          })
+          .catch((err) => {
+            console.log("Failed to launch new channel",JSON.stringify(err));
+          });
+        }).catch(err => {
+          console.log("Failed to exit current playing channel: ", JSON.stringify(err));
+        })
+      }
     }
   }
+
+
 }

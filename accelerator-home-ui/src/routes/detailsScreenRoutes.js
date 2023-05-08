@@ -24,7 +24,7 @@ export default {
         {
             path: 'menu/details',
             component: DetailsScreen,
-            widgets: ['Menu', 'Volume'],
+            widgets: ['Menu', 'Volume', "AppCarousel"],
         },
     ]
 }

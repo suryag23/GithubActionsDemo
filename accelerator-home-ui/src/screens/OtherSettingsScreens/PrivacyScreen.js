@@ -29,6 +29,7 @@ import UsbApi from '../../api/UsbApi'
  */
 
 const xcastApi = new XcastApi()
+let cookieToggle = false
 
 export default class PrivacyScreen extends Lightning.Component {
 
@@ -44,7 +45,7 @@ export default class PrivacyScreen extends Lightning.Component {
     static _template() {
         return {
             rect: true,
-            color: 0xff000000,
+            color: 0xCC000000,
             w: 1920,
             h: 1080,
             PrivacyScreenContents: {
@@ -136,6 +137,15 @@ export default class PrivacyScreen extends Lightning.Component {
                             fontSize: 25,
                         }
                     },
+                    Button: {
+                        h: 45,
+                        w: 67,
+                        x: 1600,
+                        mountX: 1,
+                        y: 45,
+                        mountY: 0.5,
+                        src: Utils.asset('images/settings/ToggleOffWhite.png'),
+                    },
                 },
                 PrivacyPolicy: {
                     y: 360,
@@ -181,15 +191,17 @@ export default class PrivacyScreen extends Lightning.Component {
         this.checkUSBDeviceStatus()
     }
     _handleBack() {
+        if(!Router.isNavigating()){
         Router.navigate('settings/other')
+        }
     }
 
     checkUSBDeviceStatus() {
         if (!Storage.get('UsbMedia')) {
-                this.tag('UsbMediaDevices.Button').src = Utils.asset('images/settings/ToggleOnOrange.png')
-                Storage.set('UsbMedia', 'ON')
+            this.tag('UsbMediaDevices.Button').src = Utils.asset('images/settings/ToggleOnOrange.png')
+            Storage.set('UsbMedia', 'ON')
         } else if (Storage.get('UsbMedia') === 'ON') {
-                this.tag('UsbMediaDevices.Button').src = Utils.asset('images/settings/ToggleOnOrange.png')
+            this.tag('UsbMediaDevices.Button').src = Utils.asset('images/settings/ToggleOnOrange.png')
         } else if (Storage.get('UsbMedia') === 'OFF') {
             this.tag('UsbMediaDevices.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
         }
@@ -241,7 +253,7 @@ export default class PrivacyScreen extends Lightning.Component {
                     this.tag('LocalDeviceDiscovery')._unfocus()
                 }
                 _handleUp() {
-                    this._setState('PrivacyPolicy')
+                    // this._setState('PrivacyPolicy')
                 }
                 _handleDown() {
                     this._setState('UsbMediaDevices')
@@ -267,11 +279,11 @@ export default class PrivacyScreen extends Lightning.Component {
                     let _UsbMedia = Storage.get('UsbMedia')
                     if (_UsbMedia === 'ON') {
                         this.fireAncestors('$deRegisterUsbMount')
-                        this.USBApi.deactivate().then((res)=>{
+                        this.USBApi.deactivate().then((res) => {
                             Storage.set('UsbMedia', 'OFF')
                             this.tag('UsbMediaDevices.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
                             this.widgets.menu.refreshMainView()
-                        }).catch(err=>{
+                        }).catch(err => {
                             console.error(`error while disabling the usb plugin = ${err}`)
                             this.fireAncestors('$registerUsbMount')
                         })
@@ -316,10 +328,50 @@ export default class PrivacyScreen extends Lightning.Component {
                     this._setState('PrivacyPolicy')
                 }
                 _handleEnter() {
+                    cookieToggle = !cookieToggle
+
+                    //TOGGLE BUTTON
+                    if(cookieToggle){
+                        this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOnOrange.png')
+                        this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - In Progress'
+                    }
+                    else{
+                        this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
+                        this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
+                    }
                     this.AppApi.clearCache()
                         .then(() => {
                             //location.reload(true)
+                    })
+
+                    setTimeout(() => {
+                            this.AppApi.resetAVSCredentials()
+                            .then((result) => {
+                                console.log("Triggering AVS credential reset." ,result)
+                                if(result.success){
+                                    
+                                    //SUCCESSFULL API CALL
+                                    this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Completed'
+
+                                    setTimeout(() => {
+                                        this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
+                                        this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
+                                        cookieToggle = !cookieToggle
+                                    }, 2000)
+                                }
+                                else{
+
+                                    //UNSUCCESSFULL API CALL
+                                    this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Error'
+
+                                    setTimeout(() => {
+                                        this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
+                                        this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
+                                        cookieToggle = !cookieToggle
+                                    }, 2000)
+                                }
                         })
+                    }, 2000)
                 }
             },
             class PrivacyPolicy extends this {
@@ -333,10 +385,12 @@ export default class PrivacyScreen extends Lightning.Component {
                     this._setState('ClearCookies')
                 }
                 _handleDown() {
-                    this._setState('LocalDeviceDiscovery')
+                    // this._setState('LocalDeviceDiscovery')
                 }
                 _handleEnter() {
+                    if(!Router.isNavigating()){
                     Router.navigate('settings/other/privacyPolicy')
+                    }
                 }
             },
         ]

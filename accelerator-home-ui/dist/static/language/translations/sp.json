@@ -160,5 +160,9 @@
   "Ethernet cable is not connected": "El cable Ethernet no está conectado",
   "Try Again": "Intentar otra vez",
   "Skip": "Saltar",
-  "UI Voice": "UI Voz"
+  "UI Voice": "UI Voz",
+  "Native Frame Rate": "Velocidad de fotogramas nativa",
+  "Settings  Other Settings  Screen Saver": "Ajustes / Otras configuraciones / Protector de pantalla",
+  "Voice Remote Control": "Control remoto de voz",
+  "Settings  Bluetooth Voice Remote Control": "Ajustes / Bluetooth / Control remoto de voz"
 }

@@ -40,7 +40,7 @@ export default class AudioScreen extends Lightning.Component {
   static _template() {
     return {
       rect: true,
-      color: 0xff000000,
+      color: 0xCC000000,
       w: 1920,
       h: 1080,
       Wrapper: {
@@ -223,7 +223,9 @@ export default class AudioScreen extends Lightning.Component {
   }
 
   _handleBack() {
+    if(!Router.isNavigating()){
     Router.navigate('settings')
+    }
   }
 
   static _states() {
@@ -239,7 +241,9 @@ export default class AudioScreen extends Lightning.Component {
           this._setState('OutputMode')
         }
         _handleEnter() {
+          if(!Router.isNavigating()){
           Router.navigate('settings/audio/output')
+          }
         }
 
       },
@@ -257,7 +261,9 @@ export default class AudioScreen extends Lightning.Component {
           // this._setState('DynamicRange');
         }
         _handleEnter() {
+          if(!Router.isNavigating()){
           Router.navigate('settings/audio/output')
+          }
         }
       },
       class DynamicRange extends this{

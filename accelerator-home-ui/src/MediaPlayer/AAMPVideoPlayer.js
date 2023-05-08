@@ -504,6 +504,10 @@ export default class AAMPVideoPlayer extends Lightning.Component {
       this.tag('ChannelName').visible = false
       this.tag('PlayerControls').showNextPrevious()
     }
+    if(this.data==undefined || this.data.length<=1)
+    {
+      this.tag('PlayerControls').hideNextPrevious()
+    }
   }
   /**
    * Function to define the different states of the video player.
@@ -556,6 +560,10 @@ export default class AAMPVideoPlayer extends Lightning.Component {
           this._setState('HideControls')
         }
         _handleRight() {
+          this.hidePlayerControls()
+          this._setState('HideControls')
+        }
+        _handleBack() {
           this.hidePlayerControls()
           this._setState('HideControls')
         }
