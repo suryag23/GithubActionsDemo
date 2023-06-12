@@ -20,7 +20,7 @@
  import SettingsItem from './SettingsItem'
  import { COLORS } from '../colors/Colors'
  import { CONFIG } from '../Config/Config'
- 
+
  /**
   * Class for the item in the Bluetooth screen.
   */
@@ -49,7 +49,7 @@
        },
      }
    }
- 
+
    /**
     * Function to set contents of an item in the Bluetooth screen.
     */
@@ -64,7 +64,7 @@
          mountY: 0.5,
          text: { text: item.name, fontSize: 25, textColor: COLORS.textColor, fontFace: CONFIG.language.font },
        },
- 
+
        Right: {
          x: 1600-200,
          y: 30,
@@ -81,7 +81,7 @@
       //  }
      })
    }
- 
+
    _focus() {
      this.tag('TopLine').color = CONFIG.theme.hex
      this.tag('BottomLine').color = CONFIG.theme.hex
@@ -91,7 +91,7 @@
     this.tag('TopLine').h = 6
     this.tag('BottomLine').h = 6
    }
- 
+
    _unfocus() {
      this.tag('TopLine').color = 0xFFFFFFFF
      this.tag('BottomLine').color = 0xFFFFFFFF
@@ -112,4 +112,3 @@
    //   this.fireAncestors('$connectBluetooth', this.tag('List').element.ref)
    // }
  }
- 

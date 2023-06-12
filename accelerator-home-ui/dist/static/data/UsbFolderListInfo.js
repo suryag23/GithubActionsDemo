@@ -32,6 +32,4 @@
         displayName: 'Images',
         url: '/images/usb/picture-folder.png',
       },
-   
   ]
-  

@@ -1,6 +1,7 @@
 import { Lightning, Utils, Language } from "@lightningjs/sdk";
 import { CONFIG } from "../Config/Config";
 import { ProgressBar } from '@lightningjs/ui-components'
+import { startDACApp } from '../api/DACApi'
 
 export default class AppStoreItem extends Lightning.Component {
     static _template() {
@@ -58,6 +59,8 @@ export default class AppStoreItem extends Lightning.Component {
     }
 
     set info(data) {
+        if(!data.hasOwnProperty('url'))
+            data.url = "/images/apps/DACApp_455_255.png";
         this.data = data
         if (data.url.startsWith('/images')) {
             this.tag('Image').patch({
@@ -68,8 +71,7 @@ export default class AppStoreItem extends Lightning.Component {
                 src: data.url,
             });
         }
-        this.tag('Text').text.text = data.displayName
-        // this.tag('Shadow').y = this.tag('Shadow').y - 10
+        this.tag('Text').text.text = data.name
     }
 
     static get width() {
@@ -78,6 +80,15 @@ export default class AppStoreItem extends Lightning.Component {
 
     static get height() {
         return 168
+    }
+
+    _init() {
+        this._app = {}
+        this._app.isRunning = false
+        this._app.isInstalled = false
+        this._app.isInstalling = false
+        this._app.isUnInstalling = false
+        this._buttonIndex = 0;
     }
 
     _focus() {
@@ -91,5 +102,13 @@ export default class AppStoreItem extends Lightning.Component {
         this.zIndex = 1
         this.tag("Shadow").alpha = 0
         this.tag("Text").alpha = 0
+    }
+    async _handleEnter(){
+        this._app.url = this.data.uri
+        this._app.id = this.data.id
+        this._app.name = this.data.name
+        this._app.version = this.data.version
+        this._app.type= this.data.type
+        this._app.isRunning = await startDACApp(this._app);
     }
 }

@@ -50,7 +50,7 @@ export default class OptionsItem extends Lightning.Component {
     set element(item) {
         this.tag('Text').text.text = Language.translate(item);
         if(this.tag('Text').text.text.length > 11){
-            this.tag('Text').text.fontSize = 25 
+            this.tag('Text').text.fontSize = 25
         }
     }
 }

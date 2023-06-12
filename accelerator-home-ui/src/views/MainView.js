@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Storage, Language, Router, Registry, Utils } from '@lightningjs/sdk'
+import { Lightning, Storage, Language, Router } from '@lightningjs/sdk'
 import ListItem from '../items/ListItem.js'
 import ThunderJS from 'ThunderJS'
 import AppApi from '../api/AppApi.js'
@@ -294,7 +294,30 @@ export default class MainView extends Lightning.Component {
 
   _handleBack() { }
 
-  _init() {
+  async checkAppCompatability (items)  {
+   for(let i=0;i<items.length;i++) {
+    let callsign = items[i].applicationType
+    if(items[i].applicationType !== '') {
+      if(items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
+        callsign = "Cobalt"
+      }
+      else if(items[i].displayName === "Peacock") {
+        callsign = items[i].displayName
+      }
+
+      await this.appApi.getPluginStatus(callsign).then(res => {
+      }).catch(err => {
+          console.log("Error:",err)
+          items.splice(i,1)
+          i--
+        })
+
+    }
+   }
+   return items
+  }
+
+  async _init() {
     this.gracenote = false
     this.inputSelect = false //false by default
     this.settingsScreen = false
@@ -313,34 +336,38 @@ export default class MainView extends Lightning.Component {
 
     // for initially showing/hiding usb icon
 
-    var appItems = this.homeApi.getAppListInfo()
-    var data = this.homeApi.getPartnerAppsInfo()
-    this.metroApps = this.homeApi.getOfflineMetroApps()
-    this.showcaseApps = this.homeApi.getShowCaseApps()
+    let appItems = this.homeApi.getAppListInfo()
+    let data = this.homeApi.getPartnerAppsInfo()
+    let metroApps = this.homeApi.getOfflineMetroApps()
+    let showcaseApps = this.homeApi.getShowCaseApps()
+
+    await this.checkAppCompatability(appItems).then(res =>{
+      appItems = res
+    })
 
     this.appApi.isConnectedToInternet()
       .then(result => {
         if (result) {
-          this.metroApps = this.homeApi.getOnlineMetroApps()
+          metroApps = this.homeApi.getOnlineMetroApps()
         }
       })
       .catch(err => {
         console.log(err)
       })
 
-    var prop_apps = 'applications'
-    var prop_displayname = 'displayName'
-    var prop_uri = 'uri'
-    var prop_apptype = 'applicationType'
-    var prop_url = 'url'
-    var appdetails = []
-    var appdetails_format = []
-    var usbAppsArr = [];
-    var usbApps = 0
+    let prop_apps = 'applications'
+    let prop_displayname = 'displayName'
+    let prop_uri = 'uri'
+    let prop_apptype = 'applicationType'
+    let prop_url = 'url'
+    let appdetails = []
+    let appdetails_format = []
+    let usbAppsArr = [];
+    let usbApps = 0
     try {
       if (data != null && JSON.parse(data).hasOwnProperty(prop_apps)) {
         appdetails = JSON.parse(data).applications
-        for (var i = 0; i < appdetails.length; i++) {
+        for (let i = 0; i < appdetails.length; i++) {
           if (
             appdetails[i].hasOwnProperty(prop_displayname) &&
             appdetails[i].hasOwnProperty(prop_uri) &&
@@ -351,7 +378,7 @@ export default class MainView extends Lightning.Component {
           }
         }
 
-        for (var i = 0; i < appItems.length; i++) {
+        for (let i = 0; i < appItems.length; i++) {
           appdetails_format.push(appItems[i])
         }
 
@@ -409,7 +436,6 @@ export default class MainView extends Lightning.Component {
 
     // for USB event
     const registerListener = () => {
-
       let listener;
 
       listener = thunder.on('org.rdk.UsbAccess', 'onUSBMountChanged', (notification) => {
@@ -449,14 +475,20 @@ export default class MainView extends Lightning.Component {
       console.log('IP ADDRESS changed', JSON.stringify(notification))
       if (notification.status === 'ACQUIRED') {
         Storage.set('ipAddress', notification.ip4Address)
-        this.metroApps = this.homeApi.getOnlineMetroApps()
+        metroApps = this.homeApi.getOnlineMetroApps()
       } else {
         Storage.set('ipAddress', null)
         //this.metroApps = this.homeApi.getMetroInfo()
       }
-
     })
 
+    await this.checkAppCompatability(metroApps).then(res =>{
+      this.metroApps = res
+    })
+
+    await this.checkAppCompatability(showcaseApps).then(res =>{
+      this.showcaseApps = res
+    })
 
     this.fireAncestors("$mountEventConstructor", registerListener.bind(this))
 
@@ -465,20 +497,17 @@ export default class MainView extends Lightning.Component {
   }
 
   _firstActive() {
-
-
     if (!Storage.get('UsbMedia')) {
       this.usbApi.activate().then(res => {
         Storage.set('UsbMedia', 'ON')
         this.fireAncestors('$registerUsbMount')
-
       })
     } else if (Storage.get('UsbMedia') === 'ON') {
       this.usbApi.activate().then(res => {
         this.fireAncestors('$registerUsbMount')
       })
     } else if (Storage.get('UsbMedia') === 'OFF') {
-      // deactivate usb Plugin here 
+      // deactivate usb Plugin here
       this.usbApi.deactivate().then((res) => {
         console.log(`disabled the Usb Plugin`);
       }).catch(err => {
@@ -493,7 +522,6 @@ export default class MainView extends Lightning.Component {
     } else {
       this._setState("AppList.0")
     }
-
   }
 
 
@@ -507,7 +535,6 @@ export default class MainView extends Lightning.Component {
     this.networkApi = new Network();
     this.internetConnectivity = false;
   }
-
 
   scroll(val) {
     this.tag('MainView').patch({
@@ -596,7 +623,6 @@ export default class MainView extends Lightning.Component {
       }
     })
   }
-
 
   /**
    * Function to set details of items in app list.
@@ -1055,10 +1081,17 @@ export default class MainView extends Lightning.Component {
             url: this.tag('UsbApps').items[this.tag('UsbApps').index].data.uri,
             launchLocation: "mainView"
           }
+          if(applicationType === "CameraApp") {
+            let cameraParams = {
+             cameraUrl : this.tag('UsbApps').items[this.tag('UsbApps').index].data.uri
+            }
+             Router.navigate("camera/player",cameraParams)
+           } else {
           this.appApi.launchApp(applicationType,params).catch(err => {
             console.log("ApplaunchError: ", JSON.stringify(err), err)
           });
         }
+      }
       },
       class RightArrow extends this {
         //TODO

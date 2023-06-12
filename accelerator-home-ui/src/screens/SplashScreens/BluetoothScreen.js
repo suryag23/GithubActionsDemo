@@ -352,7 +352,17 @@ export default class BluetoothScreen extends Lightning.Component {
             class StartPairing extends this{
                 $enter() {
                     this.tag('Buttons.StartPairing').alpha = 1
-                    this.tag('Buttons.StartPairing.Title').text.textColor = CONFIG.theme.hex
+                    this._focus()
+                }
+                _focus(){
+                    this.tag('Buttons.StartPairing').patch({
+                        color: CONFIG.theme.hex
+                    })
+                    this.tag('Buttons.StartPairing.Title').patch({
+                        text: {
+                            textColor: 0xFFFFFFFF
+                        }
+                    })
                 }
                 _handleLeft() {
 

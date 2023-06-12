@@ -18,7 +18,7 @@
  **/
  import { Lightning, Utils } from '@lightningjs/sdk'
  import { CONFIG } from '../Config/Config';
- 
+
  /**
   * Class to render items in main view.
   */
@@ -39,7 +39,7 @@
        },
      }
    }
- 
+
    _init() {
      this.tag('Shadow').patch({
        color: CONFIG.theme.hex,
@@ -69,7 +69,7 @@
          src: this.data.url,
        });
      }
- 
+
      /* Used static data for develpment purpose ,
      it wil replaced with Dynamic data once implimetation is completed.*/
      this.tag('Info').patch({
@@ -92,9 +92,9 @@
          }
        },
      })
- 
+
    }
- 
+
    /**
     * Function to change properties of item during focus.
     */
@@ -116,7 +116,7 @@
        alpha: 1,
      });
    }
- 
+
    /**
     * Function to change properties of item during unfocus.
     */
@@ -135,4 +135,3 @@
      });
    }
  }
- 

@@ -48,7 +48,6 @@ export default class UIList extends Lightning.Component {
     }
 
     _firstEnable() {
-
         this.tag('UI').add(homeApi.getUIInfo().map((element, idx) => {
             return {
                 ref: 'UI' + idx,

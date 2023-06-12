@@ -49,7 +49,7 @@ getCustomServiceList(); //call this method in activate
 export default class DTVApi {
   activate() {
     return new Promise((resolve, reject) => {
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: "DTV" })
         .then(() => {
           resolve(true);
         })
@@ -61,7 +61,7 @@ export default class DTVApi {
   }
   deactivate() {
     return new Promise((resolve, reject) => {
-      thunder.Controller.deactivate({ callsign: systemcCallsign })
+      thunder.Controller.deactivate({ callsign: "DTV" })
         .then(() => {
           resolve(true);
         })
@@ -75,7 +75,7 @@ export default class DTVApi {
   noOfCountries() {
     return new Promise((resolve, reject) => {
       thunder
-        .call(systemcCallsign, "numberOfCountries")
+        .call("DTV", "numberOfCountries")
         .then((result) => {
           resolve(result);
         })
@@ -89,7 +89,7 @@ export default class DTVApi {
   countryList() {
     return new Promise((resolve, reject) => {
       thunder
-        .call(systemcCallsign, "countryList")
+        .call("DTV", "countryList")
         .then((result) => {
           resolve(result);
         })
@@ -105,7 +105,9 @@ export default class DTVApi {
     let arr = [
       { shortname: "Amazon Prime", callsign: "Amazon", url:"", dvburi: "OTT", lcn: 0 },
       { shortname: "Netflix", callsign: "Netflix", url:"", dvburi: "OTT", lcn: 0 },
-      { shortname: "Youtube", callsign: "Cobalt", url:"", dvburi: "OTT", lcn: 0 },
+      { shortname: "YouTube", callsign: "YouTube", url:"", dvburi: "OTT", lcn: 0 },
+      { shortname: "YouTubeTV", callsign: "YouTubeTV", url:"", dvburi: "OTT", lcn: 0 },
+      { shortname: "YouTubeKids", callsign: "YouTubeKids", url:"", dvburi: "OTT", lcn: 0 },
     ];
     if(customServiceList){
       arr = arr.concat(JSON.parse(JSON.stringify(customServiceList)));
@@ -113,7 +115,7 @@ export default class DTVApi {
     console.log("arr from serviceList: ",arr)
     return new Promise((resolve, reject) => {
       thunder
-        .call(systemcCallsign, "serviceList@dvbs")
+        .call("DTV", "serviceList@dvbs")
         .then((result) => {
           arr = arr.concat(result)
           console.log("serviceListResult: ", JSON.stringify(arr));
@@ -146,7 +148,7 @@ export default class DTVApi {
         }
       } else {
         thunder
-          .call(systemcCallsign, method)
+          .call("DTV", method)
           .then((result) => {
             console.log("scheduleEventsResult: ", JSON.stringify(result));
             for (let show of result) {
@@ -168,7 +170,7 @@ export default class DTVApi {
     return new Promise((resolve, reject) => {
       // resolve([{name: "Satellite 1",longitude: 282,lnb: "Universal" },{name: "Satellite 2",longitude: 282,lnb: "Universal" }]) //#forTesting
       thunder
-        .call(systemcCallsign, "satelliteList")
+        .call("DTV", "satelliteList")
         .then((result) => {
           if (result.length === 0) {
             result = [{ "name": "Astra 28.2E", "longitude": 282, "lnb": "Universal" }]
@@ -230,7 +232,7 @@ export default class DTVApi {
   startServiceSearch(params) {
     return new Promise((resolve, reject) => {
       thunder
-        .call(systemcCallsign, "startServiceSearch", params)
+        .call("DTV", "startServiceSearch", params)
         .then((result) => {
           //console.log("serviceSearchResult: ", JSON.stringify(result));
           resolve(result);
@@ -245,7 +247,7 @@ export default class DTVApi {
   noOfServices() {
     return new Promise((resolve, reject) => {
       thunder
-        .call(systemcCallsign, "numberOfServices")
+        .call("DTV", "numberOfServices")
         .then((result) => {
           //console.log("numberOfServicesResult: ", JSON.stringify(result));
           resolve(result);
@@ -262,7 +264,7 @@ export default class DTVApi {
     let method = "nowNextEvents@" + dvburi;
     return new Promise((resolve, reject) => {
       thunder
-        .call(systemcCallsign, method)
+        .call("DTV", method)
         .then((result) => {
           //console.log("nowNextEventsResult: ", JSON.stringify(result));
           resolve(result);
@@ -284,7 +286,7 @@ export default class DTVApi {
     }
     return new Promise((resolve, reject) => {
       thunder
-        .call(systemcCallsign, "startPlaying", params)
+        .call("DTV", "startPlaying", params)
         .then((result) => {
           console.log("RESULT: startPlaying: ", JSON.stringify(result));
           if (result === -1) {
@@ -304,7 +306,7 @@ export default class DTVApi {
   stopPlaying() {
     return new Promise((resolve, reject) => {
       thunder
-        .call(systemcCallsign, "stopPlaying", playerID)
+        .call("DTV", "stopPlaying", playerID)
         .then((result) => {
           //playerID is retuned from startPlaying method
           console.log("RESULT: stopPlaying: ", JSON.stringify(result)); //result is always null

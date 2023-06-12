@@ -17,23 +17,12 @@
  * limitations under the License.
  **/
 import ThunderJS from 'ThunderJS';
-import { Registry, Router, Settings, Storage } from '@lightningjs/sdk';
+import { Router, Settings, Storage } from '@lightningjs/sdk';
 import HDMIApi from './HDMIApi';;
 import NetflixIIDs from "../../static/data/NetflixIIDs.json";
 import HomeApi from './HomeApi';
-import { Utils } from '@lightningjs/sdk';
 import { availableLanguageCodes } from '../Config/Config';
 
-var activatedWeb = false
-var activatedLightning = false
-var activatedCobalt = false
-var activatedAmazon = false
-var activatedNetflix = false
-var webUrl = ''
-var lightningUrl = ''
-var activatedNative = false
-var nativeUrl = ''
-var cobaltUrl = ''
 const config = {
   host: '127.0.0.1',
   port: 9998,
@@ -42,13 +31,12 @@ const config = {
     'org.rdk.System': 2
   }
 }
-var pluginParams=[];
+let pluginParams=[];
 const thunder = ThunderJS(config)
 /**
  * Class that contains functions which commuicates with thunder API's
  */
 export default class AppApi {
-
   constructor() {
     this.activatedForeground = false
     this._events = new Map()
@@ -77,22 +65,6 @@ export default class AppApi {
     })
   }
 
-  checkForInternet() {
-    return new Promise((resolve, reject) => {
-      let i = 0
-      var poll = () => {
-        i++
-        this.getIP().then(result => {
-          if (result == true) {
-            resolve(result)
-          } else if (i < 10) poll()
-          else resolve(false)
-        })
-      }
-      poll()
-    })
-  }
-
   isConnectedToInternet() {
     return new Promise((resolve, reject) => {
       let header = new Headers();
@@ -111,7 +83,6 @@ export default class AppApi {
         console.error("AppAPI Internet Check failed: No Internet Available");
         resolve(false); //fail of fetch method needs to be considered as no internet
       })
-
     })
   }
 
@@ -123,7 +94,7 @@ export default class AppApi {
           resolve(result.value)
         })
         .catch(err => {
-          console.error("AppAPI PersistentStore getValue failed.");
+          console.error("AppAPI PersistentStore getValue gracenote apiKey failed.");
           resolve('')
         })
     })
@@ -135,11 +106,10 @@ export default class AppApi {
    */
   getIP() {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'org.rdk.System'
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: 'org.rdk.System' })
         .then(() => {
           thunder
-            .call(systemcCallsign, 'getDeviceInfo', { params: 'estb_ip' })
+            .call('org.rdk.System', 'getDeviceInfo', { params: 'estb_ip' })
             .then(result => {
               resolve(result.success)
             })
@@ -158,8 +128,7 @@ export default class AppApi {
   */
   getZone() {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'org.rdk.System'
-      thunder.call(systemcCallsign, 'getTimeZoneDST')
+      thunder.call('org.rdk.System', 'getTimeZoneDST')
         .then(result => {
           resolve(result.timeZone)
         })
@@ -177,9 +146,9 @@ export default class AppApi {
         .call('org.rdk.System', 'setTimeZoneDST', { timeZone: zone })
         .then(result => {
           resolve(result.success)
-        }).catch(err => { 
+        }).catch(err => {
           console.error("AppAPI System plugin setTimeZoneDST failed.");
-          resolve(false) 
+          resolve(false)
         })
     }).catch(err => { })
   }
@@ -220,7 +189,6 @@ export default class AppApi {
   }
 
   activateDisplaySettings() {
-
     return new Promise((resolve, reject) => {
       const systemcCallsign = "org.rdk.DisplaySettings"
       thunder.Controller.activate({ callsign: systemcCallsign })
@@ -232,11 +200,10 @@ export default class AppApi {
 
   getSupportedResolutions() {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'org.rdk.DisplaySettings'
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: 'org.rdk.DisplaySettings' })
         .then(() => {
           thunder
-            .call(systemcCallsign, 'getSupportedResolutions', { params: 'HDMI0' })
+            .call('org.rdk.DisplaySettings', 'getSupportedResolutions', { params: 'HDMI0' })
             .then(result => {
               resolve(result.supportedResolutions)
             })
@@ -256,11 +223,10 @@ export default class AppApi {
    */
   setResolution(res) {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'org.rdk.DisplaySettings'
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: 'org.rdk.DisplaySettings' })
         .then(() => {
           thunder
-            .call(systemcCallsign, 'setCurrentResolution', {
+            .call('org.rdk.DisplaySettings', 'setCurrentResolution', {
               videoDisplay: 'HDMI0',
               resolution: res,
               persist: true,
@@ -284,11 +250,10 @@ export default class AppApi {
    */
   getHDCPStatus() {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'org.rdk.HdcpProfile'
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: 'org.rdk.HdcpProfile' })
         .then(() => {
           thunder
-            .call(systemcCallsign, 'getHDCPStatus')
+            .call('org.rdk.HdcpProfile', 'getHDCPStatus')
             .then(result => {
               console.log("AppAPI HdcpProfile getHDCPStatus : " + JSON.stringify(result.HDCPStatus));
               resolve(result.HDCPStatus)
@@ -309,11 +274,10 @@ export default class AppApi {
    */
   getTvHDRSupport() {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'org.rdk.DisplaySettings'
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: 'org.rdk.DisplaySettings' })
         .then(() => {
           thunder
-            .call(systemcCallsign, 'getTvHDRSupport')
+            .call('org.rdk.DisplaySettings', 'getTvHDRSupport')
             .then(result => {
               console.log("AppAPI DisplaySettings getTvHDRSupport : " + JSON.stringify(result));
               resolve(result)
@@ -333,12 +297,10 @@ export default class AppApi {
    */
   getSettopHDRSupport() {
     return new Promise((resolve, reject) => {
-
-      const systemcCallsign = 'org.rdk.DisplaySettings'
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: 'org.rdk.DisplaySettings' })
         .then(() => {
           thunder
-            .call(systemcCallsign, 'getSettopHDRSupport')
+            .call('org.rdk.DisplaySettings', 'getSettopHDRSupport')
             .then(result => {
               console.log("AppAPI DisplaySettings getSettopHDRSupport : " + JSON.stringify(result));
               resolve(result)
@@ -359,11 +321,10 @@ export default class AppApi {
    */
   getHDRSetting() {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'DisplayInfo'
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: 'DisplayInfo' })
         .then(() => {
           thunder
-            .call(systemcCallsign, 'hdrsetting')
+            .call('DisplayInfo', 'hdrsetting')
             .then(result => {
               console.log("AppAPI DisplayInfo hdrsetting : " + JSON.stringify(result));
               resolve(result)
@@ -384,11 +345,10 @@ export default class AppApi {
    */
   getDRMS() {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'OCDM'
-      thunder.Controller.activate({ callsign: systemcCallsign })
+      thunder.Controller.activate({ callsign: 'OCDM' })
         .then(() => {
           thunder
-            .call(systemcCallsign, 'drms')
+            .call('OCDM', 'drms')
             .then(result => {
               console.log("AppAPI OCDM supported drms: " + JSON.stringify(result));
               resolve(result)
@@ -409,9 +369,8 @@ export default class AppApi {
    */
   clearCache() {
     return new Promise((resolve, reject) => {
-      const systemcCallsign = 'ResidentApp'
       thunder
-        .call(systemcCallsign, 'delete', { path: ".cache" })
+        .call('ResidentApp', 'delete', { path: ".cache" })
         .then(result => {
           resolve(result)
         })
@@ -426,8 +385,8 @@ export default class AppApi {
    * Function to launch All types of apps. Accepts 2 params.
    * @param {String} callsign String required callsign of the particular app.
    * @param {Object} args Object optional depending on following properties.
-   *  @property {string} url: optional for youtube & netflix | required for Lightning and WebApps
-   *  @property {string} launchLocation: optional | to pass Netflix IIDs or Youtube launch reason | launchLocation value is one among these values ["mainView", "dedicatedButton", "appsMenu", "epgScreen", "dial", "gracenote","alexa"]
+   *  @property {string} url: optional for YouTube & netflix | required for Lightning and WebApps
+   *  @property {string} launchLocation: optional | to pass Netflix IIDs or YouTube launch reason | launchLocation value is one among these values ["mainView", "dedicatedButton", "appsMenu", "epgScreen", "dial", "gracenote","alexa"]
    *  @property {boolean} preventInternetCheck: optional | true will prevent bydefault check for internet
    *  @property {boolean} preventCurrentExit: optional |  true will prevent bydefault launch of previous app
    */
@@ -442,8 +401,10 @@ export default class AppApi {
     }
     Router.navigate("applauncher");
     console.log("AppAPI launchApp called with: ", callsign, args);
-    Storage.set("cobaltLaunchLocation", args.launchLocation)
-    
+    if (callsign.startsWith("YouTube")) {
+      Storage.set(callsign+"LaunchLocation", args.launchLocation)
+    }
+
     let url,preventInternetCheck,preventCurrentExit,launchLocation;
     if(args){
       url = args.url;
@@ -452,17 +413,19 @@ export default class AppApi {
       launchLocation = args.launchLocation
     }
 
-    const launchLocationKeyMapping = { //currently supported launch locations by the UI and mapping to corresponding reason/keys for IID
-      "mainView": { "Cobalt": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" }, 
-      "dedicatedButton": { "Cobalt": "remote", "Netflix": "App_launched_via_Netflix_Button" },
-      "appsMenu": { "Cobalt": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Section" },
-      "epgScreen": { "Cobalt": "guide", "Netflix": "App_launched_from_EPG_Grid" },
-      "dial": { "Cobalt": "dial", "Netflix": "App_launched_via_DIAL_request" },
-      "gracenote": { "Cobalt": "launcher", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
-      "alexa": { "Cobalt": "voice", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
+    const launchLocationKeyMapping = {
+      //currently supported launch locations by the UI and mapping to corresponding reason/keys for IID
+      // TODO: Extend for YT variants
+      "mainView": { "YouTube": "menu", "YouTubeTV": "menu", "YouTubeKids": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
+      "dedicatedButton": { "YouTube": "remote", "YouTubeTV": "remote", "YouTubeKids": "remote", "Netflix": "App_launched_via_Netflix_Button" },
+      "appsMenu": { "YouTube": "menu", "YouTubeTV": "menu", "YouTubeKids": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Section" },
+      "epgScreen": { "YouTube": "guide", "YouTubeTV": "guide", "YouTubeKids": "guide", "Netflix": "App_launched_from_EPG_Grid" },
+      "dial": { "YouTube": "dial", "YouTubeTV": "dial", "YouTubeKids": "dial", "Netflix": "App_launched_via_DIAL_request" },
+      "gracenote": { "YouTube": "launcher", "YouTubeTV": "launcher", "YouTubeKids": "launcher", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
+      "alexa": { "YouTube": "voice", "YouTubeTV": "voice", "YouTubeKids": "voice", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
     };
     if(launchLocation && launchLocationKeyMapping[launchLocation]){
-      if(callsign === "Netflix" || callsign === "Cobalt"){
+      if(callsign === "Netflix" || callsign.startsWith("YouTube")){
         launchLocation = launchLocationKeyMapping[launchLocation][callsign]
       }
     }
@@ -482,7 +445,7 @@ export default class AppApi {
       }
     }
 
-    const availableCallsigns = ["Amazon", "Cobalt", "HtmlApp", "LightningApp", "Netflix"];
+    const availableCallsigns = ["Amazon", "YouTube", "YouTubeTV", "YouTubeKids", "HtmlApp", "LightningApp", "Netflix", "NativeApp"];
 
     if (!availableCallsigns.includes(callsign)) {
       Router.navigate(Storage.get("lastVisitedRoute"));
@@ -501,8 +464,10 @@ export default class AppApi {
 
     let pluginStatus, pluginState;// to check if the plugin is active, resumed, deactivated etc
     try {
-      pluginStatus = await this.getPluginStatus(callsign);
-      pluginState = pluginStatus[0].state;
+      if (callsign != "NativeApp") {
+        pluginStatus = await this.getPluginStatus(callsign);
+        pluginState = pluginStatus[0].state;
+      }
     } catch (err) {
       console.error(err);
       Router.navigate(Storage.get("lastVisitedRoute"));
@@ -557,31 +522,12 @@ export default class AppApi {
       "type": callsign,
       "configuration":{}
     };
-    if (url && (callsign==="LightningApp" || callsign === "HtmlApp")) { //for lightning/htmlapp url is passed via rdkshell.launch method
+    if (url && (callsign==="LightningApp" || callsign === "HtmlApp" || callsign === "NativeApp")) { //for lightning/htmlapp url is passed via rdkshell.launch method
       params.uri = url
-    } else if(callsign ==="Cobalt"){
+    } else if(callsign.startsWith("YouTube")){
       let language = localStorage.getItem("Language");
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US" //default to english US if language is not available.
-      // url = url ? url : Storage.get("CobaltDefaultURL")
-      let defaultURL = Storage.get("CobaltDefaultURL"); // this goes into rdkShellLaunch
-      if (url && pluginState === "deactivated") {
-        // Cold launch started with a Cast ???
-        defaultURL += url;
-      }
-      console.log(`AppAPI appending launch location to defaultURL ${defaultURL}`)
-      if (defaultURL.endsWith("?")){
-        defaultURL = defaultURL + "launch=" + launchLocation 
-      } else {
-        defaultURL = defaultURL + "&launch=" + launchLocation 
-      }
-
-      if (!defaultURL.includes("inApp=")) {
-        defaultURL += ((Storage.get("appplicationType") === callsign)? "&inApp=true":"&inApp=false")
-      }
-      if ((launchLocation === "voice") && !defaultURL.includes("vs=")) {
-        defaultURL += "&vs=2" // YT Dev Doc specific to Alexa
-      }
-
+      url = url ? url : Storage.get(callsign+"DefaultURL");
       if(url){
         if (!url.includes("?")){
           url += "?"
@@ -604,16 +550,16 @@ export default class AppApi {
           }
           url += "vs=2" // YT Dev Doc specific to Alexa
         }
-        console.log("AppAPI Cobalt is being launched using the url: "+url)
+        console.log("AppAPI "+callsign+" is being launched using the url: "+url)
       }
 
       params.configuration = { //for gracenote cold launch url needs to be re formatted to youtube.com/tv/
         "language": language,
-        "url": defaultURL,
+        "url": url,
         "launchtype":"launch=" + launchLocation
       }
     }
-    
+
     else if(callsign === "Amazon"){
       let language = localStorage.getItem("Language");
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US"
@@ -650,82 +596,119 @@ export default class AppApi {
     }
     console.log("AppAPI RDKShell launch with params: ", params);
     return new Promise((resolve, reject) => {
-      thunder.call("org.rdk.RDKShell", "launch", params).then(res => {
-        console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
-        if (res.success) {
-          if(args.appIdentifier){    
-            let order = Storage.get("appCarouselOrder") 
-            if(!order){
-              Storage.set("appCarouselOrder" , "")
-            } else {
-              let storedApps = order.split(",")   
-              let ix = storedApps.indexOf(args.appIdentifier) 
-              if(ix != -1){
-                storedApps.splice(ix , 1)
+      if (callsign === "NativeApp") {
+        // Could be coming from PartnerApp.
+        params.client = callsign;
+        params.mimeType = "application/native";
+        thunder.call("org.rdk.RDKShell", "launchApplication", params).then(res => {
+          console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
+          if (res.success) {
+            if(args.appIdentifier){
+              let order = Storage.get("appCarouselOrder")
+              if(!order){
+                Storage.set("appCarouselOrder" , "")
+              } else {
+                let storedApps = order.split(",")
+                let ix = storedApps.indexOf(args.appIdentifier)
+                if(ix != -1){
+                  storedApps.splice(ix , 1)
+                }
+                storedApps.unshift(args.appIdentifier)
+                Storage.set("appCarouselOrder" , storedApps.toString())
               }
-              storedApps.unshift(args.appIdentifier)
-              Storage.set("appCarouselOrder" , storedApps.toString())
-            } 
+            }
+            Storage.set("applicationType", callsign);
+            resolve(res);
+          } else {
+            console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res))
+            Router.navigate(Storage.get("lastVisitedRoute"));
+            reject(res)
           }
+        }).catch(err => {
+          console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back")
+          thunder.call('org.rdk.RDKShell', 'kill', { "client": callsign });
+          this.launchResidentApp();
+          Router.navigate(Storage.get("lastVisitedRoute"));
+          reject(err)
+        })
+      } else {
+        thunder.call("org.rdk.RDKShell", "launch", params).then(res => {
+          console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
+          if (res.success) {
+            if(args.appIdentifier){
+              let order = Storage.get("appCarouselOrder")
+              if(!order){
+                Storage.set("appCarouselOrder" , "")
+              } else {
+                let storedApps = order.split(",")
+                let ix = storedApps.indexOf(args.appIdentifier)
+                if(ix != -1){
+                  storedApps.splice(ix , 1)
+                }
+                storedApps.unshift(args.appIdentifier)
+                Storage.set("appCarouselOrder" , storedApps.toString())
+              }
+            }
 
-          if(callsign !== "Netflix"){ //if app is not netflix, move it to front(netflix will be moved to front from applauncherScreen.)
-            thunder.call("org.rdk.RDKShell", "moveToFront", {
+            if(callsign !== "Netflix"){ //if app is not netflix, move it to front(netflix will be moved to front from applauncherScreen.)
+              thunder.call("org.rdk.RDKShell", "moveToFront", {
+                "client": callsign,
+                "callsign": callsign
+              }).catch(err => {
+                console.error("AppAPI failed to moveToFront : ", callsign, " ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front")
+              })
+            }
+
+            thunder.call("org.rdk.RDKShell", "setFocus", {
               "client": callsign,
               "callsign": callsign
             }).catch(err => {
-              console.error("AppAPI failed to moveToFront : ", callsign, " ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front")
+              console.error("AppAPI failed to setFocus : ", callsign, " ERROR: ", JSON.stringify(err))
             })
-          }
 
-          thunder.call("org.rdk.RDKShell", "setFocus", {
-            "client": callsign,
-            "callsign": callsign
-          }).catch(err => {
-            console.error("AppAPI failed to setFocus : ", callsign, " ERROR: ", JSON.stringify(err))
-          })
+            thunder.call("org.rdk.RDKShell", "setVisibility", {
+              "client": callsign,
+              "visible": true
+            }).catch(err => {
+              console.error("AppAPI failed to setVisibility : ", callsign, " ERROR: ", JSON.stringify(err))
+            })
 
-          thunder.call("org.rdk.RDKShell", "setVisibility", {
-            "client": callsign,
-            "visible": true
-          }).catch(err => {
-            console.error("AppAPI failed to setVisibility : ", callsign, " ERROR: ", JSON.stringify(err))
-          })
-
-          if (callsign === "Netflix") {
-            console.log("AppAPI Netflix launched: hiding residentApp");
-            thunder.call('org.rdk.RDKShell', 'setVisibility', {
-              "client": "ResidentApp",
-              "visible": false,
-            }); //if netflix splash screen was launched resident app was kept visible Netflix until app launched.
-          }
-
-          if (callsign === "Cobalt" && res.launchType === "resume") {
-            // Page visibility requirement; 'launch' need to be 'deeplink'ed when app is 'resumed'.
-            if (!url) {
-              url = params.configuration.url;
+            if (callsign === "Netflix") {
+              console.log("AppAPI Netflix launched: hiding residentApp");
+              thunder.call('org.rdk.RDKShell', 'setVisibility', {
+                "client": "ResidentApp",
+                "visible": false,
+              }); //if netflix splash screen was launched resident app was kept visible Netflix until app launched.
             }
-            console.log("AppAPI Calling Cobalt.deeplink for cobalt with url: " + url);
-            thunder.call(callsign, 'deeplink', url)
+
+            if (callsign.startsWith("YouTube") && res.launchType === "resume") {
+              // Page visibility requirement; 'launch' need to be 'deeplink'ed when app is 'resumed'.
+              if (!url) {
+                url = params.configuration.url;
+              }
+              console.log("AppAPI Calling "+callsign+".deeplink with url: " + url);
+              thunder.call(callsign, 'deeplink', url)
+            }
+
+            Storage.set("applicationType", callsign);
+
+            resolve(res);
+
+          } else {
+            console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res))
+            Router.navigate(Storage.get("lastVisitedRoute"));
+            reject(res)
           }
+        }).catch(err => {
+          console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back")
 
-          Storage.set("applicationType", callsign);
-
-          resolve(res);
-
-        } else {
-          console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res))
+          //destroying the app incase it's stuck in launching | if taking care of ResidentApp as callsign, make sure to prevent destroying it
+          thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
+          this.launchResidentApp();
           Router.navigate(Storage.get("lastVisitedRoute"));
-          reject(res)
-        }
-      }).catch(err => {
-        console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back")
-
-        //destroying the app incase it's stuck in launching | if taking care of ResidentApp as callsign, make sure to prevent destroying it
-        thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
-        this.launchResidentApp();
-        Router.navigate(Storage.get("lastVisitedRoute"));
-        reject(err)
-      })
+          reject(err)
+        })
+      }
     })
   }
 
@@ -739,7 +722,6 @@ export default class AppApi {
 
   // exit method does not need to launch the previous app.
   async exitApp(callsign, exitInBackground, forceDestroy) { //test the new exit app method
-
     if (callsign === "") { //previousApp==="" means it's residentApp | change it to residentApp in cache and here
       return Promise.reject("AppAPI Can't exit from ResidentApp");
     }
@@ -760,17 +742,19 @@ export default class AppApi {
     }
 
     let pluginStatus, pluginState;// to check if the plugin is active, resumed, deactivated etc
-    try {
-      pluginStatus = await this.getPluginStatus(callsign);
-      if (pluginStatus !== undefined) {
-        pluginState = pluginStatus[0].state;
-        console.log("AppAPI pluginStatus: " + JSON.stringify(pluginStatus) + " pluginState: ", JSON.stringify(pluginState));
+    if (callsign != "NativeApp" && !callsign.includes('application/dac.native')) {
+      try {
+        pluginStatus = await this.getPluginStatus(callsign);
+        if (pluginStatus !== undefined) {
+          pluginState = pluginStatus[0].state;
+          console.log("AppAPI pluginStatus: " + JSON.stringify(pluginStatus) + " pluginState: ", JSON.stringify(pluginState));
+        }
+        else {
+          return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device");
+        }
+      } catch (err) {
+        return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device | Error: " + JSON.stringify(err));
       }
-      else {
-        return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device");
-      }
-    } catch (err) {
-      return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device | Error: " + JSON.stringify(err));
     }
 
     if (!exitInBackground) { //means resident App needs to be launched
@@ -786,21 +770,39 @@ export default class AppApi {
       console.error("AppAPI failed to setVisibility : " + callsign + " ERROR: ", JSON.stringify(err))
     })
 
-
     if (forceDestroy) {
-      console.log("AppAPI Force Destroying the app: ", callsign)
-      await thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
-      return Promise.resolve(true);
+      if (pluginState != undefined) { // App is a Plugin
+        console.log("AppAPI Force Destroying the app: ", callsign)
+        await thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
+        return Promise.resolve(true);
+      } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
+        await thunder.call('org.rdk.RDKShell', 'kill', {"client": (callsign.includes('application/dac.native')? callsign.substring(0, callsign.indexOf(';')): callsign)}).then((res) => {
+          console.log("AppAPI RDKShell kill: " + callsign + " RESPONSE: ", JSON.stringify(res))
+          return Promise.resolve(true);
+        }).catch(err => {
+          console.error("AppAPI RDKShell kill: " + callsign + " ERROR: ", JSON.stringify(err))
+          return Promise.resolve(false);
+        });
+      }
     }
     else {
       console.log("AppAPI Exiting from App: ", callsign, " depending on platform settings enableAppSuspended: ", Settings.get("platform", "enableAppSuspended"));
       //enableAppSuspended = true means apps will be suspended by default
       if (Settings.get("platform", "enableAppSuspended")) {
-        await thunder.call('org.rdk.RDKShell', 'suspend', { "callsign": callsign }).catch(err => {
-          console.error("AppAPI Error in suspending app: ", callsign, " | trying to destroy the app");
-          thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
-        })
-        return Promise.resolve(true)
+        if (pluginState != undefined) { // App is a Plugin
+          await thunder.call('org.rdk.RDKShell', 'suspend', { "callsign": callsign }).catch(err => {
+            console.error("AppAPI Error in suspending app: ", callsign, " | trying to destroy the app");
+            thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
+          })
+          return Promise.resolve(true)
+        } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
+          // DAC Demo WorkAround; TODO: use suspendApplication instead of kill
+          await thunder.call('org.rdk.RDKShell', 'kill', { "callsign": callsign }).catch(err => {
+            console.error("AppAPI Error in kill app: ", callsign, " | trying to destroy the app");
+            thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
+          })
+          return Promise.resolve(true)
+        }
       }
       else {
         await thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
@@ -809,13 +811,10 @@ export default class AppApi {
     }
   }
 
-
-
   /**
    * Function to launch ResidentApp explicitly(incase of special scenarios)
    * Prefer using launchApp and exitApp for ALL app launch and exit scenarios.
    */
-
   async launchResidentApp() {
     console.log("AppAPI launchResidentApp got Called: setting visibility, focus and moving to front the ResidentApp")
     await thunder.call("org.rdk.RDKShell", "moveToFront", {
@@ -839,7 +838,7 @@ export default class AppApi {
       console.error("AppAPI failed to setVisibility : ResidentApp ERROR: ", JSON.stringify(err))
     })
 
-    Storage.set("applicationType", ""); //since it's residentApp aplication type is "" | change application type to ResidentApp 
+    Storage.set("applicationType", ""); //since it's residentApp aplication type is "" | change application type to ResidentApp
   }
 
 
@@ -867,115 +866,8 @@ export default class AppApi {
       return defaultIIDs;
     }
   }
-  /**
-   * Function to launch Html app.
-   * @param {String} url url of app.
-   */
-  launchWeb(url) {
-    return new Promise(resolve => {
-      const childCallsign = 'HtmlApp'
-      if (webUrl != url) {
-        thunder
-          .call('org.rdk.RDKShell', 'launch', {
-            callsign: childCallsign,
-            type: childCallsign,
-            uri: url,
-          })
-          .then((res) => {
-            console.log(`AppAPI launchWeb : webapp launch resulted in : `, JSON.stringify(res));
-            this.setVisibility("ResidentApp", false)
-            thunder.call('org.rdk.RDKShell', 'moveToFront', {
-              client: childCallsign,
-            })
-            resolve(true)
-          })
-          .catch(err => {
-            console.error("AppAPI launchWeb : error while launching web : ", JSON.stringify(err))
-            reject(false)
-          })
-      } else {
-        thunder.call('org.rdk.RDKShell', 'moveToFront', {
-          client: childCallsign,
-        })
-        thunder.call('org.rdk.RDKShell', 'setFocus', { client: childCallsign })
-        resolve(true)
-      }
-      webUrl = url
-      activatedWeb = true
-    })
 
-  }
-
-  /**
-   * Function to launch Lightning app.
-   * @param {String} url url of app.
-   */
-  launchLightning(url) {
-    return new Promise((resolve, reject) => {
-      const childCallsign = 'LightningApp'
-      if (lightningUrl != url) {
-        thunder
-          .call('org.rdk.RDKShell', 'launch', {
-            callsign: 'Lightning',
-            type: childCallsign,
-            uri: url,
-          })
-          .then((res) => {
-            console.log(`AppAPI Lightning : launch lightning results in `, JSON.stringify(res));
-            resolve(true)
-          })
-          .catch(err => {
-            console.error("AppAPI Lightning : error while launching lightning : ", JSON.stringify(err))
-            reject(false)
-          })
-      } else {
-        thunder.call('org.rdk.RDKShell', 'moveToFront', {
-          client: childCallsign,
-        })
-        thunder.call('org.rdk.RDKShell', 'setFocus', { client: childCallsign })
-        resolve(true)
-      }
-      lightningUrl = url
-      activatedLightning = true
-    })
-  }
-
-  /**
-   * Function to launch Cobalt app.
-   * @param {String} url url of app.
-   */
-  launchCobalt(url) {
-    return new Promise((resolve, reject) => {
-      const childCallsign = 'Cobalt'
-      thunder
-        .call('org.rdk.RDKShell', 'launch', {
-          callsign: childCallsign,
-          type: childCallsign
-        })
-        .then((res) => {
-          if (url) {
-            thunder.call('Cobalt', 'deeplink', url)
-          }
-          this.setVisibility("ResidentApp", false)
-          thunder.call('org.rdk.RDKShell', 'moveToFront', {
-            client: "Cobalt",
-          }).catch(err => { console.error(err) })
-          thunder.call("org.rdk.RDKShell", "setFocus", { client: childCallsign }).catch(err => { console.error(err) });
-          Storage.set("applicationType", "Cobalt");
-          console.log("AppAPI launchCobalt : launch cobalt results in ", JSON.stringify(res))
-          resolve(true)
-        })
-        .catch(err => {
-          console.error("AppAPI launchCobalt : error while launching cobalt : ", JSON.stringify(err))
-          reject(err)
-        })
-      activatedCobalt = true
-    })
-
-  }
-
-
-  /*  
+  /*
    *Function to launch apps in hidden mode
    */
   launchPremiumAppInSuspendMode(childCallsign) {
@@ -1044,25 +936,7 @@ export default class AppApi {
           }
           reject(false)
         });
-      childCallsign === 'Amazon' ? activatedAmazon = true : activatedNetflix = true;
     })
-  }
-
-  launchPremiumAppURL(childCallsign, url) {
-    thunder
-      .call("org.rdk.RDKShell", "launch", {
-        callsign: childCallsign,
-        type: childCallsign
-      })
-      .then(() => {
-        thunder.call("org.rdk.RDKShell", "moveToFront", {
-          client: childCallsign
-        })
-        thunder.call(childCallsign, 'deeplink', url)
-        thunder.call("org.rdk.RDKShell", "setFocus", { client: childCallsign });
-      })
-      .catch(err => { });
-    childCallsign === 'Amazon' ? activatedAmazon = true : activatedNetflix = true;
   }
 
   /**
@@ -1087,7 +961,6 @@ export default class AppApi {
           reject(false)
         })
     })
-
   }
 
   launchOverlay(url, client) {
@@ -1113,23 +986,6 @@ export default class AppApi {
     })
   }
 
-
-  /**
-   * Function to suspend html app.
-   */
-  suspendWeb() {
-    webUrl = ''
-    thunder.call('org.rdk.RDKShell', 'suspend', { callsign: 'HtmlApp' })
-  }
-
-  /**
-   * Function to suspend lightning app.
-   */
-  suspendLightning() {
-    lightningUrl = ''
-    thunder.call('org.rdk.RDKShell', 'suspend', { callsign: 'Lightning' })
-  }
-
   /**
    * Function to suspend Netflix/Amazon Prime app.
    */
@@ -1150,17 +1006,13 @@ export default class AppApi {
    */
   deactivateWeb() {
     thunder.call('org.rdk.RDKShell', 'destroy', { callsign: 'HtmlApp' })
-    activatedWeb = false
-    webUrl = ''
   }
 
   /**
    * Function to deactivate cobalt app.
    */
-  deactivateCobalt() {
-    thunder.call('org.rdk.RDKShell', 'destroy', { callsign: 'Cobalt' })
-    activatedCobalt = false
-    cobaltUrl = ''
+  deactivateCobalt(instanceName = 'Cobalt') {
+    thunder.call('org.rdk.RDKShell', 'destroy', { callsign: instanceName })
   }
 
   cobaltStateChangeEvent() {
@@ -1174,21 +1026,12 @@ export default class AppApi {
       console.error('AppAPI Failed to register statechange event' + e)
     }
   }
-  /**
-   * Function to deactivate Netflix/Amazon Prime app.
-   */
-  deactivateNativeApp(appName) {
-    thunder.call('org.rdk.RDKShell', 'destroy', { callsign: appName })
-    appName === 'Amazon' ? activatedAmazon = false : activatedNetflix = false;
-  }
 
   /**
    * Function to deactivate lightning app.
    */
   deactivateLightning() {
     thunder.call('org.rdk.RDKShell', 'destroy', { callsign: 'Lightning' })
-    activatedLightning = false
-    lightningUrl = ''
   }
 
   /**
@@ -1232,7 +1075,6 @@ export default class AppApi {
   }
 
   enabledisableinactivityReporting(bool) {
-
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.RDKShell', 'enableInactivityReporting', {
@@ -1248,11 +1090,11 @@ export default class AppApi {
     })
   }
 
-  setInactivityInterval(t) {
+  setInactivityInterval(duration) {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.RDKShell', 'setInactivityInterval', {
-          "interval": t
+          "interval": duration
         })
         .then(result => {
           resolve(result)
@@ -1264,8 +1106,6 @@ export default class AppApi {
     })
   }
 
-
-
   zorder(cli) {
     thunder.call('org.rdk.RDKShell', 'moveToFront', { client: cli, callsign: cli })
   }
@@ -1273,7 +1113,6 @@ export default class AppApi {
   setFocus(cli) {
     thunder.call('org.rdk.RDKShell', 'setFocus', { client: cli })
   }
-
 
   moveToBack(cli) {
     thunder.call('org.rdk.RDKShell', 'moveToBack', { client: cli })
@@ -1287,7 +1126,6 @@ export default class AppApi {
  * @param {appName} Name of the application
  * @param {config_data} config_data configuration data
  */
-
   configureApplication(appName, config_data) {
     let plugin = 'Controller';
     let method = 'configuration@' + appName;
@@ -1304,55 +1142,6 @@ export default class AppApi {
         reject(err);
       });
     })
-  }
-  /**
-   * Function to launch Native app.
-   * @param {String} url url of app.
-   */
-  launchNative(url) {
-    return new Promise((resolve, reject) => {
-      const childCallsign = 'essos-sample'
-      thunder
-        .call('org.rdk.RDKShell', 'launchApplication', {
-          client: childCallsign,
-          uri: url,
-          mimeType: 'application/native'
-        })
-        .then((res) => {
-          console.log("AppAPI launchNative resulted in : ", JSON.stringify(res))
-          resolve(true)
-        })
-        .catch(err => {
-          console.error('AppAPI launchNative error: ' + JSON.stringify(err))
-          reject(err)
-        })
-      nativeUrl = url
-      activatedNative = true
-    })
-  }
-
-  /**
-     * Function to kill native app.
-     */
-  killNative() {
-    thunder.call('org.rdk.RDKShell', 'kill', { callsign: 'essos-sample' })
-    activatedNative = false
-    nativeUrl = ''
-  }
-
-  static pluginStatus(plugin) {
-    switch (plugin) {
-      case 'WebApp':
-        return activatedWeb
-      case 'Cobalt':
-        return activatedCobalt
-      case 'Lightning':
-        return activatedLightning
-      case 'Amazon':
-        return activatedAmazon
-      case 'Netflix':
-        return activatedNetflix
-    }
   }
 
   setPowerState(value) {
@@ -1463,7 +1252,7 @@ export default class AppApi {
     })
   }
 
-  //Enable or disable the specified audio port based on the input audio port ID. 
+  //Enable or disable the specified audio port based on the input audio port ID.
   setEnableAudioPort(port) {
     return new Promise((resolve, reject) => {
       thunder
@@ -1573,7 +1362,7 @@ export default class AppApi {
   //1. UI VOICE
 
   //Start a speech
-  speak() {
+  ttsSpeak() {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.TextToSpeech', 'speak', {
@@ -1590,7 +1379,7 @@ export default class AppApi {
   }
 
   //Resume a speech
-  resume() {
+  ttsResume() {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.TextToSpeech', 'resume', {
@@ -1607,7 +1396,7 @@ export default class AppApi {
   }
 
   //Pause a speech
-  pause() {
+  ttsPause() {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.TextToSpeech', 'pause', {
@@ -1624,7 +1413,7 @@ export default class AppApi {
   }
 
   // 2. TTS Options
-  getlistVoices() {
+  ttsGetListVoices() {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.TextToSpeech', 'listvoices', {
@@ -1699,6 +1488,7 @@ export default class AppApi {
         })
     })
   }
+
   // Get Firmware download info
   getDownloadFirmwareInfo() {
     return new Promise((resolve, reject) => {
@@ -1791,8 +1581,6 @@ export default class AppApi {
     })
   }
 
-
-
   // 5. Device Info
   systeminfo() {
     return new Promise((resolve, reject) => {
@@ -1803,6 +1591,20 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI systeminfo error:", JSON.stringify(err, 3, null))
+          resolve(false)
+        })
+    })
+  }
+
+  deviceType() {
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('DeviceInfo', 'devicetype')
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI devicetype error:", JSON.stringify(err, 3, null))
           resolve(false)
         })
     })
@@ -1835,7 +1637,6 @@ export default class AppApi {
   }
 
   // get prefered standby mode
-
   getPreferredStandbyMode() {
     return new Promise((resolve, reject) => {
       thunder
@@ -1866,11 +1667,10 @@ export default class AppApi {
   }
 
   registerChangeLocation() {
-    var callsign = "LocationSync"
     thunder
-      .call('Controller', 'activate', { callsign: callsign })
+      .call('Controller', 'activate', { callsign: "LocationSync" })
       .then(result => {
-        thunder.on(callsign, "locationchange", notification => {
+        thunder.on("LocationSync", "locationchange", notification => {
           console.log("AppAPI locationchange notification :", notification);
         })
       }).catch(err => {
@@ -1884,10 +1684,9 @@ export default class AppApi {
       .then(result => result.state);
     this.state = state;
     let params = { applicationName: value, state: 'stopped' };
-    for (var i = 0; i < state.length; i++) {
+    for (let i = 0; i < state.length; i++) {
       if (state[i].callsign == value) {
         if (state[i].state == 'resumed') {
-          activatedCobalt = true
           params.state = 'running';
         } else if (state[i].state == 'suspended') {
           params.state = 'suspended';
@@ -1895,9 +1694,6 @@ export default class AppApi {
           params.state = 'stopped'
         };
       }
-    }
-    if (params.state === 'stopped') {
-      activatedCobalt = false
     }
     await thunder
       .call('org.rdk.Xcast', 'onApplicationStateChanged', params)
@@ -1985,7 +1781,6 @@ export default class AppApi {
   }
 
   // Volume Apis
-
   getConnectedAudioPorts() {
     return new Promise((resolve, reject) => {
       thunder
@@ -2216,7 +2011,6 @@ getSupportedAudioPorts() {
         resolve(false)
       });
   })
-
 }
 
 monitorStatus(callsign) {
@@ -2250,7 +2044,6 @@ internalReset() {
         resolve(false)
       });
   })
-
 }
 
 isClean() {
@@ -2265,8 +2058,8 @@ isClean() {
         resolve(false)
       });
   })
-
 }
+
 lightReset() {
   return new Promise((resolve, reject) => {
     thunder
@@ -2279,8 +2072,8 @@ lightReset() {
         resolve(false)
       });
   })
-
 }
+
 resetDevice() {
   return new Promise((resolve, reject) => {
     thunder
@@ -2296,8 +2089,8 @@ resetDevice() {
         resolve(false)
       });
   })
-
 }
+
 //{ path: ".cache" }
 deletecache(systemcCallsign, path) {
   return new Promise((resolve, reject) => {
@@ -2310,8 +2103,8 @@ deletecache(systemcCallsign, path) {
         resolve(false)
       });
   })
-
 }
+
 // activate controller plugin
 activateController(callsign){
   return new Promise((resolve, reject) => {
@@ -2326,33 +2119,30 @@ activateController(callsign){
       });
   })
 }
+
 checkStatus(plugin) {
   return new Promise((resolve, reject) => {
-      thunder.call('Controller', 'status@' + plugin)
-          .then(res => {
-              console.log("AppAPI checkStatus ", JSON.stringify(res))
-              resolve(res)
-          })
-          .catch(err => {
-            console.error("AppAPI checkStatus error:", err)
-              resolve(false)
-            });
+    thunder.call('Controller', 'status@' + plugin).then(res => {
+      console.log("AppAPI checkStatus ", JSON.stringify(res))
+      resolve(res)
+    }).catch(err => {
+      console.error("AppAPI checkStatus error:", err)
+      resolve(false)
+    });
   })
 }
 
 configStatus(){
 //controller.1.configuration
 return new Promise((resolve, reject) => {
-  thunder.call('Controller', 'status')
-      .then(res => {
-          console.log("AppAPI configStatus ",JSON.stringify(res))
-          resolve(res)
-      })
-      .catch(err => {
-        console.error("AppAPI configStatus error:", err)
-        resolve(false)
-        });
-})
+  thunder.call('Controller', 'status').then(res => {
+      console.log("AppAPI configStatus ",JSON.stringify(res))
+      resolve(res)
+    }).catch(err => {
+      console.error("AppAPI configStatus error:", err)
+      resolve(false)
+    });
+  })
 }
 
 getAvCodeStatus(){
@@ -2368,6 +2158,7 @@ getAvCodeStatus(){
       });
   })
 }
+
 SaveTimerValue(value1) {
   console.log("persistenceSt",value1)
   return new Promise((resolve, reject) => {
@@ -2423,13 +2214,10 @@ getTimerValue() {
    * Return respective map so that logic can be drawn based on that.
    */
   checkAlexaAuthStatus(){
-      // DAB Demo WorkAround - return all Denied
-      if (Storage.get("AlexaVoiceAssitantState") === "AlexaUserDenied")
-          return "AlexaUserDenied"; // User has opted out of Alexa Voice Service; Do not process AVS Auth/Error states.
-      else if (Storage.get("AlexaVoiceAssitantState") === null || Storage.get("AlexaVoiceAssitantState") === "null")
+      if (Storage.get("AlexaVoiceAssitantState") === undefined || Storage.get("AlexaVoiceAssitantState") === null || Storage.get("AlexaVoiceAssitantState") === "AlexaAuthPending")
           return "AlexaAuthPending"; // Do not handle Alexa Related Errors; only Handle its Auth status.
       else
-          return "AlexaHandleError"; // User has not opted out of Alexa Voice Service and Auth was success earlier.
+          return Storage.get("AlexaVoiceAssitantState"); // Return the stored value of AlexaVoiceAssitantState
   }
 
   setAlexaAuthStatus(newState = false){

@@ -23,12 +23,10 @@ export var leftArrowInfo = [
    {
       url: '/images/left-small.png',
    },
-
    {
       url: '/images/left-small.png',
    },
    {
       url: '/images/left-small.png',
    },
-
 ]

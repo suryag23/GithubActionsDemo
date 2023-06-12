@@ -2,8 +2,8 @@
  * App version: 3.7 19/07/22
  * SDK version: 4.8.3
  * CLI version: 2.11.0
- *
- * Generated: Mon, 08 May 2023 16:37:51 GMT
+ * 
+ * Generated: Fri, 09 Jun 2023 15:01:52 GMT
  */
 
 var APP_accelerator_home_ui = (function () {
@@ -1935,7 +1935,7 @@ var APP_accelerator_home_ui = (function () {
   }
   function getEnumerableOwnPropertySymbols(target) {
     return Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols(target).filter(function (symbol) {
-      return Object.propertyIsEnumerable.call(target, symbol);
+      return target.propertyIsEnumerable(symbol);
     }) : [];
   }
   function getKeys(target) {
@@ -4083,7 +4083,7 @@ var APP_accelerator_home_ui = (function () {
    */
   const startRouter = (config, instance) => {
     bootRouter(config, instance);
-    registerListener();
+    registerListener$1();
     start();
   };
 
@@ -4475,7 +4475,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * On hash change we start processing
    */
-  const registerListener = () => {
+  const registerListener$1 = () => {
     Registry.addEventListener(window, 'hashchange', async () => {
       if (mustUpdateLocationHash()) {
         try {
@@ -5903,7 +5903,7 @@ var APP_accelerator_home_ui = (function () {
    * If not stated otherwise in this file or this component's LICENSE file the
    * following copyright and licenses apply:
    *
-   * Copyright 2023 Metrological
+   * Copyright 2021 Metrological
    *
    * Licensed under the Apache License, Version 2.0 (the License);
    * you may not use this file except in compliance with the License.
@@ -6041,7 +6041,7 @@ var APP_accelerator_home_ui = (function () {
       id: requestId,
       method: [plugin, version, method].join('.')
     };
-    params !== undefined ? body.params = params : null;
+    params || params === false ? typeof params === 'object' && Object.keys(params).length === 0 ? null : body.params = params : null;
     return body;
   };
   var getVersion = (versionsConfig, plugin, params) => {
@@ -6153,12 +6153,12 @@ var APP_accelerator_home_ui = (function () {
       });
     }
   };
-  var thunderJS = options => {
+  var thunderJS$1 = options => {
     if (options.token === undefined && typeof window !== 'undefined' && window.thunder && typeof window.thunder.token === 'function') {
       options.token = window.thunder.token();
     }
     return wrapper({
-      ...thunder$i(options),
+      ...thunder$k(options),
       ...plugins
     });
   };
@@ -6175,7 +6175,7 @@ var APP_accelerator_home_ui = (function () {
       return result;
     }
   };
-  const thunder$i = options => ({
+  const thunder$k = options => ({
     options,
     api: API(options),
     plugin: false,
@@ -6194,7 +6194,7 @@ var APP_accelerator_home_ui = (function () {
       return this.api.request.apply(this, args);
     },
     registerPlugin(name, plugin) {
-      this[name] = wrapper(Object.assign(Object.create(thunder$i), plugin, {
+      this[name] = wrapper(Object.assign(Object.create(thunder$k), plugin, {
         plugin: name
       }));
     },
@@ -6241,14 +6241,14 @@ var APP_accelerator_home_ui = (function () {
             };
           }
           if (typeof prop === 'object') {
-            return wrapper(Object.assign(Object.create(thunder$i(target.options)), prop, {
+            return wrapper(Object.assign(Object.create(thunder$k(target.options)), prop, {
               plugin: propKey
             }));
           }
           return prop;
         } else {
           if (target.plugin === false) {
-            return wrapper(Object.assign(Object.create(thunder$i(target.options)), {}, {
+            return wrapper(Object.assign(Object.create(thunder$k(target.options)), {}, {
               plugin: propKey
             }));
           }
@@ -6422,7 +6422,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
       this.callsign = 'org.rdk.Network';
     }
 
@@ -6615,7 +6615,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
       this._events = new Map();
       this.callsign = 'org.rdk.HdmiInput';
 
@@ -6807,14 +6807,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  var activatedWeb = false;
-  var activatedLightning = false;
-  var activatedCobalt = false;
-  var activatedAmazon = false;
-  var activatedNetflix = false;
-  var webUrl = '';
-  var lightningUrl = '';
-  const config$g = {
+  const config$i = {
     host: '127.0.0.1',
     port: 9998,
     default: 1,
@@ -6822,7 +6815,7 @@ var APP_accelerator_home_ui = (function () {
       'org.rdk.System': 2
     }
   };
-  const thunder$h = thunderJS(config$g);
+  const thunder$j = thunderJS$1(config$i);
   /**
    * Class that contains functions which commuicates with thunder API's
    */
@@ -6843,26 +6836,12 @@ var APP_accelerator_home_ui = (function () {
     }
     fetchTimeZone() {
       return new Promise(resolve => {
-        thunder$h.call('org.rdk.System', 'getTimeZones').then(result => {
+        thunder$j.call('org.rdk.System', 'getTimeZones').then(result => {
           resolve(result.zoneinfo);
         }).catch(err => {
           console.error('AppAPI Cannot fetch time zone', err);
           resolve({});
         });
-      });
-    }
-    checkForInternet() {
-      return new Promise((resolve, reject) => {
-        let i = 0;
-        var poll = () => {
-          i++;
-          this.getIP().then(result => {
-            if (result == true) {
-              resolve(result);
-            } else if (i < 10) poll();else resolve(false);
-          });
-        };
-        poll();
       });
     }
     isConnectedToInternet() {
@@ -6890,13 +6869,13 @@ var APP_accelerator_home_ui = (function () {
 
     fetchApiKey() {
       return new Promise(resolve => {
-        thunder$h.call('org.rdk.PersistentStore', 'getValue', {
+        thunder$j.call('org.rdk.PersistentStore', 'getValue', {
           namespace: 'gracenote',
           key: 'apiKey'
         }).then(result => {
           resolve(result.value);
         }).catch(err => {
-          console.error("AppAPI PersistentStore getValue failed.");
+          console.error("AppAPI PersistentStore getValue gracenote apiKey failed.");
           resolve('');
         });
       });
@@ -6908,11 +6887,10 @@ var APP_accelerator_home_ui = (function () {
      */
     getIP() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'org.rdk.System';
-        thunder$h.Controller.activate({
-          callsign: systemcCallsign
+        thunder$j.Controller.activate({
+          callsign: 'org.rdk.System'
         }).then(() => {
-          thunder$h.call(systemcCallsign, 'getDeviceInfo', {
+          thunder$j.call('org.rdk.System', 'getDeviceInfo', {
             params: 'estb_ip'
           }).then(result => {
             resolve(result.success);
@@ -6930,8 +6908,7 @@ var APP_accelerator_home_ui = (function () {
     */
     getZone() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'org.rdk.System';
-        thunder$h.call(systemcCallsign, 'getTimeZoneDST').then(result => {
+        thunder$j.call('org.rdk.System', 'getTimeZoneDST').then(result => {
           resolve(result.timeZone);
         }).catch(err => {
           console.error('AppAPI System plugin getTimeZoneDST failed.');
@@ -6942,7 +6919,7 @@ var APP_accelerator_home_ui = (function () {
     setZone(zone) {
       console.log(zone);
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'setTimeZoneDST', {
+        thunder$j.call('org.rdk.System', 'setTimeZoneDST', {
           timeZone: zone
         }).then(result => {
           resolve(result.success);
@@ -6954,7 +6931,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getPluginStatus(plugin) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('Controller', "status@".concat(plugin)).then(result => {
+        thunder$j.call('Controller', "status@".concat(plugin)).then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI Controller plugin status check failed.");
@@ -6968,7 +6945,7 @@ var APP_accelerator_home_ui = (function () {
      */
     getResolution() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getCurrentResolution', {
+        thunder$j.call('org.rdk.DisplaySettings', 'getCurrentResolution', {
           "videoDisplay": "HDMI0"
         }).then(result => {
           resolve(result.resolution);
@@ -6981,7 +6958,7 @@ var APP_accelerator_home_ui = (function () {
     activateDisplaySettings() {
       return new Promise((resolve, reject) => {
         const systemcCallsign = "org.rdk.DisplaySettings";
-        thunder$h.Controller.activate({
+        thunder$j.Controller.activate({
           callsign: systemcCallsign
         }).then(res => {}).catch(err => {
           console.error("AppAPI activate DisplaySettings failed.");
@@ -6990,11 +6967,10 @@ var APP_accelerator_home_ui = (function () {
     }
     getSupportedResolutions() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'org.rdk.DisplaySettings';
-        thunder$h.Controller.activate({
-          callsign: systemcCallsign
+        thunder$j.Controller.activate({
+          callsign: 'org.rdk.DisplaySettings'
         }).then(() => {
-          thunder$h.call(systemcCallsign, 'getSupportedResolutions', {
+          thunder$j.call('org.rdk.DisplaySettings', 'getSupportedResolutions', {
             params: 'HDMI0'
           }).then(result => {
             resolve(result.supportedResolutions);
@@ -7013,11 +6989,10 @@ var APP_accelerator_home_ui = (function () {
      */
     setResolution(res) {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'org.rdk.DisplaySettings';
-        thunder$h.Controller.activate({
-          callsign: systemcCallsign
+        thunder$j.Controller.activate({
+          callsign: 'org.rdk.DisplaySettings'
         }).then(() => {
-          thunder$h.call(systemcCallsign, 'setCurrentResolution', {
+          thunder$j.call('org.rdk.DisplaySettings', 'setCurrentResolution', {
             videoDisplay: 'HDMI0',
             resolution: res,
             persist: true
@@ -7038,11 +7013,10 @@ var APP_accelerator_home_ui = (function () {
      */
     getHDCPStatus() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'org.rdk.HdcpProfile';
-        thunder$h.Controller.activate({
-          callsign: systemcCallsign
+        thunder$j.Controller.activate({
+          callsign: 'org.rdk.HdcpProfile'
         }).then(() => {
-          thunder$h.call(systemcCallsign, 'getHDCPStatus').then(result => {
+          thunder$j.call('org.rdk.HdcpProfile', 'getHDCPStatus').then(result => {
             console.log("AppAPI HdcpProfile getHDCPStatus : " + JSON.stringify(result.HDCPStatus));
             resolve(result.HDCPStatus);
           }).catch(err => {
@@ -7060,11 +7034,10 @@ var APP_accelerator_home_ui = (function () {
      */
     getTvHDRSupport() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'org.rdk.DisplaySettings';
-        thunder$h.Controller.activate({
-          callsign: systemcCallsign
+        thunder$j.Controller.activate({
+          callsign: 'org.rdk.DisplaySettings'
         }).then(() => {
-          thunder$h.call(systemcCallsign, 'getTvHDRSupport').then(result => {
+          thunder$j.call('org.rdk.DisplaySettings', 'getTvHDRSupport').then(result => {
             console.log("AppAPI DisplaySettings getTvHDRSupport : " + JSON.stringify(result));
             resolve(result);
           }).catch(err => {
@@ -7081,11 +7054,10 @@ var APP_accelerator_home_ui = (function () {
      */
     getSettopHDRSupport() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'org.rdk.DisplaySettings';
-        thunder$h.Controller.activate({
-          callsign: systemcCallsign
+        thunder$j.Controller.activate({
+          callsign: 'org.rdk.DisplaySettings'
         }).then(() => {
-          thunder$h.call(systemcCallsign, 'getSettopHDRSupport').then(result => {
+          thunder$j.call('org.rdk.DisplaySettings', 'getSettopHDRSupport').then(result => {
             console.log("AppAPI DisplaySettings getSettopHDRSupport : " + JSON.stringify(result));
             resolve(result);
           }).catch(err => {
@@ -7103,11 +7075,10 @@ var APP_accelerator_home_ui = (function () {
      */
     getHDRSetting() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'DisplayInfo';
-        thunder$h.Controller.activate({
-          callsign: systemcCallsign
+        thunder$j.Controller.activate({
+          callsign: 'DisplayInfo'
         }).then(() => {
-          thunder$h.call(systemcCallsign, 'hdrsetting').then(result => {
+          thunder$j.call('DisplayInfo', 'hdrsetting').then(result => {
             console.log("AppAPI DisplayInfo hdrsetting : " + JSON.stringify(result));
             resolve(result);
           }).catch(err => {
@@ -7125,11 +7096,10 @@ var APP_accelerator_home_ui = (function () {
      */
     getDRMS() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'OCDM';
-        thunder$h.Controller.activate({
-          callsign: systemcCallsign
+        thunder$j.Controller.activate({
+          callsign: 'OCDM'
         }).then(() => {
-          thunder$h.call(systemcCallsign, 'drms').then(result => {
+          thunder$j.call('OCDM', 'drms').then(result => {
             console.log("AppAPI OCDM supported drms: " + JSON.stringify(result));
             resolve(result);
           }).catch(err => {
@@ -7147,8 +7117,7 @@ var APP_accelerator_home_ui = (function () {
      */
     clearCache() {
       return new Promise((resolve, reject) => {
-        const systemcCallsign = 'ResidentApp';
-        thunder$h.call(systemcCallsign, 'delete', {
+        thunder$j.call('ResidentApp', 'delete', {
           path: ".cache"
         }).then(result => {
           resolve(result);
@@ -7163,8 +7132,8 @@ var APP_accelerator_home_ui = (function () {
      * Function to launch All types of apps. Accepts 2 params.
      * @param {String} callsign String required callsign of the particular app.
      * @param {Object} args Object optional depending on following properties.
-     *  @property {string} url: optional for youtube & netflix | required for Lightning and WebApps
-     *  @property {string} launchLocation: optional | to pass Netflix IIDs or Youtube launch reason | launchLocation value is one among these values ["mainView", "dedicatedButton", "appsMenu", "epgScreen", "dial", "gracenote","alexa"]
+     *  @property {string} url: optional for YouTube & netflix | required for Lightning and WebApps
+     *  @property {string} launchLocation: optional | to pass Netflix IIDs or YouTube launch reason | launchLocation value is one among these values ["mainView", "dedicatedButton", "appsMenu", "epgScreen", "dial", "gracenote","alexa"]
      *  @property {boolean} preventInternetCheck: optional | true will prevent bydefault check for internet
      *  @property {boolean} preventCurrentExit: optional |  true will prevent bydefault launch of previous app
      */
@@ -7179,7 +7148,9 @@ var APP_accelerator_home_ui = (function () {
       }
       Router.navigate("applauncher");
       console.log("AppAPI launchApp called with: ", callsign, args);
-      Storage.set("cobaltLaunchLocation", args.launchLocation);
+      if (callsign.startsWith("YouTube")) {
+        Storage.set(callsign + "LaunchLocation", args.launchLocation);
+      }
       let url, preventInternetCheck, preventCurrentExit, launchLocation;
       if (args) {
         url = args.url;
@@ -7189,37 +7160,52 @@ var APP_accelerator_home_ui = (function () {
       }
       const launchLocationKeyMapping = {
         //currently supported launch locations by the UI and mapping to corresponding reason/keys for IID
+        // TODO: Extend for YT variants
         "mainView": {
-          "Cobalt": "menu",
+          "YouTube": "menu",
+          "YouTubeTV": "menu",
+          "YouTubeKids": "menu",
           "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page"
         },
         "dedicatedButton": {
-          "Cobalt": "remote",
+          "YouTube": "remote",
+          "YouTubeTV": "remote",
+          "YouTubeKids": "remote",
           "Netflix": "App_launched_via_Netflix_Button"
         },
         "appsMenu": {
-          "Cobalt": "menu",
+          "YouTube": "menu",
+          "YouTubeTV": "menu",
+          "YouTubeKids": "menu",
           "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Section"
         },
         "epgScreen": {
-          "Cobalt": "guide",
+          "YouTube": "guide",
+          "YouTubeTV": "guide",
+          "YouTubeKids": "guide",
           "Netflix": "App_launched_from_EPG_Grid"
         },
         "dial": {
-          "Cobalt": "dial",
+          "YouTube": "dial",
+          "YouTubeTV": "dial",
+          "YouTubeKids": "dial",
           "Netflix": "App_launched_via_DIAL_request"
         },
         "gracenote": {
-          "Cobalt": "launcher",
+          "YouTube": "launcher",
+          "YouTubeTV": "launcher",
+          "YouTubeKids": "launcher",
           "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page"
         },
         "alexa": {
-          "Cobalt": "voice",
+          "YouTube": "voice",
+          "YouTubeTV": "voice",
+          "YouTubeKids": "voice",
           "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page"
         }
       };
       if (launchLocation && launchLocationKeyMapping[launchLocation]) {
-        if (callsign === "Netflix" || callsign === "Cobalt") {
+        if (callsign === "Netflix" || callsign.startsWith("YouTube")) {
           launchLocation = launchLocationKeyMapping[launchLocation][callsign];
         }
       }
@@ -7236,7 +7222,7 @@ var APP_accelerator_home_ui = (function () {
           console.warn("AppAPI launchLocation(IID) not specified while launching netflix");
         }
       }
-      const availableCallsigns = ["Amazon", "Cobalt", "HtmlApp", "LightningApp", "Netflix"];
+      const availableCallsigns = ["Amazon", "YouTube", "YouTubeTV", "YouTubeKids", "HtmlApp", "LightningApp", "Netflix", "NativeApp"];
       if (!availableCallsigns.includes(callsign)) {
         Router.navigate(Storage.get("lastVisitedRoute"));
         return Promise.reject("Can't launch App: " + callsign + " | Error: callsign not found!");
@@ -7252,8 +7238,10 @@ var APP_accelerator_home_ui = (function () {
 
       let pluginStatus, pluginState; // to check if the plugin is active, resumed, deactivated etc
       try {
-        pluginStatus = await this.getPluginStatus(callsign);
-        pluginState = pluginStatus[0].state;
+        if (callsign != "NativeApp") {
+          pluginStatus = await this.getPluginStatus(callsign);
+          pluginState = pluginStatus[0].state;
+        }
       } catch (err) {
         console.error(err);
         Router.navigate(Storage.get("lastVisitedRoute"));
@@ -7289,7 +7277,7 @@ var APP_accelerator_home_ui = (function () {
           if (url) {
             try {
               console.log("AppAPI Netflix HotLaunch passing netflix url & IIDqueryString using systemcommand method: ", url, IIDqueryString);
-              await thunder$h.call("Netflix", "systemcommand", {
+              await thunder$j.call("Netflix", "systemcommand", {
                 command: url + IIDqueryString
               });
             } catch (err) {
@@ -7298,7 +7286,7 @@ var APP_accelerator_home_ui = (function () {
           } else {
             try {
               console.log("AppAPI Netflix HotLaunch passing netflix IIDqueryString using systemcommand method: ", IIDqueryString);
-              await thunder$h.call("Netflix", "systemcommand", {
+              await thunder$j.call("Netflix", "systemcommand", {
                 command: IIDqueryString
               });
             } catch (err) {
@@ -7312,31 +7300,13 @@ var APP_accelerator_home_ui = (function () {
         "type": callsign,
         "configuration": {}
       };
-      if (url && (callsign === "LightningApp" || callsign === "HtmlApp")) {
+      if (url && (callsign === "LightningApp" || callsign === "HtmlApp" || callsign === "NativeApp")) {
         //for lightning/htmlapp url is passed via rdkshell.launch method
         params.uri = url;
-      } else if (callsign === "Cobalt") {
+      } else if (callsign.startsWith("YouTube")) {
         let language = localStorage.getItem("Language");
         language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US"; //default to english US if language is not available.
-        // url = url ? url : Storage.get("CobaltDefaultURL")
-        let defaultURL = Storage.get("CobaltDefaultURL"); // this goes into rdkShellLaunch
-        if (url && pluginState === "deactivated") {
-          // Cold launch started with a Cast ???
-          defaultURL += url;
-        }
-        console.log("AppAPI appending launch location to defaultURL ".concat(defaultURL));
-        if (defaultURL.endsWith("?")) {
-          defaultURL = defaultURL + "launch=" + launchLocation;
-        } else {
-          defaultURL = defaultURL + "&launch=" + launchLocation;
-        }
-        if (!defaultURL.includes("inApp=")) {
-          defaultURL += Storage.get("appplicationType") === callsign ? "&inApp=true" : "&inApp=false";
-        }
-        if (launchLocation === "voice" && !defaultURL.includes("vs=")) {
-          defaultURL += "&vs=2"; // YT Dev Doc specific to Alexa
-        }
-
+        url = url ? url : Storage.get(callsign + "DefaultURL");
         if (url) {
           if (!url.includes("?")) {
             url += "?";
@@ -7360,12 +7330,12 @@ var APP_accelerator_home_ui = (function () {
             url += "vs=2"; // YT Dev Doc specific to Alexa
           }
 
-          console.log("AppAPI Cobalt is being launched using the url: " + url);
+          console.log("AppAPI " + callsign + " is being launched using the url: " + url);
         }
         params.configuration = {
           //for gracenote cold launch url needs to be re formatted to youtube.com/tv/
           "language": language,
-          "url": defaultURL,
+          "url": url,
           "launchtype": "launch=" + launchLocation
         };
       } else if (callsign === "Amazon") {
@@ -7392,7 +7362,7 @@ var APP_accelerator_home_ui = (function () {
       }
       if (currentApp === "" && callsign !== "Netflix") {
         //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack | for netflix keep the splash screen visible till it launches
-        thunder$h.call('org.rdk.RDKShell', 'setVisibility', {
+        thunder$j.call('org.rdk.RDKShell', 'setVisibility', {
           "client": "ResidentApp",
           "visible": false
         });
@@ -7407,78 +7377,117 @@ var APP_accelerator_home_ui = (function () {
       }
       console.log("AppAPI RDKShell launch with params: ", params);
       return new Promise((resolve, reject) => {
-        thunder$h.call("org.rdk.RDKShell", "launch", params).then(res => {
-          console.log("AppAPI ".concat(callsign, " : Launch results in ").concat(JSON.stringify(res)));
-          if (res.success) {
-            if (args.appIdentifier) {
-              let order = Storage.get("appCarouselOrder");
-              if (!order) {
-                Storage.set("appCarouselOrder", "");
-              } else {
-                let storedApps = order.split(",");
-                let ix = storedApps.indexOf(args.appIdentifier);
-                if (ix != -1) {
-                  storedApps.splice(ix, 1);
+        if (callsign === "NativeApp") {
+          // Could be coming from PartnerApp.
+          params.client = callsign;
+          params.mimeType = "application/native";
+          thunder$j.call("org.rdk.RDKShell", "launchApplication", params).then(res => {
+            console.log("AppAPI ".concat(callsign, " : Launch results in ").concat(JSON.stringify(res)));
+            if (res.success) {
+              if (args.appIdentifier) {
+                let order = Storage.get("appCarouselOrder");
+                if (!order) {
+                  Storage.set("appCarouselOrder", "");
+                } else {
+                  let storedApps = order.split(",");
+                  let ix = storedApps.indexOf(args.appIdentifier);
+                  if (ix != -1) {
+                    storedApps.splice(ix, 1);
+                  }
+                  storedApps.unshift(args.appIdentifier);
+                  Storage.set("appCarouselOrder", storedApps.toString());
                 }
-                storedApps.unshift(args.appIdentifier);
-                Storage.set("appCarouselOrder", storedApps.toString());
               }
+              Storage.set("applicationType", callsign);
+              resolve(res);
+            } else {
+              console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res));
+              Router.navigate(Storage.get("lastVisitedRoute"));
+              reject(res);
             }
-            if (callsign !== "Netflix") {
-              //if app is not netflix, move it to front(netflix will be moved to front from applauncherScreen.)
-              thunder$h.call("org.rdk.RDKShell", "moveToFront", {
+          }).catch(err => {
+            console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back");
+            thunder$j.call('org.rdk.RDKShell', 'kill', {
+              "client": callsign
+            });
+            this.launchResidentApp();
+            Router.navigate(Storage.get("lastVisitedRoute"));
+            reject(err);
+          });
+        } else {
+          thunder$j.call("org.rdk.RDKShell", "launch", params).then(res => {
+            console.log("AppAPI ".concat(callsign, " : Launch results in ").concat(JSON.stringify(res)));
+            if (res.success) {
+              if (args.appIdentifier) {
+                let order = Storage.get("appCarouselOrder");
+                if (!order) {
+                  Storage.set("appCarouselOrder", "");
+                } else {
+                  let storedApps = order.split(",");
+                  let ix = storedApps.indexOf(args.appIdentifier);
+                  if (ix != -1) {
+                    storedApps.splice(ix, 1);
+                  }
+                  storedApps.unshift(args.appIdentifier);
+                  Storage.set("appCarouselOrder", storedApps.toString());
+                }
+              }
+              if (callsign !== "Netflix") {
+                //if app is not netflix, move it to front(netflix will be moved to front from applauncherScreen.)
+                thunder$j.call("org.rdk.RDKShell", "moveToFront", {
+                  "client": callsign,
+                  "callsign": callsign
+                }).catch(err => {
+                  console.error("AppAPI failed to moveToFront : ", callsign, " ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front");
+                });
+              }
+              thunder$j.call("org.rdk.RDKShell", "setFocus", {
                 "client": callsign,
                 "callsign": callsign
               }).catch(err => {
-                console.error("AppAPI failed to moveToFront : ", callsign, " ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front");
+                console.error("AppAPI failed to setFocus : ", callsign, " ERROR: ", JSON.stringify(err));
               });
-            }
-            thunder$h.call("org.rdk.RDKShell", "setFocus", {
-              "client": callsign,
-              "callsign": callsign
-            }).catch(err => {
-              console.error("AppAPI failed to setFocus : ", callsign, " ERROR: ", JSON.stringify(err));
-            });
-            thunder$h.call("org.rdk.RDKShell", "setVisibility", {
-              "client": callsign,
-              "visible": true
-            }).catch(err => {
-              console.error("AppAPI failed to setVisibility : ", callsign, " ERROR: ", JSON.stringify(err));
-            });
-            if (callsign === "Netflix") {
-              console.log("AppAPI Netflix launched: hiding residentApp");
-              thunder$h.call('org.rdk.RDKShell', 'setVisibility', {
-                "client": "ResidentApp",
-                "visible": false
-              }); //if netflix splash screen was launched resident app was kept visible Netflix until app launched.
-            }
-
-            if (callsign === "Cobalt" && res.launchType === "resume") {
-              // Page visibility requirement; 'launch' need to be 'deeplink'ed when app is 'resumed'.
-              if (!url) {
-                url = params.configuration.url;
+              thunder$j.call("org.rdk.RDKShell", "setVisibility", {
+                "client": callsign,
+                "visible": true
+              }).catch(err => {
+                console.error("AppAPI failed to setVisibility : ", callsign, " ERROR: ", JSON.stringify(err));
+              });
+              if (callsign === "Netflix") {
+                console.log("AppAPI Netflix launched: hiding residentApp");
+                thunder$j.call('org.rdk.RDKShell', 'setVisibility', {
+                  "client": "ResidentApp",
+                  "visible": false
+                }); //if netflix splash screen was launched resident app was kept visible Netflix until app launched.
               }
-              console.log("AppAPI Calling Cobalt.deeplink for cobalt with url: " + url);
-              thunder$h.call(callsign, 'deeplink', url);
-            }
-            Storage.set("applicationType", callsign);
-            resolve(res);
-          } else {
-            console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res));
-            Router.navigate(Storage.get("lastVisitedRoute"));
-            reject(res);
-          }
-        }).catch(err => {
-          console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back");
 
-          //destroying the app incase it's stuck in launching | if taking care of ResidentApp as callsign, make sure to prevent destroying it
-          thunder$h.call('org.rdk.RDKShell', 'destroy', {
-            "callsign": callsign
+              if (callsign.startsWith("YouTube") && res.launchType === "resume") {
+                // Page visibility requirement; 'launch' need to be 'deeplink'ed when app is 'resumed'.
+                if (!url) {
+                  url = params.configuration.url;
+                }
+                console.log("AppAPI Calling " + callsign + ".deeplink with url: " + url);
+                thunder$j.call(callsign, 'deeplink', url);
+              }
+              Storage.set("applicationType", callsign);
+              resolve(res);
+            } else {
+              console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res));
+              Router.navigate(Storage.get("lastVisitedRoute"));
+              reject(res);
+            }
+          }).catch(err => {
+            console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back");
+
+            //destroying the app incase it's stuck in launching | if taking care of ResidentApp as callsign, make sure to prevent destroying it
+            thunder$j.call('org.rdk.RDKShell', 'destroy', {
+              "callsign": callsign
+            });
+            this.launchResidentApp();
+            Router.navigate(Storage.get("lastVisitedRoute"));
+            reject(err);
           });
-          this.launchResidentApp();
-          Router.navigate(Storage.get("lastVisitedRoute"));
-          reject(err);
-        });
+        }
       });
     }
 
@@ -7492,7 +7501,6 @@ var APP_accelerator_home_ui = (function () {
     // exit method does not need to launch the previous app.
     async exitApp(callsign, exitInBackground, forceDestroy) {
       //test the new exit app method
-
       if (callsign === "") {
         //previousApp==="" means it's residentApp | change it to residentApp in cache and here
         return Promise.reject("AppAPI Can't exit from ResidentApp");
@@ -7514,16 +7522,18 @@ var APP_accelerator_home_ui = (function () {
       }
 
       let pluginStatus, pluginState; // to check if the plugin is active, resumed, deactivated etc
-      try {
-        pluginStatus = await this.getPluginStatus(callsign);
-        if (pluginStatus !== undefined) {
-          pluginState = pluginStatus[0].state;
-          console.log("AppAPI pluginStatus: " + JSON.stringify(pluginStatus) + " pluginState: ", JSON.stringify(pluginState));
-        } else {
-          return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device");
+      if (callsign != "NativeApp" && !callsign.includes('application/dac.native')) {
+        try {
+          pluginStatus = await this.getPluginStatus(callsign);
+          if (pluginStatus !== undefined) {
+            pluginState = pluginStatus[0].state;
+            console.log("AppAPI pluginStatus: " + JSON.stringify(pluginStatus) + " pluginState: ", JSON.stringify(pluginState));
+          } else {
+            return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device");
+          }
+        } catch (err) {
+          return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device | Error: " + JSON.stringify(err));
         }
-      } catch (err) {
-        return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device | Error: " + JSON.stringify(err));
       }
       if (!exitInBackground) {
         //means resident App needs to be launched
@@ -7532,33 +7542,60 @@ var APP_accelerator_home_ui = (function () {
 
       //to hide the current app
       console.log("AppAPI setting visibility of " + callsign + " to false");
-      await thunder$h.call("org.rdk.RDKShell", "setVisibility", {
+      await thunder$j.call("org.rdk.RDKShell", "setVisibility", {
         "client": callsign,
         "visible": false
       }).catch(err => {
         console.error("AppAPI failed to setVisibility : " + callsign + " ERROR: ", JSON.stringify(err));
       });
       if (forceDestroy) {
-        console.log("AppAPI Force Destroying the app: ", callsign);
-        await thunder$h.call('org.rdk.RDKShell', 'destroy', {
-          "callsign": callsign
-        });
-        return Promise.resolve(true);
+        if (pluginState != undefined) {
+          // App is a Plugin
+          console.log("AppAPI Force Destroying the app: ", callsign);
+          await thunder$j.call('org.rdk.RDKShell', 'destroy', {
+            "callsign": callsign
+          });
+          return Promise.resolve(true);
+        } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
+          await thunder$j.call('org.rdk.RDKShell', 'kill', {
+            "client": callsign.includes('application/dac.native') ? callsign.substring(0, callsign.indexOf(';')) : callsign
+          }).then(res => {
+            console.log("AppAPI RDKShell kill: " + callsign + " RESPONSE: ", JSON.stringify(res));
+            return Promise.resolve(true);
+          }).catch(err => {
+            console.error("AppAPI RDKShell kill: " + callsign + " ERROR: ", JSON.stringify(err));
+            return Promise.resolve(false);
+          });
+        }
       } else {
         console.log("AppAPI Exiting from App: ", callsign, " depending on platform settings enableAppSuspended: ", Settings.get("platform", "enableAppSuspended"));
         //enableAppSuspended = true means apps will be suspended by default
         if (Settings.get("platform", "enableAppSuspended")) {
-          await thunder$h.call('org.rdk.RDKShell', 'suspend', {
-            "callsign": callsign
-          }).catch(err => {
-            console.error("AppAPI Error in suspending app: ", callsign, " | trying to destroy the app");
-            thunder$h.call('org.rdk.RDKShell', 'destroy', {
+          if (pluginState != undefined) {
+            // App is a Plugin
+            await thunder$j.call('org.rdk.RDKShell', 'suspend', {
               "callsign": callsign
+            }).catch(err => {
+              console.error("AppAPI Error in suspending app: ", callsign, " | trying to destroy the app");
+              thunder$j.call('org.rdk.RDKShell', 'destroy', {
+                "callsign": callsign
+              });
             });
-          });
-          return Promise.resolve(true);
+            return Promise.resolve(true);
+          } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
+            // DAC Demo WorkAround; TODO: use suspendApplication instead of kill
+            await thunder$j.call('org.rdk.RDKShell', 'kill', {
+              "callsign": callsign
+            }).catch(err => {
+              console.error("AppAPI Error in kill app: ", callsign, " | trying to destroy the app");
+              thunder$j.call('org.rdk.RDKShell', 'destroy', {
+                "callsign": callsign
+              });
+            });
+            return Promise.resolve(true);
+          }
         } else {
-          await thunder$h.call('org.rdk.RDKShell', 'destroy', {
+          await thunder$j.call('org.rdk.RDKShell', 'destroy', {
             "callsign": callsign
           });
           return Promise.resolve(true);
@@ -7570,28 +7607,27 @@ var APP_accelerator_home_ui = (function () {
      * Function to launch ResidentApp explicitly(incase of special scenarios)
      * Prefer using launchApp and exitApp for ALL app launch and exit scenarios.
      */
-
     async launchResidentApp() {
       console.log("AppAPI launchResidentApp got Called: setting visibility, focus and moving to front the ResidentApp");
-      await thunder$h.call("org.rdk.RDKShell", "moveToFront", {
+      await thunder$j.call("org.rdk.RDKShell", "moveToFront", {
         "client": "ResidentApp",
         "callsign": "ResidentApp"
       }).catch(err => {
         console.error("AppAPI failed to moveToFront : ResidentApp ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front");
       });
-      await thunder$h.call("org.rdk.RDKShell", "setFocus", {
+      await thunder$j.call("org.rdk.RDKShell", "setFocus", {
         "client": "ResidentApp",
         "callsign": "ResidentApp"
       }).catch(err => {
         console.error("AppAPI failed to setFocus : ResidentApp ERROR: ", JSON.stringify(err));
       });
-      await thunder$h.call("org.rdk.RDKShell", "setVisibility", {
+      await thunder$j.call("org.rdk.RDKShell", "setVisibility", {
         "client": "ResidentApp",
         "visible": true
       }).catch(err => {
         console.error("AppAPI failed to setVisibility : ResidentApp ERROR: ", JSON.stringify(err));
       });
-      Storage.set("applicationType", ""); //since it's residentApp aplication type is "" | change application type to ResidentApp 
+      Storage.set("applicationType", ""); //since it's residentApp aplication type is "" | change application type to ResidentApp
     }
 
     async getNetflixIIDs() {
@@ -7618,118 +7654,13 @@ var APP_accelerator_home_ui = (function () {
         return defaultIIDs;
       }
     }
-    /**
-     * Function to launch Html app.
-     * @param {String} url url of app.
-     */
-    launchWeb(url) {
-      return new Promise(resolve => {
-        const childCallsign = 'HtmlApp';
-        if (webUrl != url) {
-          thunder$h.call('org.rdk.RDKShell', 'launch', {
-            callsign: childCallsign,
-            type: childCallsign,
-            uri: url
-          }).then(res => {
-            console.log("AppAPI launchWeb : webapp launch resulted in : ", JSON.stringify(res));
-            this.setVisibility("ResidentApp", false);
-            thunder$h.call('org.rdk.RDKShell', 'moveToFront', {
-              client: childCallsign
-            });
-            resolve(true);
-          }).catch(err => {
-            console.error("AppAPI launchWeb : error while launching web : ", JSON.stringify(err));
-            reject(false);
-          });
-        } else {
-          thunder$h.call('org.rdk.RDKShell', 'moveToFront', {
-            client: childCallsign
-          });
-          thunder$h.call('org.rdk.RDKShell', 'setFocus', {
-            client: childCallsign
-          });
-          resolve(true);
-        }
-        webUrl = url;
-        activatedWeb = true;
-      });
-    }
 
-    /**
-     * Function to launch Lightning app.
-     * @param {String} url url of app.
-     */
-    launchLightning(url) {
-      return new Promise((resolve, reject) => {
-        const childCallsign = 'LightningApp';
-        if (lightningUrl != url) {
-          thunder$h.call('org.rdk.RDKShell', 'launch', {
-            callsign: 'Lightning',
-            type: childCallsign,
-            uri: url
-          }).then(res => {
-            console.log("AppAPI Lightning : launch lightning results in ", JSON.stringify(res));
-            resolve(true);
-          }).catch(err => {
-            console.error("AppAPI Lightning : error while launching lightning : ", JSON.stringify(err));
-            reject(false);
-          });
-        } else {
-          thunder$h.call('org.rdk.RDKShell', 'moveToFront', {
-            client: childCallsign
-          });
-          thunder$h.call('org.rdk.RDKShell', 'setFocus', {
-            client: childCallsign
-          });
-          resolve(true);
-        }
-        lightningUrl = url;
-        activatedLightning = true;
-      });
-    }
-
-    /**
-     * Function to launch Cobalt app.
-     * @param {String} url url of app.
-     */
-    launchCobalt(url) {
-      return new Promise((resolve, reject) => {
-        const childCallsign = 'Cobalt';
-        thunder$h.call('org.rdk.RDKShell', 'launch', {
-          callsign: childCallsign,
-          type: childCallsign
-        }).then(res => {
-          if (url) {
-            thunder$h.call('Cobalt', 'deeplink', url);
-          }
-          this.setVisibility("ResidentApp", false);
-          thunder$h.call('org.rdk.RDKShell', 'moveToFront', {
-            client: "Cobalt"
-          }).catch(err => {
-            console.error(err);
-          });
-          thunder$h.call("org.rdk.RDKShell", "setFocus", {
-            client: childCallsign
-          }).catch(err => {
-            console.error(err);
-          });
-          Storage.set("applicationType", "Cobalt");
-          console.log("AppAPI launchCobalt : launch cobalt results in ", JSON.stringify(res));
-          resolve(true);
-        }).catch(err => {
-          console.error("AppAPI launchCobalt : error while launching cobalt : ", JSON.stringify(err));
-          reject(err);
-        });
-        activatedCobalt = true;
-      });
-    }
-
-    /*  
+    /*
      *Function to launch apps in hidden mode
      */
     launchPremiumAppInSuspendMode(childCallsign) {
       return new Promise((resolve, reject) => {
-        thunder$h.call("org.rdk.RDKShell", "launch", {
+        thunder$j.call("org.rdk.RDKShell", "launch", {
           callsign: childCallsign,
           type: childCallsign,
           suspend: true,
@@ -7758,7 +7689,7 @@ var APP_accelerator_home_ui = (function () {
      */
     launchPremiumApp(childCallsign) {
       return new Promise((resolve, reject) => {
-        thunder$h.call("org.rdk.RDKShell", "launch", {
+        thunder$j.call("org.rdk.RDKShell", "launch", {
           callsign: childCallsign,
           type: childCallsign,
           visible: true,
@@ -7782,23 +7713,7 @@ var APP_accelerator_home_ui = (function () {
           }
           reject(false);
         });
-        childCallsign === 'Amazon' ? activatedAmazon = true : activatedNetflix = true;
       });
-    }
-    launchPremiumAppURL(childCallsign, url) {
-      thunder$h.call("org.rdk.RDKShell", "launch", {
-        callsign: childCallsign,
-        type: childCallsign
-      }).then(() => {
-        thunder$h.call("org.rdk.RDKShell", "moveToFront", {
-          client: childCallsign
-        });
-        thunder$h.call(childCallsign, 'deeplink', url);
-        thunder$h.call("org.rdk.RDKShell", "setFocus", {
-          client: childCallsign
-        });
-      }).catch(err => {});
-      childCallsign === 'Amazon' ? activatedAmazon = true : activatedNetflix = true;
     }
 
     /**
@@ -7808,7 +7723,7 @@ var APP_accelerator_home_ui = (function () {
     launchResident(url, client) {
       return new Promise((resolve, reject) => {
         const childCallsign = client;
-        thunder$h.call('org.rdk.RDKShell', 'launch', {
+        thunder$j.call('org.rdk.RDKShell', 'launch', {
           callsign: childCallsign,
           type: 'ResidentApp',
           uri: url
@@ -7824,12 +7739,12 @@ var APP_accelerator_home_ui = (function () {
     launchOverlay(url, client) {
       return new Promise(resolve => {
         const childCallsign = client;
-        thunder$h.call('org.rdk.RDKShell', 'launch', {
+        thunder$j.call('org.rdk.RDKShell', 'launch', {
           callsign: childCallsign,
           type: 'ResidentApp',
           uri: url
         }).then(res => {
-          thunder$h.call('org.rdk.RDKShell', 'moveToFront', {
+          thunder$j.call('org.rdk.RDKShell', 'moveToFront', {
             client: childCallsign
           });
           console.log("AppAPI launchOverlay : launched overlay : ", JSON.stringify(res));
@@ -7842,31 +7757,11 @@ var APP_accelerator_home_ui = (function () {
     }
 
     /**
-     * Function to suspend html app.
-     */
-    suspendWeb() {
-      webUrl = '';
-      thunder$h.call('org.rdk.RDKShell', 'suspend', {
-        callsign: 'HtmlApp'
-      });
-    }
-
-    /**
-     * Function to suspend lightning app.
-     */
-    suspendLightning() {
-      lightningUrl = '';
-      thunder$h.call('org.rdk.RDKShell', 'suspend', {
-        callsign: 'Lightning'
-      });
-    }
-
-    /**
      * Function to suspend Netflix/Amazon Prime app.
      */
     suspendPremiumApp(appName) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.RDKShell', 'suspend', {
+        thunder$j.call('org.rdk.RDKShell', 'suspend', {
           callsign: appName
         }).then(res => {
           resolve(true);
@@ -7881,25 +7776,23 @@ var APP_accelerator_home_ui = (function () {
      * Function to deactivate html app.
      */
     deactivateWeb() {
-      thunder$h.call('org.rdk.RDKShell', 'destroy', {
+      thunder$j.call('org.rdk.RDKShell', 'destroy', {
         callsign: 'HtmlApp'
       });
-      activatedWeb = false;
-      webUrl = '';
     }
 
     /**
      * Function to deactivate cobalt app.
      */
     deactivateCobalt() {
-      thunder$h.call('org.rdk.RDKShell', 'destroy', {
-        callsign: 'Cobalt'
+      let instanceName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Cobalt';
+      thunder$j.call('org.rdk.RDKShell', 'destroy', {
+        callsign: instanceName
       });
-      activatedCobalt = false;
     }
     cobaltStateChangeEvent() {
       try {
-        thunder$h.on('Controller', 'statechange', notification => {
+        thunder$j.on('Controller', 'statechange', notification => {
           if (this._events.has('statechange')) {
             this._events.get('statechange')(notification);
           }
@@ -7908,32 +7801,21 @@ var APP_accelerator_home_ui = (function () {
         console.error('AppAPI Failed to register statechange event' + e);
       }
     }
-    /**
-     * Function to deactivate Netflix/Amazon Prime app.
-     */
-    deactivateNativeApp(appName) {
-      thunder$h.call('org.rdk.RDKShell', 'destroy', {
-        callsign: appName
-      });
-      appName === 'Amazon' ? activatedAmazon = false : activatedNetflix = false;
-    }
 
     /**
      * Function to deactivate lightning app.
      */
     deactivateLightning() {
-      thunder$h.call('org.rdk.RDKShell', 'destroy', {
+      thunder$j.call('org.rdk.RDKShell', 'destroy', {
         callsign: 'Lightning'
       });
-      activatedLightning = false;
-      lightningUrl = '';
     }
 
     /**
      * Function to deactivate resident app.
      */
     deactivateResidentApp(client) {
-      thunder$h.call('org.rdk.RDKShell', 'destroy', {
+      thunder$j.call('org.rdk.RDKShell', 'destroy', {
         callsign: client
       });
     }
@@ -7945,12 +7827,12 @@ var APP_accelerator_home_ui = (function () {
      */
     setVisibility(client, visible) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.RDKShell', 'setVisibility', {
+        thunder$j.call('org.rdk.RDKShell', 'setVisibility', {
           client: client,
           visible: visible
         });
         if (visible) {
-          thunder$h.call('org.rdk.RDKShell', 'setFocus', {
+          thunder$j.call('org.rdk.RDKShell', 'setFocus', {
             client: client
           }).then(res => {
             resolve(true);
@@ -7963,7 +7845,7 @@ var APP_accelerator_home_ui = (function () {
     }
     visible(client, visible) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.RDKShell', 'setVisibility', {
+        thunder$j.call('org.rdk.RDKShell', 'setVisibility', {
           client: client,
           visible: visible
         });
@@ -7971,7 +7853,7 @@ var APP_accelerator_home_ui = (function () {
     }
     enabledisableinactivityReporting(bool) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.RDKShell', 'enableInactivityReporting', {
+        thunder$j.call('org.rdk.RDKShell', 'enableInactivityReporting', {
           "enable": bool
         }).then(result => {
           resolve(result);
@@ -7981,10 +7863,10 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
-    setInactivityInterval(t) {
+    setInactivityInterval(duration) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.RDKShell', 'setInactivityInterval', {
-          "interval": t
+        thunder$j.call('org.rdk.RDKShell', 'setInactivityInterval', {
+          "interval": duration
         }).then(result => {
           resolve(result);
         }).catch(err => {
@@ -7994,23 +7876,23 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     zorder(cli) {
-      thunder$h.call('org.rdk.RDKShell', 'moveToFront', {
+      thunder$j.call('org.rdk.RDKShell', 'moveToFront', {
         client: cli,
         callsign: cli
       });
     }
     setFocus(cli) {
-      thunder$h.call('org.rdk.RDKShell', 'setFocus', {
+      thunder$j.call('org.rdk.RDKShell', 'setFocus', {
         client: cli
       });
     }
     moveToBack(cli) {
-      thunder$h.call('org.rdk.RDKShell', 'moveToBack', {
+      thunder$j.call('org.rdk.RDKShell', 'moveToBack', {
         client: cli
       });
     }
     setOpacity(cli, opacity) {
-      thunder$h.call('org.rdk.RDKShell', 'setOpacity', {
+      thunder$j.call('org.rdk.RDKShell', 'setOpacity', {
         client: cli,
         opacity: opacity
       });
@@ -8021,14 +7903,13 @@ var APP_accelerator_home_ui = (function () {
     * @param {appName} Name of the application
     * @param {config_data} config_data configuration data
     */
-
     configureApplication(appName, config_data) {
       let plugin = 'Controller';
       let method = 'configuration@' + appName;
       return new Promise((resolve, reject) => {
-        thunder$h.call(plugin, method).then(res => {
+        thunder$j.call(plugin, method).then(res => {
           res.querystring = config_data;
-          thunder$h.call(plugin, method, res).then(resp => {
+          thunder$j.call(plugin, method, res).then(resp => {
             console.log("AppAPI ".concat(appName, " : updating configuration with object ").concat(res, " results in ").concat(resp));
             resolve(true);
           }).catch(err => {
@@ -8039,52 +7920,9 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
-    /**
-     * Function to launch Native app.
-     * @param {String} url url of app.
-     */
-    launchNative(url) {
-      return new Promise((resolve, reject) => {
-        const childCallsign = 'essos-sample';
-        thunder$h.call('org.rdk.RDKShell', 'launchApplication', {
-          client: childCallsign,
-          uri: url,
-          mimeType: 'application/native'
-        }).then(res => {
-          console.log("AppAPI launchNative resulted in : ", JSON.stringify(res));
-          resolve(true);
-        }).catch(err => {
-          console.error('AppAPI launchNative error: ' + JSON.stringify(err));
-          reject(err);
-        });
-      });
-    }
-
-    /**
-       * Function to kill native app.
-       */
-    killNative() {
-      thunder$h.call('org.rdk.RDKShell', 'kill', {
-        callsign: 'essos-sample'
-      });
-    }
-    static pluginStatus(plugin) {
-      switch (plugin) {
-        case 'WebApp':
-          return activatedWeb;
-        case 'Cobalt':
-          return activatedCobalt;
-        case 'Lightning':
-          return activatedLightning;
-        case 'Amazon':
-          return activatedAmazon;
-        case 'Netflix':
-          return activatedNetflix;
-      }
-    }
     setPowerState(value) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'setPowerState', {
+        thunder$j.call('org.rdk.System', 'setPowerState', {
           "powerState": value,
           "standbyReason": "ResidentApp User Requested"
         }).then(result => {
@@ -8097,7 +7935,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getPowerState() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getPowerState').then(result => {
+        thunder$j.call('org.rdk.System', 'getPowerState').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI System getPowerState failed: ", JSON.stringify(err));
@@ -8107,7 +7945,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getWakeupReason() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getWakeupReason').then(result => {
+        thunder$j.call('org.rdk.System', 'getWakeupReason').then(result => {
           resolve(result);
         }).catch(err => {
           console.log("org.rdk.System: getWakeupReason: Error in getting wake up reason: ", err);
@@ -8117,7 +7955,7 @@ var APP_accelerator_home_ui = (function () {
     }
     enableDisplaySettings() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('Controller', 'activate', {
+        thunder$j.call('Controller', 'activate', {
           callsign: 'org.rdk.DisplaySettings'
         }).then(result => {
           console.log('AppAPI activate DisplaySettings success.');
@@ -8130,7 +7968,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getSoundMode() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getSoundMode', {
+        thunder$j.call('org.rdk.DisplaySettings', 'getSoundMode', {
           "audioPort": "HDMI0"
         }).then(result => {
           resolve(result);
@@ -8144,7 +7982,7 @@ var APP_accelerator_home_ui = (function () {
       mode = mode.startsWith("AUTO") ? "AUTO" : mode;
       console.log("mode", mode);
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'setSoundMode', {
+        thunder$j.call('org.rdk.DisplaySettings', 'setSoundMode', {
           "audioPort": "HDMI0",
           "soundMode": mode,
           "persist": true
@@ -8158,7 +7996,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getSupportedAudioModes() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getSupportedAudioModes', {
+        thunder$j.call('org.rdk.DisplaySettings', 'getSupportedAudioModes', {
           "audioPort": "HDMI0"
         }).then(result => {
           resolve(result);
@@ -8169,10 +8007,10 @@ var APP_accelerator_home_ui = (function () {
       });
     }
 
-    //Enable or disable the specified audio port based on the input audio port ID. 
+    //Enable or disable the specified audio port based on the input audio port ID.
     setEnableAudioPort(port) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'setEnableAudioPort', {
+        thunder$j.call('org.rdk.DisplaySettings', 'setEnableAudioPort', {
           "audioPort": port,
           "enable": true
         }).then(result => {
@@ -8185,7 +8023,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getDRCMode() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getDRCMode', {
+        thunder$j.call('org.rdk.DisplaySettings', 'getDRCMode', {
           "audioPort": "HDMI0"
         }).then(result => {
           resolve(result);
@@ -8197,7 +8035,7 @@ var APP_accelerator_home_ui = (function () {
     }
     setDRCMode(DRCNum) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'setDRCMode', {
+        thunder$j.call('org.rdk.DisplaySettings', 'setDRCMode', {
           "DRCMode": DRCNum
         }).then(result => {
           resolve(result);
@@ -8209,7 +8047,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getZoomSetting() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getZoomSetting').then(result => {
+        thunder$j.call('org.rdk.DisplaySettings', 'getZoomSetting').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI DisplaySettings getZoomSetting error:", JSON.stringify(err));
@@ -8219,7 +8057,7 @@ var APP_accelerator_home_ui = (function () {
     }
     setZoomSetting(zoom) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'setZoomSetting', {
+        thunder$j.call('org.rdk.DisplaySettings', 'setZoomSetting', {
           "zoomSetting": zoom
         }).then(result => {
           resolve(result);
@@ -8231,7 +8069,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getEnableAudioPort(audioPort) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getEnableAudioPort', {
+        thunder$j.call('org.rdk.DisplaySettings', 'getEnableAudioPort', {
           "audioPort": audioPort
         }).then(result => {
           resolve(result);
@@ -8243,7 +8081,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getSupportedAudioPorts() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getSupportedAudioPorts').then(result => {
+        thunder$j.call('org.rdk.DisplaySettings', 'getSupportedAudioPorts').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI DisplaySettings getSupportedAudioPorts error:", JSON.stringify(err));
@@ -8259,9 +8097,9 @@ var APP_accelerator_home_ui = (function () {
     //1. UI VOICE
 
     //Start a speech
-    speak() {
+    ttsSpeak() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.TextToSpeech', 'speak', {
+        thunder$j.call('org.rdk.TextToSpeech', 'speak', {
           "text": "speech_1"
         }).then(result => {
           resolve(result);
@@ -8273,9 +8111,9 @@ var APP_accelerator_home_ui = (function () {
     }
 
     //Resume a speech
-    resume() {
+    ttsResume() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.TextToSpeech', 'resume', {
+        thunder$j.call('org.rdk.TextToSpeech', 'resume', {
           "speechid": 1
         }).then(result => {
           resolve(result);
@@ -8287,9 +8125,9 @@ var APP_accelerator_home_ui = (function () {
     }
 
     //Pause a speech
-    pause() {
+    ttsPause() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.TextToSpeech', 'pause', {
+        thunder$j.call('org.rdk.TextToSpeech', 'pause', {
           "speechid": 1
         }).then(result => {
           resolve(result);
@@ -8301,9 +8139,9 @@ var APP_accelerator_home_ui = (function () {
     }
 
     // 2. TTS Options
-    getlistVoices() {
+    ttsGetListVoices() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.TextToSpeech', 'listvoices', {
+        thunder$j.call('org.rdk.TextToSpeech', 'listvoices', {
           "language": "en-US"
         }).then(result => {
           resolve(result);
@@ -8317,7 +8155,7 @@ var APP_accelerator_home_ui = (function () {
     // 3. Sync Location
     syncLocation() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('LocationSync', 'sync').then(result => {
+        thunder$j.call('LocationSync', 'sync').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI LocationSync sync error:", JSON.stringify(err, 3, null));
@@ -8327,7 +8165,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getLocation() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('LocationSync', 'location').then(result => {
+        thunder$j.call('LocationSync', 'location').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI LocationSync location error:", JSON.stringify(err, 3, null));
@@ -8340,7 +8178,7 @@ var APP_accelerator_home_ui = (function () {
     //Get Firmware Update Info
     getFirmwareUpdateInfo() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getFirmwareUpdateInfo').then(result => {
+        thunder$j.call('org.rdk.System', 'getFirmwareUpdateInfo').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI System getFirmwareUpdateInfo error:", JSON.stringify(err, 3, null));
@@ -8352,7 +8190,7 @@ var APP_accelerator_home_ui = (function () {
     // Get Firmware Update State
     getFirmwareUpdateState() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getFirmwareUpdateState').then(result => {
+        thunder$j.call('org.rdk.System', 'getFirmwareUpdateState').then(result => {
           resolve(result);
         }).catch(err => {
           console.error(" AppAPI System getFirmwareUpdateState error:", JSON.stringify(err, 3, null));
@@ -8360,10 +8198,11 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
+
     // Get Firmware download info
     getDownloadFirmwareInfo() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getDownloadedFirmwareInfo').then(result => {
+        thunder$j.call('org.rdk.System', 'getDownloadedFirmwareInfo').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI System getDownloadedFirmwareInfo error:", JSON.stringify(err, 3, null));
@@ -8375,7 +8214,7 @@ var APP_accelerator_home_ui = (function () {
     //Get serial number
     getSerialNumber() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getSerialNumber').then(result => {
+        thunder$j.call('org.rdk.System', 'getSerialNumber').then(result => {
           console.log(JSON.stringify(result, 3, null));
           resolve(result);
         }).catch(err => {
@@ -8388,7 +8227,7 @@ var APP_accelerator_home_ui = (function () {
     //Get system versions
     getSystemVersions() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getSystemVersions').then(result => {
+        thunder$j.call('org.rdk.System', 'getSystemVersions').then(result => {
           console.log(JSON.stringify(result, 3, null));
           resolve(result);
         }).catch(err => {
@@ -8401,7 +8240,7 @@ var APP_accelerator_home_ui = (function () {
     //Update firmware
     updateFirmware() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'updateFirmware').then(result => {
+        thunder$j.call('org.rdk.System', 'updateFirmware').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI System updateFirmware error:", JSON.stringify(err, 3, null));
@@ -8413,7 +8252,7 @@ var APP_accelerator_home_ui = (function () {
     //Get download percentage
     getFirmwareDownloadPercent() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getFirmwareDownloadPercent').then(result => {
+        thunder$j.call('org.rdk.System', 'getFirmwareDownloadPercent').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI getFirmwareDownloadPercent error:", JSON.stringify(err, 3, null));
@@ -8425,7 +8264,7 @@ var APP_accelerator_home_ui = (function () {
     // device Identification
     getDeviceIdentification() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('DeviceIdentification', 'deviceidentification').then(result => {
+        thunder$j.call('DeviceIdentification', 'deviceidentification').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI getDeviceIdentification error:", JSON.stringify(err, 3, null));
@@ -8437,10 +8276,20 @@ var APP_accelerator_home_ui = (function () {
     // 5. Device Info
     systeminfo() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('DeviceInfo', 'systeminfo').then(result => {
+        thunder$j.call('DeviceInfo', 'systeminfo').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI systeminfo error:", JSON.stringify(err, 3, null));
+          resolve(false);
+        });
+      });
+    }
+    deviceType() {
+      return new Promise((resolve, reject) => {
+        thunder$j.call('DeviceInfo', 'devicetype').then(result => {
+          resolve(result);
+        }).catch(err => {
+          console.error("AppAPI devicetype error:", JSON.stringify(err, 3, null));
           resolve(false);
         });
       });
@@ -8449,7 +8298,7 @@ var APP_accelerator_home_ui = (function () {
     // 6. Reboot
     reboot() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'reboot', {
+        thunder$j.call('org.rdk.System', 'reboot', {
           "rebootReason": "FIRMWARE_FAILURE"
         }).then(result => {
           resolve(result);
@@ -8461,17 +8310,16 @@ var APP_accelerator_home_ui = (function () {
     }
     getNetflixESN() {
       return new Promise(resolve => {
-        thunder$h.call('Netflix', 'esn').then(res => {
+        thunder$j.call('Netflix', 'esn').then(res => {
           resolve(res);
         });
       });
     }
 
     // get prefered standby mode
-
     getPreferredStandbyMode() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'getPreferredStandbyMode').then(result => {
+        thunder$j.call('org.rdk.System', 'getPreferredStandbyMode').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI getPreferredStandbyMode error:", JSON.stringify(err, 3, null));
@@ -8482,7 +8330,7 @@ var APP_accelerator_home_ui = (function () {
     setPreferredStandbyMode(standbyMode) {
       console.log("setPreferredStandbyMode called : " + standbyMode);
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.System', 'setPreferredStandbyMode', {
+        thunder$j.call('org.rdk.System', 'setPreferredStandbyMode', {
           "standbyMode": standbyMode
         }).then(result => {
           resolve(result);
@@ -8493,11 +8341,10 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     registerChangeLocation() {
-      var callsign = "LocationSync";
-      thunder$h.call('Controller', 'activate', {
-        callsign: callsign
+      thunder$j.call('Controller', 'activate', {
+        callsign: "LocationSync"
       }).then(result => {
-        thunder$h.on(callsign, "locationchange", notification => {
+        thunder$j.on("LocationSync", "locationchange", notification => {
           console.log("AppAPI locationchange notification :", notification);
         });
       }).catch(err => {
@@ -8505,16 +8352,15 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     async sendAppState(value) {
-      const state = await thunder$h.call('org.rdk.RDKShell', 'getState', {}).then(result => result.state);
+      const state = await thunder$j.call('org.rdk.RDKShell', 'getState', {}).then(result => result.state);
       this.state = state;
       let params = {
         applicationName: value,
         state: 'stopped'
       };
-      for (var i = 0; i < state.length; i++) {
+      for (let i = 0; i < state.length; i++) {
         if (state[i].callsign == value) {
           if (state[i].state == 'resumed') {
-            activatedCobalt = true;
             params.state = 'running';
           } else if (state[i].state == 'suspended') {
             params.state = 'suspended';
@@ -8523,17 +8369,14 @@ var APP_accelerator_home_ui = (function () {
           }
         }
       }
-      if (params.state === 'stopped') {
-        activatedCobalt = false;
-      }
-      await thunder$h.call('org.rdk.Xcast', 'onApplicationStateChanged', params).then(result => result.success);
+      await thunder$j.call('org.rdk.Xcast', 'onApplicationStateChanged', params).then(result => result.success);
     }
     //NETWORK INFO APIS
 
     //1. Get IP Setting
     getIPSetting(defaultInterface) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Network', 'getIPSettings', {
+        thunder$j.call('org.rdk.Network', 'getIPSettings', {
           "interface": defaultInterface
         }).then(result => {
           resolve(result);
@@ -8547,7 +8390,7 @@ var APP_accelerator_home_ui = (function () {
     //2. Get default interface
     getDefaultInterface() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Network', 'getDefaultInterface').then(result => {
+        thunder$j.call('org.rdk.Network', 'getDefaultInterface').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI getDefaultInterface error:", JSON.stringify(err, 3, null));
@@ -8559,7 +8402,7 @@ var APP_accelerator_home_ui = (function () {
     //3. Is interface enabled
     isInterfaceEnabled() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Network', 'isInterfaceEnabled', {
+        thunder$j.call('org.rdk.Network', 'isInterfaceEnabled', {
           "interface": "WIFI"
         }).then(result => {
           resolve(result);
@@ -8573,7 +8416,7 @@ var APP_accelerator_home_ui = (function () {
     //4. Get interfaces
     getInterfaces() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Network', 'getInterfaces').then(result => {
+        thunder$j.call('org.rdk.Network', 'getInterfaces').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI getInterfaces error:", JSON.stringify(err, 3, null));
@@ -8585,7 +8428,7 @@ var APP_accelerator_home_ui = (function () {
     //5. getConnectedSSID
     getConnectedSSID() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Wifi', 'getConnectedSSID').then(result => {
+        thunder$j.call('org.rdk.Wifi', 'getConnectedSSID').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI getConnectedSSID error:", JSON.stringify(err, 3, null));
@@ -8595,10 +8438,9 @@ var APP_accelerator_home_ui = (function () {
     }
 
     // Volume Apis
-
     getConnectedAudioPorts() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getConnectedAudioPorts', {}).then(result => {
+        thunder$j.call('org.rdk.DisplaySettings', 'getConnectedAudioPorts', {}).then(result => {
           resolve(result);
         }).catch(err => {
           console.error('AppAPI getConnectedAudioPorts error:', JSON.stringify(err, 3, null));
@@ -8608,7 +8450,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getVolumeLevel(port) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getVolumeLevel', {
+        thunder$j.call('org.rdk.DisplaySettings', 'getVolumeLevel', {
           audioPort: port
         }).then(result => {
           resolve(result);
@@ -8620,7 +8462,7 @@ var APP_accelerator_home_ui = (function () {
     }
     muteStatus(port) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getMuted', {
+        thunder$j.call('org.rdk.DisplaySettings', 'getMuted', {
           audioPort: port
         }).then(result => {
           resolve(result);
@@ -8632,7 +8474,7 @@ var APP_accelerator_home_ui = (function () {
     }
     setVolumeLevel(port, volume) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'setVolumeLevel', {
+        thunder$j.call('org.rdk.DisplaySettings', 'setVolumeLevel', {
           audioPort: port,
           volumeLevel: volume
         }).then(result => {
@@ -8646,7 +8488,7 @@ var APP_accelerator_home_ui = (function () {
     }
     audio_mute(audio_source, value) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'setMuted', {
+        thunder$j.call('org.rdk.DisplaySettings', 'setMuted', {
           audioPort: audio_source,
           muted: value
         }).then(result => {
@@ -8660,7 +8502,7 @@ var APP_accelerator_home_ui = (function () {
     //created only to get the required params
     getPluginStatusParams(plugin) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('Controller', "status@".concat(plugin)).then(result => {
+        thunder$j.call('Controller', "status@".concat(plugin)).then(result => {
           console.log("pluginstatus", result);
           let pluginParams = [result[0].callsign, result[0].state];
           resolve(pluginParams);
@@ -8673,7 +8515,7 @@ var APP_accelerator_home_ui = (function () {
     //activate autopairing for stack
     activateAutoPairing() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.RemoteControl', 'startPairing', {
+        thunder$j.call('org.rdk.RemoteControl', 'startPairing', {
           "netType": '1',
           "timeout": '30'
         }).then(result => {
@@ -8688,7 +8530,7 @@ var APP_accelerator_home_ui = (function () {
     resetBassEnhancer(port) {
       console.log("portname", port);
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'resetBassEnhancer', {
+        thunder$j.call('org.rdk.DisplaySettings', 'resetBassEnhancer', {
           "audioPort": port
         }).then(result => {
           resolve(result);
@@ -8700,7 +8542,7 @@ var APP_accelerator_home_ui = (function () {
     }
     resetDialogEnhancement(port) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'resetDialogEnhancement', {
+        thunder$j.call('org.rdk.DisplaySettings', 'resetDialogEnhancement', {
           "audioPort": port
         }).then(result => {
           resolve(result);
@@ -8713,7 +8555,7 @@ var APP_accelerator_home_ui = (function () {
     //resetSurroundVirtualizer
     resetSurroundVirtualizer(port) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'resetSurroundVirtualizer', {
+        thunder$j.call('org.rdk.DisplaySettings', 'resetSurroundVirtualizer', {
           "audioPort": port
         }).then(result => {
           resolve(result);
@@ -8726,7 +8568,7 @@ var APP_accelerator_home_ui = (function () {
     //resetVolumeLeveller
     resetVolumeLeveller(port) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'resetVolumeLeveller', {
+        thunder$j.call('org.rdk.DisplaySettings', 'resetVolumeLeveller', {
           "audioPort": port
         }).then(result => {
           resolve(result);
@@ -8738,7 +8580,7 @@ var APP_accelerator_home_ui = (function () {
     }
     flushcache() {
       return new Promise(resolve => {
-        thunder$h.call('org.rdk.PersistentStore', 'flushCache').then(result => {
+        thunder$j.call('org.rdk.PersistentStore', 'flushCache').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI flushCache error:", err);
@@ -8749,7 +8591,7 @@ var APP_accelerator_home_ui = (function () {
     //resetInactivityTime
     resetInactivityTime() {
       return new Promise(resolve => {
-        thunder$h.call('org.rdk.RDKShell', 'resetInactivityTime').then(result => {
+        thunder$j.call('org.rdk.RDKShell', 'resetInactivityTime').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI resetInactivityTime error:", err);
@@ -8760,7 +8602,7 @@ var APP_accelerator_home_ui = (function () {
     //clearLastDeepSleepReason
     clearLastDeepSleepReason() {
       return new Promise(resolve => {
-        thunder$h.call('org.rdk.System', 'clearLastDeepSleepReason').then(result => {
+        thunder$j.call('org.rdk.System', 'clearLastDeepSleepReason').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI clearLastDeepSleepReason error:", err);
@@ -8770,7 +8612,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getSupportedAudioPorts() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DisplaySettings', 'getSupportedAudioPorts').then(result => {
+        thunder$j.call('org.rdk.DisplaySettings', 'getSupportedAudioPorts').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI getSupportedAudioPorts error:", err);
@@ -8780,7 +8622,7 @@ var APP_accelerator_home_ui = (function () {
     }
     monitorStatus(callsign) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('Monitor', 'resetstats', {
+        thunder$j.call('Monitor', 'resetstats', {
           "callsign": callsign
         }).then(result => {
           resolve(result);
@@ -8794,7 +8636,7 @@ var APP_accelerator_home_ui = (function () {
     // warehouse api's
     internalReset() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Warehouse', 'internalReset', {
+        thunder$j.call('org.rdk.Warehouse', 'internalReset', {
           "passPhrase": "FOR TEST PURPOSES ONLY"
         }).then(result => {
           resolve(result);
@@ -8806,7 +8648,7 @@ var APP_accelerator_home_ui = (function () {
     }
     isClean() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Warehouse', 'isClean').then(result => {
+        thunder$j.call('org.rdk.Warehouse', 'isClean').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI isClean error:", err);
@@ -8816,7 +8658,7 @@ var APP_accelerator_home_ui = (function () {
     }
     lightReset() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Warehouse', 'lightReset').then(result => {
+        thunder$j.call('org.rdk.Warehouse', 'lightReset').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI lightReset error:", err);
@@ -8826,7 +8668,7 @@ var APP_accelerator_home_ui = (function () {
     }
     resetDevice() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.Warehouse', 'resetDevice', {
+        thunder$j.call('org.rdk.Warehouse', 'resetDevice', {
           "suppressReboot": false,
           "resetType": "USERFACTORY"
         }).then(result => {
@@ -8837,10 +8679,11 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
+
     //{ path: ".cache" }
     deletecache(systemcCallsign, path) {
       return new Promise((resolve, reject) => {
-        thunder$h.call(systemcCallsign, 'delete', {
+        thunder$j.call(systemcCallsign, 'delete', {
           path: path
         }).then(result => {
           resolve(result);
@@ -8850,10 +8693,11 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
+
     // activate controller plugin
     activateController(callsign) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('Controller', 'activate', {
+        thunder$j.call('Controller', 'activate', {
           callsign: callsign
         }).then(result => {
           resolve(result);
@@ -8865,7 +8709,7 @@ var APP_accelerator_home_ui = (function () {
     }
     checkStatus(plugin) {
       return new Promise((resolve, reject) => {
-        thunder$h.call('Controller', 'status@' + plugin).then(res => {
+        thunder$j.call('Controller', 'status@' + plugin).then(res => {
           console.log("AppAPI checkStatus ", JSON.stringify(res));
           resolve(res);
         }).catch(err => {
@@ -8877,7 +8721,7 @@ var APP_accelerator_home_ui = (function () {
     configStatus() {
       //controller.1.configuration
       return new Promise((resolve, reject) => {
-        thunder$h.call('Controller', 'status').then(res => {
+        thunder$j.call('Controller', 'status').then(res => {
           console.log("AppAPI configStatus ", JSON.stringify(res));
           resolve(res);
         }).catch(err => {
@@ -8888,7 +8732,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getAvCodeStatus() {
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.DeviceDiagnostics', 'getAVDecoderStatus').then(result => {
+        thunder$j.call('org.rdk.DeviceDiagnostics', 'getAVDecoderStatus').then(result => {
           resolve(result);
         }).catch(err => {
           console.error("AppAPI getAvCodeStatus error:", err);
@@ -8899,7 +8743,7 @@ var APP_accelerator_home_ui = (function () {
     SaveTimerValue(value1) {
       console.log("persistenceSt", value1);
       return new Promise((resolve, reject) => {
-        thunder$h.call('org.rdk.PersistentStore', 'setValue', {
+        thunder$j.call('org.rdk.PersistentStore', 'setValue', {
           namespace: "ScreenSaverTime",
           key: "timerValue",
           value: value1
@@ -8913,7 +8757,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getTimerValue() {
       return new Promise(resolve => {
-        thunder$h.call('org.rdk.PersistentStore', 'getValue', {
+        thunder$j.call('org.rdk.PersistentStore', 'getValue', {
           namespace: 'ScreenSaverTime',
           key: 'timerValue'
         }).then(result => {
@@ -8931,7 +8775,7 @@ var APP_accelerator_home_ui = (function () {
       return new Promise((resolve, reject) => {
         Storage.set("AlexaVoiceAssitantState", "AlexaAuthPending");
         const systemCallsign = 'org.rdk.VoiceControl';
-        thunder$h.call(systemCallsign, 'sendVoiceMessage', {
+        thunder$j.call(systemCallsign, 'sendVoiceMessage', {
           "msgPayload": {
             "event": "ResetAVS"
           }
@@ -8948,10 +8792,8 @@ var APP_accelerator_home_ui = (function () {
      * Return respective map so that logic can be drawn based on that.
      */
     checkAlexaAuthStatus() {
-      // DAB Demo WorkAround - return all Denied
-      if (Storage.get("AlexaVoiceAssitantState") === "AlexaUserDenied") return "AlexaUserDenied"; // User has opted out of Alexa Voice Service; Do not process AVS Auth/Error states.
-      else if (Storage.get("AlexaVoiceAssitantState") === null || Storage.get("AlexaVoiceAssitantState") === "null") return "AlexaAuthPending"; // Do not handle Alexa Related Errors; only Handle its Auth status.
-      else return "AlexaHandleError"; // User has not opted out of Alexa Voice Service and Auth was success earlier.
+      if (Storage.get("AlexaVoiceAssitantState") === undefined || Storage.get("AlexaVoiceAssitantState") === null || Storage.get("AlexaVoiceAssitantState") === "AlexaAuthPending") return "AlexaAuthPending"; // Do not handle Alexa Related Errors; only Handle its Auth status.
+      else return Storage.get("AlexaVoiceAssitantState"); // Return the stored value of AlexaVoiceAssitantState
     }
 
     setAlexaAuthStatus() {
@@ -9014,82 +8856,35 @@ var APP_accelerator_home_ui = (function () {
     url: '/images/apps/App_Amazon_Prime_454x255.png',
     appIdentifier: 'n:2'
   }, {
-    displayName: 'Youtube',
-    applicationType: 'Cobalt',
-    uri: '',
+    displayName: 'YouTube',
+    applicationType: 'YouTube',
+    uri: 'https://www.youtube.com/tv',
     url: '/images/apps/App_YouTube_454x255.png',
     appIdentifier: 'n:3'
+  }, {
+    displayName: 'YouTubeTV',
+    applicationType: 'YouTubeTV',
+    uri: 'https://www.youtube.com/tv/upg',
+    url: '/images/apps/App_YouTubeTV_454x255.png',
+    appIdentifier: 'n:4'
+  }, {
+    displayName: 'YouTubeKids',
+    applicationType: 'YouTubeKids',
+    uri: 'https://www.youtube.com/tv_kids',
+    url: '/images/apps/App_YouTubeKids_454x255.png',
+    appIdentifier: 'n:5'
   }, {
     displayName: 'Peacock',
     applicationType: 'LightningApp',
     uri: '',
     url: '/images/apps/App_Peacock_454x255.png',
-    appIdentifier: 'n:4'
+    appIdentifier: 'n:6'
   }, {
     displayName: 'Xumo',
     applicationType: 'HtmlApp',
     uri: 'https://x1box-app.xumo.com/index.html',
     url: '/images/apps/App_Xumo_454x255.png',
-    appIdentifier: 'n:5'
-  }];
-
-  /**
-   * If not stated otherwise in this file or this component's LICENSE
-   * file the following copyright and licenses apply:
-   *
-   * Copyright 2020 RDK Management
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   **/
-  /**
-   * Class which contains data for app listings.
-   */
-  var appListInfoOffline = [{
-    displayName: 'USB',
-    applicationType: '',
-    uri: 'USB',
-    url: '/images/usb/USB_Featured_Item.jpg',
-    appIdentifier: 'n:0'
-  }, {
-    displayName: 'Netflix',
-    applicationType: 'Netflix',
-    uri: '',
-    url: '/images/apps/App_Netflix_454x255.png',
-    appIdentifier: 'n:1'
-  }, {
-    displayName: 'Amazon Prime video',
-    applicationType: 'Amazon',
-    uri: '',
-    url: '/images/apps/App_Amazon_Prime_454x255.png',
-    appIdentifier: 'n:2'
-  }, {
-    displayName: 'Youtube',
-    applicationType: 'Cobalt',
-    uri: '',
-    url: '/images/apps/App_YouTube_454x255.png',
-    appIdentifier: 'n:3'
-  }, {
-    displayName: 'Peacock',
-    applicationType: 'LightningApp',
-    uri: '',
-    url: '/images/apps/App_Peacock_454x255.png',
-    appIdentifier: 'n:4'
-  }, {
-    displayName: 'Xumo',
-    applicationType: 'HtmlApp',
-    uri: 'https://x1box-app.xumo.com/index.html',
-    url: '/images/apps/App_Xumo_454x255.png',
-    appIdentifier: 'n:5'
+    appIdentifier: 'n:7'
   }];
 
   /**
@@ -9809,8 +9604,8 @@ var APP_accelerator_home_ui = (function () {
   }).catch(() => {
     Storage.set("ipAddress", null);
   });
-  let appApi$e = new AppApi();
-  appApi$e.getIP().then(ip => {
+  let appApi$j = new AppApi();
+  appApi$j.getIP().then(ip => {
     IpAddress2 = ip;
   });
 
@@ -9822,12 +9617,7 @@ var APP_accelerator_home_ui = (function () {
      * Function to get details for app listing.
      */
     getAppListInfo() {
-      let appsMetaData;
-      if (IpAddress1 || IpAddress2) {
-        appsMetaData = appListInfo;
-      } else {
-        appsMetaData = appListInfoOffline;
-      }
+      let appsMetaData = appListInfo;
       return JSON.parse(JSON.stringify(appsMetaData));
     }
 
@@ -9920,7 +9710,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getMovieSubscriptions(id) {
       return new Promise((resolve, reject) => {
-        appApi$e.fetchApiKey().then(res => {
+        appApi$j.fetchApiKey().then(res => {
           // console.log("Key is: ", res);
           // console.log("tmsID is :", id);
           try {
@@ -9935,7 +9725,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getAPIKey() {
       return new Promise((resolve, reject) => {
-        appApi$e.fetchApiKey().then(res => {
+        appApi$j.fetchApiKey().then(res => {
           let [day, month, year] = [new Date().getUTCDate(), new Date().getUTCMonth(), new Date().getUTCFullYear()];
           month += 1;
           day = day.toString();
@@ -10181,13 +9971,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$f = {
+  const config$h = {
     host: "127.0.0.1",
     port: 9998,
     default: 1
   };
-  const thunder$g = thunderJS(config$f);
-  const systemcCallsign$2 = "DTV";
+  const thunder$i = thunderJS$1(config$h);
   let playerID = -1; //set to -1 to indicate nothing is currently playing
 
   let customServiceList = []; //list containing all channel details
@@ -10210,8 +9999,8 @@ var APP_accelerator_home_ui = (function () {
   class DTVApi {
     activate() {
       return new Promise((resolve, reject) => {
-        thunder$g.Controller.activate({
-          callsign: systemcCallsign$2
+        thunder$i.Controller.activate({
+          callsign: "DTV"
         }).then(() => {
           resolve(true);
         }).catch(err => {
@@ -10222,8 +10011,8 @@ var APP_accelerator_home_ui = (function () {
     }
     deactivate() {
       return new Promise((resolve, reject) => {
-        thunder$g.Controller.deactivate({
-          callsign: systemcCallsign$2
+        thunder$i.Controller.deactivate({
+          callsign: "DTV"
         }).then(() => {
           resolve(true);
         }).catch(err => {
@@ -10235,7 +10024,7 @@ var APP_accelerator_home_ui = (function () {
     //gets the number of available countries
     noOfCountries() {
       return new Promise((resolve, reject) => {
-        thunder$g.call(systemcCallsign$2, "numberOfCountries").then(result => {
+        thunder$i.call("DTV", "numberOfCountries").then(result => {
           resolve(result);
         }).catch(err => {
           console.log("Error: noOfCountries: ", JSON.stringify(err));
@@ -10246,7 +10035,7 @@ var APP_accelerator_home_ui = (function () {
     //returns the list of the available countries
     countryList() {
       return new Promise((resolve, reject) => {
-        thunder$g.call(systemcCallsign$2, "countryList").then(result => {
+        thunder$i.call("DTV", "countryList").then(result => {
           resolve(result);
         }).catch(err => {
           console.log("Error: countryList: ", JSON.stringify(err));
@@ -10270,8 +10059,20 @@ var APP_accelerator_home_ui = (function () {
         dvburi: "OTT",
         lcn: 0
       }, {
-        shortname: "Youtube",
-        callsign: "Cobalt",
+        shortname: "YouTube",
+        callsign: "YouTube",
+        url: "",
+        dvburi: "OTT",
+        lcn: 0
+      }, {
+        shortname: "YouTubeTV",
+        callsign: "YouTubeTV",
+        url: "",
+        dvburi: "OTT",
+        lcn: 0
+      }, {
+        shortname: "YouTubeKids",
+        callsign: "YouTubeKids",
         url: "",
         dvburi: "OTT",
         lcn: 0
@@ -10281,7 +10082,7 @@ var APP_accelerator_home_ui = (function () {
       }
       console.log("arr from serviceList: ", arr);
       return new Promise((resolve, reject) => {
-        thunder$g.call(systemcCallsign$2, "serviceList@dvbs").then(result => {
+        thunder$i.call("DTV", "serviceList@dvbs").then(result => {
           arr = arr.concat(result);
           console.log("serviceListResult: ", JSON.stringify(arr));
           resolve(arr);
@@ -10311,7 +10112,7 @@ var APP_accelerator_home_ui = (function () {
             resolve([]);
           }
         } else {
-          thunder$g.call(systemcCallsign$2, method).then(result => {
+          thunder$i.call("DTV", method).then(result => {
             console.log("scheduleEventsResult: ", JSON.stringify(result));
             for (let show of result) {
               show.starttime *= 1000;
@@ -10330,7 +10131,7 @@ var APP_accelerator_home_ui = (function () {
     satelliteList() {
       return new Promise((resolve, reject) => {
         // resolve([{name: "Satellite 1",longitude: 282,lnb: "Universal" },{name: "Satellite 2",longitude: 282,lnb: "Universal" }]) //#forTesting
-        thunder$g.call(systemcCallsign$2, "satelliteList").then(result => {
+        thunder$i.call("DTV", "satelliteList").then(result => {
           if (result.length === 0) {
             result = [{
               "name": "Astra 28.2E",
@@ -10379,7 +10180,7 @@ var APP_accelerator_home_ui = (function () {
     //initiates a service search for the provided params
     startServiceSearch(params) {
       return new Promise((resolve, reject) => {
-        thunder$g.call(systemcCallsign$2, "startServiceSearch", params).then(result => {
+        thunder$i.call("DTV", "startServiceSearch", params).then(result => {
           //console.log("serviceSearchResult: ", JSON.stringify(result));
           resolve(result);
         }).catch(err => {
@@ -10391,7 +10192,7 @@ var APP_accelerator_home_ui = (function () {
     //returns the number of available services(channels)
     noOfServices() {
       return new Promise((resolve, reject) => {
-        thunder$g.call(systemcCallsign$2, "numberOfServices").then(result => {
+        thunder$i.call("DTV", "numberOfServices").then(result => {
           //console.log("numberOfServicesResult: ", JSON.stringify(result));
           resolve(result);
         }).catch(err => {
@@ -10405,7 +10206,7 @@ var APP_accelerator_home_ui = (function () {
     nowNextEvents(dvburi) {
       let method = "nowNextEvents@" + dvburi;
       return new Promise((resolve, reject) => {
-        thunder$g.call(systemcCallsign$2, method).then(result => {
+        thunder$i.call("DTV", method).then(result => {
           //console.log("nowNextEventsResult: ", JSON.stringify(result));
           resolve(result);
         }).catch(err => {
@@ -10422,7 +10223,7 @@ var APP_accelerator_home_ui = (function () {
         return Promise.reject("something is still playing Please retry");
       }
       return new Promise((resolve, reject) => {
-        thunder$g.call(systemcCallsign$2, "startPlaying", params).then(result => {
+        thunder$i.call("DTV", "startPlaying", params).then(result => {
           console.log("RESULT: startPlaying: ", JSON.stringify(result));
           if (result === -1) {
             reject("Can't be played");
@@ -10438,7 +10239,7 @@ var APP_accelerator_home_ui = (function () {
     }
     stopPlaying() {
       return new Promise((resolve, reject) => {
-        thunder$g.call(systemcCallsign$2, "stopPlaying", playerID).then(result => {
+        thunder$i.call("DTV", "stopPlaying", playerID).then(result => {
           //playerID is retuned from startPlaying method
           console.log("RESULT: stopPlaying: ", JSON.stringify(result)); //result is always null
           playerID = -1; //to set that nothing is being played currently
@@ -10538,12 +10339,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$e = {
+  const config$g = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  var thunder$f = thunderJS(config$e);
+  var thunder$h = thunderJS$1(config$g);
 
   /**
    * Class for settings screen.
@@ -10777,13 +10578,10 @@ var APP_accelerator_home_ui = (function () {
       this.dtvApi = new DTVApi();
       this.dtvPlugin = false; //plugin availability
       this.dtvApi.activate().then(res => {
-        // if (res){
         this.dtvPlugin = true;
         this.tag("DTVSettings").alpha = 1;
-        // }
       });
     }
-
     _handleBack() {
       if (!Router.isNavigating()) {
         Router.navigate('menu');
@@ -10895,7 +10693,7 @@ var APP_accelerator_home_ui = (function () {
           //handle Switch
           let self = this;
           if (Storage.get("NFRStatus")) {
-            thunder$f.call("Netflix.1", "nfrstatus", {
+            thunder$h.call("Netflix.1", "nfrstatus", {
               "params": "disable"
             }).then(nr => {
               self.tag("NFRStatus.Button").src = "static/images/settings/ToggleOffWhite.png";
@@ -10906,7 +10704,7 @@ var APP_accelerator_home_ui = (function () {
               console.error(nerr);
             });
           } else {
-            thunder$f.call("Netflix.1", "nfrstatus", {
+            thunder$h.call("Netflix.1", "nfrstatus", {
               "params": "enable"
             }).then(nr => {
               self.tag("NFRStatus.Button").src = "static/images/settings/ToggleOnOrange.png";
@@ -11221,7 +11019,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$d = {
+  const config$f = {
     host: '127.0.0.1',
     port: 9998,
     versions: {
@@ -11230,7 +11028,7 @@ var APP_accelerator_home_ui = (function () {
       UsbAccess: 2
     }
   };
-  var thunder$e = thunderJS(config$d);
+  let thunder$g = thunderJS$1(config$f);
   /**
    * Class that contains functions which commuicates with thunder API's
    */
@@ -11243,7 +11041,7 @@ var APP_accelerator_home_ui = (function () {
     activate() {
       return new Promise((resolve, reject) => {
         const systemcCallsign = 'org.rdk.UsbAccess';
-        thunder$e.Controller.activate({
+        thunder$g.Controller.activate({
           callsign: systemcCallsign
         }).then(res => {
           resolve(res);
@@ -11261,7 +11059,7 @@ var APP_accelerator_home_ui = (function () {
     deactivate() {
       return new Promise((resolve, reject) => {
         const systemcCallsign = 'org.rdk.UsbAccess';
-        thunder$e.Controller.deactivate({
+        thunder$g.Controller.deactivate({
           callsign: systemcCallsign
         }).then(res => {
           resolve(res);
@@ -11278,7 +11076,7 @@ var APP_accelerator_home_ui = (function () {
     clearLink() {
       return new Promise((resolve, reject) => {
         const systemcCallsign = 'org.rdk.UsbAccess';
-        thunder$e.call(systemcCallsign, 'clearLink').then(result => {
+        thunder$g.call(systemcCallsign, 'clearLink').then(result => {
           resolve(result);
         }).catch(err => {
           resolve(false);
@@ -11292,7 +11090,7 @@ var APP_accelerator_home_ui = (function () {
     createLink() {
       return new Promise((resolve, reject) => {
         const systemcCallsign = 'org.rdk.UsbAccess';
-        thunder$e.call(systemcCallsign, 'createLink').then(result => {
+        thunder$g.call(systemcCallsign, 'createLink').then(result => {
           resolve(result);
         }).catch(err => {
           resolve(false);
@@ -11307,7 +11105,7 @@ var APP_accelerator_home_ui = (function () {
       if (arguments.length === 0) {
         return new Promise((resolve, reject) => {
           const systemcCallsign = 'org.rdk.UsbAccess';
-          thunder$e.call(systemcCallsign, 'getFileList').then(result => {
+          thunder$g.call(systemcCallsign, 'getFileList').then(result => {
             resolve(result.contents);
           }).catch(err => {
             resolve(false);
@@ -11316,7 +11114,7 @@ var APP_accelerator_home_ui = (function () {
       } else {
         return new Promise((resolve, reject) => {
           const systemcCallsign = 'org.rdk.UsbAccess';
-          thunder$e.call(systemcCallsign, 'getFileList', {
+          thunder$g.call(systemcCallsign, 'getFileList', {
             "path": arguments[0]
           }).then(result => {
             resolve(result.contents);
@@ -11328,7 +11126,7 @@ var APP_accelerator_home_ui = (function () {
     }
     retrieUsb() {
       this.usbLink = "";
-      var self = this;
+      let self = this;
       return new Promise((resolve, reject) => {
         self.clearLink().then(result => {
           self.createLink().then(res => {
@@ -11368,7 +11166,7 @@ var APP_accelerator_home_ui = (function () {
     getMountedDevices() {
       return new Promise((resolve, reject) => {
         const systemcCallsign = "org.rdk.UsbAccess";
-        thunder$e.call(systemcCallsign, 'getMounted').then(result => {
+        thunder$g.call(systemcCallsign, 'getMounted').then(result => {
           resolve(result);
         }).catch(err => {
           reject(err);
@@ -11383,16 +11181,16 @@ var APP_accelerator_home_ui = (function () {
         cwd = cwd + '/' + arguments[1];
       }
       // to add support for more formats, extension can be added same as below 
-      var extensionForImage = ['.png', '.jpg', '.PNG', '.jpeg', '.JPEG', '.jpg', '.JPG'];
-      var extensionForVideo = ['.mp4', '.MP4', '.mov', '.MOV', '.avi', '.AVI', '.m3u8', '.M3U8', '.mpeg2', '.MPEG2'];
-      var extensionForAudio = ['.mp3', '.mpeg', '.MP3', '.MPEG'];
+      let extensionForImage = ['.png', '.jpg', '.PNG', '.jpeg', '.JPEG', '.jpg', '.JPG'];
+      let extensionForVideo = ['.mp4', '.MP4', '.mov', '.MOV', '.avi', '.AVI', '.m3u8', '.M3U8', '.mpeg2', '.MPEG2'];
+      let extensionForAudio = ['.mp3', '.mpeg', '.MP3', '.MPEG'];
       this._discoveredC = result;
       //   console.log("Discovered result :: " + JSON.stringify(result));
 
       this._discoveredC.filter(device => {
         for (let i in extensionForImage) {
           if (device.name.indexOf(extensionForImage[i]) !== -1) {
-            var obj1 = {
+            let obj1 = {
               displayName: device.name,
               uri: cwd + '/' + device.name,
               url: cwd + '/' + device.name
@@ -11409,7 +11207,7 @@ var APP_accelerator_home_ui = (function () {
       this._discoveredC.filter(device => {
         for (let i in extensionForVideo) {
           if (device.name.indexOf(extensionForVideo[i]) !== -1) {
-            var obj2 = {
+            let obj2 = {
               displayName: device.name,
               //  url: '/images/usb/video-default-tile.jpg',
               url: '/images/usb/USB_Video_Placeholder.jpg',
@@ -11423,7 +11221,7 @@ var APP_accelerator_home_ui = (function () {
       this._discoveredC.filter(device => {
         for (let i in extensionForAudio) {
           if (device.name.indexOf(extensionForAudio[i]) !== -1) {
-            var obj3 = {
+            let obj3 = {
               displayName: device.name,
               //  url: '/images/usb/music-default-tile.jpg',
               url: '/images/usb/USB_Audio_Placeholder.jpg',
@@ -11437,7 +11235,7 @@ var APP_accelerator_home_ui = (function () {
       this._discoveredC.filter(device => {
         if (device.t === 'd') {
           if (!(device.name === '.' || device.name === "..")) {
-            var obj4 = {
+            let obj4 = {
               displayName: device.name,
               url: "/images/usb/USB_Folder.jpg",
               uri: cwd + "/" + device.name
@@ -11478,7 +11276,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
       console.log('Xcast constructor');
       this._events = new Map();
     }
@@ -11583,9 +11381,8 @@ var APP_accelerator_home_ui = (function () {
      */
     onApplicationStateChanged(params) {
       return new Promise((resolve, reject) => {
-        console.log('Notifying back');
         this._thunder.call('org.rdk.Xcast.1', 'onApplicationStateChanged', params).then(result => {
-          console.log("an application state has been changed : result =>", JSON.stringify(result));
+          console.log("XCastAPI onApplicationStateChanged Updating: " + JSON.stringify(params) + " result: ", JSON.stringify(result));
           resolve(result);
         }).catch(err => {
           console.error(err);
@@ -11596,7 +11393,7 @@ var APP_accelerator_home_ui = (function () {
     static supportedApps() {
       var xcastApps = {
         AmazonInstantVideo: 'Amazon',
-        YouTube: 'Cobalt',
+        YouTube: 'YouTube',
         NetflixApp: 'Netflix',
         YouTubeKids: "YouTubeKids",
         YouTubeTV: "YouTubeTV"
@@ -11799,40 +11596,25 @@ var APP_accelerator_home_ui = (function () {
         max = lines;
       }
       if (this._requestsEnabled && !this._requestingItems) {
-        if (target + this._requestThreshold >= max) {
-          this.requestItems(false, obj);
+        if (previous < target && target + this._requestThreshold >= max) {
+          this._requestingItems = true;
+          this.signal('onRequestItems', obj).then(response => {
+            const type = typeof response;
+            if (Array.isArray(response) || type === 'object' || type === 'string' || type === 'number') {
+              this.add(response);
+            }
+            if (response === false) {
+              this.enableRequests = false;
+            }
+            this._requestingItems = false;
+          });
         }
       }
       this._refocus();
       this.scrollCollectionWrapper(obj);
-      if (obj.previousIndex !== obj.index) {
+      if (previous !== target) {
         this.signal('onIndexChanged', obj);
       }
-    }
-    requestItems() {
-      let reload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      let obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-      if (obj === undefined) {
-        obj = {
-          previous: 0,
-          index: 0,
-          max: 0
-        };
-      }
-      this._requestingItems = true;
-      this.signal('onRequestItems', obj).then(response => {
-        if (response === false) {
-          this.enableRequests = false;
-        }
-        this._requestingItems = false;
-        if (reload) {
-          this.clear();
-        }
-        const type = typeof response;
-        if (Array.isArray(response) || type === 'object' || type === 'string' || type === 'number') {
-          this.add(response);
-        }
-      });
     }
     setIndex(index) {
       const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
@@ -12239,7 +12021,7 @@ var APP_accelerator_home_ui = (function () {
       return this.wrapper.children[this._index];
     }
     get currentItem() {
-      return this.currentItemWrapper && this.currentItemWrapper.component || undefined;
+      return this.currentItemWrapper.component;
     }
     set direction(string) {
       this._direction = CollectionWrapper.DIRECTION[string] || CollectionWrapper.DIRECTION.row;
@@ -12284,7 +12066,7 @@ var APP_accelerator_home_ui = (function () {
     set scroll(value) {
       this._scroll = value;
     }
-    get scroll() {
+    get scrollTo() {
       return this._scroll;
     }
     set autoResize(bool) {
@@ -15076,7 +14858,25 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     _handleBack() {}
-    _init() {
+    async checkAppCompatability(items) {
+      for (let i = 0; i < items.length; i++) {
+        let callsign = items[i].applicationType;
+        if (items[i].applicationType !== '') {
+          if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
+            callsign = "Cobalt";
+          } else if (items[i].displayName === "Peacock") {
+            callsign = items[i].displayName;
+          }
+          await this.appApi.getPluginStatus(callsign).then(res => {}).catch(err => {
+            console.log("Error:", err);
+            items.splice(i, 1);
+            i--;
+          });
+        }
+      }
+      return items;
+    }
+    async _init() {
       this.gracenote = false;
       this.inputSelect = false; //false by default
       this.settingsScreen = false;
@@ -15091,39 +14891,42 @@ var APP_accelerator_home_ui = (function () {
       this.xcastApi = new XcastApi();
       this.hdmiApi = new HDMIApi();
       this.appApi = new AppApi();
-      let thunder = thunderJS(config);
+      let thunder = thunderJS$1(config);
 
       // for initially showing/hiding usb icon
 
-      var appItems = this.homeApi.getAppListInfo();
-      var data = this.homeApi.getPartnerAppsInfo();
-      this.metroApps = this.homeApi.getOfflineMetroApps();
-      this.showcaseApps = this.homeApi.getShowCaseApps();
+      let appItems = this.homeApi.getAppListInfo();
+      let data = this.homeApi.getPartnerAppsInfo();
+      let metroApps = this.homeApi.getOfflineMetroApps();
+      let showcaseApps = this.homeApi.getShowCaseApps();
+      await this.checkAppCompatability(appItems).then(res => {
+        appItems = res;
+      });
       this.appApi.isConnectedToInternet().then(result => {
         if (result) {
-          this.metroApps = this.homeApi.getOnlineMetroApps();
+          metroApps = this.homeApi.getOnlineMetroApps();
         }
       }).catch(err => {
         console.log(err);
       });
-      var prop_apps = 'applications';
-      var prop_displayname = 'displayName';
-      var prop_uri = 'uri';
-      var prop_apptype = 'applicationType';
-      var appdetails = [];
-      var appdetails_format = [];
-      var usbAppsArr = [];
-      var usbApps = 0;
+      let prop_apps = 'applications';
+      let prop_displayname = 'displayName';
+      let prop_uri = 'uri';
+      let prop_apptype = 'applicationType';
+      let appdetails = [];
+      let appdetails_format = [];
+      let usbAppsArr = [];
+      let usbApps = 0;
       try {
         if (data != null && JSON.parse(data).hasOwnProperty(prop_apps)) {
           appdetails = JSON.parse(data).applications;
-          for (var i = 0; i < appdetails.length; i++) {
+          for (let i = 0; i < appdetails.length; i++) {
             if (appdetails[i].hasOwnProperty(prop_displayname) && appdetails[i].hasOwnProperty(prop_uri) && appdetails[i].hasOwnProperty(prop_apptype)) {
               usbAppsArr.push(appdetails[i]);
               usbApps++;
             }
           }
-          for (var i = 0; i < appItems.length; i++) {
+          for (let i = 0; i < appItems.length; i++) {
             appdetails_format.push(appItems[i]);
           }
         } else {
@@ -15212,13 +15015,19 @@ var APP_accelerator_home_ui = (function () {
         console.log('IP ADDRESS changed', JSON.stringify(notification));
         if (notification.status === 'ACQUIRED') {
           Storage.set('ipAddress', notification.ip4Address);
-          this.metroApps = this.homeApi.getOnlineMetroApps();
+          metroApps = this.homeApi.getOnlineMetroApps();
         } else {
           Storage.set('ipAddress', null);
           //this.metroApps = this.homeApi.getMetroInfo()
         }
       });
 
+      await this.checkAppCompatability(metroApps).then(res => {
+        this.metroApps = res;
+      });
+      await this.checkAppCompatability(showcaseApps).then(res => {
+        this.showcaseApps = res;
+      });
       this.fireAncestors("$mountEventConstructor", registerListener.bind(this));
       this.refreshFirstRow();
       // this._setState('AppList.0')
@@ -15235,7 +15044,7 @@ var APP_accelerator_home_ui = (function () {
           this.fireAncestors('$registerUsbMount');
         });
       } else if (Storage.get('UsbMedia') === 'OFF') {
-        // deactivate usb Plugin here 
+        // deactivate usb Plugin here
         this.usbApi.deactivate().then(res => {
           console.log("disabled the Usb Plugin");
         }).catch(err => {
@@ -15799,9 +15608,16 @@ var APP_accelerator_home_ui = (function () {
             url: this.tag('UsbApps').items[this.tag('UsbApps').index].data.uri,
             launchLocation: "mainView"
           };
-          this.appApi.launchApp(applicationType, params).catch(err => {
-            console.log("ApplaunchError: ", JSON.stringify(err), err);
-          });
+          if (applicationType === "CameraApp") {
+            let cameraParams = {
+              cameraUrl: this.tag('UsbApps').items[this.tag('UsbApps').index].data.uri
+            };
+            Router.navigate("camera/player", cameraParams);
+          } else {
+            this.appApi.launchApp(applicationType, params).catch(err => {
+              console.log("ApplaunchError: ", JSON.stringify(err), err);
+            });
+          }
         }
       }, class RightArrow extends this {
         //TODO
@@ -16246,7 +16062,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
     }
 
     /**
@@ -19731,7 +19547,7 @@ var APP_accelerator_home_ui = (function () {
         host: '127.0.0.1',
         port: 9998
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
       this.callsign = 'org.rdk.Wifi';
     }
 
@@ -20738,7 +20554,7 @@ var APP_accelerator_home_ui = (function () {
     * Class for Other Settings Screen.
     */
 
-  var appApi$d = new AppApi();
+  var appApi$i = new AppApi();
   var defaultInterface$1 = "";
   var currentInterface$1 = [];
   class NetworkInfo$1 extends lng$1.Component {
@@ -20980,13 +20796,13 @@ var APP_accelerator_home_ui = (function () {
       };
     }
     getIPSetting(interfaceName) {
-      appApi$d.getIPSetting(interfaceName).then(result => {
+      appApi$i.getIPSetting(interfaceName).then(result => {
         this.tag('InternetProtocol.Value').text.text = result.ipversion;
       }).catch(err => console.log(err));
     }
     _focus() {
       //Getting the default interface
-      appApi$d.getDefaultInterface().then(result => {
+      appApi$i.getDefaultInterface().then(result => {
         defaultInterface$1 = result.interface;
         this.getIPSetting(defaultInterface$1);
         if (defaultInterface$1 === "WIFI") {
@@ -21006,12 +20822,12 @@ var APP_accelerator_home_ui = (function () {
         }
 
         //Filtering the current interface
-        appApi$d.getInterfaces().then(result => {
+        appApi$i.getInterfaces().then(result => {
           currentInterface$1 = result.interfaces.filter(data => data.interface === defaultInterface$1);
           //console.log(currentInterface);
           if (currentInterface$1[0].connected) {
             this.tag("Status.Value").text.text = "Connected";
-            appApi$d.getConnectedSSID().then(result => {
+            appApi$i.getConnectedSSID().then(result => {
               if (parseInt(result.signalStrength) >= -50) {
                 this.tag("SignalStrength.Value").text.text = "Excellent";
               } else if (parseInt(result.signalStrength) >= -60) {
@@ -21023,7 +20839,7 @@ var APP_accelerator_home_ui = (function () {
               }
               this.tag("SSID.Value").text.text = "".concat(result.ssid);
             }).catch(error => console.log(error));
-            appApi$d.getIPSetting(defaultInterface$1).then(result => {
+            appApi$i.getIPSetting(defaultInterface$1).then(result => {
               this.tag('IPAddress.Value').text.text = "".concat(result.ipaddr);
               this.tag("Gateway.Value").text.text = "".concat(result.gateway);
             }).catch(error => console.log(error));
@@ -21137,7 +20953,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
       const systemcCallsign = 'org.rdk.Network';
       const eventName = 'onDefaultInterfaceChanged';
       this._thunder.on(systemcCallsign, eventName, notification => {
@@ -21880,6 +21696,8 @@ var APP_accelerator_home_ui = (function () {
   /**
   * Class for WiFi screen.
   */
+
+  var previousFocusedItemSSid;
   class WiFiScreen$1 extends lng$1.Component {
     pageTransition() {
       return 'left';
@@ -22030,7 +21848,7 @@ var APP_accelerator_home_ui = (function () {
         if (result) {
           this.wifiStatus = true;
           this._network.registerEvent('onIPAddressStatusChanged', notification => {
-            console.log(JSON.stringify(notification));
+            console.log("onIPAddressStatusChanged", JSON.stringify(notification));
             if (notification.status == 'LOST') {
               if (notification.interface === 'WIFI') {
                 this._wifi.setInterface('ETHERNET', true).then(res => {
@@ -22152,6 +21970,7 @@ var APP_accelerator_home_ui = (function () {
           item.connected = false;
           return {
             ref: 'Other' + index,
+            index: index,
             w: 1620,
             h: 90,
             type: WiFiItem,
@@ -22159,6 +21978,14 @@ var APP_accelerator_home_ui = (function () {
           };
         });
       });
+      let IndexVal = 0;
+      console.log("previousFocusedItemSSid:::", previousFocusedItemSSid);
+      this._availableNetworks.tag('List').items.forEach(element => {
+        if (element._item.ssid == previousFocusedItemSSid) {
+          IndexVal = element.index;
+        }
+      });
+      this._availableNetworks.tag('List').setIndex(IndexVal);
     }
     _handleBack() {
       if (!Router.isNavigating()) {
@@ -22221,6 +22048,7 @@ var APP_accelerator_home_ui = (function () {
           }
         }
         _getFocused() {
+          previousFocusedItemSSid = this._availableNetworks.tag('List').element._item.ssid;
           return this._availableNetworks.tag('List').element;
         }
         _handleDown() {
@@ -22237,6 +22065,14 @@ var APP_accelerator_home_ui = (function () {
             console.log("ssid check");
             if (response === item.ssid) {
               this._wifi.connect().then(response => {
+                this._wifi.registerEvent('onError', notification => {
+                  if (notification.code === 0 || notification.code === 4) {
+                    this._wifi.clearSSID();
+                    Router.navigate('settings/network/interface/wifi/connect', {
+                      wifiItem: this._availableNetworks.tag('List').element._item
+                    });
+                  }
+                });
                 console.log(response);
               }).catch(err => {
                 Router.navigate('settings/network/interface/wifi/connect', {
@@ -22398,6 +22234,9 @@ var APP_accelerator_home_ui = (function () {
         }
       });
     }
+    _inactive() {
+      previousFocusedItemSSid = undefined;
+    }
   }
 
   /**
@@ -22423,14 +22262,14 @@ var APP_accelerator_home_ui = (function () {
    * Class for Video and Audio screen.
    */
 
-  var appApi$c = new AppApi();
+  var appApi$h = new AppApi();
   var bluetoothApi$1 = new BluetoothApi();
-  const config$c = {
+  const config$e = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  const _thunder$1 = thunderJS(config$c);
+  const _thunder$1 = thunderJS$1(config$e);
   class RCInformationScreen extends lng$1.Component {
     _onChanged() {
       this.widgets.menu.updateTopPanelText(Language.translate('Settings  Bluetooth Voice Remote Control'));
@@ -22624,7 +22463,7 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this._setState("RCInformationScreen");
-      appApi$c.getPluginStatus('org.rdk.RemoteControl').then(result => {
+      appApi$h.getPluginStatus('org.rdk.RemoteControl').then(result => {
         if (result[0].state != "activated") {
           bluetoothApi$1.remotepluginactivate();
           _thunder$1.on('Controller', 'statechange', notification => {
@@ -22678,7 +22517,7 @@ var APP_accelerator_home_ui = (function () {
           triggerPairing = notification.status.pairingState === "SEARCHING" ? 0 : 1;
         }
         if (triggerPairing) {
-          appApi$c.activateAutoPairing().then(res => {
+          appApi$h.activateAutoPairing().then(res => {
             console.log("RCInformationScreen rcPairingApis startpairing 1", res);
           });
         }
@@ -22686,7 +22525,7 @@ var APP_accelerator_home_ui = (function () {
       await bluetoothApi$1.getNetStatus().then(result => {
         var triggerPairing = 0;
         if (result.status.remoteData === [] && result.status.pairingState != "SEARCHING") {
-          appApi$c.activateAutoPairing().then(res => {
+          appApi$h.activateAutoPairing().then(res => {
             console.log("RCInformationScreen rcPairingApis startpairing 2", res);
           });
         } else if (result.status.remoteData != []) {
@@ -22721,7 +22560,7 @@ var APP_accelerator_home_ui = (function () {
           this.tag("RCUName.Value").text.text = RemoteName;
         }
         if (triggerPairing) {
-          appApi$c.activateAutoPairing().then(res => {
+          appApi$h.activateAutoPairing().then(res => {
             console.log("RCInformationScreen rcPairingApis startpairing 3", res);
           });
         }
@@ -24836,8 +24675,8 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const appApi$b = new AppApi();
-  const thunder$d = thunderJS({
+  const appApi$g = new AppApi();
+  const thunder$f = thunderJS$1({
     host: '127.0.0.1',
     port: 9998,
     default: 1
@@ -24890,14 +24729,14 @@ var APP_accelerator_home_ui = (function () {
           item: item
         };
       });
-      appApi$b.deactivateResidentApp(loader$2);
-      appApi$b.setVisibility('ResidentApp', true);
-      thunder$d.call('org.rdk.RDKShell', 'moveToFront', {
+      appApi$g.deactivateResidentApp(loader$2);
+      appApi$g.setVisibility('ResidentApp', true);
+      thunder$f.call('org.rdk.RDKShell', 'moveToFront', {
         client: 'ResidentApp'
       }).then(result => {
         console.log('ResidentApp moveToFront Success');
       });
-      thunder$d.call('org.rdk.RDKShell', 'setFocus', {
+      thunder$f.call('org.rdk.RDKShell', 'setFocus', {
         client: 'ResidentApp'
       }).then(result => {
         console.log('ResidentApp moveToFront Success');
@@ -24932,8 +24771,8 @@ var APP_accelerator_home_ui = (function () {
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html";
             let notification_url = location.origin + path + url;
             console.log(notification_url);
-            appApi$b.launchResident(notification_url, loader$2).catch(err => {});
-            appApi$b.setVisibility('ResidentApp', false);
+            appApi$g.launchResident(notification_url, loader$2).catch(err => {});
+            appApi$g.setVisibility('ResidentApp', false);
             location.reload();
           }
         }
@@ -25407,16 +25246,16 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$b = {
+  const config$d = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  const thunder$c = thunderJS(config$b);
+  const thunder$e = thunderJS$1(config$d);
   class CECApi {
     activate() {
       return new Promise((resolve, reject) => {
-        thunder$c.Controller.activate({
+        thunder$e.Controller.activate({
           callsign: 'org.rdk.HdmiCec_2'
         }).then(() => {
           resolve(true);
@@ -25427,7 +25266,7 @@ var APP_accelerator_home_ui = (function () {
     }
     deactivate() {
       return new Promise((resolve, reject) => {
-        thunder$c.Controller.deactivate({
+        thunder$e.Controller.deactivate({
           callsign: 'org.rdk.HdmiCec_2'
         }).then(() => {
           resolve(true);
@@ -25438,7 +25277,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getEnabled() {
       return new Promise((resolve, reject) => {
-        thunder$c.call('org.rdk.HdmiCec_2', 'getEnabled').then(result => {
+        thunder$e.call('org.rdk.HdmiCec_2', 'getEnabled').then(result => {
           resolve(result);
         }).catch(err => {
           resolve({
@@ -25449,7 +25288,7 @@ var APP_accelerator_home_ui = (function () {
     }
     setEnabled() {
       return new Promise((resolve, reject) => {
-        thunder$c.call('org.rdk.HdmiCec_2', 'setEnabled', {
+        thunder$e.call('org.rdk.HdmiCec_2', 'setEnabled', {
           enabled: true
         }).then(result => {
           resolve(result);
@@ -25463,7 +25302,7 @@ var APP_accelerator_home_ui = (function () {
     }
     performOTP() {
       return new Promise((resolve, reject) => {
-        thunder$c.call('org.rdk.HdmiCec_2', 'performOTPAction').then(result => {
+        thunder$e.call('org.rdk.HdmiCec_2', 'performOTPAction').then(result => {
           resolve(result);
         }).catch(err => {
           console.error('CEC Otp Error', err);
@@ -25475,7 +25314,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getActiveSourceStatus() {
       return new Promise((resolve, reject) => {
-        thunder$c.call('org.rdk.HdmiCec_2', 'getActiveSourceStatus').then(result => {
+        thunder$e.call('org.rdk.HdmiCec_2', 'getActiveSourceStatus').then(result => {
           resolve(result.status);
         }).catch(err => {
           console.error("CECApi HdmiCec_2 getActiveSourceStatus failed." + err);
@@ -25503,12 +25342,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$a = {
+  const config$c = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  thunderJS(config$a);
+  thunderJS$1(config$c);
   /**
    * Class for AdvancedSettings screen.
    */
@@ -26537,7 +26376,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      const thunder = thunderJS(config);
+      const thunder = thunderJS$1(config);
       const systemcCallsign = "org.rdk.System.1";
       thunder.Controller.activate({
         callsign: systemcCallsign
@@ -26637,7 +26476,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const appApi$a = new AppApi();
+  const appApi$f = new AppApi();
   /**
    * Class for Reboot Confirmation Screen.
    */
@@ -26777,7 +26616,7 @@ var APP_accelerator_home_ui = (function () {
           this._focus();
         }
         _handleEnter() {
-          appApi$a.reboot().then(result => {
+          appApi$f.reboot().then(result => {
             console.log('device rebooting' + JSON.stringify(result));
             this._setState('Rebooting');
           });
@@ -27324,7 +27163,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const appApi$9 = new AppApi();
+  const appApi$e = new AppApi();
   const _btApi = new BluetoothApi();
   const _wfApi = new Wifi();
   new HDMIApi();
@@ -27466,7 +27305,7 @@ var APP_accelerator_home_ui = (function () {
     }
     async _performFactoryReset() {
       // Deactivate SmartScreen instance to prevent overlay when Auth is revoked.
-      appApi$9.getPluginStatus("SmartScreen").then(res => {
+      appApi$e.getPluginStatus("SmartScreen").then(res => {
         if (res[0].state !== "deactivated") {
           thunder.Controller.deactivate({
             callsign: 'SmartScreen'
@@ -27479,30 +27318,30 @@ var APP_accelerator_home_ui = (function () {
       }).catch(err => {
         console.error("FactoryResetConfirmationScreen getPluginStatus SmartScreen ERROR: ", err);
       });
-      appApi$9.setAlexaAuthStatus("AlexaAuthPending");
-      let getsuportedmode = await appApi$9.getSupportedAudioPorts();
+      appApi$e.setAlexaAuthStatus("AlexaAuthPending");
+      let getsuportedmode = await appApi$e.getSupportedAudioPorts();
       console.log("getspmode", getsuportedmode);
       for (let i = 0; i < getsuportedmode.supportedAudioPorts.length; i++) {
         if (getsuportedmode.supportedAudioPorts[i] != 'SPDIF0') {
-          let rsbass = await appApi$9.resetBassEnhancer(getsuportedmode.supportedAudioPorts[i]).catch(err => {
+          let rsbass = await appApi$e.resetBassEnhancer(getsuportedmode.supportedAudioPorts[i]).catch(err => {
             console.log("resetBassEnhancer", err);
           });
           if (rsbass.success != true) {
             console.log("resetBassEnhancer", rsbass);
           } //throw new Error(rsbass); }//{Promise.reject(false); return} 
-          let rsDialog = await appApi$9.resetDialogEnhancement(getsuportedmode.supportedAudioPorts[i]).catch(err => {
+          let rsDialog = await appApi$e.resetDialogEnhancement(getsuportedmode.supportedAudioPorts[i]).catch(err => {
             console.log("resetDialogEnhancement", err);
           }); //{Promise.reject(JSON.stringify(err))});
           if (rsDialog.success != true) {
             console.log("resetDialogEnhancement", rsDialog);
           }
-          let rsVirtualizer = await appApi$9.resetSurroundVirtualizer(getsuportedmode.supportedAudioPorts[i]).catch(err => {
+          let rsVirtualizer = await appApi$e.resetSurroundVirtualizer(getsuportedmode.supportedAudioPorts[i]).catch(err => {
             console.log("resetSurroundVirtualizer", err);
           });
           if (rsVirtualizer.success != true) {
             console.log("resetSurroundVirtualizer", rsVirtualizer);
           }
-          let rsvolumelvel = await appApi$9.resetVolumeLeveller(getsuportedmode.supportedAudioPorts[i]).catch(err => {
+          let rsvolumelvel = await appApi$e.resetVolumeLeveller(getsuportedmode.supportedAudioPorts[i]).catch(err => {
             console.log("resetVolumeLeveller", err);
           });
           if (rsvolumelvel.success != true) {
@@ -27524,9 +27363,9 @@ var APP_accelerator_home_ui = (function () {
           }
         }
       }
-      let contollerStat = await appApi$9.checkStatus("Monitor");
+      let contollerStat = await appApi$e.checkStatus("Monitor");
       for (let i = 0; i < contollerStat[0].configuration.observables.length; i++) {
-        let monitorstat = await appApi$9.monitorStatus(contollerStat[0].configuration.observables[i].callsign).catch(err => {
+        let monitorstat = await appApi$e.monitorStatus(contollerStat[0].configuration.observables[i].callsign).catch(err => {
           console.log("monitorStatus", err);
         });
         if (monitorstat.length < 0) {
@@ -27534,37 +27373,37 @@ var APP_accelerator_home_ui = (function () {
         }
       }
       // warehouse apis
-      let internalReset = await appApi$9.internalReset().catch(err => {
+      let internalReset = await appApi$e.internalReset().catch(err => {
         console.log("internalReset", err);
       });
       if (internalReset.success != true || internalReset.error) {
         console.log("internalReset", internalReset);
       }
-      let isClean = await appApi$9.isClean().catch(err => {
+      let isClean = await appApi$e.isClean().catch(err => {
         console.log("isClean", err);
       });
       if (isClean.success != true) {
         console.log("isClean", isClean);
       }
-      let lightReset = await appApi$9.lightReset().catch(err => {
+      let lightReset = await appApi$e.lightReset().catch(err => {
         console.log("lightReset", err);
       });
       if (lightReset.success != true || lightReset.error) {
         console.log("lightReset", lightReset);
       }
-      let resetDevice = await appApi$9.resetDevice().catch(err => {
+      let resetDevice = await appApi$e.resetDevice().catch(err => {
         console.log("resetDevice", err);
       });
       if (resetDevice.success != true || resetDevice.error) {
         console.log("resetDevice", resetDevice);
       }
-      let rsactivitytime = await appApi$9.resetInactivityTime().catch(err => {
+      let rsactivitytime = await appApi$e.resetInactivityTime().catch(err => {
         console.log("resetInactivityTime", err);
       });
       if (rsactivitytime.success != true) {
         console.log("rsactivitytime", rsactivitytime);
       }
-      let clearLastDeepSleepReason = await appApi$9.clearLastDeepSleepReason().catch(err => {
+      let clearLastDeepSleepReason = await appApi$e.clearLastDeepSleepReason().catch(err => {
         console.log("clearLastDeepSleepReason", err);
       });
       if (clearLastDeepSleepReason.success != true) {
@@ -27582,7 +27421,7 @@ var APP_accelerator_home_ui = (function () {
       if (wifidisconnect.success != true) {
         console.log("wifidisconnect", wifidisconnect);
       }
-      await appApi$9.reboot().then(result => {
+      await appApi$e.reboot().then(result => {
         console.log('device rebooting' + JSON.stringify(result));
       });
     }
@@ -27827,13 +27666,13 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  var appApi$8 = new AppApi();
-  const config$9 = {
+  var appApi$d = new AppApi();
+  const config$b = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  var thunder$b = thunderJS(config$9);
+  var thunder$d = thunderJS$1(config$b);
   class SreenSaverScreen extends lng$1.Component {
     _onChanged() {
       this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Screen Saver'));
@@ -27915,7 +27754,7 @@ var APP_accelerator_home_ui = (function () {
     }
 
     async _focus() {
-      let FocusedValue = await appApi$8.getTimerValue();
+      let FocusedValue = await appApi$d.getTimerValue();
       console.log("focusedValue", FocusedValue);
       this.options = [{
         value: 'Off',
@@ -27959,17 +27798,17 @@ var APP_accelerator_home_ui = (function () {
     }
     setTimerValue(time) {
       if (time === "Off") {
-        appApi$8.enabledisableinactivityReporting(false).then(resp => console.log(resp));
+        appApi$d.enabledisableinactivityReporting(false).then(resp => console.log(resp));
       } else {
         // 10
-        appApi$8.enabledisableinactivityReporting(true).then(resp => {
-          appApi$8.setInactivityInterval(parseInt(time)).then(res => {
+        appApi$d.enabledisableinactivityReporting(true).then(resp => {
+          appApi$d.setInactivityInterval(parseInt(time)).then(res => {
             console.log("setinactivityres", res);
             Storage.set('TimeoutInterval1', time);
             console.log("successfully set the timer to ".concat(time, " minutes"));
-            thunder$b.on('org.rdk.RDKShell', 'onUserInactivity', notification => {
+            thunder$d.on('org.rdk.RDKShell', 'onUserInactivity', notification => {
               console.log("UserInactivityStatusNotification: ", JSON.stringify(notification));
-              appApi$8.getAvCodeStatus().then(result => {
+              appApi$d.getAvCodeStatus().then(result => {
                 console.log("Avdecoder", result.avDecoderStatus);
                 if ((result.avDecoderStatus === "IDLE" || result.avDecoderStatus === "PAUSE") && Storage.get("applicationType") === "") {
                   this.fireAncestors("$hideImage", 1);
@@ -28001,7 +27840,7 @@ var APP_accelerator_home_ui = (function () {
           this.timerValue = this.options[this.tag('List').index].value; //10 minutes
           this.timerValue = this.timerValue === "Off" ? "Off" : this.timerValue.substring(0, 2); // 10
           console.log("TimerValue", this.timerValue);
-          appApi$8.SaveTimerValue(this.timerValue); // storing in persistence store
+          appApi$d.SaveTimerValue(this.timerValue); // storing in persistence store
           this.setTimerValue(this.timerValue); // enable and setinactivity process
           this.fireAncestors('$screenSaverTime', this.options[this.tag('List').index].value);
         }
@@ -28362,7 +28201,7 @@ var APP_accelerator_home_ui = (function () {
           this.appApi.getDRCMode().then(res => {}).catch(err => {
             console.log(err);
           });
-          this.appApi.setVolumeLevel("HDMI0", 100).then(res => {
+          this.appApi.setVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", 100).then(res => {
             this.appApi.getVolumeLevel().catch(err => {
               console.log(err);
             });
@@ -28373,7 +28212,7 @@ var APP_accelerator_home_ui = (function () {
             console.log(err);
           });
           // gets the enabled Audio Port
-          this.appApi.getEnableAudioPort("HDMI0").then(res => {}).catch(err => {
+          this.appApi.getEnableAudioPort(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(res => {}).catch(err => {
             console.log(err);
           });
           this.appApi.getSupportedAudioPorts().catch(err => {
@@ -28381,8 +28220,8 @@ var APP_accelerator_home_ui = (function () {
           });
 
           // set enable Audio POrt
-          this.appApi.setEnableAudioPort("HDMI0").then(res => {
-            this.appApi.getEnableAudioPort("HDMI0").then(res => {}).catch(err => {
+          this.appApi.setEnableAudioPort(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(res => {
+            this.appApi.getEnableAudioPort(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(res => {}).catch(err => {
               console.log(err);
             });
           }).catch(err => {
@@ -28570,7 +28409,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for HDMI Output Screen.
    */
-  var appApi$7 = new AppApi();
+  var appApi$c = new AppApi();
   class HdmiOutputScreen$1 extends lng$1.Component {
     pageTransition() {
       return 'left';
@@ -28640,8 +28479,8 @@ var APP_accelerator_home_ui = (function () {
     _focus() {
       this.loadingAnimation.start();
       var options = [];
-      appApi$7.getSoundMode().then(result => {
-        appApi$7.getSupportedAudioModes().then(res => {
+      appApi$c.getSoundMode().then(result => {
+        appApi$c.getSupportedAudioModes().then(res => {
           options = [...res.supportedAudioModes];
           this.tag('HdmiOutputScreenContents').h = options.length * 90;
           this.tag('HdmiOutputScreenContents.List').h = options.length * 90;
@@ -28704,7 +28543,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const thunder$a = thunderJS({
+  const thunder$c = thunderJS$1({
     host: '127.0.0.1',
     port: 9998,
     default: 1
@@ -28769,11 +28608,11 @@ var APP_accelerator_home_ui = (function () {
           }
         }]
       });
-      thunder$a.on('org.rdk.DisplaySettings', 'resolutionPreChange', notification => {
+      thunder$c.on('org.rdk.DisplaySettings', 'resolutionPreChange', notification => {
         console.log(new Date().toISOString() + " ResolutionScreen got resolutionPreChange");
         Storage.set("ResolutionChangeInProgress", true);
       });
-      thunder$a.on('org.rdk.DisplaySettings', 'resolutionChanged', notification => {
+      thunder$c.on('org.rdk.DisplaySettings', 'resolutionChanged', notification => {
         console.log(new Date().toISOString() + " ResolutionScreen got resolutionChanged");
         const items = this.tag('List').items;
         items.forEach(element => {
@@ -30284,14 +30123,14 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  var appApi$6 = new AppApi();
+  var appApi$b = new AppApi();
   var bluetoothApi = new BluetoothApi();
-  const config$8 = {
+  const config$a = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  const _thunder = thunderJS(config$8);
+  const _thunder = thunderJS$1(config$a);
   class BluetoothScreen$1 extends lng$1.Component {
     static _template() {
       return {
@@ -30479,7 +30318,7 @@ var APP_accelerator_home_ui = (function () {
         }
         console.log("SplashBluetoothScreen async RemoteControl checking condition to kick start pairing");
         if ((notification.status.remoteData === [] || rcuNotConnectedStartPairing) && notification.status.pairingState != "SEARCHING") {
-          appApi$6.activateAutoPairing();
+          appApi$b.activateAutoPairing();
         }
       });
       var RCInterval = Registry.setInterval(() => {
@@ -30498,7 +30337,7 @@ var APP_accelerator_home_ui = (function () {
           if (result.status.remoteData === [] && result.status.pairingState != "SEARCHING" || rcuNotConnectedStartPairing) {
             //|| result.status.pairingState === "SEARCHING" ){
             console.log("SplashBluetoothScreen async RCInterval RemoteControl getNetStatus activateAutoPairing 4");
-            appApi$6.activateAutoPairing().then(status => {
+            appApi$b.activateAutoPairing().then(status => {
               console.log("Invoked activateAutoPairing() and got ", status);
               Registry.clearInterval(RCInterval); // org.rdk.RemoteControl 'onStatus' notification will do the rest.
             });
@@ -30507,7 +30346,7 @@ var APP_accelerator_home_ui = (function () {
       }, 30000, true);
     }
     _init() {
-      appApi$6.getPluginStatus('org.rdk.RemoteControl').then(result => {
+      appApi$b.getPluginStatus('org.rdk.RemoteControl').then(result => {
         if (result[0].state != "activated") {
           bluetoothApi.remotepluginactivate();
           _thunder.on('Controller', 'statechange', notification => {
@@ -30523,7 +30362,7 @@ var APP_accelerator_home_ui = (function () {
         }
       }).catch(err => {
         console.log('SplashBluetoothScreen init remote autoPair plugin error:', JSON.stringify(err));
-        appApi$6.getPluginStatusParams('org.rdk.Bluetooth').then(pluginresult => {
+        appApi$b.getPluginStatusParams('org.rdk.Bluetooth').then(pluginresult => {
           console.log("SplashBluetoothScreen init status", pluginresult[1]);
           if (pluginresult[1] === 'deactivated') {
             bluetoothApi.btactivate().then(result => {
@@ -30617,7 +30456,17 @@ var APP_accelerator_home_ui = (function () {
       }, class StartPairing extends this {
         $enter() {
           this.tag('Buttons.StartPairing').alpha = 1;
-          this.tag('Buttons.StartPairing.Title').text.textColor = CONFIG.theme.hex;
+          this._focus();
+        }
+        _focus() {
+          this.tag('Buttons.StartPairing').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('Buttons.StartPairing.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
         }
         _handleLeft() {}
         _handleRight() {}
@@ -30652,7 +30501,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const appApi$5 = new AppApi();
+  const appApi$a = new AppApi();
   const loader$1 = 'Loader';
   class LanguageScreen$1 extends lng$1.Component {
     static _template() {
@@ -30781,8 +30630,8 @@ var APP_accelerator_home_ui = (function () {
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html";
             let notification_url = location.origin + path + url;
             console.log(notification_url);
-            appApi$5.launchResident(notification_url, loader$1).catch(err => {});
-            appApi$5.setVisibility('ResidentApp', false);
+            appApi$a.launchResident(notification_url, loader$1).catch(err => {});
+            appApi$a.setVisibility('ResidentApp', false);
             location.reload();
           }
         }
@@ -30851,6 +30700,7 @@ var APP_accelerator_home_ui = (function () {
    **/
   const wifi$3 = new Wifi();
   const network = new Network();
+  var appApi$9 = new AppApi();
   class NetworkScreen extends lng$1.Component {
     static _template() {
       return {
@@ -31033,7 +30883,11 @@ var APP_accelerator_home_ui = (function () {
           });
         }
         _handleEnter() {
-          Router.navigate('menu');
+          if (appApi$9.checkAlexaAuthStatus() !== "AlexaUserDenied") {
+            Router.navigate('AlexaLoginScreen');
+          } else {
+            Router.navigate('menu');
+          }
         }
         _handleUp() {
           this._setState('Ethernet');
@@ -31766,7 +31620,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const homeApi$2 = new HomeApi();
+  const homeApi$1 = new HomeApi();
   class UIList extends lng$1.Component {
     static _template() {
       return {
@@ -31789,7 +31643,7 @@ var APP_accelerator_home_ui = (function () {
       return 'right';
     }
     _firstEnable() {
-      this.tag('UI').add(homeApi$2.getUIInfo().map((element, idx) => {
+      this.tag('UI').add(homeApi$1.getUIInfo().map((element, idx) => {
         return {
           ref: 'UI' + idx,
           w: 300,
@@ -32568,6 +32422,275 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  let platform = null;
+  let thunder$b = null;
+  function thunderJS() {
+    if (thunder$b) return thunder$b;
+    thunder$b = thunderJS$1({
+      host: window.location.hostname,
+      port: '9998'
+    });
+    return thunder$b;
+  }
+  async function registerListener(plugin, eventname, cb) {
+    return await thunderJS().on(plugin, eventname, notification => {
+      console.log("DACApi Received event " + plugin + ":" + eventname, notification);
+      if (cb != null) {
+        cb(notification, eventname, plugin);
+      }
+    });
+  }
+  async function addEventHandler(eventHandlers, pluginname, eventname, cb) {
+    eventHandlers.push(await registerListener(pluginname, eventname, cb));
+  }
+  function translateLisaProgressEvent(evtname) {
+    if (evtname === "DOWNLOADING") {
+      return "Downloading";
+    } else if (evtname === "UNTARING") {
+      return "Extracting";
+    } else if (evtname === "UPDATING_DATABASE") {
+      return "Installing";
+    } else if (evtname === "FINISHED") {
+      return "Finished";
+    } else {
+      return evtname;
+    }
+  }
+  async function registerLISAEvents(id, progress) {
+    let eventHandlers = [];
+    if (progress === undefined) {
+      console.log("DACApi progress undefined, return");
+      return;
+    }
+    progress.reset();
+    let handleProgress = (notification, eventname, plugin) => {
+      console.log('DACApi handleProgress: ' + plugin + ' ' + eventname);
+      if (plugin !== 'LISA') {
+        return;
+      }
+      if (notification.status === 'Progress') {
+        let parts = notification.details.split(" ");
+        if (parts.length >= 2) {
+          let pc = parseFloat(parts[1]) / 100.0;
+          progress.setProgress(pc, translateLisaProgressEvent(parts[0]));
+        }
+      } else if (notification.status === 'Success') {
+        progress.fireAncestors('$fireDACOperationFinished', true);
+        eventHandlers.map(h => {
+          h.dispose();
+        });
+        eventHandlers = [];
+      } else if (notification.status === 'Failed') {
+        progress.fireAncestors('$fireDACOperationFinished', false, 'Failed');
+        eventHandlers.map(h => {
+          h.dispose();
+        });
+        eventHandlers = [];
+      }
+    };
+    addEventHandler(eventHandlers, 'LISA', 'operationStatus', handleProgress);
+  }
+  const installDACApp = async (app, progress) => {
+    let platName = await getPlatformNameForDAC();
+    const url = app.url.replace(/amlogic/g, platName);
+    registerLISAEvents(app.id, progress);
+    let result = null;
+    try {
+      result = await thunderJS()['LISA'].install({
+        id: app.id,
+        type: 'application/dac.native',
+        appName: app.name,
+        category: app.category,
+        versionAsParameter: app.version,
+        url: url
+      });
+    } catch (error) {
+      console.error('DACApi Error on installDACApp: ' + error.code + ' ' + error.message);
+      return false;
+    }
+    return true;
+  };
+  const uninstallDACApp = async (app, progress) => {
+    // Could be same app is running; lets end it if so.
+    await thunderJS()['org.rdk.RDKShell'].getClients().then(response => {
+      if (Array.isArray(response.clients) && response.clients.includes(app.id.toLowerCase())) {
+        console.log("DACApi killing " + app.id + " as we got a match in getClients response.");
+        thunderJS()['org.rdk.RDKShell'].kill({
+          client: app.id
+        });
+      }
+    });
+    registerLISAEvents(app.id, progress);
+    let result = null;
+    try {
+      result = await thunderJS()['LISA'].uninstall({
+        id: app.id,
+        type: 'application/dac.native',
+        versionAsParameter: app.version,
+        uninstallType: 'full'
+      });
+    } catch (error) {
+      console.error('DACApi Error on LISA uninstall: ' + error.code + ' ' + error.message);
+      return false;
+    }
+    return true;
+  };
+  const getInstalledDACApps = async () => {
+    let result = null;
+    try {
+      result = await thunderJS()['LISA'].getList();
+    } catch (error) {
+      console.error('DACApi Error on LISA getList: ', error);
+    }
+    return result == null ? [] : result.apps ? result.apps : [];
+  };
+  const getPlatformNameForDAC = async () => {
+    if (platform == null) {
+      platform = await getDeviceName();
+      platform = platform.split('-')[0];
+    }
+    if (platform === 'raspberrypi') {
+      return 'broadcom';
+    } else if (platform === 'brcm972180hbc') {
+      return '7218c';
+    } else if (platform === 'brcm972127ott') {
+      return '72127ott';
+    } else if (platform === 'vip7802') {
+      return '7218c';
+    } else if (platform.toLowerCase().includes('hp44h')) {
+      return 'amlogic';
+    } else if (platform.toLowerCase().includes('amlogic')) {
+      return 'amlogic';
+    } else if (platform.toLowerCase().includes('mediabox')) {
+      return 'realtek';
+    } else {
+      // default
+      return '7218c';
+    }
+  };
+  const getDeviceName = async () => {
+    let result = null;
+    try {
+      result = await thunderJS().DeviceInfo.systeminfo();
+    } catch (error) {
+      console.error('DAC Api Error on systeminfo: ', error);
+    }
+    return result == null ? "unknown" : result.devicename;
+  };
+  const startDACApp = async app => {
+    console.log('DACApi startDACApp invoked with data:' + app);
+    let result = null;
+    try {
+      if (app.type === 'application/dac.native') {
+        result = await thunderJS()['org.rdk.RDKShell'].launchApplication({
+          client: app.id,
+          mimeType: app.type,
+          uri: app.id + ';' + app.version + ';' + app.type
+        });
+      } else if (app.type === 'application/html') {
+        result = await thunderJS()['org.rdk.RDKShell'].launch({
+          callsign: app.id,
+          uri: app.url,
+          type: 'HtmlApp'
+        });
+      } else if (app.type === 'application/lightning') {
+        result = await thunderJS()['org.rdk.RDKShell'].launch({
+          callsign: app.id,
+          uri: app.url,
+          type: 'LightningApp'
+        });
+      } else {
+        console.warn('DACApi Unsupported app type: ' + app.type);
+        return false;
+      }
+    } catch (error) {
+      console.error('DACApi Error on launchApplication: ', error);
+      return false;
+    }
+    if (result == null) {
+      console.error('DACApi launch error returned result: ', result);
+      return false;
+    } else if (!result.success) {
+      // Could be same app is in suspended mode.
+      await thunderJS()['org.rdk.RDKShell'].getClients().then(response => {
+        if (Array.isArray(response.clients) && response.clients.includes(app.id.toLowerCase())) {
+          console.log("DACApi " + app.id + " got a match in getClients response; could be in suspended mode, resume it.");
+          thunderJS()['org.rdk.RDKShell'].resumeApplication({
+            client: app.id
+          }).then(result => {
+            if (!result.success) return false;
+          });
+        }
+      });
+    } else ;
+    try {
+      result = await thunderJS()['org.rdk.RDKShell'].moveToFront({
+        client: app.id
+      });
+    } catch (error) {
+      console.log('DACApi Error on moveToFront: ', error);
+    }
+    try {
+      result = await thunderJS()['org.rdk.RDKShell'].setFocus({
+        client: app.id
+      });
+      Storage.set("applicationType", app.id + ';' + app.version + ';' + app.type);
+    } catch (error) {
+      console.log('DACApi Error on setFocus: ', error);
+      return false;
+    }
+    return result == null ? false : result.success;
+  };
+
+  /* WorkAround until proper cloud based App Catalog support */
+  const getAppCatalogInfo = async () => {
+    let appListArray = null;
+    try {
+      let data = new HomeApi().getPartnerAppsInfo();
+      if (data) {
+        data = await JSON.parse(data);
+        if (data != null && data.hasOwnProperty("app-catalog-path")) {
+          let url = data["app-catalog-path"];
+          await fetch(url, {
+            method: 'GET',
+            cache: "no-store"
+          }).then(response => response.text()).then(result => {
+            result = JSON.parse(result);
+            console.log("DACApi fetch result: ", result);
+            if (result.hasOwnProperty("AppCatalogInfo")) {
+              appListArray = result["AppCatalogInfo"];
+            } else {
+              console.error("DACApi result does not have AppCatalogInfo");
+            }
+          }).catch(error => console.log("DACApi fetch error", error));
+        }
+      } else {
+        console.error("DACApi Appstore info not available; DAC features won't work.");
+      }
+    } catch (error) {
+      console.log("DACApi Appstore info Error: ", error);
+    }
+    return appListArray == null ? undefined : appListArray;
+  };
+
   class AppStoreItem extends lng$1.Component {
     static _template() {
       return {
@@ -32623,6 +32746,7 @@ var APP_accelerator_home_ui = (function () {
       };
     }
     set info(data) {
+      if (!data.hasOwnProperty('url')) data.url = "/images/apps/DACApp_455_255.png";
       this.data = data;
       if (data.url.startsWith('/images')) {
         this.tag('Image').patch({
@@ -32633,15 +32757,21 @@ var APP_accelerator_home_ui = (function () {
           src: data.url
         });
       }
-      this.tag('Text').text.text = data.displayName;
-      // this.tag('Shadow').y = this.tag('Shadow').y - 10
+      this.tag('Text').text.text = data.name;
     }
-
     static get width() {
       return 300;
     }
     static get height() {
       return 168;
+    }
+    _init() {
+      this._app = {};
+      this._app.isRunning = false;
+      this._app.isInstalled = false;
+      this._app.isInstalling = false;
+      this._app.isUnInstalling = false;
+      this._buttonIndex = 0;
     }
     _focus() {
       this.scale = 1.15;
@@ -32654,6 +32784,14 @@ var APP_accelerator_home_ui = (function () {
       this.zIndex = 1;
       this.tag("Shadow").alpha = 0;
       this.tag("Text").alpha = 0;
+    }
+    async _handleEnter() {
+      this._app.url = this.data.uri;
+      this._app.id = this.data.id;
+      this._app.name = this.data.name;
+      this._app.version = this.data.version;
+      this._app.type = this.data.type;
+      this._app.isRunning = await startDACApp(this._app);
     }
   }
 
@@ -32705,7 +32843,430 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  const homeApi$1 = new HomeApi();
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  class Progress extends lng.Component {
+    static _template() {
+      let RR = lng.shaders.RoundedRectangle;
+      return {
+        BackgroundOverlay: {
+          rect: true,
+          color: 0xFF000000,
+          alpha: 0,
+          w: 300,
+          h: 168,
+          x: -50,
+          y: -80
+        },
+        Label: {
+          x: 10,
+          y: -28,
+          text: {
+            fontSize: 18,
+            textColor: 0xFFFFFFFF
+          }
+        },
+        ProgressBar: {
+          Background: {
+            x: -2,
+            y: 0,
+            w: 4,
+            h: 12,
+            rtt: true,
+            rect: true,
+            color: 0xFF666666,
+            shader: {
+              radius: 3,
+              type: RR
+            }
+          },
+          Progress: {
+            x: 0,
+            y: 0,
+            w: 0,
+            h: 10,
+            rtt: true,
+            rect: true,
+            color: CONFIG.theme.hex,
+            shader: {
+              radius: 3,
+              type: RR
+            }
+          }
+        }
+      };
+    }
+    getProgress() {
+      return this.value;
+    }
+    reset() {
+      this.value = 0;
+      this.tag("Progress").w = 0;
+      this.tag("ProgressBar").alpha = 0.0;
+      this.tag("Label").text.text = "";
+      this.tag("Label").alpha = 1.0;
+    }
+    setProgress(pc, state) {
+      this.percent = pc * 100;
+      this.value = pc;
+      var ww = (this.w - 4) * pc;
+      if (pc != 1.0) {
+        this.tag("BackgroundOverlay").alpha = 0.6;
+        this.tag("ProgressBar").setSmooth('alpha', 0.7, {
+          duration: .1
+        });
+        this.tag("Progress").setSmooth('w', ww, {
+          duration: 1
+        });
+      }
+      if (state !== "") {
+        this.tag("Label").text.text = state + " " + Math.floor(this.percent) + "%";
+      }
+      if (pc == 1.0) {
+        this.tag("ProgressBar").setSmooth('alpha', 0, {
+          duration: 2.3
+        });
+        this.tag("Label").setSmooth('alpha', 0, {
+          duration: 2.3
+        });
+        this.tag("BackgroundOverlay").setSmooth('alpha', 0, {
+          duration: 1.5
+        });
+      }
+    }
+    _init() {
+      this.tag("Background").w = this.w;
+      this.reset();
+    }
+  }
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  class AppCatalogItem extends lng$1.Component {
+    static _template() {
+      return {
+        Shadow: {
+          y: -10,
+          alpha: 0,
+          rect: true,
+          color: CONFIG.theme.hex,
+          h: this.height + 20,
+          w: this.width
+        },
+        Image: {
+          h: this.height,
+          w: this.width
+        },
+        Overlay: {
+          alpha: 0,
+          rect: true,
+          color: 0xFF000000,
+          h: this.height,
+          w: this.width,
+          OverlayText: {
+            alpha: 0,
+            mount: 0.5,
+            x: this.width / 2,
+            y: this.height / 2,
+            text: {
+              text: "Already installed!",
+              fontFace: CONFIG.language.font,
+              fontSize: 20
+            }
+          }
+        },
+        Text: {
+          alpha: 0,
+          y: this.height + 10,
+          text: {
+            text: '',
+            fontFace: CONFIG.language.font,
+            fontSize: 25
+          }
+        },
+        StatusProgress: {
+          type: Progress,
+          x: 50,
+          y: 80,
+          w: 200
+        }
+      };
+    }
+    set info(data) {
+      if (!data.hasOwnProperty('url')) data.url = "/images/apps/DACApp_455_255.png";
+      this.data = data;
+      if (data.url.startsWith('/images')) {
+        this.tag('Image').patch({
+          src: Utils.asset(data.url)
+        });
+      } else {
+        this.tag('Image').patch({
+          src: data.url
+        });
+      }
+      this.tag('Text').text.text = data.name;
+    }
+    static get width() {
+      return 300;
+    }
+    static get height() {
+      return 168;
+    }
+    async $fireDACOperationFinished(success, msg) {
+      if (this._app.isInstalling) {
+        this._app.isInstalled = success;
+        this._app.isInstalling = false;
+        this.updateStatus();
+        if (!success) {
+          this.tag('StatusProgress').setProgress(1.0, 'Error: ' + msg);
+        }
+      } else if (this._app.isUnInstalling) {
+        this._app.isInstalled = !success;
+        this._app.isUnInstalling = false;
+        this.updateStatus();
+        if (!success) {
+          this.tag('StatusProgress').setProgress(1.0, 'Error: ' + msg);
+        }
+      }
+    }
+    updateStatus() {
+      if (this._app.isRunning) {
+        this.tag('StatusProgress').setProgress(1.0, 'Running!');
+      } else {
+        if (this._app.isInstalled) {
+          console.log("App is installed");
+          this.tag('StatusProgress').setProgress(1.0, 'Installed!');
+        } else {
+          this.tag('StatusProgress').reset();
+        }
+      }
+    }
+    async myfireINSTALL() {
+      if (this._app.isInstalled) {
+        console.log("App is already installed");
+        this.tag("Overlay").alpha = 0.7;
+        this.tag("OverlayText").alpha = 1;
+        this.tag("Overlay").setSmooth('alpha', 0, {
+          duration: 5
+        });
+        return;
+      }
+      this._app.isInstalling = await installDACApp(this._app, this.tag('StatusProgress'));
+      this.updateStatus();
+    }
+    _init() {
+      this._app = {};
+      this._app.isRunning = false;
+      this._app.isInstalled = false;
+      this._app.isInstalling = false;
+      this._app.isUnInstalling = false;
+      this._buttonIndex = 0;
+    }
+    _focus() {
+      this.scale = 1.15;
+      this.zIndex = 2;
+      this.tag("Shadow").alpha = 1;
+      this.tag("Text").alpha = 1;
+    }
+    _unfocus() {
+      this.scale = 1;
+      this.zIndex = 1;
+      this.tag("Shadow").alpha = 0;
+      this.tag("Text").alpha = 0;
+    }
+    async _handleEnter() {
+      this._app.url = this.data.uri;
+      this._app.id = this.data.id;
+      this._app.name = this.data.name;
+      this._app.version = this.data.version;
+      this._app.type = this.data.type;
+      let installedApps = await getInstalledDACApps();
+      this._app.isInstalled = installedApps.find(a => {
+        return a.id === this._app.id;
+      });
+      if (this._app.isInstalled === undefined) this._app.isInstalled = false;
+      this.myfireINSTALL();
+    }
+  }
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  class ManageAppItem extends lng$1.Component {
+    static _template() {
+      return {
+        Shadow: {
+          y: -10,
+          alpha: 0,
+          rect: true,
+          color: CONFIG.theme.hex,
+          h: this.height + 20,
+          w: this.width
+        },
+        Image: {
+          h: this.height,
+          w: this.width
+        },
+        Overlay: {
+          alpha: 0,
+          rect: true,
+          color: 0xFF000000,
+          h: this.height,
+          w: this.width,
+          OverlayText: {
+            alpha: 0,
+            mount: 0.5,
+            x: this.width / 2,
+            y: this.height / 2,
+            text: {
+              text: "Uninstalling App ..",
+              fontFace: CONFIG.language.font,
+              fontSize: 30
+            }
+          }
+        },
+        Text: {
+          alpha: 0,
+          y: this.height + 10,
+          text: {
+            text: '',
+            fontFace: CONFIG.language.font,
+            fontSize: 25
+          }
+        },
+        StatusProgress: {
+          type: Progress,
+          x: 50,
+          y: 80,
+          w: 200
+        }
+      };
+    }
+    set info(data) {
+      if (!data.hasOwnProperty('url')) data.url = "/images/apps/DACApp_455_255.png";
+      this.data = data;
+      if (data.url.startsWith('/images')) {
+        this.tag('Image').patch({
+          src: Utils.asset(data.url)
+        });
+      } else {
+        this.tag('Image').patch({
+          src: data.url
+        });
+      }
+      this.tag('Text').text.text = data.name;
+    }
+    static get width() {
+      return 300;
+    }
+    static get height() {
+      return 168;
+    }
+    async $fireDACOperationFinished(success, msg) {
+      if (this._app.isUnInstalling) {
+        this._app.isInstalled = !success;
+        this._app.isUnInstalling = false;
+        await this.displayLabel().then(res => {
+          setTimeout(() => {
+            this.fireAncestors('$refreshManagedApps');
+          }, 500);
+        });
+        if (!success) {
+          this.tag('StatusProgress').setProgress(1.0, 'Error: ' + msg);
+        }
+      }
+    }
+    displayLabel() {
+      return new Promise((resolve, reject) => {
+        this.tag("OverlayText").text.text = "App Uninstalled";
+        this.tag("Overlay").alpha = 0.7;
+        this.tag("OverlayText").alpha = 1;
+        this.tag("Overlay").setSmooth('alpha', 0, {
+          duration: 5
+        });
+        resolve();
+      });
+    }
+    async myfireUNINSTALL() {
+      this._app.isUnInstalling = await uninstallDACApp(this._app, this.tag('StatusProgress'));
+    }
+    _init() {
+      this._app = {};
+      this._app.isRunning = false;
+      this._app.isInstalled = false;
+      this._app.isInstalling = false;
+      this._app.isUnInstalling = false;
+      this._buttonIndex = 0;
+    }
+    _focus() {
+      this.scale = 1.15;
+      this.zIndex = 2;
+      this.tag("Shadow").alpha = 1;
+      this.tag("Text").alpha = 1;
+    }
+    _unfocus() {
+      this.scale = 1;
+      this.zIndex = 1;
+      this.tag("Shadow").alpha = 0;
+      this.tag("Text").alpha = 0;
+    }
+    _handleEnter() {
+      this._app.url = this.data.uri;
+      this._app.id = this.data.id;
+      this._app.name = this.data.name;
+      this._app.version = this.data.version;
+      this._app.type = this.data.type;
+      this.myfireUNINSTALL();
+    }
+  }
+
   class AppStore extends lng$1.Component {
     _onChanged() {
       this.widgets.menu.updateTopPanelText(Language.translate('Apps'));
@@ -32737,21 +33298,39 @@ var APP_accelerator_home_ui = (function () {
               after: 2
             },
             spacing: 20
+          },
+          Catalog: {
+            x: 20,
+            y: 120,
+            type: Grid,
+            columns: 5,
+            itemType: AppCatalogItem,
+            w: 1920,
+            h: (AppStore.height + 90) * 2 + 2 * 20 - 10,
+            scroll: {
+              after: 2
+            },
+            spacing: 20
+          },
+          ManagedApps: {
+            x: 20,
+            y: 120,
+            type: Grid,
+            columns: 5,
+            itemType: ManageAppItem,
+            w: 1920,
+            h: (AppStore.height + 90) * 2 + 2 * 20 - 10,
+            scroll: {
+              after: 2
+            },
+            spacing: 20
           }
         }
       };
     }
-    _firstEnable() {
-      let apps = homeApi$1.getAllApps();
-      apps.shift();
+    async _firstEnable() {
+      const Catalog = await getAppCatalogInfo();
       const options = ['My Apps', 'App Catalog', 'Manage Apps'];
-      this.tag('Apps').add(apps.map(element => {
-        return {
-          h: AppStoreItem.height + 90,
-          w: AppStoreItem.width,
-          info: element
-        };
-      }));
       this.tag('Options').add(options.map((element, idx) => {
         return {
           type: OptionsItem,
@@ -32761,30 +33340,74 @@ var APP_accelerator_home_ui = (function () {
         };
       }));
       this.options = {
-        0: () => {
-          this.tag('Apps').add(apps.map(element => {
-            return {
+        0: async () => {
+          const installedApplications = await getInstalledDACApps();
+          this.tag('Apps').add(Catalog.map(element => {
+            let isInstalled = installedApplications.find(a => {
+              return a.id === element.id;
+            });
+            if (isInstalled) return {
               h: AppStoreItem.height + 90,
               w: AppStoreItem.width,
               info: element
             };
           }));
         },
-        1: () => {
-          this.tag('Apps').clear();
+        1: async () => {
+          this.tag('Catalog').add(Catalog.map(element => {
+            return {
+              h: AppCatalogItem.height + 90,
+              w: AppCatalogItem.width,
+              info: element
+            };
+          }));
         },
-        2: () => {
-          this.tag('Apps').clear();
+        2: async () => {
+          const installedApplications = await getInstalledDACApps();
+          this.tag('ManagedApps').add(Catalog.map(element => {
+            let isInstalled = installedApplications.find(a => {
+              return a.id === element.id;
+            });
+            if (isInstalled) return {
+              h: ManageAppItem.height + 90,
+              w: ManageAppItem.width,
+              info: element
+            };
+          }));
         }
       };
+      const installedApps = await getInstalledDACApps();
+      if (Object.keys(installedApps).length === 0) {
+        this.tag('Options').setIndex(1);
+        this.options[1]();
+        this._setState('Catalog');
+      } else {
+        this.options[0]();
+        this._setState('Apps');
+      }
     }
     $selectOption(option, obj) {
       this.tag('Apps').clear();
+      this.tag('Catalog').clear();
+      this.tag('ManagedApps').clear();
       obj._focus();
       this.options[option]();
-      if (this.tag('Apps').length) {
-        this._setState('Apps');
+      switch (option) {
+        case 0:
+          this._setState('Apps');
+          break;
+        case 1:
+          this._setState('Catalog');
+          break;
+        case 2:
+          this._setState('ManagedApps');
+          break;
       }
+    }
+    $refreshManagedApps() {
+      this.tag('ManagedApps').clear();
+      this.options[2]();
+      this._setState('ManagedApps');
     }
     _handleLeft() {
       Router.focusWidget('Menu');
@@ -32816,17 +33439,19 @@ var APP_accelerator_home_ui = (function () {
         _handleUp() {
           this._setState('Options');
         }
-        _handleEnter() {
-          let appApi = new AppApi();
-          let applicationType = this.tag('Apps').currentItem.data.applicationType;
-          let params = {
-            url: this.tag('Apps').currentItem.data.uri,
-            launchLocation: "appsMenu"
-          };
-          console.log(params, applicationType);
-          appApi.launchApp(applicationType, params).catch(err => {
-            console.log(applicationType + ' plugin error: ' + JSON.stringify(err));
-          });
+      }, class Catalog extends this {
+        _getFocused() {
+          return this.tag('Catalog');
+        }
+        _handleUp() {
+          this._setState('Options');
+        }
+      }, class ManagedApps extends this {
+        _getFocused() {
+          return this.tag('ManagedApps');
+        }
+        _handleUp() {
+          this._setState('Options');
         }
       }];
     }
@@ -32991,7 +33616,7 @@ var APP_accelerator_home_ui = (function () {
           launchLocation: "gracenote",
           appIdentifier: 'n:3'
         };
-        appApi.launchApp("Cobalt", params).catch(err => {});
+        appApi.launchApp("YouTube", params).catch(err => {});
       }
     }
     _handleRight() {
@@ -33938,13 +34563,13 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const dtvApi$3 = new DTVApi();
-  const config$7 = {
+  const config$9 = {
     host: "127.0.0.1",
     port: 9998,
     default: 1
   };
-  const thunder$9 = thunderJS(config$7);
-  const systemcCallsign$1 = "DTV";
+  const thunder$a = thunderJS$1(config$9);
+  const systemcCallsign = "DTV";
 
   /**
    * Class for DVB Scan screen.
@@ -34364,7 +34989,7 @@ var APP_accelerator_home_ui = (function () {
     }
 
     _firstActive() {
-      thunder$9.on(systemcCallsign$1, "searchstatus", notification => {
+      thunder$a.on(systemcCallsign, "searchstatus", notification => {
         console.log("SearchStatus Notification: ", JSON.stringify(notification));
         if (notification.finished) {
           console.log("notification.finished: ", notification.finished);
@@ -35295,7 +35920,7 @@ var APP_accelerator_home_ui = (function () {
           ControlSettings: 2
         }
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
       this._events = new Map();
       this.callsign = "org.rdk.tv.ControlSettings";
       this.settingsOptions = [{
@@ -36349,12 +36974,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$6 = {
+  const config$8 = {
     host: "127.0.0.1",
     port: 9998,
     default: 1
   };
-  var thunder$8 = thunderJS(config$6);
+  var thunder$9 = thunderJS$1(config$8);
   class TvOverlayScreen extends lng$1.Component {
     set params(args) {
       this._type = args.type;
@@ -36455,11 +37080,11 @@ var APP_accelerator_home_ui = (function () {
       setTimeout(() => {
         if (currentApp !== "") {
           this.appApi.setVisibility("ResidentApp", false);
-          thunder$8.call("org.rdk.RDKShell", "moveToFront", {
+          thunder$9.call("org.rdk.RDKShell", "moveToFront", {
             client: currentApp
           }).then(result => {
             console.log(currentApp, " moveToFront Success");
-            thunder$8.call("org.rdk.RDKShell", "setFocus", {
+            thunder$9.call("org.rdk.RDKShell", "setFocus", {
               client: currentApp
             }).then(result => {
               console.log(currentApp, " setFocus Success");
@@ -36970,7 +37595,9 @@ var APP_accelerator_home_ui = (function () {
           url: channel.url
         };
         const appIdentifiers = {
-          "Cobalt": "n:3",
+          "YouTube": "n:5",
+          "YouTube": "n:4",
+          "YouTube": "n:3",
           "Netflix": "n:1",
           "Amazon": "n:2"
         }; //callsign to identifier mapping
@@ -37659,7 +38286,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
       this.appApi = new AppApi();
     }
     _focus() {
@@ -37680,6 +38307,1202 @@ var APP_accelerator_home_ui = (function () {
         this.appApi.setFocus(currentApp);
         this.appApi.visible(currentApp, true);
       }
+    }
+  }
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  const config$7 = {
+    host: '127.0.0.1',
+    port: 9998,
+    default: 1
+  };
+  var thunder$8 = thunderJS$1(config$7);
+  var appApi$8 = new AppApi();
+  class CodeScreen extends lng$1.Component {
+    static _template() {
+      return {
+        Wrapper: {
+          w: 1920,
+          h: 1080,
+          rect: true,
+          color: 0xff000000,
+          BackButton: {
+            x: 180,
+            y: 60,
+            w: 150,
+            mountX: 0.5,
+            h: 60,
+            rect: true,
+            color: 0xFFFFFFFF,
+            Title: {
+              x: 75,
+              y: 30,
+              mount: 0.5,
+              text: {
+                text: "Back",
+                fontFace: CONFIG.language.font,
+                fontSize: 22,
+                textColor: 0xFF000000,
+                fontStyle: 'bold'
+              }
+            },
+            visible: true
+          },
+          Alexa: {
+            x: 1050,
+            y: 250,
+            Logo: {
+              h: 220,
+              w: 442,
+              x: 135,
+              mountX: 1,
+              y: 200,
+              mountY: 0.5,
+              src: Utils.asset('/images/apps/AlexaBadge.png')
+            },
+            Description: {
+              x: -70,
+              y: 380,
+              mount: 0.5,
+              text: {
+                text: "",
+                fontFace: CONFIG.language.font,
+                fontSize: 32,
+                textColor: 0xFFF9F9F9,
+                fontStyle: 'normal',
+                wordWrap: true,
+                wordWrapWidth: 800
+              }
+            },
+            Description2: {
+              x: -100,
+              y: 500,
+              mount: 0.5,
+              text: {
+                text: "Loading Code ...",
+                fontFace: CONFIG.language.font,
+                fontSize: 32,
+                textColor: 0xFF00CAFF,
+                fontStyle: 'normal',
+                wordWrap: true,
+                wordWrapWidth: 800
+              },
+              visible: true
+            }
+          }
+        }
+      };
+    }
+    _init() {
+      this._setState('Description');
+    }
+    _focus() {
+      thunder$8.Controller.activate({
+        callsign: "org.rdk.VoiceControl"
+      }).then(res => {
+        thunder$8.on("org.rdk.VoiceControl", 'onServerMessage', notification => {
+          console.log("VoiceControl.onServerMessage Notification: ", notification);
+          this.VoiceControlData = notification;
+          this.tag('Description').text.text = "Go to ".concat(notification.xr_speech_avs.url, ", enter this code");
+          this.tag("Description2").visible = true;
+          this.tag("Description2").text.text = "".concat(notification.xr_speech_avs.code);
+          console.log('avs code coming from CodeScreen');
+          if (notification.xr_speech_avs.state === "refreshed") {
+            // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
+            appApi$8.setAlexaAuthStatus("AlexaHandleError");
+            Router.navigate("SuccessScreen");
+          } else if (notification.xr_speech_avs.state === "uninitialized" || notification.xr_speech_avs.state === "authorizing") {
+            console.log("notification state is uninitialised");
+            appApi$8.setAlexaAuthStatus("AlexaAuthPending");
+          } else if (notification.xr_speech_avs.state === "unrecoverable error") {
+            console.log("notification state is unrecoverable error");
+            // Could be AUTH token Timeout; refresh it.
+            Router.navigate("FailureScreen");
+          }
+        });
+      }).catch(err => {
+        console.log("VoiceControl Plugin Activation ERROR!: ", err);
+      });
+      this._setState('Description');
+    }
+    _active() {
+      this._setState('Description');
+    }
+    static _states() {
+      return [class Description extends this {
+        $enter() {
+          this._setState("Description");
+        }
+        _handleUp() {
+          this._setState("BackButton");
+        }
+        $exit() {
+          this.tag('Description');
+        }
+      }, class BackButton extends this {
+        $enter() {
+          this.tag("BackButton");
+          this._focus();
+        }
+        _handleEnter() {
+          if (!Router.isNavigating()) {
+            Router.navigate('AlexaConfirmationScreen');
+          }
+        }
+        _focus() {
+          this.tag('BackButton').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('BackButton.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('BackButton').patch({
+            color: 0xFFFFFFFF
+          });
+          this.tag('BackButton.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        $exit() {
+          this._unfocus();
+        }
+      }];
+    }
+  }
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  const config$6 = {
+    host: '127.0.0.1',
+    port: 9998,
+    default: 1
+  };
+  thunderJS$1(config$6);
+  var appApi$7 = new AppApi();
+  class AlexaLoginScreen extends lng$1.Component {
+    static _template() {
+      return {
+        Wrapper: {
+          w: 1920,
+          h: 1080,
+          rect: true,
+          color: 0xff000000,
+          BackButton: {
+            x: 180,
+            y: 60,
+            w: 150,
+            mountX: 0.5,
+            h: 60,
+            rect: true,
+            color: 0xFFFFFFFF,
+            Title: {
+              x: 75,
+              y: 30,
+              mount: 0.5,
+              text: {
+                text: "Back",
+                fontFace: CONFIG.language.font,
+                fontSize: 22,
+                textColor: 0xFF000000,
+                fontStyle: 'bold'
+              }
+            },
+            visible: true
+          },
+          Alexa: {
+            x: 1050,
+            y: 250,
+            Logo: {
+              h: 220,
+              w: 442,
+              x: 135,
+              mountX: 1,
+              y: 200,
+              mountY: 0.5,
+              src: Utils.asset('/images/apps/AlexaBadge.png')
+            },
+            Description: {
+              x: -70,
+              y: 380,
+              mount: 0.5,
+              text: {
+                text: "Alexa allows you to use your voice to hear the news, check weather, control your smart home, and more.",
+                fontFace: CONFIG.language.font,
+                fontSize: 32,
+                textColor: 0xFFF9F9F9,
+                fontStyle: 'normal',
+                wordWrap: true,
+                wordWrapWidth: 800
+              }
+            },
+            SignInButton: {
+              x: -100,
+              y: 500,
+              mountX: 0.5,
+              h: 60,
+              w: 350,
+              rect: true,
+              color: 0xFFFFFFFF,
+              Title: {
+                x: 180,
+                y: 30,
+                mount: 0.5,
+                text: {
+                  text: "Sign in with Amazon",
+                  fontFace: CONFIG.language.font,
+                  fontSize: 28,
+                  textColor: 0xFF000000,
+                  fontStyle: 'normal'
+                }
+              },
+              visible: true
+            }
+          }
+        }
+      };
+    }
+    _init() {}
+    _focus() {
+      this._setState('SignInButton');
+    }
+    _active() {
+      this._setState('SignInButton');
+    }
+    static _states() {
+      return [class SignInButton extends this {
+        $enter() {
+          this.tag("SignInButton").visible = true;
+          this.tag('SignInButton.Title').text.textColor = 0xFFFFFFFF;
+          this._focus();
+        }
+        _focus() {
+          this.tag('SignInButton').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('SignInButton.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('SignInButton').patch({
+            color: 0xFFFFFFFF
+          });
+          this.tag('SignInButton.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        async _handleEnter() {
+          if (appApi$7.checkAlexaAuthStatus() != "AlexaUserDenied") {
+            console.log("Code coming from AlexaLoginScreen");
+            Router.navigate("CodeScreen");
+          }
+        }
+        _handleUp() {
+          this._setState("BackButton");
+        }
+        $exit() {
+          this._unfocus();
+        }
+      }, class BackButton extends this {
+        $enter() {
+          this.tag("BackButton");
+          this.tag('BackButton.Title').text.textColor = 0xFFFFFFFF;
+          this._focus();
+        }
+        _handleEnter() {
+          if (!Router.isNavigating()) {
+            Router.navigate('AlexaConfirmationScreen');
+          }
+        }
+        _focus() {
+          this.tag('BackButton').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('BackButton.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('BackButton').patch({
+            color: 0xFFFFFFFF
+          });
+          this.tag('BackButton.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        _handleDown() {
+          this._setState("SignInButton");
+        }
+        $exit() {
+          this._unfocus();
+        }
+      }];
+    }
+  }
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  class SuccessScreen extends lng$1.Component {
+    static _template() {
+      return {
+        Wrapper: {
+          w: 1920,
+          h: 1080,
+          rect: true,
+          color: 0xff000000,
+          Alexa: {
+            x: 1050,
+            y: 250,
+            Logo: {
+              h: 220,
+              w: 442,
+              x: 135,
+              mountX: 1,
+              y: 200,
+              mountY: 0.5,
+              src: Utils.asset('/images/apps/AlexaBadge.png')
+            },
+            Description: {
+              x: -70,
+              y: 380,
+              mount: 0.5,
+              text: {
+                text: "You are ready to use alexa. Here are some things to try",
+                fontFace: CONFIG.language.font,
+                fontSize: 32,
+                textColor: 0xFFF9F9F9,
+                fontStyle: 'normal',
+                wordWrap: true,
+                wordWrapWidth: 800
+              }
+            },
+            Box1: {
+              x: -600,
+              y: 500,
+              mountX: 0.5,
+              h: 60,
+              w: 420,
+              rect: true,
+              color: 0xFF00CAFF,
+              Title: {
+                x: 200,
+                y: 30,
+                mount: 0.5,
+                text: {
+                  text: "\"Alexa, play some jazz music\"",
+                  fontFace: CONFIG.language.font,
+                  fontSize: 28,
+                  textColor: 0xFF232F3E,
+                  fontStyle: 'italic',
+                  borderRadius: 100
+                }
+              },
+              visible: true
+            },
+            Box2: {
+              x: -100,
+              y: 500,
+              mountX: 0.5,
+              h: 60,
+              w: 420,
+              rect: true,
+              color: 0xFF00CAFF,
+              Title: {
+                x: 200,
+                y: 30,
+                mount: 0.5,
+                text: {
+                  text: "\"Alexa, play my Flash Briefing\"",
+                  fontFace: CONFIG.language.font,
+                  fontSize: 28,
+                  textColor: 0xFF232F3E,
+                  fontStyle: 'italic',
+                  borderRadius: 100
+                }
+              },
+              visible: true
+            },
+            Box3: {
+              x: 440,
+              y: 500,
+              mountX: 0.5,
+              h: 60,
+              w: 500,
+              rect: true,
+              color: 0xFF00CAFF,
+              Title: {
+                x: 250,
+                y: 30,
+                mount: 0.5,
+                text: {
+                  text: "\"Alexa, what's your favourite movie?\"",
+                  fontFace: CONFIG.language.font,
+                  fontSize: 28,
+                  textColor: 0xFF232F3E,
+                  fontStyle: 'italic',
+                  borderRadius: 100
+                }
+              },
+              visible: true
+            }
+          },
+          DoneButton: {
+            x: 1700,
+            y: 60,
+            w: 150,
+            mountX: 0.5,
+            h: 60,
+            rect: true,
+            color: 0xFFFFFFFF,
+            Title: {
+              x: 75,
+              y: 30,
+              mount: 0.5,
+              text: {
+                text: "Done",
+                fontFace: CONFIG.language.font,
+                fontSize: 22,
+                textColor: 0xFF000000,
+                fontStyle: 'bold'
+              }
+            },
+            visible: true,
+            alpha: 1
+          }
+        }
+      };
+    }
+    _init() {
+      this._setState('DoneButton');
+    }
+    _focus() {
+      Registry.clear();
+      this._setState('DoneButton');
+    }
+    _active() {
+      this._setState('DoneButton');
+    }
+    static _states() {
+      return [class DoneButton extends this {
+        $enter() {
+          this.tag("DoneButton");
+        }
+        _handleEnter() {
+          Router.navigate('menu');
+        }
+        _focus() {
+          this.tag('DoneButton').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('DoneButton.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('DoneButton').patch({
+            color: 0xFFFFFFFF
+          });
+          this.tag('DoneButton.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        $exit() {
+          //this.show()
+          this.tag('DoneButton');
+        }
+      }];
+    }
+  }
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  var appApi$6 = new AppApi();
+  class FailureScreen extends lng$1.Component {
+    static _template() {
+      return {
+        Wrapper: {
+          w: 1920,
+          h: 1080,
+          rect: true,
+          color: 0xff000000,
+          Alexa: {
+            x: 1050,
+            y: 250,
+            Logo: {
+              h: 220,
+              w: 442,
+              x: 135,
+              mountX: 1,
+              y: 200,
+              mountY: 0.5,
+              src: Utils.asset('/images/apps/AlexaBadge.png')
+            },
+            Description: {
+              x: -70,
+              y: 380,
+              mount: 0.5,
+              text: {
+                text: "Something went wrong, please try again",
+                fontFace: CONFIG.language.font,
+                fontSize: 32,
+                textColor: 0xFFF9F9F9,
+                fontStyle: 'normal',
+                wordWrap: true,
+                wordWrapWidth: 800
+              }
+            }
+          },
+          RetryButton: {
+            x: 1700,
+            y: 60,
+            w: 150,
+            mountX: 0.5,
+            h: 60,
+            rect: true,
+            color: 0xFFFFFFFF,
+            Title: {
+              x: 75,
+              y: 30,
+              mount: 0.5,
+              text: {
+                text: "Retry",
+                fontFace: CONFIG.language.font,
+                fontSize: 22,
+                textColor: 0xFF000000,
+                fontStyle: 'bold'
+              }
+            },
+            visible: true,
+            alpha: 1
+          }
+        }
+      };
+    }
+    _init() {}
+    _focus() {
+      this._setState('RetryButton');
+    }
+    _active() {
+      this._setState('RetryButton');
+    }
+    static _states() {
+      return [class RetryButton extends this {
+        $enter() {
+          console.log("setState DoneButton CodeScreen");
+          this.tag("RetryButton");
+          this._focus();
+          this.tag('RetryButton.Title').text.textColor = CONFIG.theme.hex;
+        }
+        _handleEnter() {
+          appApi$6.resetAVSCredentials().then(res => {
+            console.log("resetAvsres", res);
+            Router.navigate('AlexaLoginScreen');
+          });
+        }
+        _focus() {
+          this.tag('RetryButton').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('RetryButton.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('RetryButton').patch({
+            color: 0xFFFFFFFF
+          });
+          this.tag('RetryButton.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        $exit() {
+          this._unfocus();
+        }
+      }];
+    }
+  }
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  const appApi$5 = new AppApi();
+  /**
+   * Class for Reboot Confirmation Screen.
+   */
+  class AlexaConfirmationScreen extends lng$1.Component {
+    pageTransition() {
+      return 'left';
+    }
+    static _template() {
+      return {
+        w: 1920,
+        h: 2000,
+        rect: true,
+        color: 0xCC000000,
+        RebootScreen: {
+          x: 950,
+          y: 270,
+          Title: {
+            x: 0,
+            y: 0,
+            mountX: 0.5,
+            text: {
+              text: "Exit Alexa",
+              fontFace: CONFIG.language.font,
+              fontSize: 40,
+              textColor: CONFIG.theme.hex
+            }
+          },
+          BorderTop: {
+            x: 0,
+            y: 75,
+            w: 1558,
+            h: 3,
+            rect: true,
+            mountX: 0.5
+          },
+          Info: {
+            x: 0,
+            y: 125,
+            mountX: 0.5,
+            text: {
+              text: Language.translate("Alexa will be disabled, are you sure you want to exit?"),
+              fontFace: CONFIG.language.font,
+              fontSize: 25
+            }
+          },
+          Buttons: {
+            x: 100,
+            y: 200,
+            w: 440,
+            mountX: 0.5,
+            h: 50,
+            YesButton: {
+              x: 0,
+              w: 200,
+              mountX: 0.5,
+              h: 50,
+              rect: true,
+              color: 0xFFFFFFFF,
+              Title: {
+                x: 100,
+                y: 25,
+                mount: 0.5,
+                text: {
+                  text: "Yes",
+                  fontFace: CONFIG.language.font,
+                  fontSize: 22,
+                  textColor: 0xFF000000
+                }
+              }
+            },
+            NoButton: {
+              x: 220,
+              w: 200,
+              mountX: 0.5,
+              h: 50,
+              rect: true,
+              color: 0xFFFFFFFF,
+              Title: {
+                x: 100,
+                y: 25,
+                mount: 0.5,
+                text: {
+                  text: "No",
+                  fontFace: CONFIG.language.font,
+                  fontSize: 22,
+                  textColor: 0xFF000000
+                }
+              }
+            }
+          },
+          BorderBottom: {
+            x: 0,
+            y: 300,
+            w: 1558,
+            h: 3,
+            rect: true,
+            mountX: 0.5
+          }
+        }
+      };
+    }
+    _focus() {
+      this._setState('NoButton');
+    }
+    _handleBack() {
+      if (!Router.isNavigating()) {
+        Router.back();
+      }
+    }
+    static _states() {
+      return [class YesButton extends this {
+        $enter() {
+          this._focus();
+        }
+        _handleEnter() {
+          appApi$5.setAlexaAuthStatus("AlexaUserDenied");
+          Router.navigate("menu");
+        }
+        _handleRight() {
+          this._setState('NoButton');
+        }
+        _focus() {
+          this.tag('YesButton').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('YesButton.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('YesButton').patch({
+            color: 0xFFFFFFFF
+          });
+          this.tag('YesButton.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        $exit() {
+          this._unfocus();
+        }
+      }, class NoButton extends this {
+        $enter() {
+          this._focus();
+        }
+        _handleEnter() {
+          if (!Router.isNavigating()) {
+            Router.back();
+          }
+        }
+        _handleLeft() {
+          this._setState('YesButton');
+        }
+        _focus() {
+          this.tag('NoButton').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('NoButton.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('NoButton').patch({
+            color: 0xFFFFFFFF
+          });
+          this.tag('NoButton.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        $exit() {
+          this._unfocus();
+        }
+      }];
+    }
+  }
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  class CameraStreamingScreen extends lng$1.Component {
+    static _template() {
+      return {
+        Background: {
+          w: 1920,
+          h: 1080,
+          shader: {
+            x: 260,
+            y: 390,
+            w: 910,
+            h: 520,
+            type: lng$1.shaders.Hole
+          },
+          visible: true
+        },
+        Riot: {
+          x: 300,
+          y: 300,
+          mount: 0.5,
+          text: {
+            text: "RIoT",
+            fontFace: CONFIG.language.font,
+            fontSize: 32,
+            textColor: 0xFFF9F9F9,
+            fontStyle: 'normal',
+            zIndex: 10
+          }
+        },
+        BorderTop: {
+          x: 1470,
+          y: 400,
+          w: 550,
+          h: 6,
+          rect: true,
+          mountX: 0.5
+        },
+        Switch1: {
+          Text: {
+            x: 1260,
+            y: 450,
+            mount: 0.5,
+            text: {
+              text: Language.translate("Switch 1"),
+              fontFace: CONFIG.language.font,
+              fontSize: 32,
+              textColor: 0xFFF9F9F9,
+              fontStyle: 'normal',
+              wordWrap: true,
+              wordWrapWidth: 800
+            }
+          },
+          Button: {
+            h: 45,
+            w: 67,
+            x: 1750,
+            mountX: 1,
+            y: 450,
+            mountY: 0.5,
+            src: Utils.asset('images/settings/ToggleOffWhite.png')
+          },
+          BorderBottom: {
+            x: 1470,
+            y: 500,
+            w: 550,
+            h: 6,
+            rect: true,
+            mountX: 0.5
+          }
+        },
+        Switch2: {
+          Text: {
+            x: 1260,
+            y: 550,
+            mount: 0.5,
+            text: {
+              text: Language.translate("Switch 2"),
+              fontFace: CONFIG.language.font,
+              fontSize: 32,
+              textColor: 0xFFF9F9F9,
+              fontStyle: 'normal',
+              wordWrap: true,
+              wordWrapWidth: 800
+            }
+          },
+          Button: {
+            h: 45,
+            w: 67,
+            x: 1750,
+            mountX: 1,
+            y: 550,
+            mountY: 0.5,
+            src: Utils.asset('images/settings/ToggleOffWhite.png')
+          },
+          BorderBottom2: {
+            x: 1470,
+            y: 600,
+            w: 550,
+            h: 6,
+            rect: true,
+            mountX: 0.5
+          }
+        },
+        Switch3: {
+          Text: {
+            x: 1260,
+            y: 650,
+            mount: 0.5,
+            text: {
+              text: Language.translate("Switch 3"),
+              fontFace: CONFIG.language.font,
+              fontSize: 32,
+              textColor: 0xFFF9F9F9,
+              fontStyle: 'normal',
+              wordWrap: true,
+              wordWrapWidth: 800
+            }
+          },
+          Button: {
+            h: 45,
+            w: 67,
+            x: 1750,
+            mountX: 1,
+            y: 650,
+            mountY: 0.5,
+            src: Utils.asset('images/settings/ToggleOffWhite.png')
+          },
+          BorderBottom3: {
+            x: 1470,
+            y: 700,
+            w: 550,
+            h: 6,
+            rect: true,
+            mountX: 0.5
+          }
+        },
+        Switch4: {
+          Text: {
+            x: 1260,
+            y: 750,
+            mount: 0.5,
+            text: {
+              text: Language.translate("Switch 4"),
+              fontFace: CONFIG.language.font,
+              fontSize: 32,
+              textColor: 0xFFF9F9F9,
+              fontStyle: 'normal',
+              wordWrap: true,
+              wordWrapWidth: 800
+            }
+          },
+          Button: {
+            h: 45,
+            w: 67,
+            x: 1750,
+            mountX: 1,
+            y: 750,
+            mountY: 0.5,
+            src: Utils.asset('images/settings/ToggleOffWhite.png')
+          },
+          BorderBottom4: {
+            x: 1470,
+            y: 800,
+            w: 550,
+            h: 6,
+            rect: true,
+            mountX: 0.5
+          }
+        }
+      };
+    }
+    _init() {
+      this._setState('Switch1');
+    }
+    set params(args) {
+      VideoPlayer.position(350, 270);
+      VideoPlayer.size(890, 600);
+      VideoPlayer.open(args.cameraUrl);
+    }
+    _handleBack() {
+      Router.navigate('menu');
+      VideoPlayer.close();
+    }
+    static _states() {
+      return [class Switch1 extends this {
+        $enter() {
+          this.tag('BorderTop').color = CONFIG.theme.hex;
+          this.tag('BorderBottom').color = CONFIG.theme.hex;
+        }
+        $exit() {
+          this.tag('BorderTop').color = 0xFFF9F9F9;
+          this.tag('BorderBottom').color = 0xFFF9F9F9;
+        }
+        _handleDown() {
+          this._setState('Switch2');
+        }
+        _handleEnter() {
+          if (this.tag("Switch1.Button").src == "static/images/settings/ToggleOnOrange.png") {
+            this.tag("Switch1.Button").src = "static/images/settings/ToggleOffWhite.png";
+            console.log("Switch1 Turned Off");
+          } else {
+            this.tag("Switch1.Button").src = "static/images/settings/ToggleOnOrange.png";
+            console.log("Switch1 Turned On");
+          }
+        }
+      }, class Switch2 extends this {
+        $enter() {
+          this.tag('BorderBottom').color = CONFIG.theme.hex;
+          this.tag('BorderBottom2').color = CONFIG.theme.hex;
+        }
+        $exit() {
+          this.tag('BorderBottom').color = 0xFFF9F9F9;
+          this.tag('BorderBottom2').color = 0xFFF9F9F9;
+        }
+        _handleDown() {
+          this._setState('Switch3');
+        }
+        _handleUp() {
+          this._setState('Switch1');
+        }
+        _handleEnter() {
+          if (this.tag("Switch2.Button").src == "static/images/settings/ToggleOnOrange.png") {
+            this.tag("Switch2.Button").src = "static/images/settings/ToggleOffWhite.png";
+            console.log("Switch2 Turned Off");
+          } else {
+            this.tag("Switch2.Button").src = "static/images/settings/ToggleOnOrange.png";
+            console.log("Switch2 Turned On");
+          }
+        }
+      }, class Switch3 extends this {
+        $enter() {
+          this.tag('BorderBottom2').color = CONFIG.theme.hex;
+          this.tag('BorderBottom3').color = CONFIG.theme.hex;
+        }
+        $exit() {
+          this.tag('BorderBottom2').color = 0xFFF9F9F9;
+          this.tag('BorderBottom3').color = 0xFFF9F9F9;
+        }
+        _handleDown() {
+          this._setState('Switch4');
+        }
+        _handleUp() {
+          this._setState('Switch2');
+        }
+        _handleEnter() {
+          if (this.tag("Switch3.Button").src == "static/images/settings/ToggleOnOrange.png") {
+            this.tag("Switch3.Button").src = "static/images/settings/ToggleOffWhite.png";
+            console.log("Switch3 Turned Off");
+          } else {
+            this.tag("Switch3.Button").src = "static/images/settings/ToggleOnOrange.png";
+            console.log("Switch3 Turned On");
+          }
+        }
+      }, class Switch4 extends this {
+        $enter() {
+          this.tag('BorderBottom3').color = CONFIG.theme.hex;
+          this.tag('BorderBottom4').color = CONFIG.theme.hex;
+        }
+        $exit() {
+          this.tag('BorderBottom3').color = 0xFFF9F9F9;
+          this.tag('BorderBottom4').color = 0xFFF9F9F9;
+        }
+        _handleUp() {
+          this._setState('Switch3');
+        }
+        _handleEnter() {
+          if (this.tag("Switch4.Button").src == "static/images/settings/ToggleOnOrange.png") {
+            this.tag("Switch4.Button").src = "static/images/settings/ToggleOffWhite.png";
+            console.log("Switch4 Turned Off");
+          } else {
+            this.tag("Switch4.Button").src = "static/images/settings/ToggleOnOrange.png";
+            console.log("Switch4 Turned On");
+          }
+        }
+      }];
     }
   }
 
@@ -37781,6 +39604,10 @@ var APP_accelerator_home_ui = (function () {
       component: AAMPVideoPlayer,
       widgets: ['Volume', "SettingsOverlay", "AppCarousel"]
     }, {
+      path: 'camera/player',
+      component: CameraStreamingScreen,
+      widgets: ['Menu']
+    }, {
       path: 'dtvplayer',
       component: DTVPlayer,
       widgets: ['Volume', 'TvOverlays', 'ChannelOverlay', "SettingsOverlay", "AppCarousel"]
@@ -37790,6 +39617,21 @@ var APP_accelerator_home_ui = (function () {
     }, {
       path: '*',
       component: LogoScreen
+    }, {
+      path: "FailureScreen",
+      component: FailureScreen
+    }, {
+      path: "SuccessScreen",
+      component: SuccessScreen
+    }, {
+      path: "AlexaLoginScreen",
+      component: AlexaLoginScreen
+    }, {
+      path: "CodeScreen",
+      component: CodeScreen
+    }, {
+      path: "AlexaConfirmationScreen",
+      component: AlexaConfirmationScreen
     }]
   };
 
@@ -38168,7 +40010,6 @@ var APP_accelerator_home_ui = (function () {
     * @param {boolean} toggle
     * Function to change the mic icon.
     */
-
     set changeMic(toggle) {
       if (toggle) {
         this.tag('Mic').src = Utils.asset('/images/topPanel/microphone_mute.png');
@@ -38406,12 +40247,11 @@ var APP_accelerator_home_ui = (function () {
     port: 9998,
     default: 1
   };
-  const thunder$7 = thunderJS(config$5);
+  const thunder$7 = thunderJS$1(config$5);
   new AppApi();
   function keyIntercept() {
-    const rdkshellCallsign = 'org.rdk.RDKShell';
     thunder$7.Controller.activate({
-      callsign: rdkshellCallsign
+      callsign: 'org.rdk.RDKShell'
     }).then(result => {
       console.log('Successfully activated RDK Shell');
     }).catch(err => {
@@ -38423,7 +40263,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.AudioVolumeMute,
         modifiers: []
@@ -38435,7 +40275,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.on(rdkshellCallsign, 'onSuspended', notification => {
+      thunder$7.on('org.rdk.RDKShell', 'onSuspended', notification => {
         if (notification) {
           console.log('onSuspended notification from KeyIntercept: ' + notification.client);
         }
@@ -38443,7 +40283,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.F1,
         modifiers: []
@@ -38453,7 +40293,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Inputs_Shortcut,
         modifiers: []
@@ -38463,7 +40303,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Picture_Setting_Shortcut,
         modifiers: []
@@ -38473,7 +40313,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Power,
         modifiers: []
@@ -38483,7 +40323,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Settings_Shortcut,
         modifiers: []
@@ -38493,7 +40333,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.AppCarousel,
         modifiers: []
@@ -38503,7 +40343,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Youtube,
         modifiers: []
@@ -38513,7 +40353,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Amazon,
         modifiers: []
@@ -38523,7 +40363,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Netflix,
         modifiers: []
@@ -38533,7 +40373,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.F7,
         modifiers: []
@@ -38543,7 +40383,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.AudioVolumeUp,
         modifiers: []
@@ -38553,7 +40393,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.AudioVolumeDown,
         modifiers: []
@@ -38563,7 +40403,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'foreground',
         keyCode: keyMap.AudioVolumeDown,
         modifiers: []
@@ -38573,7 +40413,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'foreground',
         keyCode: keyMap.AudioVolumeUp,
         modifiers: []
@@ -38583,7 +40423,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'foreground',
         keyCode: keyMap.AudioVolumeMute,
         modifiers: []
@@ -38593,7 +40433,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.MediaFastForward,
         modifiers: []
@@ -38603,7 +40443,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: 142,
         modifiers: []
@@ -38613,7 +40453,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Home,
         modifiers: []
@@ -38623,7 +40463,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.MediaRewind,
         modifiers: []
@@ -38633,7 +40473,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'ResidentApp',
         keyCode: keyMap.Pause,
         modifiers: []
@@ -38643,8 +40483,8 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
-        client: 'Cobalt',
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
+        client: 'YouTube',
         keyCode: keyMap.Home,
         modifiers: []
       }).catch(err => {
@@ -38653,7 +40493,27 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
+        client: 'YouTubeTV',
+        keyCode: keyMap.Home,
+        modifiers: []
+      }).catch(err => {
+        console.log('Error', err);
+      });
+    }).catch(err => {
+      console.log('Error', err);
+    }).then(result => {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
+        client: 'YouTubeKids',
+        keyCode: keyMap.Home,
+        modifiers: []
+      }).catch(err => {
+        console.log('Error', err);
+      });
+    }).catch(err => {
+      console.log('Error', err);
+    }).then(result => {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'Amazon',
         keyCode: keyMap.Home,
         modifiers: []
@@ -38663,8 +40523,8 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
-        client: 'Cobalt',
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
+        client: 'YouTube',
         keyCode: keyMap.Backspace,
         modifiers: []
       }).catch(err => {
@@ -38673,7 +40533,7 @@ var APP_accelerator_home_ui = (function () {
     }).catch(err => {
       console.log('Error', err);
     }).then(result => {
-      thunder$7.call(rdkshellCallsign, 'addKeyIntercept', {
+      thunder$7.call('org.rdk.RDKShell', 'addKeyIntercept', {
         client: 'Amazon',
         keyCode: keyMap.Backspace,
         modifiers: []
@@ -38738,7 +40598,17 @@ var APP_accelerator_home_ui = (function () {
     //app/shortcuts identifier and callsign map 
     "amzn1.alexa-ask-target.app.70045": {
       "name": "YouTube",
-      "callsign": "Cobalt",
+      "callsign": "YouTube",
+      "url": ""
+    },
+    "amzn1.alexa-ask-target.app.50623": {
+      "name": "YouTubeTV",
+      "callsign": "YouTubeTV",
+      "url": ""
+    },
+    "amzn1.alexa-ask-target.app.09817": {
+      "name": "YouTubeKids",
+      "callsign": "YouTubeKids",
       "url": ""
     },
     "amzn1.alexa-ask-target.app.58952": {
@@ -38923,13 +40793,13 @@ var APP_accelerator_home_ui = (function () {
     port: 9998,
     default: 1
   };
-  var thunder$6 = thunderJS(config$4);
+  var thunder$6 = thunderJS$1(config$4);
   class Volume extends lng$1.Component {
     constructor() {
       super(...arguments);
       _defineProperty(this, "setVolume", async val => {
-        const value = await this.appApi.setVolumeLevel('HDMI0', val);
-        this.appApi.getVolumeLevel("HDMI0").then(volres => {
+        const value = await this.appApi.setVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", val);
+        this.appApi.getVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(volres => {
           console.log("volres", volres, parseInt(volres.volumeLevel));
           VolumePayload.msgPayload.event.header.messageId = "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b";
           VolumePayload.msgPayload.event.payload.volume = parseInt(volres.volumeLevel);
@@ -38942,8 +40812,8 @@ var APP_accelerator_home_ui = (function () {
         return value;
       });
       _defineProperty(this, "setMute", async val => {
-        const status = await this.appApi.audio_mute('HDMI0', val);
-        this.appApi.muteStatus("HDMI0").then(volres => {
+        const status = await this.appApi.audio_mute(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", val);
+        this.appApi.muteStatus(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(volres => {
           console.log("volres", volres, parseInt(volres.muted));
           VolumePayload.msgPayload.event.header.messageId = "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b";
           VolumePayload.msgPayload.event.payload.muted = volres.muted;
@@ -39473,7 +41343,7 @@ var APP_accelerator_home_ui = (function () {
           this.appApi.getDRCMode().then(res => {}).catch(err => {
             console.log(err);
           });
-          this.appApi.setVolumeLevel("HDMI0", 100).then(res => {
+          this.appApi.setVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", 100).then(res => {
             this.appApi.getVolumeLevel().catch(err => {
               console.log(err);
             });
@@ -39484,7 +41354,7 @@ var APP_accelerator_home_ui = (function () {
             console.log(err);
           });
           // gets the enabled Audio Port
-          this.appApi.getEnableAudioPort("HDMI0").then(res => {}).catch(err => {
+          this.appApi.getEnableAudioPort(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(res => {}).catch(err => {
             console.log(err);
           });
           this.appApi.getSupportedAudioPorts().catch(err => {
@@ -39492,8 +41362,8 @@ var APP_accelerator_home_ui = (function () {
           });
 
           // set enable Audio POrt
-          this.appApi.setEnableAudioPort("HDMI0").then(res => {
-            this.appApi.getEnableAudioPort("HDMI0").then(res => {}).catch(err => {
+          this.appApi.setEnableAudioPort(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(res => {
+            this.appApi.getEnableAudioPort(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(res => {}).catch(err => {
               console.log(err);
             });
           }).catch(err => {
@@ -39577,7 +41447,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const thunder$5 = thunderJS({
+  const thunder$5 = thunderJS$1({
     host: '127.0.0.1',
     port: 9998,
     default: 1
@@ -41821,7 +43691,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      this._thunder = thunderJS(config);
+      this._thunder = thunderJS$1(config);
       const systemcCallsign = 'org.rdk.Network';
       const eventName = 'onDefaultInterfaceChanged';
       this._thunder.on(systemcCallsign, eventName, notification => {
@@ -43149,8 +45019,7 @@ var APP_accelerator_home_ui = (function () {
     port: 9998,
     default: 1
   };
-  const thunder$4 = thunderJS(config$3);
-  const systemcCallsign = "DTV";
+  const thunder$4 = thunderJS$1(config$3);
 
   /**
    * Class for DVB Scan screen.
@@ -43559,7 +45428,7 @@ var APP_accelerator_home_ui = (function () {
     }
 
     _firstActive() {
-      thunder$4.on(systemcCallsign, "searchstatus", notification => {
+      thunder$4.on("DTV", "searchstatus", notification => {
         console.log("SearchStatus Notification: ", JSON.stringify(notification));
         if (notification.finished) {
           console.log("notification.finished: ", notification.finished);
@@ -44698,7 +46567,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const appApi$2 = new AppApi();
-  const thunder$3 = thunderJS({
+  const thunder$3 = thunderJS$1({
     host: '127.0.0.1',
     port: 9998,
     default: 1
@@ -45416,7 +47285,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 720,
                 mountY: 0.5,
                 text: {
-                  text: "Youtube:\nAmazon Prime:\nNetflix ESN:",
+                  text: "YouTube:\nAmazon Prime:\nNetflix ESN:",
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -45507,7 +47376,7 @@ var APP_accelerator_home_ui = (function () {
               se.appApi.getNetflixESN().then(res => {
                 Storage.set('Netflix_ESN', res);
                 console.log("Netflix : netflix esn call returns : ", JSON.stringify(res));
-                se.netflixESN = "Youtube: NA \nAmazon Prime: NA \nNetflix ESN: ".concat(res);
+                se.netflixESN = "YouTube: NA \nAmazon Prime: NA \nNetflix ESN: ".concat(res);
               }).catch(err => {
                 console.error("Netflix : error while getting netflix esn : ", JSON.stringify(err));
               });
@@ -45518,7 +47387,7 @@ var APP_accelerator_home_ui = (function () {
             self.appApi.getNetflixESN().then(res => {
               Storage.set('Netflix_ESN', res);
               console.log("Netflix : netflix esn call returns : ", JSON.stringify(res));
-              self.netflixESN = "Youtube: NA \nAmazon Prime: NA \nNetflix ESN: ".concat(res);
+              self.netflixESN = "YouTube: NA \nAmazon Prime: NA \nNetflix ESN: ".concat(res);
             }).catch(err => {
               console.error("Netflix : error while getting netflix esn : ", JSON.stringify(err));
             });
@@ -46021,7 +47890,7 @@ var APP_accelerator_home_ui = (function () {
         port: 9998,
         default: 1
       };
-      const thunder = thunderJS(config);
+      const thunder = thunderJS$1(config);
       const systemcCallsign = "org.rdk.System.1";
       thunder.Controller.activate({
         callsign: systemcCallsign
@@ -46690,7 +48559,7 @@ var APP_accelerator_home_ui = (function () {
     port: 9998,
     default: 1
   };
-  thunderJS(config$2);
+  thunderJS$1(config$2);
   /**
    * Class for AdvancedSettings screen.
    */
@@ -47485,7 +49354,7 @@ var APP_accelerator_home_ui = (function () {
     port: 9998,
     default: 1
   };
-  var thunder$2 = thunderJS(config$1);
+  var thunder$2 = thunderJS$1(config$1);
   /**
    * Class for settings screen.
    */
@@ -48339,10 +50208,11 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   };
   var powerState = 'ON';
-  var thunder$1 = thunderJS(config);
+  var AlexaAudioplayerActive = false;
+  var thunder$1 = thunderJS$1(config);
   var appApi = new AppApi();
   var dtvApi$1 = new DTVApi();
-  var hdmiApi = new HDMIApi();
+  new HDMIApi();
   var cecApi = new CECApi();
   class App extends Router.App {
     static getFonts() {
@@ -48435,11 +50305,10 @@ var APP_accelerator_home_ui = (function () {
       let self = this;
       console.log(key, key.keyCode);
       this.$hideImage(0);
-      if (key.keyCode == keyMap.Home || key.keyCode === keyMap.m) {
+      if (key.keyCode == keyMap.Home) {
         this.jumpToRoute("menu"); //method to exit the current app(if any) and route to home screen
         return true;
-      }
-      if (key.keyCode == keyMap.Inputs_Shortcut) {
+      } else if (key.keyCode == keyMap.Inputs_Shortcut) {
         //for inputs overlay
         if (Storage.get("applicationType") !== "") {
           if (Router.getActiveHash() === "tv-overlay/inputs") {
@@ -48468,8 +50337,7 @@ var APP_accelerator_home_ui = (function () {
           }
         }
         return true;
-      }
-      if (key.keyCode == keyMap.Picture_Setting_Shortcut) {
+      } else if (key.keyCode == keyMap.Picture_Setting_Shortcut) {
         //for video settings overlay
         if (Storage.get("applicationType") !== "") {
           if (Router.getActiveHash() === "tv-overlay/settings") {
@@ -48498,8 +50366,7 @@ var APP_accelerator_home_ui = (function () {
           }
         }
         return true;
-      }
-      if (key.keyCode == keyMap.Settings_Shortcut) {
+      } else if (key.keyCode == keyMap.Settings_Shortcut) {
         console.log("settings shortcut");
         if (Storage.get("applicationType") === "") {
           //launch settings overlay/page depending on the current route.
@@ -48544,12 +50411,10 @@ var APP_accelerator_home_ui = (function () {
           }
         }
         return true;
-      }
-      if (key.keyCode == keyMap.Guide_Shortcut) {
+      } else if (key.keyCode == keyMap.Guide_Shortcut) {
         Router.navigate('epg');
         return true;
-      }
-      if (key.keyCode == keyMap.Amazon) {
+      } else if (key.keyCode == keyMap.Amazon) {
         ({
           appIdentifier: self.appIdentifiers["Amazon"]
         });
@@ -48557,18 +50422,16 @@ var APP_accelerator_home_ui = (function () {
           console.error("Error in launching Amazon via dedicated key: " + JSON.stringify(err));
         });
         return true;
-      }
-      if (key.keyCode == keyMap.Youtube) {
+      } else if (key.keyCode == keyMap.Youtube) {
         let params = {
           launchLocation: "dedicatedButton",
-          appIdentifier: self.appIdentifiers["Cobalt"]
+          appIdentifier: self.appIdentifiers["YouTube"]
         };
-        appApi.launchApp("Cobalt", params).catch(err => {
+        appApi.launchApp("YouTube", params).catch(err => {
           console.error("Error in launching Youtube via dedicated key: " + JSON.stringify(err));
         });
         return true;
-      }
-      if (key.keyCode == keyMap.Netflix) {
+      } else if (key.keyCode == keyMap.Netflix) {
         //launchLocation mapping is in launchApp method in AppApi.js
         let params = {
           launchLocation: "dedicatedButton",
@@ -48578,10 +50441,9 @@ var APP_accelerator_home_ui = (function () {
           console.error("Error in launching Netflix via dedicated key: " + JSON.stringify(err));
         });
         return true;
-      }
-      if (key.keyCode == keyMap.AppCarousel) {
+      } else if (key.keyCode == keyMap.AppCarousel) {
         if (Storage.get("applicationType") === "") {
-          // if resident app is on focus 
+          // if resident app is on focus
           if (Router.getActiveHash() === "menu") {
             return true;
           } else if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "AppCarousel") {
@@ -48619,8 +50481,7 @@ var APP_accelerator_home_ui = (function () {
           }
         }
         return true;
-      }
-      if (key.keyCode == keyMap.Power) {
+      } else if (key.keyCode == keyMap.Power) {
         // Remote power key and keyboard F1 key used for STANDBY and POWER_ON
         appApi.getPowerState().then(res => {
           console.log("getPowerState: ", res);
@@ -48763,20 +50624,22 @@ var APP_accelerator_home_ui = (function () {
     _init() {
       let self = this;
       self.appIdentifiers = {
-        "YouTubeKids": "n:3",
-        "YouTubeTV": "n:3",
-        "Youtube": "n:3",
-        "Cobalt": "n:3",
+        "YouTubeKids": "n:5",
+        "YouTubeTV": "n:4",
+        "YouTube": "n:3",
         "Netflix": "n:1",
         "Amazon Prime": "n:2",
         "Amazon": "n:2",
         "Prime": "n:2"
       };
       this.userInactivity();
+      appApi.deviceType().then(result => {
+        console.log("App detected deviceType as:", result.devicetype != null ? result.devicetype : "tv");
+        Storage.set("deviceType", result.devicetype != null ? result.devicetype : "tv");
+      });
       appApi.getPluginStatus("org.rdk.DeviceDiagnostics").then(res => {
-        console.log("avs plugin voice resp", res[0].state);
+        console.log("App DeviceDiagnostics state:", res[0].state);
         if (res[0].state === "deactivated") {
-          console.log("avs1");
           thunder$1.Controller.activate({
             callsign: 'org.rdk.DeviceDiagnostics'
           }).then(result => {
@@ -48785,23 +50648,11 @@ var APP_accelerator_home_ui = (function () {
             reject(err);
           });
         } else {
-          console.log("activated");
           this.AvDecodernotificationcall();
         }
       });
       appApi.getHDCPStatus().then(result => {
         Storage.set("UICacheonDisplayConnectionChanged", result.isConnected);
-      });
-      appApi.getPluginStatus("Cobalt").then(res => {
-        //to set the default url for cobalt
-        console.log("getPluginStatus result: " + JSON.stringify(res));
-        if (res[0].configuration.url.includes("?") === false) {
-          res[0].configuration.url += "?";
-          console.log("Appending '?' to Cobalt base url.");
-        }
-        Storage.set("CobaltDefaultURL", res[0].configuration.url);
-      }).catch(err => {
-        console.log("getPluginStatus ERROR: ", err);
       });
       if (Storage.get("applicationType") !== "HDMI") {
         //to default to hdmi, if previous input was hdmi
@@ -48826,11 +50677,88 @@ var APP_accelerator_home_ui = (function () {
         localStorage.setItem('Language', 'English');
       }
       thunder$1.on('Controller.1', 'all', noti => {
-        console.log("controller notification", noti);
+        console.log("App controller notification:", noti);
         if (noti.data.url && noti.data.url.slice(-5) === "#boot" || noti.data.httpstatus && noti.data.httpstatus != 200 && noti.data.httpstatus != -1) {
           // to exit metro apps by pressing back key & to auto exit webapp if httpstatus is not 200
           appApi.exitApp(Storage.get('applicationType'));
         }
+        // TODO: make the check based on XcastApi.supportedApps() list
+        if (noti.hasOwnProperty("callsign") && (noti.callsign.startsWith("YouYube") || noti.callsign.startsWith("Amazon") || noti.callsign.startsWith("Netflix"))) {
+          let params = {
+            applicationName: noti.callsign,
+            state: 'stopped'
+          };
+          switch (noti.data.state) {
+            case "activated":
+            case "resumed":
+              params.state = 'running';
+              break;
+            case "Activation":
+            case "deactivated":
+            case "Deactivation":
+              params.state = 'stopped';
+              break;
+            case "suspended":
+              params.state = 'suspended';
+          }
+          if (noti.callsign.startsWith("Amazon")) {
+            params.applicationName = "AmazonInstantVideo";
+          }
+          console.log("App Controller state change to xcast: ", JSON.stringify(params));
+          this.xcastApi.onApplicationStateChanged(params);
+          params = null;
+        }
+      });
+      appApi.getPluginStatus("Cobalt").then(res => {
+        /* Loop through YouTube variants and set respective urls. */
+        JSON.parse(JSON.stringify(appListInfo)).forEach(appInfo => {
+          if (appInfo.hasOwnProperty("applicationType") && appInfo.applicationType.startsWith("YouTube") && appInfo.hasOwnProperty("uri") && appInfo.uri.length) {
+            thunder$1.Controller.clone({
+              callsign: "Cobalt",
+              newcallsign: appInfo.applicationType
+            }).then(result => {
+              console.log("App Controller.clone Cobalt as " + appInfo.applicationType + " done.", result);
+            }).catch(err => {
+              console.error("App Controller clone Cobalt for " + appInfo.applicationType + " failed: ", err);
+              // TODO: hide YouTube Icon and listing from Menu, AppCarousel, Channel overlay and EPG page.
+            });
+
+            appApi.getPluginStatus(appInfo.applicationType).then(res => {
+              if (res[0].state !== "deactivated") {
+                thunder$1.Controller.deactivate({
+                  callsign: appInfo.applicationType
+                }).catch(err => {
+                  console.error("App Controller.deactivate " + appInfo.applicationType + " failed. It may not work.", err);
+                  resolve(false);
+                });
+              }
+              /* Do not change YouTube's configuration as Page-visibility test runs on that. */
+              if (res[0].callsign !== "YouTube") {
+                thunder$1.call('Controller', "configuration@".concat(appInfo.applicationType)).then(result => {
+                  /* Ensure appending '?' so that later params can be directly appended. */
+                  result.url = appInfo.uri + "?"; // Make sure that appListInfo.js has only base url.
+                  thunder$1.call('Controller', "configuration@".concat(appInfo.applicationType), result).then(result => {
+                    Storage.set(appInfo.applicationType + "DefaultURL", appInfo.uri + "?"); // Make sure that appListInfo.js has only base url.
+                  }).catch(err => {
+                    console.error("App Controller.configuration@" + appInfo.applicationType + " set failed. It may not work.", err);
+                    resolve(false);
+                  });
+                }).catch(err => {
+                  console.error("App Controller.configuration@" + appInfo.applicationType + " get failed. It may not work.", err);
+                  resolve(false);
+                });
+              } else {
+                /* Just store the plugin configured url as default url and ensure '?' is appended. */
+                Storage.set(appInfo.applicationType + "DefaultURL", res[0].configuration.url.includes('?') ? res[0].configuration.url : res[0].configuration.url + "?");
+              }
+            }).catch(err => {
+              console.error("App getPluginStatus " + appInfo.applicationType + " Error: " + err);
+              resolve(false);
+            });
+          }
+        });
+      }).catch(err => {
+        console.error("App getPluginStatus Cobalt error: ", err);
       });
       thunder$1.on('org.rdk.RDKShell', 'onApplicationDisconnected', notification => {
         console.log("onApplicationDisconnectedNotification: ", JSON.stringify(notification));
@@ -48865,13 +50793,10 @@ var APP_accelerator_home_ui = (function () {
           this.widgets.videoinfochange.update(" New video resolution :  " + notification.currentVideoFormat);
         }
       });
-
-      //video info change events end here -------------
-
       thunder$1.on('Controller', 'statechange', notification => {
         // get plugin status
         console.log("Controller statechange Notification : " + JSON.stringify(notification));
-        if (notification && (notification.callsign === 'Cobalt' || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && (notification.state == 'Deactivation' || notification.state == 'Deactivated')) {
+        if (notification && (notification.callsign.startsWith("YouTube") || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && (notification.state == 'Deactivation' || notification.state == 'Deactivated')) {
           console.log("".concat(notification.callsign, " status = ").concat(notification.state));
           console.log(">>notification.callsign: ", notification.callsign, " applicationType: ", Storage.get("applicationType"));
           if (Router.getActiveHash().startsWith("tv-overlay") || Router.getActiveHash().startsWith("overlay") || Router.getActiveHash().startsWith("applauncher")) {
@@ -48892,7 +50817,7 @@ var APP_accelerator_home_ui = (function () {
             this.advanceScreen.performOTPAction();
           }
         }
-        if (notification && (notification.callsign === 'Cobalt' || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && notification.state == 'Activated') {
+        if (notification && (notification.callsign.startsWith("YouTube") || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && notification.state == 'Activated') {
           Storage.set('applicationType', notification.callsign); //required in case app launch happens using curl command.
           if (notification.callsign === 'Netflix') {
             appApi.getNetflixESN().then(res => {
@@ -48973,32 +50898,32 @@ var APP_accelerator_home_ui = (function () {
         if (!Storage.get("ResolutionChangeInProgress") && temp.isConnected != Storage.get("UICacheonDisplayConnectionChanged")) {
           if (temp.isConnected) {
             let currentApp = Storage.get('applicationType');
-            let launchLocation = Storage.get('cobaltLaunchLocation');
-            console.log("current app is ", currentApp);
+            let launchLocation = Storage.get(currentApp + "LaunchLocation");
+            console.log("App HdcpProfile onDisplayConnectionChanged current app is:", currentApp);
             let params = {
               launchLocation: launchLocation,
               appIdentifier: self.appIdentifiers[currentApp]
             };
-            if (currentApp == "Cobalt") {
-              params["url"] = Storage.get("CobaltDefaultURL");
-              appApi.getPluginStatus('Cobalt').then(result => {
+            if (currentApp.startsWith("YouTube")) {
+              params["url"] = Storage.get(currentApp + "DefaultURL");
+              appApi.getPluginStatus(currentApp).then(result => {
                 if (result[0].state === (Settings.get("platform", "enableAppSuspended") ? "suspended" : "deactivated")) {
                   appApi.launchApp(currentApp, params).catch(err => {
                     console.error("Error in launching ".concat(currentApp, " : ") + JSON.stringify(err));
                   });
                 } else {
-                  console.log("App HdcpProfile onDisplayConnectionChanged skipping; Cobalt is already: ", JSON.stringify(result[0].state));
+                  console.log("App HdcpProfile onDisplayConnectionChanged skipping; " + currentApp + " is already: ", JSON.stringify(result[0].state));
                 }
               });
             }
           } else {
             let currentApp = Storage.get('applicationType');
-            if (currentApp == "Cobalt") {
-              appApi.getPluginStatus('Cobalt').then(result => {
+            if (currentApp.startsWith("YouTube")) {
+              appApi.getPluginStatus(currentApp).then(result => {
                 if (result[0].state !== (Settings.get("platform", "enableAppSuspended") ? "suspended" : "deactivated")) {
                   appApi.exitApp(currentApp, true);
                 } else {
-                  console.log("App HdcpProfile onDisplayConnectionChanged skipping; Cobalt is already: ", JSON.stringify(result[0].state));
+                  console.log("App HdcpProfile onDisplayConnectionChanged skipping; " + currentApp + " is already: ", JSON.stringify(result[0].state));
                 }
               });
             }
@@ -49017,32 +50942,32 @@ var APP_accelerator_home_ui = (function () {
         if (notification.status != Storage.get("UICacheCECActiveSourceStatus")) {
           if (notification.status) {
             let currentApp = Storage.get('applicationType');
-            let launchLocation = Storage.get('cobaltLaunchLocation');
+            let launchLocation = Storage.get(currentApp + "LaunchLocation");
             console.log("current app is ", currentApp);
             let params = {
               launchLocation: launchLocation,
               appIdentifier: self.appIdentifiers[currentApp]
             };
-            if (currentApp == "Cobalt") {
-              params["url"] = Storage.get("CobaltDefaultURL");
-              appApi.getPluginStatus('Cobalt').then(result => {
+            if (currentApp.startsWith("YouTube")) {
+              params["url"] = Storage.get(currentApp + "DefaultURL");
+              appApi.getPluginStatus(currentApp).then(result => {
                 if (result[0].state === (Settings.get("platform", "enableAppSuspended") ? "suspended" : "deactivated")) {
                   appApi.launchApp(currentApp, params).catch(err => {
                     console.error("Error in launching ".concat(currentApp, " : ") + JSON.stringify(err));
                   });
                 } else {
-                  console.log("App HdmiCec_2 onActiveSourceStatusUpdated skipping; Cobalt is already:", JSON.stringify(result[0].state));
+                  console.log("App HdmiCec_2 onActiveSourceStatusUpdated skipping; " + currentApp + " is already:", JSON.stringify(result[0].state));
                 }
               });
             }
           } else {
             let currentApp = Storage.get('applicationType');
-            if (currentApp == "Cobalt") {
-              appApi.getPluginStatus('Cobalt').then(result => {
+            if (currentApp.startsWith("YouTube")) {
+              appApi.getPluginStatus(currentApp).then(result => {
                 if (result[0].state !== (Settings.get("platform", "enableAppSuspended") ? "suspended" : "deactivated")) {
                   appApi.exitApp(currentApp, true);
                 } else {
-                  console.log("App HdmiCec_2 onActiveSourceStatusUpdated skipping; Cobalt is already:", JSON.stringify(result[0].state));
+                  console.log("App HdmiCec_2 onActiveSourceStatusUpdated skipping; " + currentApp + " is already:", JSON.stringify(result[0].state));
                 }
               });
             }
@@ -49084,10 +51009,10 @@ var APP_accelerator_home_ui = (function () {
         callsign: systemcCallsign
       }).then(res => {
         console.log("App VoiceControl Plugin Activation result: ", res);
-        appApi.getVolumeLevel("HDMI0").then(volres => {
+        appApi.getVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(volres => {
           VolumePayload.msgPayload.event.payload.volume = volres.volumeLevel;
         });
-        appApi.muteStatus("HDMI0").then(muteRes => {
+        appApi.muteStatus(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(muteRes => {
           VolumePayload.msgPayload.event.payload.muted = muteRes.muted;
         });
         console.log("App reporting device volume to Alexa:", VolumePayload);
@@ -49121,7 +51046,7 @@ var APP_accelerator_home_ui = (function () {
             if (notification.xr_speech_avs.state_reporter === "authorization_req" || notification.xr_speech_avs.code) {
               // DAB Demo Work Around - disabling.
               //Storage.set("code", notification.xr_speech_avs.code)
-              //Storage.set("url", notification.xr_speech_avs.url)   
+              //Storage.set("url", notification.xr_speech_avs.url)
               //if(Router.getActiveHash() != "AlexaScreen" && Router.getActiveHash() != "CodeScreen1"){
               //  Router.navigate("AlexaScreen")
               //}
@@ -49143,17 +51068,24 @@ var APP_accelerator_home_ui = (function () {
                   console.error("App getPluginStatus SmartScreen ERROR: ", err);
                 });
               }
+              if (Router.getActiveHash() === "menu") {
+                if (Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen") {
+                  console.log("Routing to Alexa login page");
+                  Router.navigate("AlexaLoginScreen");
+                }
+              }
               console.log("Alexa Auth OTP is ", notification.xr_speech_avs.code);
             } else if (notification.xr_speech_avs.state_reporter === "authendication") {
               console.log("Alexa Auth State is now at ", notification.xr_speech_avs.state);
               if (notification.xr_speech_avs.state === "refreshed") {
                 // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
                 appApi.setAlexaAuthStatus("AlexaHandleError");
+                Router.navigate("SuccessScreen");
               } else if (notification.xr_speech_avs.state === "uninitialized" || notification.xr_speech_avs.state === "authorizing") {
                 appApi.setAlexaAuthStatus("AlexaAuthPending");
               } else if (notification.xr_speech_avs.state === "unrecoverable error") {
                 // Could be AUTH token Timeout; refresh it.
-                appApi.resetAVSCredentials();
+                Router.navigate("FailureScreen");
               }
             } else if (notification.xr_speech_avs.state_reporter === "login" && notification.xr_speech_avs.state === "User request to disable Alexa") {
               // https://jira.rdkcentral.com/jira/browse/RDKDEV-746: SDK abstraction layer sends on SKIP button event.
@@ -49161,7 +51093,7 @@ var APP_accelerator_home_ui = (function () {
             }
           }
           if (appApi.checkAlexaAuthStatus() === "AlexaHandleError" && (notification.xr_speech_avs.state === "CONNECTING" || notification.xr_speech_avs.state === "DISCONNECTED")) {
-            // || notification.xr_speech_avs.state === "CONNECTED" 
+            // || notification.xr_speech_avs.state === "CONNECTED"
             this.tag("Failscreen1").alpha = 1;
             this.tag("Widgets").visible = false;
             this.tag("Pages").visible = false;
@@ -49176,16 +51108,17 @@ var APP_accelerator_home_ui = (function () {
             }, 5000);
           }
           if (appApi.checkAlexaAuthStatus() != "AlexaUserDenied" && notification.xr_speech_avs.state) {
+            if (notification.xr_speech_avs.state.guiAPL === "ACTIVATED") {
+              appApi.zorder("SmartScreen");
+              appApi.setOpacity("SmartScreen", 100);
+              appApi.visible("SmartScreen", true);
+              appApi.setFocus(Storage.get("applicationType") === "" ? "ResidentApp" : Storage.get("applicationType"));
+            }
             if (notification.xr_speech_avs.state.dialogUX === "idle" && notification.xr_speech_avs.state.audio === "stopped") {
-              console.log("ApplicationType", Storage.get("applicationType"));
-              appApi.visible("SmartScreen", false);
-              console.log("smartscreen visible false");
-              appApi.moveToBack("SmartScreen");
-              if (Storage.get("applicationType") === "") {
-                console.log("crrent app came to focus");
-                appApi.setFocus("ResidentApp");
-              } else {
-                appApi.setFocus(Storage.get("applicationType"));
+              console.log("App current AlexaAudioplayerActive state:" + AlexaAudioplayerActive);
+              if (AlexaAudioplayerActive && notification.xr_speech_avs.state.guiManager === "DEACTIVATED" || !AlexaAudioplayerActive) {
+                AlexaAudioplayerActive = false;
+                appApi.setFocus(Storage.get("applicationType") === "" ? "ResidentApp" : Storage.get("applicationType"));
               }
             }
             if (notification.xr_speech_avs.state.dialogUX === "idle" && notification.xr_speech_avs.state.audio === "playing") {
@@ -49196,7 +51129,7 @@ var APP_accelerator_home_ui = (function () {
             }
             if (notification.xr_speech_avs.state.dialogUX === "listening") {
               appApi.zorder("SmartScreen");
-              appApi.setOpacity("SmartScreen", 80);
+              appApi.setOpacity("SmartScreen", 100);
               appApi.visible("SmartScreen", true);
             }
             if (notification.xr_speech_avs.state.dialogUX === "speaking") {
@@ -49296,20 +51229,22 @@ var APP_accelerator_home_ui = (function () {
                         console.log("Netflix launched FAILED using alexa search: " + JSON.stringify(err));
                       });
                     }
-                    if (item.value === "YouTube" || item.type == "MediaType") {
+                    if (item.value.startsWith("YouTube") || item.type == "MediaType") {
                       let replacedText = payload.searchText.transcribed.replace("youtube", "");
                       console.log("replacedtext", replacedText);
                       const cobaltLaunchParams = {
-                        url: Storage.get("CobaltDefaultURL") + "&va=search&vq=" + encodeURI(replacedText.trim()),
+                        url: Storage.get(item.value + "DefaultURL") + "&va=" + (header.name === "SearchAndPlay" ? "play" : "search") + "&vq=" + encodeURI(replacedText.trim()),
                         launchLocation: "alexa",
-                        appIdentifier: self.appIdentifiers["Cobalt"]
+                        appIdentifier: self.appIdentifiers[item.value]
                       };
-                      console.log("youtube search is getting invoked using alexa params: " + JSON.stringify(cobaltLaunchParams));
-                      appApi.launchApp("Cobalt", cobaltLaunchParams).then(res => {
-                        console.log("Cobalt launched successfully using alexa search: " + JSON.stringify(res));
+                      console.log(item.value + " search is getting invoked using alexa params: " + JSON.stringify(cobaltLaunchParams));
+                      appApi.launchApp(item.value, cobaltLaunchParams).then(res => {
+                        console.log(item.value + " launched successfully using alexa search: " + JSON.stringify(res));
                       }).catch(err => {
-                        console.log("Cobalt launched FAILED using alexa search: " + JSON.stringify(err));
+                        console.log(item.value + " launched FAILED using alexa search: " + JSON.stringify(err));
                       });
+                      replacedText = null;
+                      cobaltLaunchParams = null;
                     }
                   }
                 });
@@ -49325,21 +51260,30 @@ var APP_accelerator_home_ui = (function () {
                 resolve(false);
               });
             } else if (header.namespace === "AudioPlayer") {
-              console.log("ApplicationType", Storage.get("applicationType"));
-              appApi.visible("SmartScreen", true);
-              appApi.setOpacity("SmartScreen", 100);
-              appApi.zorder("SmartScreen");
-              if (Storage.get("applicationType") != "") {
-                console.log("AudioPlayer: Suspending the current app ", Storage.get("applicationType"));
-                appApi.exitApp(Storage.get("applicationType"));
-              } else {
-                console.log("AudioPlayer:Application type is Empty");
+              if (header.name === "Play") {
+                appApi.visible("SmartScreen", true);
+                appApi.setOpacity("SmartScreen", 100);
+                appApi.zorder("SmartScreen");
+                appApi.setFocus("SmartScreen");
+                AlexaAudioplayerActive = true;
+                console.log("App AudioPlayer: Suspending the current app:'" + Storage.get("applicationType") + "'");
+                if (Storage.get("applicationType") != "") {
+                  appApi.exitApp(Storage.get("applicationType"));
+                }
+              }
+            } else if (header.namespace === "TemplateRuntime") {
+              if (header.name === "RenderPlayerInfo") {
+                appApi.visible("SmartScreen", true);
+                appApi.setOpacity("SmartScreen", 100);
+                appApi.zorder("SmartScreen");
+                appApi.setFocus("SmartScreen");
+                AlexaAudioplayerActive = true;
               }
             } else if (header.namespace === "Speaker") {
               console.log("Speaker");
               if (header.name === "AdjustVolume") {
                 VolumePayload.msgPayload.event.header.messageId = header.messageId;
-                appApi.getVolumeLevel("HDMI0").then(volres => {
+                appApi.getVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(volres => {
                   console.log("volres", volres, parseInt(volres.volumeLevel));
                   if (parseInt(volres.volumeLevel) >= 0 || parseInt(volres.volumeLevel) <= 100) {
                     VolumePayload.msgPayload.event.payload.volume = parseInt(volres.volumeLevel) + payload.volume;
@@ -49354,7 +51298,7 @@ var APP_accelerator_home_ui = (function () {
                   VolumePayload.msgPayload.event.payload.muted = false;
                   console.log("cehckvolume", VolumePayload.msgPayload.event.payload.volume);
                   console.log("adjust volume", VolumePayload);
-                  appApi.setVolumeLevel("HDMI0", VolumePayload.msgPayload.event.payload.volume).then(res => {});
+                  appApi.setVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", VolumePayload.msgPayload.event.payload.volume).then(res => {});
                 });
               }
               if (header.name === "SetVolume") {
@@ -49364,14 +51308,13 @@ var APP_accelerator_home_ui = (function () {
                 VolumePayload.msgPayload.event.payload.muted = false;
                 console.log("adjust volume", VolumePayload);
                 console.log("checkvolume", VolumePayload.msgPayload.event.payload.volume);
-                appApi.setVolumeLevel("HDMI0", VolumePayload.msgPayload.event.payload.volume).then(res => {});
+                appApi.setVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", VolumePayload.msgPayload.event.payload.volume).then(res => {});
               }
               if (header.name === "SetMute") {
-                //8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b
                 VolumePayload.msgPayload.event.header.messageId = header.messageId;
                 VolumePayload.msgPayload.event.payload.volume = payload.volume;
                 VolumePayload.msgPayload.event.payload.muted = payload.mute;
-                appApi.audio_mute("HDMI0", VolumePayload.msgPayload.event.payload.muted).then(res => {});
+                appApi.audio_mute(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", VolumePayload.msgPayload.event.payload.muted).then(res => {});
               }
             }
           }
@@ -49385,7 +51328,6 @@ var APP_accelerator_home_ui = (function () {
         });
         thunder$1.on(systemcCallsign, 'onSessionEnd', notification => {
           console.log("VoiceControl.onSessionEnd Notification: " + JSON.stringify(notification));
-          // DAB Demo Work Around and for disabling Alexa using OOBE "Skip" button.
           if (notification.result === "success" && notification.success.transcription === "User request to disable Alexa") {
             console.warn("App VoiceControl.onSessionEnd got disable Alexa.");
             appApi.resetAVSCredentials(); // To avoid Audio Feedback
@@ -49408,9 +51350,6 @@ var APP_accelerator_home_ui = (function () {
     }
     activateChildApp(plugin) {
       //#currentlyNotUsed #needToBeRemoved
-      if (plugin == "YouTubeKids" || plugin == "YouTubeTV") {
-        plugin = "Cobalt";
-      }
       fetch('http://127.0.0.1:9998/Service/Controller/').then(res => res.json()).then(data => {
         data.plugins.forEach(element => {
           if (element.callsign === plugin) {
@@ -49430,18 +51369,23 @@ var APP_accelerator_home_ui = (function () {
         case 'WebApp':
           appApi.deactivateWeb();
           break;
-        case 'Cobalt':
-          appApi.suspendPremiumApp("Cobalt").then(res => {
-            if (res) {
-              let params = {
-                applicationName: "YouTube",
-                state: 'suspended'
-              };
-              this.xcastApi.onApplicationStateChanged(params).catch(err => {
-                console.error(err);
-              });
-            }
-            console.log("Cobalt : suspend cobalt request");
+        case 'YouTube':
+          appApi.suspendPremiumApp("YouTube").then(res => {
+            console.log("YouTube : suspend YouTube request");
+          }).catch(err => {
+            console.error(err);
+          });
+          break;
+        case 'YouTubeTV':
+          appApi.suspendPremiumApp("YouTubeTV").then(res => {
+            console.log("YouTubeTV : suspend YouTubeTV request");
+          }).catch(err => {
+            console.error(err);
+          });
+          break;
+        case 'YouTubeKids':
+          appApi.suspendPremiumApp("YouTubeKids").then(res => {
+            console.log("YouTubeKids : suspend YouTubeKids request");
           }).catch(err => {
             console.error(err);
           });
@@ -49558,153 +51502,45 @@ var APP_accelerator_home_ui = (function () {
     registerXcastListeners() {
       let self = this;
       this.xcastApi.registerEvent('onApplicationLaunchRequest', notification => {
-        console.log('Received a launch request ' + JSON.stringify(notification));
+        console.log('App onApplicationLaunchRequest: ' + JSON.stringify(notification));
         if (this.xcastApps(notification.applicationName)) {
           let applicationName = this.xcastApps(notification.applicationName);
-          let url = notification.parameters.url;
-          if (applicationName === "YouTubeKids") {
-            hdmiApi.checkStatus("Cobalt").then(res => {
-              if (res[0].state === "running") {
-                thunder$1.call('org.rdk.RDKShell', 'destroy', {
-                  callsign: 'Cobalt'
-                }).then(r => {
-                  console.log("Cobalt : Cobalt instance deactivated", r);
-                  let params = {
-                    url: url,
-                    launchLocation: "dial",
-                    appIdentifier: self.appIdentifiers["Cobalt"]
-                  };
-                  appApi.launchApp("Cobalt", params).then(res => {
-                    // we launch cobalt
-
-                    Storage.set("applicationType", "Cobalt");
-                    console.log("App launched on xcast event: ", res);
-                    let params = {
-                      applicationName: notification.applicationName,
-                      state: 'running'
-                    }; // we update applicationStateChanged for YouTubeKids
-                    this.xcastApi.onApplicationStateChanged(params);
-                  }).catch(err => {
-                    console.error("Applaunch error on xcast notification: ", err);
-                  });
-                }).catch(err => {
-                  console.error("Cobalt : error while deactivating cobalt instance", err);
-                });
-              } else {
-                let params = {
-                  url: url,
-                  launchLocation: "dial",
-                  appIdentifier: self.appIdentifiers["Cobalt"]
-                };
-                let aName = "Cobalt";
-                appApi.launchApp(aName, params).then(res => {
-                  Storage.set("applicationType", "Cobalt");
-                  console.log("App launched on xcast event: ", res);
-                  let params = {
-                    applicationName: notification.applicationName,
-                    state: 'running'
-                  };
-                  this.xcastApi.onApplicationStateChanged(params);
-                }).catch(err => {
-                  console.log("Applaunch error on xcast notification: ", err);
-                });
-              }
-            });
-          } else if (applicationName === "YouTubeTV") {
-            hdmiApi.checkStatus("Cobalt").then(res => {
-              if (res[0].state === "running") {
-                thunder$1.call('org.rdk.RDKShell', 'destroy', {
-                  callsign: 'Cobalt'
-                }).then(r => {
-                  let params = {
-                    url: url,
-                    launchLocation: "dial",
-                    appIdentifier: self.appIdentifiers["Cobalt"]
-                  };
-                  appApi.launchApp("Cobalt", params).then(res => {
-                    // we launch cobalt
-                    Storage.set("applicationType", "Cobalt");
-                    console.log("App launched on xcast event: ", res);
-                    let params = {
-                      applicationName: notification.applicationName,
-                      state: 'running'
-                    }; // we update applicationStateChanged for YouTubeKids
-                    this.xcastApi.onApplicationStateChanged(params);
-                  }).catch(err => {
-                    console.error("Applaunch error on xcast notification: ", err);
-                  });
-                }).catch(err => {
-                  console.error(err);
-                });
-              } else {
-                let params = {
-                  url: url,
-                  launchLocation: "dial",
-                  appIdentifier: self.appIdentifiers["Cobalt"]
-                };
-                let aName = "Cobalt";
-                appApi.launchApp(aName, params).then(res => {
-                  Storage.set("applicationType", "Cobalt");
-                  console.log("App launched on xcast event: ", res);
-                  let params = {
-                    applicationName: notification.applicationName,
-                    state: 'running'
-                  };
-                  this.xcastApi.onApplicationStateChanged(params);
-                }).catch(err => {
-                  console.log("Applaunch error on xcast notification: ", err);
-                });
-              }
-            }).catch(err => {
-              console.error(err);
-            });
-          } else {
+          if (applicationName.startsWith("YouTube")) {
             let params = {
-              url: url,
+              url: notification.parameters.url,
               launchLocation: "dial",
               appIdentifier: self.appIdentifiers[applicationName]
             };
             appApi.launchApp(applicationName, params).then(res => {
-              console.log("App launched on xcast event: ", res);
+              console.log("App onApplicationLaunchRequest: launched " + applicationName + " : ", res);
               Storage.set("applicationType", applicationName);
+              // TODO: move to Controller.statuschange event
               let params = {
                 applicationName: notification.applicationName,
                 state: 'running'
               };
               this.xcastApi.onApplicationStateChanged(params);
             }).catch(err => {
-              console.log("Applaunch error on xcast notification: ", err);
+              console.log("App onApplicationLaunchRequest: error ", err);
             });
           }
         }
       });
       this.xcastApi.registerEvent('onApplicationHideRequest', notification => {
-        console.log('Received a hide request ' + JSON.stringify(notification));
+        console.log('App onApplicationHideRequest: ' + JSON.stringify(notification));
         if (this.xcastApps(notification.applicationName)) {
           let applicationName = this.xcastApps(notification.applicationName);
-          console.log('Hide ' + this.xcastApps(notification.applicationName));
-          let params = {
-            applicationName: notification.applicationName,
-            state: 'suspended'
-          };
-          if (applicationName === "YouTubeKids") {
-            appApi.suspendPremiumApp("Cobalt");
-            this.xcastApi.onApplicationStateChanged(params);
-          } else if (applicationName === "YouTubeTV") {
-            appApi.suspendPremiumApp("Cobalt");
-            this.xcastApi.onApplicationStateChanged(params);
-          } else {
+          console.log('App onApplicationHideRequest: ' + this.xcastApps(notification.applicationName));
+          if (applicationName.startsWith("YouTube")) {
             //second argument true means resident app won't be launched the required app will be exited in the background.
             //only bring up the resident app when the notification is from the current app(ie app in focus)
-            console.log("exitApp is getting called depending upon " + applicationName + "!==" + Storage.get("applicationType"));
+            console.log("App onApplicationHideRequest: exitApp as " + applicationName + "!==" + Storage.get("applicationType"));
             appApi.exitApp(applicationName, applicationName !== Storage.get("applicationType"));
-            console.log("Event : On hide request, updating application Status to ", params);
-            this.xcastApi.onApplicationStateChanged(params);
           }
         }
       });
       this.xcastApi.registerEvent('onApplicationResumeRequest', notification => {
-        console.log('Received a resume request ' + JSON.stringify(notification));
+        console.log('App onApplicationResumeRequest: ' + JSON.stringify(notification));
         if (this.xcastApps(notification.applicationName)) {
           let applicationName = this.xcastApps(notification.applicationName);
           let params = {
@@ -49712,87 +51548,54 @@ var APP_accelerator_home_ui = (function () {
             launchLocation: "dial",
             appIdentifier: self.appIdentifiers[applicationName]
           };
-          let aName = applicationName;
-          if (aName == "YouTubeKids" || aName == "YouTubeTV") {
-            aName = "Cobalt";
-          }
-          console.log('Resume ', applicationName, " with params: ", params);
-          appApi.launchApp(aName, params).then(res => {
-            Storage.set("applicationType", aName);
-            console.log("launched ", applicationName, " on casting resume request: ", res);
-            let params = {
-              applicationName: notification.applicationName,
-              state: 'running'
-            };
-            this.xcastApi.onApplicationStateChanged(params);
+          console.log('App onApplicationResumeRequest: launchApp ', applicationName, " with params: ", params);
+          appApi.launchApp(applicationName, params).then(res => {
+            Storage.set("applicationType", applicationName);
+            console.log("App onApplicationResumeRequest: launched ", applicationName, " result: ", res);
           }).catch(err => {
             console.log("Error in launching ", applicationName, " on casting resume request: ", err);
           });
         }
       });
       this.xcastApi.registerEvent('onApplicationStopRequest', notification => {
-        console.log('Received an xcast stop request ' + JSON.stringify(notification));
-        console.log('Received a stop request ' + JSON.stringify(notification));
+        console.log('App onApplicationStopRequest: ' + JSON.stringify(notification));
         if (this.xcastApps(notification.applicationName)) {
-          console.log('Stop ' + this.xcastApps(notification.applicationName));
           let applicationName = this.xcastApps(notification.applicationName);
-          if (applicationName === "YouTubeKids") {
-            appApi.deactivateCobalt();
-            let params = {
-              applicationName: notification.applicationName,
-              state: 'stopped'
-            };
-            this.xcastApi.onApplicationStateChanged(params);
-          } else if (applicationName === "YouTubeTV") {
-            appApi.deactivateCobalt();
-            let params = {
-              applicationName: notification.applicationName,
-              state: 'stopped'
-            };
-            this.xcastApi.onApplicationStateChanged(params);
-          } else {
-            //second argument true means resident app won't be launched the required app will be exited in the background.
-            //only bring up the resident app when the notification is from the current app(ie app in focus)
-            console.log("exitApp is getting called depending upon " + applicationName + "!==" + Storage.get("applicationType"));
-            appApi.exitApp(applicationName, applicationName !== Storage.get("applicationType"));
-            let params = {
-              applicationName: notification.applicationName,
-              state: 'stopped'
-            };
-            this.xcastApi.onApplicationStateChanged(params);
+          if (applicationName.startsWith("YouTube")) {
+            appApi.deactivateCobalt(applicationName);
+            if (Storage.get("applicationType") === applicationName) {
+              appApi.exitApp(applicationName);
+            }
           }
         }
       });
       this.xcastApi.registerEvent('onApplicationStateRequest', notification => {
-        // console.log('onApplicationStateRequest : ');
-        // console.log(JSON.stringify(notification))
+        console.log("App onApplicationStateRequest: " + JSON.stringify(notification));
         if (this.xcastApps(notification.applicationName)) {
           let applicationName = this.xcastApps(notification.applicationName);
-          let params = {
-            applicationName: notification.applicationName,
-            state: 'stopped'
+          let appState = {
+            "applicationName": notification.applicationName,
+            "state": "stopped"
           };
-          appApi.registerEvent('statechange', results => {
-            if (results.callsign === applicationName && results.state === 'Activated') {
-              params.state = 'running';
-              if (results.callsign == "YouTubeKids" || results.callsign == "YouTubeTV") {
-                Storage.set("applicationType", "Cobalt"); //required in case app launch happens using curl command.
-              } else {
-                Storage.set("applicationType", results.callsign); //required in case app launch happens using curl command.
-              }
-            } else if (results.state == 'Deactivation') {
-              params.state = "stopped";
-            } else if (results.state == "Activation") ; else if (results.state == "Resumed") {
-              params.state = "running";
-            } else if (results.state == 'suspended') {
-              params.state = 'suspended';
-            } else {
-              console.warn(" THIS SHOULDN'T HAPPEN : unexpected app state" + results.state);
+          appApi.checkStatus(applicationName).then(result => {
+            switch (result[0].state) {
+              case "activated":
+              case "resumed":
+                appState.state = "running";
+                break;
+              case "Activation":
+              case "deactivated":
+              case "Deactivation":
+              case "Precondition":
+                appState.state = "stopped";
+                break;
+              case "suspended":
+                appState.state = "suspended";
+                break;
             }
-            console.log("STATE CHANGED : ");
-            console.log(results);
-            this.xcastApi.onApplicationStateChanged(params);
-            console.log('State of ' + this.xcastApps(notification.applicationName));
+            this.xcastApi.onApplicationStateChanged(appState);
+          }).catch(error => {
+            console.error("App onApplicationStateRequest: checkStatus error ", error);
           });
         }
       });
@@ -49852,9 +51655,8 @@ var APP_accelerator_home_ui = (function () {
             powerState = 'ON';
           }
         });
-        const systemcCallsign = "org.rdk.RDKShell.1";
         thunder$1.Controller.activate({
-          callsign: systemcCallsign
+          callsign: 'org.rdk.RDKShell.1'
         }).then(res => {
           console.log("activated the rdk shell plugin trying to set the inactivity listener; res = ".concat(JSON.stringify(res)));
           thunder$1.on("org.rdk.RDKShell.1", "onUserInactivity", notification => {

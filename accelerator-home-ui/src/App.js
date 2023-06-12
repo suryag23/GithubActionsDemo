@@ -38,6 +38,7 @@ import VideoScreen  from './screens/Video';
 import VideoInfoChange from './overlays/VideoInfoChange/VideoInfoChange.js';
 import Failscreen1 from './screens/FailScreen';
 import CECApi from './api/CECApi';
+import { appListInfo } from "./../static/data/AppListInfo.js";
 
 const config = {
   host: '127.0.0.1',
@@ -45,12 +46,12 @@ const config = {
   default: 1,
 };
 var powerState = 'ON';
+var AlexaAudioplayerActive = false;
 var thunder = ThunderJS(config);
 var appApi = new AppApi();
 var dtvApi = new DTVApi();
 var hdmiApi = new HDMIApi()
 var cecApi = new CECApi();
-
 
 
 export default class App extends Router.App {
@@ -147,13 +148,11 @@ export default class App extends Router.App {
     let self = this;
     console.log(key, key.keyCode)
     this.$hideImage(0);
-    if (key.keyCode == Keymap.Home || key.keyCode === Keymap.m) {
+    if (key.keyCode == Keymap.Home) {
       this.jumpToRoute("menu"); //method to exit the current app(if any) and route to home screen
       return true
-
     }
-
-    if (key.keyCode == Keymap.Inputs_Shortcut) { //for inputs overlay
+    else if (key.keyCode == Keymap.Inputs_Shortcut) { //for inputs overlay
       if (Storage.get("applicationType") !== "") {
         if (Router.getActiveHash() === "tv-overlay/inputs") {
           Router.reload();
@@ -185,7 +184,7 @@ export default class App extends Router.App {
       }
       return true
     }
-    if (key.keyCode == Keymap.Picture_Setting_Shortcut) { //for video settings overlay
+    else if (key.keyCode == Keymap.Picture_Setting_Shortcut) { //for video settings overlay
       if (Storage.get("applicationType") !== "") {
         if (Router.getActiveHash() === "tv-overlay/settings") {
           Router.reload();
@@ -217,10 +216,8 @@ export default class App extends Router.App {
       }
       return true;
     }
-
-    if (key.keyCode == Keymap.Settings_Shortcut) {
+    else if (key.keyCode == Keymap.Settings_Shortcut) {
       console.log(`settings shortcut`)
-
       if (Storage.get("applicationType") === "") { //launch settings overlay/page depending on the current route.
         if(Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player"){ //player supports settings overlay, so launch it as overlay
           if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "SettingsOverlay") { //currently focused on settings overlay, so hide it
@@ -254,15 +251,14 @@ export default class App extends Router.App {
           Router.navigate("applauncher");
           Router.focusWidget('SettingsOverlay');
         }
-
       }
       return true;
     }
-    if (key.keyCode == Keymap.Guide_Shortcut) {
+    else if (key.keyCode == Keymap.Guide_Shortcut) {
       Router.navigate('epg')
       return true
     }
-    if (key.keyCode == Keymap.Amazon) {
+    else if (key.keyCode == Keymap.Amazon) {
       let params = {
         appIdentifier: self.appIdentifiers["Amazon"]
       }
@@ -271,17 +267,17 @@ export default class App extends Router.App {
       });
       return true
     }
-    if (key.keyCode == Keymap.Youtube) {
+    else if (key.keyCode == Keymap.Youtube) {
       let params = {
         launchLocation: "dedicatedButton",
-        appIdentifier:self.appIdentifiers["Cobalt"]
+        appIdentifier:self.appIdentifiers["YouTube"]
       }
-      appApi.launchApp( "Cobalt" , params).catch(err => {
+      appApi.launchApp( "YouTube" , params).catch(err => {
         console.error("Error in launching Youtube via dedicated key: " + JSON.stringify(err))
       });
       return true
     }
-    if (key.keyCode == Keymap.Netflix) { //launchLocation mapping is in launchApp method in AppApi.js
+    else if (key.keyCode == Keymap.Netflix) { //launchLocation mapping is in launchApp method in AppApi.js
       let params = {
         launchLocation: "dedicatedButton",
         appIdentifier:self.appIdentifiers["Netflix"]
@@ -291,19 +287,18 @@ export default class App extends Router.App {
       });
       return true
     }
-
-    if(key.keyCode == Keymap.AppCarousel){
-    if (Storage.get("applicationType") === "") { // if resident app is on focus 
-      if(Router.getActiveHash() === "menu"){
-        return true;
-      }
-      else if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "AppCarousel") { //currently focused on appcarousel, so hide it
-        Router.focusPage();
-      }
-      else { //launch the app carousel
-        Router.focusWidget("AppCarousel")
-      }
-    }else { //currently on some application
+    else if(key.keyCode == Keymap.AppCarousel) {
+      if (Storage.get("applicationType") === "") { // if resident app is on focus
+        if(Router.getActiveHash() === "menu"){
+          return true;
+        }
+        else if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "AppCarousel") { //currently focused on appcarousel, so hide it
+          Router.focusPage();
+        }
+        else { //launch the app carousel
+          Router.focusWidget("AppCarousel")
+        }
+      } else { //currently on some application
         if(Router.getActiveHash() === "applauncher"){ //if route is applauncher just focus the overlay widget
           if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "AppCarousel") { //currently focused on settings overlay, so hide it
             Router.focusPage();
@@ -325,13 +320,10 @@ export default class App extends Router.App {
           Router.navigate("applauncher");
           Router.focusWidget('AppCarousel');
         }
-
       }
-
       return true
     }
-
-    if (key.keyCode == Keymap.Power) {
+    else if (key.keyCode == Keymap.Power) {
       // Remote power key and keyboard F1 key used for STANDBY and POWER_ON
       appApi.getPowerState().then(res => {
         console.log("getPowerState: ",res)
@@ -357,13 +349,11 @@ export default class App extends Router.App {
         }
       })
     } else if (key.keyCode == 228) {
-
       console.log("___________DEEP_SLEEP_______________________F12")
       appApi.setPowerState("DEEP_SLEEP").then(res => {
         powerState = 'DEEP_SLEEP'
       })
       return true
-
     } else if (key.keyCode === Keymap.AudioVolumeMute) {
       if (Storage.get('applicationType') === ''){
         this.tag("Volume").onVolumeMute();
@@ -383,10 +373,8 @@ export default class App extends Router.App {
         }
       }
       return true
-
     } else if (key.keyCode == Keymap.AudioVolumeUp) {
-
-      if(Storage.get('applicationType') === ''){
+      if (Storage.get('applicationType') === ''){
         this.tag("Volume").onVolumeKeyUp();
       } else {
         console.log("muting on some app")
@@ -404,11 +392,8 @@ export default class App extends Router.App {
         }
       }
       return true
-
     } else if (key.keyCode == Keymap.AudioVolumeDown) {
-
-
-      if(Storage.get('applicationType') === ''){
+      if (Storage.get('applicationType') === ''){
         this.tag("Volume").onVolumeKeyDown();
       } else {
         console.log("muting on some app")
@@ -448,14 +433,13 @@ export default class App extends Router.App {
       appApi.enabledisableinactivityReporting(false).then(resp =>{
         this.userInactivity.dispose();
       })
-    
     }
     else{
       console.log("came else block")
      this.setTimerValuethroughPersistence(parseInt(persisteneTimerValue))
     }
-    
-  } 
+  }
+
   setTimerValuethroughPersistence(persisteneTimerValue){
     appApi.enabledisableinactivityReporting(true).then(resp =>{
       console.log("enable",resp)
@@ -471,48 +455,46 @@ export default class App extends Router.App {
         })
       })
     });
-  } 
+  }
 
   $hideImage(alpha){
     if(alpha === 1){
       this.tag("Widgets").visible = false;
       this.tag("Pages").visible = false;
-     
     }
-  else{
+    else{
     this.tag("Widgets").visible = true;
     this.tag("Pages").visible = true;
   }
     this.tag("VideoScreen").alpha = alpha;
    // this.tag("ScreenSaver").alpha = alpha;
-
   }
   _init() {
     let self = this;
     self.appIdentifiers = {
-      "YouTubeKids":"n:3",
-      "YouTubeTV":"n:3",
-      "Youtube": "n:3",
-      "Cobalt":"n:3",
+      "YouTubeKids":"n:5",
+      "YouTubeTV":"n:4",
+      "YouTube": "n:3",
       "Netflix": "n:1",
       "Amazon Prime": "n:2",
       "Amazon":"n:2",
       "Prime":"n:2"
     }
     this.userInactivity();
+    appApi.deviceType().then(result => {
+      console.log("App detected deviceType as:", ((result.devicetype != null)?result.devicetype:"tv"));
+      Storage.set("deviceType", ((result.devicetype != null)?result.devicetype:"tv"));
+    });
     appApi.getPluginStatus("org.rdk.DeviceDiagnostics").then(res =>{
-      console.log("avs plugin voice resp", res[0].state)
+      console.log("App DeviceDiagnostics state:", res[0].state)
       if(res[0].state === "deactivated"){
-        console.log("avs1")
-            thunder.Controller.activate({ callsign: 'org.rdk.DeviceDiagnostics' }).then(result => {
-                this.AvDecodernotificationcall();
-              
-              }).catch(err => {
-                reject(err)
-              }) 
+        thunder.Controller.activate({ callsign: 'org.rdk.DeviceDiagnostics' }).then(result => {
+          this.AvDecodernotificationcall();
+        }).catch(err => {
+          reject(err)
+        })
       }
-      else{ 
-        console.log("activated")
+      else{
         this.AvDecodernotificationcall();
       }
     })
@@ -521,16 +503,6 @@ export default class App extends Router.App {
       Storage.set("UICacheonDisplayConnectionChanged", result.isConnected);
     })
 
-    appApi.getPluginStatus("Cobalt").then(res => { //to set the default url for cobalt
-      console.log("getPluginStatus result: " + JSON.stringify(res));
-      if (res[0].configuration.url.includes("?") === false) {
-        res[0].configuration.url += "?";
-        console.log("Appending '?' to Cobalt base url.");
-      }
-      Storage.set("CobaltDefaultURL",res[0].configuration.url);
-    }).catch(err => {
-      console.log("getPluginStatus ERROR: ",err);
-    })
     if (Storage.get("applicationType") !== "HDMI") { //to default to hdmi, if previous input was hdmi
       Storage.set('applicationType', '');//to set the application type to none
     }
@@ -547,13 +519,85 @@ export default class App extends Router.App {
     if (!availableLanguages.includes(localStorage.getItem('Language'))) {
       localStorage.setItem('Language', 'English')
     }
+
     thunder.on('Controller.1', 'all', noti => {
-      console.log("controller notification", noti)
+      console.log("App controller notification:", noti)
       if ((noti.data.url && noti.data.url.slice(-5) === "#boot") || (noti.data.httpstatus && noti.data.httpstatus != 200 && noti.data.httpstatus != -1 )) { // to exit metro apps by pressing back key & to auto exit webapp if httpstatus is not 200
         appApi.exitApp(Storage.get('applicationType'));
       }
+      // TODO: make the check based on XcastApi.supportedApps() list
+      if (noti.hasOwnProperty("callsign") && (noti.callsign.startsWith("YouYube") || noti.callsign.startsWith("Amazon") || noti.callsign.startsWith("Netflix"))) {
+        let params = { applicationName: noti.callsign, state: 'stopped' };
+        switch(noti.data.state) {
+          case "activated":
+          case "resumed":
+            params.state = 'running';
+            break;
+          case "Activation":
+          case "deactivated":
+          case "Deactivation":
+            params.state = 'stopped';
+            break;
+          case "suspended":
+            params.state = 'suspended';
+          case "Precondition":
+            break;
+        }
+        if (noti.callsign.startsWith("Amazon")) {
+          params.applicationName = "AmazonInstantVideo";
+        }
+        console.log("App Controller state change to xcast: ", JSON.stringify(params));
+        this.xcastApi.onApplicationStateChanged(params);
+        params = null;
+      }
     })
 
+    appApi.getPluginStatus("Cobalt").then(res => {
+      /* Loop through YouTube variants and set respective urls. */
+      JSON.parse(JSON.stringify(appListInfo)).forEach(appInfo => {
+        if (appInfo.hasOwnProperty("applicationType") && appInfo.applicationType.startsWith("YouTube") && appInfo.hasOwnProperty("uri") && appInfo.uri.length) {
+          thunder.Controller.clone({callsign:"Cobalt", newcallsign:appInfo.applicationType}).then(result => {
+            console.log("App Controller.clone Cobalt as "+appInfo.applicationType+" done.", result);
+          }).catch(err => {
+            console.error("App Controller clone Cobalt for "+appInfo.applicationType+" failed: ", err);
+            // TODO: hide YouTube Icon and listing from Menu, AppCarousel, Channel overlay and EPG page.
+          })
+
+          appApi.getPluginStatus(appInfo.applicationType).then(res => {
+            if (res[0].state !== "deactivated") {
+              thunder.Controller.deactivate({ callsign:appInfo.applicationType}).catch(err => {
+                console.error("App Controller.deactivate "+appInfo.applicationType+" failed. It may not work.", err);
+                resolve(false);
+              })
+            }
+            /* Do not change YouTube's configuration as Page-visibility test runs on that. */
+            if (res[0].callsign !== "YouTube") {
+              thunder.call('Controller', `configuration@${appInfo.applicationType}`).then(result => {
+                /* Ensure appending '?' so that later params can be directly appended. */
+                result.url = appInfo.uri + "?"; // Make sure that appListInfo.js has only base url.
+                thunder.call('Controller', `configuration@${appInfo.applicationType}`, result).then(result => {
+                  Storage.set(appInfo.applicationType+"DefaultURL", appInfo.uri + "?"); // Make sure that appListInfo.js has only base url.
+                }).catch(err =>{
+                  console.error("App Controller.configuration@" +appInfo.applicationType+" set failed. It may not work.", err);
+                  resolve(false);
+                })
+              }).catch(err => {
+                console.error("App Controller.configuration@" +appInfo.applicationType+" get failed. It may not work.", err);
+                resolve(false);
+              })
+            } else {
+              /* Just store the plugin configured url as default url and ensure '?' is appended. */
+              Storage.set(appInfo.applicationType+"DefaultURL", (res[0].configuration.url.includes('?')?res[0].configuration.url:res[0].configuration.url+"?"));
+            }
+          }).catch(err => {
+            console.error("App getPluginStatus "+appInfo.applicationType+" Error: " + err);
+            resolve(false);
+          })
+        }
+      });
+    }).catch(err => {
+      console.error("App getPluginStatus Cobalt error: ",err);
+    })
 
     thunder.on('org.rdk.RDKShell', 'onApplicationDisconnected', notification => {
       console.log("onApplicationDisconnectedNotification: ", JSON.stringify(notification))
@@ -565,7 +609,7 @@ export default class App extends Router.App {
       console.log("videoFormatChangedNotification: ", JSON.stringify(notification))
       if(Router.getActiveWidget() == this.widgets.videoinfochange){
         this.widgets.videoinfochange.update( " New videoFormat :  " + notification.currentVideoFormat , true)
-      } 
+      }
       else{
         Router.focusWidget("VideoInfoChange")
         this.widgets.videoinfochange.update(" New videoFormat :  " + notification.currentVideoFormat )
@@ -576,7 +620,7 @@ export default class App extends Router.App {
       console.log("videoFrameRateChangedNotification: ", JSON.stringify(notification))
       if(Router.getActiveWidget() == this.widgets.videoinfochange){
         this.widgets.videoinfochange.update(" New videoFrameRate :  " + notification.currentVideoFrameRate , true)
-      } 
+      }
       else{
         Router.focusWidget("VideoInfoChange")
         this.widgets.videoinfochange.update(" New videoFrameRate :  " + notification.currentVideoFrameRate )
@@ -587,20 +631,17 @@ export default class App extends Router.App {
       console.log("videoResolutionChangedNotification: ", JSON.stringify(notification))
       if(Router.getActiveWidget() == this.widgets.videoinfochange){
         this.widgets.videoinfochange.update( " New video resolution :  " + notification.currentVideoFormat , true)
-      } 
+      }
       else{
         Router.focusWidget("VideoInfoChange")
         this.widgets.videoinfochange.update(" New video resolution :  " + notification.currentVideoFormat)
       }
     })
 
-    //video info change events end here -------------
-
-
     thunder.on('Controller', 'statechange', notification => {
       // get plugin status
       console.log("Controller statechange Notification : " + JSON.stringify(notification))
-      if (notification && (notification.callsign === 'Cobalt' || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && (notification.state == 'Deactivation' || notification.state == 'Deactivated')) {
+      if (notification && (notification.callsign.startsWith("YouTube") || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && (notification.state == 'Deactivation' || notification.state == 'Deactivated')) {
         console.log(`${notification.callsign} status = ${notification.state}`)
         console.log(">>notification.callsign: ", notification.callsign, " applicationType: ", Storage.get("applicationType"));
         if (Router.getActiveHash().startsWith("tv-overlay") || Router.getActiveHash().startsWith("overlay") || Router.getActiveHash().startsWith("applauncher")) { //navigate to last visited route when exiting from any app
@@ -620,7 +661,7 @@ export default class App extends Router.App {
         }
       }
 
-      if (notification && (notification.callsign === 'Cobalt' || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && notification.state == 'Activated') {
+      if (notification && (notification.callsign.startsWith("YouTube") || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && notification.state == 'Activated') {
         Storage.set('applicationType', notification.callsign) //required in case app launch happens using curl command.
         if (notification.callsign === 'Netflix') {
           appApi.getNetflixESN()
@@ -644,7 +685,6 @@ export default class App extends Router.App {
                   console.error(`Netflix : error while updating nfrstatus ${nerr}`)
                 })
               }
-
 
               appApi.visible('ResidentApp', false);
             }
@@ -704,33 +744,33 @@ export default class App extends Router.App {
     if (!Storage.get("ResolutionChangeInProgress") && (temp.isConnected != Storage.get("UICacheonDisplayConnectionChanged"))) {
       if(temp.isConnected){
         let currentApp = Storage.get('applicationType')
-        let launchLocation = Storage.get('cobaltLaunchLocation')
-        console.log("current app is ", currentApp)
+        let launchLocation = Storage.get(currentApp+"LaunchLocation")
+        console.log("App HdcpProfile onDisplayConnectionChanged current app is:", currentApp)
         let params = {
           launchLocation: launchLocation,
           appIdentifier: self.appIdentifiers[currentApp]
         }
-        if(currentApp == "Cobalt"){
-          params["url"] = Storage.get("CobaltDefaultURL");
-          appApi.getPluginStatus('Cobalt').then(result => {
+        if(currentApp.startsWith("YouTube")){
+          params["url"] = Storage.get(currentApp+"DefaultURL");
+          appApi.getPluginStatus(currentApp).then(result => {
             if(result[0].state === (Settings.get("platform", "enableAppSuspended")? "suspended":"deactivated")) {
               appApi.launchApp(currentApp, params).catch(err => {
                 console.error(`Error in launching ${currentApp} : ` + JSON.stringify(err))
               });
             } else {
-              console.log("App HdcpProfile onDisplayConnectionChanged skipping; Cobalt is already: ", JSON.stringify(result[0].state));
+              console.log("App HdcpProfile onDisplayConnectionChanged skipping; "+currentApp+" is already: ", JSON.stringify(result[0].state));
             }
           })
         }
       }
       else{
         let currentApp = Storage.get('applicationType')
-        if(currentApp == "Cobalt"){
-          appApi.getPluginStatus('Cobalt').then(result => {
+        if(currentApp.startsWith("YouTube")){
+          appApi.getPluginStatus(currentApp).then(result => {
             if(result[0].state !== (Settings.get("platform", "enableAppSuspended")? "suspended":"deactivated")) {
               appApi.exitApp(currentApp, true)
             } else {
-              console.log("App HdcpProfile onDisplayConnectionChanged skipping; Cobalt is already: ", JSON.stringify(result[0].state));
+              console.log("App HdcpProfile onDisplayConnectionChanged skipping; "+currentApp+" is already: ", JSON.stringify(result[0].state));
             }
           })
         }
@@ -749,33 +789,33 @@ export default class App extends Router.App {
     if(notification.status != Storage.get("UICacheCECActiveSourceStatus")){
       if (notification.status){
         let currentApp = Storage.get('applicationType')
-        let launchLocation = Storage.get('cobaltLaunchLocation')
+        let launchLocation = Storage.get(currentApp+"LaunchLocation")
         console.log("current app is ", currentApp)
         let params = {
           launchLocation: launchLocation,
           appIdentifier: self.appIdentifiers[currentApp]
         }
-        if(currentApp == "Cobalt"){
-          params["url"] = Storage.get("CobaltDefaultURL");
-          appApi.getPluginStatus('Cobalt').then(result => {
+        if(currentApp.startsWith("YouTube")){
+          params["url"] = Storage.get(currentApp+"DefaultURL");
+          appApi.getPluginStatus(currentApp).then(result => {
             if(result[0].state === (Settings.get("platform", "enableAppSuspended")? "suspended":"deactivated")) {
               appApi.launchApp(currentApp, params).catch(err => {
                 console.error(`Error in launching ${currentApp} : ` + JSON.stringify(err))
               });
             } else {
-              console.log("App HdmiCec_2 onActiveSourceStatusUpdated skipping; Cobalt is already:", JSON.stringify(result[0].state));
+              console.log("App HdmiCec_2 onActiveSourceStatusUpdated skipping; "+currentApp+" is already:", JSON.stringify(result[0].state));
             }
           })
         }
       }
       else{
         let currentApp = Storage.get('applicationType')
-        if(currentApp == "Cobalt"){
-          appApi.getPluginStatus('Cobalt').then(result => {
+        if(currentApp.startsWith("YouTube")){
+          appApi.getPluginStatus(currentApp).then(result => {
             if(result[0].state !== (Settings.get("platform", "enableAppSuspended")? "suspended":"deactivated")) {
               appApi.exitApp(currentApp, true)
             } else {
-              console.log("App HdmiCec_2 onActiveSourceStatusUpdated skipping; Cobalt is already:", JSON.stringify(result[0].state));
+              console.log("App HdmiCec_2 onActiveSourceStatusUpdated skipping; "+currentApp+" is already:", JSON.stringify(result[0].state));
             }
           })
         }
@@ -786,13 +826,11 @@ export default class App extends Router.App {
       console.warn("App HdmiCec_2 onActiveSourceStatusUpdated discarding.");
     }
   })
-
-
   }
 
   _firstEnable() {
     thunder.on("org.rdk.System", "onSystemPowerStateChanged", notification => {
-        console.log(new Date().toISOString() + " onSystemPowerStateChanged Notification: ",notification); 
+        console.log(new Date().toISOString() + " onSystemPowerStateChanged Notification: ",notification);
         if(notification.powerState !== "ON" && notification.currentPowerState === "ON"){
           console.log("onSystemPowerStateChanged Notification: power state was changed from ON to " + notification.powerState)
 
@@ -823,10 +861,10 @@ export default class App extends Router.App {
 
     thunder.Controller.activate({callsign: systemcCallsign}).then(res => {
       console.log("App VoiceControl Plugin Activation result: ",res)
-      appApi.getVolumeLevel("HDMI0").then(volres => {
+      appApi.getVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres => {
         VolumePayload.msgPayload.event.payload.volume = volres.volumeLevel
       })
-      appApi.muteStatus("HDMI0").then(muteRes => {
+      appApi.muteStatus(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(muteRes => {
         VolumePayload.msgPayload.event.payload.muted = muteRes.muted
       })
       console.log("App reporting device volume to Alexa:", VolumePayload)
@@ -859,7 +897,7 @@ export default class App extends Router.App {
           if(notification.xr_speech_avs.state_reporter === "authorization_req" || notification.xr_speech_avs.code){
             // DAB Demo Work Around - disabling.
             //Storage.set("code", notification.xr_speech_avs.code)
-            //Storage.set("url", notification.xr_speech_avs.url)   
+            //Storage.set("url", notification.xr_speech_avs.url)
             //if(Router.getActiveHash() != "AlexaScreen" && Router.getActiveHash() != "CodeScreen1"){
             //  Router.navigate("AlexaScreen")
             //}
@@ -879,17 +917,24 @@ export default class App extends Router.App {
                 console.error("App getPluginStatus SmartScreen ERROR: ",err);
               })
             }
+            if(Router.getActiveHash() === "menu"){
+              if(Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen"){
+                console.log("Routing to Alexa login page")
+                Router.navigate("AlexaLoginScreen")
+              }
+            }
             console.log("Alexa Auth OTP is ", notification.xr_speech_avs.code)
           } else if (notification.xr_speech_avs.state_reporter === "authendication") {
             console.log("Alexa Auth State is now at ", notification.xr_speech_avs.state)
             if (notification.xr_speech_avs.state === "refreshed") {
               // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
               appApi.setAlexaAuthStatus("AlexaHandleError")
+              Router.navigate("SuccessScreen")
             } else if ((notification.xr_speech_avs.state === "uninitialized") || (notification.xr_speech_avs.state === "authorizing")) {
               appApi.setAlexaAuthStatus("AlexaAuthPending")
             } else if (notification.xr_speech_avs.state === "unrecoverable error") {
               // Could be AUTH token Timeout; refresh it.
-              appApi.resetAVSCredentials()
+              Router.navigate("FailureScreen")
             }
           } else if (notification.xr_speech_avs.state_reporter === "login" && notification.xr_speech_avs.state === "User request to disable Alexa") {
             // https://jira.rdkcentral.com/jira/browse/RDKDEV-746: SDK abstraction layer sends on SKIP button event.
@@ -897,8 +942,8 @@ export default class App extends Router.App {
           }
         }
 
-        if((appApi.checkAlexaAuthStatus() === "AlexaHandleError") && (notification.xr_speech_avs.state === "CONNECTING" || 
-            notification.xr_speech_avs.state === "DISCONNECTED")) {// || notification.xr_speech_avs.state === "CONNECTED" 
+        if((appApi.checkAlexaAuthStatus() === "AlexaHandleError") && (notification.xr_speech_avs.state === "CONNECTING" ||
+            notification.xr_speech_avs.state === "DISCONNECTED")) {// || notification.xr_speech_avs.state === "CONNECTED"
           this.tag("Failscreen1").alpha = 1
           this.tag("Widgets").visible = false;
           this.tag("Pages").visible = false;
@@ -910,35 +955,35 @@ export default class App extends Router.App {
           }, 5000);
         }
         if((appApi.checkAlexaAuthStatus() != "AlexaUserDenied") && notification.xr_speech_avs.state){
+          if (notification.xr_speech_avs.state.guiAPL === "ACTIVATED") {
+            appApi.zorder("SmartScreen");
+            appApi.setOpacity("SmartScreen", 100);
+            appApi.visible("SmartScreen", true);
+            appApi.setFocus(Storage.get("applicationType") === "" ? "ResidentApp" : Storage.get("applicationType"));
+          }
           if(notification.xr_speech_avs.state.dialogUX  === "idle" && notification.xr_speech_avs.state.audio === "stopped"){
-            console.log("ApplicationType", Storage.get("applicationType"))
-            appApi.visible("SmartScreen", false)
-            console.log("smartscreen visible false")
-              appApi.moveToBack("SmartScreen")
-              if(Storage.get("applicationType") === ""){
-                console.log("crrent app came to focus")
-                appApi.setFocus("ResidentApp")
-              }
-              else{
-                appApi.setFocus(Storage.get("applicationType"))
-              }
+            console.log("App current AlexaAudioplayerActive state:" + AlexaAudioplayerActive);
+            if (AlexaAudioplayerActive && notification.xr_speech_avs.state.guiManager === "DEACTIVATED" || !AlexaAudioplayerActive) {
+              AlexaAudioplayerActive = false;
+              appApi.setFocus(Storage.get("applicationType") === "" ? "ResidentApp" : Storage.get("applicationType"));
+            }
           }
           if(notification.xr_speech_avs.state.dialogUX=== "idle" && notification.xr_speech_avs.state.audio  === "playing"){
             appApi.zorder("SmartScreen")
             appApi.setOpacity("SmartScreen", 100)
-              appApi.visible("SmartScreen", true)
-                appApi.setFocus("SmartScreen")
+            appApi.visible("SmartScreen", true)
+            appApi.setFocus("SmartScreen")
           }
           if(notification.xr_speech_avs.state.dialogUX=== "listening"){
             appApi.zorder("SmartScreen")
-              appApi.setOpacity("SmartScreen", 80)
-                appApi.visible("SmartScreen", true)
+              appApi.setOpacity("SmartScreen", 100)
+            appApi.visible("SmartScreen", true)
           }
           if(notification.xr_speech_avs.state.dialogUX === "speaking"){
             appApi.zorder("SmartScreen")
-              appApi.setOpacity("SmartScreen", 100)
-                appApi.visible("SmartScreen", true)
-                  appApi.setFocus("SmartScreen")
+            appApi.setOpacity("SmartScreen", 100)
+            appApi.visible("SmartScreen", true)
+            appApi.setFocus("SmartScreen")
           }
           if (notification.xr_speech_avs.state_reporter === "dialog") {
             // Smartscreen playback state reports
@@ -1006,7 +1051,7 @@ export default class App extends Router.App {
           }/////////Alexa.Launcher END
           else if(header.namespace === "Alexa.RemoteVideoPlayer") { //alexa remote video player will search on youtube for now
             console.log("Alexa.RemoteVideoPlayer: "+JSON.stringify(header))
-            if(header.name === "SearchAndDisplayResults" || header.name === "SearchAndPlay"){ 
+            if(header.name === "SearchAndDisplayResults" || header.name === "SearchAndPlay"){
               console.log("Alexa.RemoteVideoPlayer: SearchAndDisplayResults || SearchAndPlay: "+JSON.stringify(header))
               payload && payload.entities.map(item =>{
                 if(item.type === "App" ||  item.type === "MediaType"){
@@ -1026,26 +1071,28 @@ export default class App extends Router.App {
                       console.log("Netflix launched FAILED using alexa search: "+JSON.stringify(err))
                     })
                   }
-                  if(item.value === "YouTube" || item.type == "MediaType"){
+                  if(item.value.startsWith("YouTube") || item.type == "MediaType"){
                     let replacedText = payload.searchText.transcribed.replace("youtube","")
                     console.log("replacedtext",replacedText)
                     const cobaltLaunchParams = {
-                      url: Storage.get("CobaltDefaultURL")+"&va=search&vq=" + encodeURI(replacedText.trim()),
+                      url: Storage.get(item.value+"DefaultURL")+"&va="+((header.name === "SearchAndPlay")?"play":"search")+"&vq=" + encodeURI(replacedText.trim()),
                       launchLocation: "alexa",
-                      appIdentifier:self.appIdentifiers["Cobalt"]
+                      appIdentifier:self.appIdentifiers[item.value]
                     }
-                    console.log("youtube search is getting invoked using alexa params: "+JSON.stringify(cobaltLaunchParams));
-                    appApi.launchApp("Cobalt",cobaltLaunchParams).then(res => {
-                      console.log("Cobalt launched successfully using alexa search: "+JSON.stringify(res))
+                    console.log(item.value +" search is getting invoked using alexa params: "+JSON.stringify(cobaltLaunchParams));
+                    appApi.launchApp(item.value, cobaltLaunchParams).then(res => {
+                      console.log(item.value+" launched successfully using alexa search: "+JSON.stringify(res))
                     }).catch(err => {
-                      console.log("Cobalt launched FAILED using alexa search: "+JSON.stringify(err))
+                      console.log(item.value+" launched FAILED using alexa search: "+JSON.stringify(err))
                     })
+                    replacedText = null;
+                    cobaltLaunchParams = null;
                   }
                 }
               })
             }
           }
-          else if(header.namespace === "Alexa.PlaybackController"){  
+          else if(header.namespace === "Alexa.PlaybackController"){
             console.log("chek",notification.xr_speech_avs.directive.header)
             PlaybackStateReport.msgPayload.event.endpoint.endpointId = notification.xr_speech_avs.directive.endpoint.endpointId
             PlaybackStateReport.msgPayload.event.payload.change.properties[0].value.state  = notification.xr_speech_avs.directive.header.name;
@@ -1055,26 +1102,35 @@ export default class App extends Router.App {
             })
           }
           else if(header.namespace === "AudioPlayer"){
-            console.log("ApplicationType", Storage.get("applicationType"))
-            appApi.visible("SmartScreen", true)
-            appApi.setOpacity("SmartScreen", 100)
-            appApi.zorder("SmartScreen")
-            if(Storage.get("applicationType") != ""){
-              console.log("AudioPlayer: Suspending the current app ",Storage.get("applicationType"))
-              appApi.exitApp(Storage.get("applicationType"))
+            if (header.name === "Play") {
+              appApi.visible("SmartScreen", true);
+              appApi.setOpacity("SmartScreen", 100);
+              appApi.zorder("SmartScreen");
+              appApi.setFocus("SmartScreen");
+              AlexaAudioplayerActive = true;
+              console.log("App AudioPlayer: Suspending the current app:'" + Storage.get("applicationType") + "'");
+              if (Storage.get("applicationType") != "") {
+                appApi.exitApp(Storage.get("applicationType"));
+              }
             }
-            else{
-              console.log("AudioPlayer:Application type is Empty")
+          }
+          else if (header.namespace === "TemplateRuntime") {
+            if (header.name === "RenderPlayerInfo") {
+              appApi.visible("SmartScreen", true);
+              appApi.setOpacity("SmartScreen", 100);
+              appApi.zorder("SmartScreen");
+              appApi.setFocus("SmartScreen");
+              AlexaAudioplayerActive = true;
             }
           }
           else if(header.namespace === "Speaker"){
             console.log("Speaker")
             if(header.name === "AdjustVolume"){
               VolumePayload.msgPayload.event.header.messageId = header.messageId
-              appApi.getVolumeLevel("HDMI0").then(volres =>{
+              appApi.getVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres =>{
                 console.log("volres",volres, parseInt(volres.volumeLevel))
-              if((parseInt(volres.volumeLevel) >= 0) || (parseInt(volres.volumeLevel) <= 100)) { 
-                VolumePayload.msgPayload.event.payload.volume = parseInt(volres.volumeLevel) + payload.volume 
+              if((parseInt(volres.volumeLevel) >= 0) || (parseInt(volres.volumeLevel) <= 100)) {
+                VolumePayload.msgPayload.event.payload.volume = parseInt(volres.volumeLevel) + payload.volume
                 console.log("volumepayload", VolumePayload.msgPayload.event.payload.volume)
                 if(VolumePayload.msgPayload.event.payload.volume < 0){
                   VolumePayload.msgPayload.event.payload.volume = 0
@@ -1086,9 +1142,9 @@ export default class App extends Router.App {
               VolumePayload.msgPayload.event.payload.muted = false
               console.log("cehckvolume", VolumePayload.msgPayload.event.payload.volume)
               console.log("adjust volume", VolumePayload)
-              appApi.setVolumeLevel("HDMI0", VolumePayload.msgPayload.event.payload.volume).then(res =>{})
+              appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), VolumePayload.msgPayload.event.payload.volume).then(res =>{})
               })
-            
+
             }
             if(header.name === "SetVolume"){
             // VolumePayload.msgPayload.event.header.name=  header.name
@@ -1097,31 +1153,29 @@ export default class App extends Router.App {
               VolumePayload.msgPayload.event.payload.muted = false
               console.log("adjust volume", VolumePayload)
               console.log("checkvolume", VolumePayload.msgPayload.event.payload.volume)
-              appApi.setVolumeLevel("HDMI0", VolumePayload.msgPayload.event.payload.volume).then(res =>{})
+              appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), VolumePayload.msgPayload.event.payload.volume).then(res =>{})
             }
             if(header.name === "SetMute"){
-                //8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b
               VolumePayload.msgPayload.event.header.messageId = header.messageId
               VolumePayload.msgPayload.event.payload.volume = payload.volume
               VolumePayload.msgPayload.event.payload.muted = payload.mute
-              appApi.audio_mute("HDMI0",VolumePayload.msgPayload.event.payload.muted).then(res =>{})
+              appApi.audio_mute(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"),VolumePayload.msgPayload.event.payload.muted).then(res =>{})
             }
           }
         }
       })
 
-      thunder.on(systemcCallsign, 'onKeywordVerification', notification => { 
+      thunder.on(systemcCallsign, 'onKeywordVerification', notification => {
         console.log("VoiceControl.onKeywordVerification Notification: " + JSON.stringify(notification))
       })
 
-      thunder.on(systemcCallsign, 'onSessionBegin', notification => { 
+      thunder.on(systemcCallsign, 'onSessionBegin', notification => {
         this.$hideImage(0);
         console.log("VoiceControl.onSessionBegin Notification: " + JSON.stringify(notification))
       })
 
       thunder.on(systemcCallsign, 'onSessionEnd', notification => {
         console.log("VoiceControl.onSessionEnd Notification: " + JSON.stringify(notification))
-        // DAB Demo Work Around and for disabling Alexa using OOBE "Skip" button.
         if (notification.result === "success" && notification.success.transcription === "User request to disable Alexa") {
           console.warn("App VoiceControl.onSessionEnd got disable Alexa.")
           appApi.resetAVSCredentials() // To avoid Audio Feedback
@@ -1129,15 +1183,15 @@ export default class App extends Router.App {
         }
       })
 
-      thunder.on(systemcCallsign, 'onStreamBegin', notification => { 
+      thunder.on(systemcCallsign, 'onStreamBegin', notification => {
         console.log("VoiceControl.onStreamBegin Notification: " + JSON.stringify(notification))
       })
 
-      thunder.on(systemcCallsign, 'onStreamEnd', notification => { 
+      thunder.on(systemcCallsign, 'onStreamEnd', notification => {
         console.log("VoiceControl.onStreamEnd Notification: " + JSON.stringify(notification))
       })
 
-      thunder.on(systemcCallsign, 'onSuspend', notification => { 
+      thunder.on(systemcCallsign, 'onSuspend', notification => {
         console.log("VoiceControl.onSuspend Notification: " + JSON.stringify(notification))
       })
 
@@ -1147,10 +1201,6 @@ export default class App extends Router.App {
   }
 
   activateChildApp(plugin) { //#currentlyNotUsed #needToBeRemoved
-    if(plugin == "YouTubeKids" || plugin == "YouTubeTV"){
-      plugin = "Cobalt"
-    }
-
     fetch('http://127.0.0.1:9998/Service/Controller/')
       .then(res => res.json())
       .then(data => {
@@ -1173,13 +1223,23 @@ export default class App extends Router.App {
       case 'WebApp':
         appApi.deactivateWeb();
         break;
-      case 'Cobalt':
-        appApi.suspendPremiumApp("Cobalt").then(res => {
-          if (res) {
-            let params = { applicationName: "YouTube", state: 'suspended' };
-            this.xcastApi.onApplicationStateChanged(params).catch(err => { console.error(err) });
-          }
-          console.log(`Cobalt : suspend cobalt request`);
+      case 'YouTube':
+        appApi.suspendPremiumApp("YouTube").then(res => {
+          console.log(`YouTube : suspend YouTube request`);
+        }).catch((err) => {
+          console.error(err)
+        });
+        break;
+      case 'YouTubeTV':
+        appApi.suspendPremiumApp("YouTubeTV").then(res => {
+          console.log(`YouTubeTV : suspend YouTubeTV request`);
+        }).catch((err) => {
+          console.error(err)
+        });
+        break;
+      case 'YouTubeKids':
+        appApi.suspendPremiumApp("YouTubeKids").then(res => {
+          console.log(`YouTubeKids : suspend YouTubeKids request`);
         }).catch((err) => {
           console.error(err)
         });
@@ -1249,7 +1309,6 @@ export default class App extends Router.App {
                 reject(err)
 
               })// gets configuration object and sets configuration
-
             }
             else {
               appApi.launchPremiumApp("Netflix").then(res => {
@@ -1291,7 +1350,6 @@ export default class App extends Router.App {
           reject(false)
         })
     })
-
   }
 
   /**
@@ -1300,154 +1358,47 @@ export default class App extends Router.App {
    registerXcastListeners() {
     let self = this;
     this.xcastApi.registerEvent('onApplicationLaunchRequest', notification => {
-      console.log('Received a launch request ' + JSON.stringify(notification));
+      console.log('App onApplicationLaunchRequest: ' + JSON.stringify(notification));
 
       if (this.xcastApps(notification.applicationName)) {
         let applicationName = this.xcastApps(notification.applicationName);
 
-        let url = notification.parameters.url;
-
-        if (applicationName === "YouTubeKids") {
-          hdmiApi.checkStatus("Cobalt").then(res=>{
-            if(res[0].state === "running"){
-
-              thunder.call('org.rdk.RDKShell', 'destroy', { callsign: 'Cobalt' }).then(r => {
-                console.log(`Cobalt : Cobalt instance deactivated`, r)
-                let params = {
-                  url: url,
-                  launchLocation: "dial",
-                  appIdentifier:self.appIdentifiers["Cobalt"]
-                }
-                appApi.launchApp( "Cobalt" , params).then(res => {// we launch cobalt
-                  
-                    Storage.set("applicationType", "Cobalt")  
-                  
-                  console.log("App launched on xcast event: ", res);
-                  let params = { applicationName: notification.applicationName, state: 'running' }; // we update applicationStateChanged for YouTubeKids
-                  this.xcastApi.onApplicationStateChanged(params);
-                }).catch(err => {
-                  console.error("Applaunch error on xcast notification: ", err)
-                })
-    
-              }).catch(err => {
-                console.error("Cobalt : error while deactivating cobalt instance", err)
-              })
-
-
-            }
-            else{
-              let params = {
-                url: url,
-                launchLocation: "dial",
-                appIdentifier:self.appIdentifiers["Cobalt"]
-              }
-              let aName = "Cobalt"
-              appApi.launchApp(aName, params).then(res => {
-                Storage.set("applicationType", "Cobalt")
-                console.log("App launched on xcast event: ", res);
-                let params = { applicationName: notification.applicationName, state: 'running' };
-                this.xcastApi.onApplicationStateChanged(params);
-              }).catch(err => {
-                console.log("Applaunch error on xcast notification: ", err)
-              })
-            }
-          })
-          
-        }
-        else if(applicationName === "YouTubeTV"){
-          hdmiApi.checkStatus("Cobalt").then(res=>{
-            if(res[0].state === "running"){
-
-              thunder.call('org.rdk.RDKShell', 'destroy', { callsign: 'Cobalt' }).then(r => {
-
-
-                let params = {
-                  url: url,
-                  launchLocation: "dial",
-                  appIdentifier:self.appIdentifiers["Cobalt"]
-                }
-
-                appApi.launchApp("Cobalt", params).then(res => {// we launch cobalt
-                  Storage.set("applicationType", "Cobalt")
-                  console.log("App launched on xcast event: ", res);
-                  let params = { applicationName: notification.applicationName, state: 'running' }; // we update applicationStateChanged for YouTubeKids
-                  this.xcastApi.onApplicationStateChanged(params);
-                }).catch(err => {
-                  console.error("Applaunch error on xcast notification: ", err)
-                })
-
-              }).catch(err=>{
-                console.error(err)
-              })
-            }
-            else{
-              let params = {
-                url: url,
-                launchLocation: "dial",
-                appIdentifier:self.appIdentifiers["Cobalt"]
-              }
-              let aName = "Cobalt"
-              appApi.launchApp(aName, params).then(res => {
-                Storage.set("applicationType", "Cobalt")
-                console.log("App launched on xcast event: ", res);
-                let params = { applicationName: notification.applicationName, state: 'running' };
-                this.xcastApi.onApplicationStateChanged(params);
-              }).catch(err => {
-                console.log("Applaunch error on xcast notification: ", err)
-              })
-            }
-            
-          }).catch(err=>{
-            console.error(err)
-          })
-          
-        }
-        else {
+        if (applicationName.startsWith("YouTube")) {
           let params = {
-            url: url,
+            url: notification.parameters.url,
             launchLocation: "dial",
             appIdentifier:self.appIdentifiers[applicationName]
           }
           appApi.launchApp(applicationName, params).then(res => {
-            console.log("App launched on xcast event: ", res);
+            console.log("App onApplicationLaunchRequest: launched "+applicationName+" : ", res);
             Storage.set("applicationType", applicationName)
+            // TODO: move to Controller.statuschange event
             let params = { applicationName: notification.applicationName, state: 'running' };
             this.xcastApi.onApplicationStateChanged(params);
           }).catch(err => {
-            console.log("Applaunch error on xcast notification: ", err)
+            console.log("App onApplicationLaunchRequest: error ", err)
           })
         }
-
       }
     });
 
     this.xcastApi.registerEvent('onApplicationHideRequest', notification => {
-      console.log('Received a hide request ' + JSON.stringify(notification));
+      console.log('App onApplicationHideRequest: ' + JSON.stringify(notification));
+
       if (this.xcastApps(notification.applicationName)) {
         let applicationName = this.xcastApps(notification.applicationName);
-        console.log('Hide ' + this.xcastApps(notification.applicationName));
-        let params = { applicationName: notification.applicationName, state: 'suspended' };
-        if (applicationName === "YouTubeKids") {
-          appApi.suspendPremiumApp("Cobalt")
-          this.xcastApi.onApplicationStateChanged(params);
-        } 
-        else if(applicationName === "YouTubeTV"){
-          appApi.suspendPremiumApp("Cobalt")
-          this.xcastApi.onApplicationStateChanged(params);
-        }else {
+        console.log('App onApplicationHideRequest: ' + this.xcastApps(notification.applicationName));
+        if (applicationName.startsWith("YouTube")) {
           //second argument true means resident app won't be launched the required app will be exited in the background.
           //only bring up the resident app when the notification is from the current app(ie app in focus)
-          console.log("exitApp is getting called depending upon " + applicationName + "!==" + Storage.get("applicationType"));
+          console.log("App onApplicationHideRequest: exitApp as " + applicationName + "!==" + Storage.get("applicationType"));
           appApi.exitApp(applicationName, applicationName !== Storage.get("applicationType"));
-
-          console.log(`Event : On hide request, updating application Status to `, params);
-          this.xcastApi.onApplicationStateChanged(params);
         }
-
       }
     });
+
     this.xcastApi.registerEvent('onApplicationResumeRequest', notification => {
-      console.log('Received a resume request ' + JSON.stringify(notification));
+      console.log('App onApplicationResumeRequest: ' + JSON.stringify(notification));
       if (this.xcastApps(notification.applicationName)) {
         let applicationName = this.xcastApps(notification.applicationName);
         let params = {
@@ -1455,86 +1406,55 @@ export default class App extends Router.App {
           launchLocation: "dial",
           appIdentifier:self.appIdentifiers[applicationName]
         }
-        let aName = applicationName
-        if(aName == "YouTubeKids" || aName == "YouTubeTV"){
-          aName = "Cobalt"
-        }
-        console.log('Resume ', applicationName, " with params: ", params);
-        appApi.launchApp(aName, params).then(res => {
-          Storage.set("applicationType", aName)
-          
-          console.log("launched ", applicationName, " on casting resume request: ", res);
-          let params = { applicationName: notification.applicationName, state: 'running' };
-          this.xcastApi.onApplicationStateChanged(params);
+
+        console.log('App onApplicationResumeRequest: launchApp ', applicationName, " with params: ", params);
+        appApi.launchApp(applicationName, params).then(res => {
+          Storage.set("applicationType", applicationName)
+          console.log("App onApplicationResumeRequest: launched ", applicationName, " result: ", res);
         }).catch(err => {
           console.log("Error in launching ", applicationName, " on casting resume request: ", err);
         })
       }
     });
-    this.xcastApi.registerEvent('onApplicationStopRequest', notification => {
-      console.log('Received an xcast stop request ' + JSON.stringify(notification));
-      console.log('Received a stop request ' + JSON.stringify(notification));
-      if (this.xcastApps(notification.applicationName)) {
-        console.log('Stop ' + this.xcastApps(notification.applicationName));
-        let applicationName = this.xcastApps(notification.applicationName);
-        if (applicationName === "YouTubeKids") {
-          appApi.deactivateCobalt()
-          let params = { applicationName: notification.applicationName, state: 'stopped' };
-          this.xcastApi.onApplicationStateChanged(params);
-        }
-        else if(applicationName === "YouTubeTV"){
-          appApi.deactivateCobalt()
-          let params = { applicationName: notification.applicationName, state: 'stopped' };
-          this.xcastApi.onApplicationStateChanged(params);
-        }
-        else {
-          //second argument true means resident app won't be launched the required app will be exited in the background.
-          //only bring up the resident app when the notification is from the current app(ie app in focus)
-          console.log("exitApp is getting called depending upon " + applicationName + "!==" + Storage.get("applicationType"));
-          appApi.exitApp(applicationName, applicationName !== Storage.get("applicationType"));
 
-          let params = { applicationName: notification.applicationName, state: 'stopped' };
-          this.xcastApi.onApplicationStateChanged(params);
+    this.xcastApi.registerEvent('onApplicationStopRequest', notification => {
+      console.log('App onApplicationStopRequest: ' + JSON.stringify(notification));
+      if (this.xcastApps(notification.applicationName)) {
+        let applicationName = this.xcastApps(notification.applicationName);
+        if (applicationName.startsWith("YouTube")) {
+          appApi.deactivateCobalt(applicationName)
+          if (Storage.get("applicationType") === applicationName) {
+            appApi.exitApp(applicationName);
+          }
         }
       }
     });
+
     this.xcastApi.registerEvent('onApplicationStateRequest', notification => {
-      // console.log('onApplicationStateRequest : ');
-      // console.log(JSON.stringify(notification))
+      console.log("App onApplicationStateRequest: " + JSON.stringify(notification));
       if (this.xcastApps(notification.applicationName)) {
         let applicationName = this.xcastApps(notification.applicationName);
-        let params = { applicationName: notification.applicationName, state: 'stopped' };   
-
-        appApi.registerEvent('statechange', results => {
-          if (results.callsign === applicationName && results.state === 'Activated') {
-            params.state = 'running'
-            if(results.callsign == "YouTubeKids" || results.callsign == "YouTubeTV"){
-              Storage.set("applicationType", "Cobalt")  //required in case app launch happens using curl command.
-            }else{
-              Storage.set("applicationType", results.callsign) //required in case app launch happens using curl command.
-            }
+        let appState = { "applicationName": notification.applicationName, "state": "stopped" };
+        appApi.checkStatus(applicationName).then(result => {
+          switch(result[0].state) {
+            case "activated":
+            case "resumed":
+              appState.state = "running";
+              break;
+            case "Activation":
+            case "deactivated":
+            case "Deactivation":
+            case "Precondition":
+              appState.state = "stopped";
+              break;
+            case "suspended":
+              appState.state = "suspended";
+              break;
           }
-          else if (results.state == 'Deactivation') {
-            params.state = "stopped"
-          }
-          else if (results.state == "Activation") {
-            // params.state = "running"
-          }
-          else if (results.state == "Resumed") {
-            params.state = "running"
-          }
-          else if (results.state == 'suspended') {
-            params.state = 'suspended';
-          }
-          else{
-            console.warn(" THIS SHOULDN'T HAPPEN : unexpected app state"+results.state)
-          }
-          console.log(`STATE CHANGED : `);
-          console.log(results);
-          this.xcastApi.onApplicationStateChanged(params);
-          console.log('State of ' + this.xcastApps(notification.applicationName))
+          this.xcastApi.onApplicationStateChanged(appState);
+        }).catch(error => {
+          console.error("App onApplicationStateRequest: checkStatus error ", error);
         })
-
       }
     });
   }
@@ -1587,7 +1507,6 @@ export default class App extends Router.App {
               }
             }
           }
-
         })
         return true
       }
@@ -1603,9 +1522,8 @@ export default class App extends Router.App {
         }
       })
 
-      const systemcCallsign = "org.rdk.RDKShell.1";
       thunder.Controller.activate({
-        callsign: systemcCallsign
+        callsign: 'org.rdk.RDKShell.1'
       })
         .then(res => {
           console.log(`activated the rdk shell plugin trying to set the inactivity listener; res = ${JSON.stringify(res)}`);
@@ -1622,9 +1540,7 @@ export default class App extends Router.App {
           reject(err)
           console.error(`error while activating the displaysettings plugin; err = ${err}`)
         })
-
     })
-
   }
 
   $resetSleepTimer(t) {
@@ -1674,7 +1590,7 @@ export default class App extends Router.App {
       }).catch(err => { console.error(`error while enabling inactivity reporting`) });
     }
   }
-      
+
   jumpToRoute(route) {
     if (Storage.get('applicationType') != '') {
       appApi.exitApp(Storage.get('applicationType')).catch(err => {

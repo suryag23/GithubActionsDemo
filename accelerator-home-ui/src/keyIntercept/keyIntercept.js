@@ -31,8 +31,7 @@ const thunder = ThunderJS(config);
 const appApi = new AppApi()
 
 export function keyIntercept() {
-    const rdkshellCallsign = 'org.rdk.RDKShell';
-    thunder.Controller.activate({ callsign: rdkshellCallsign })
+    thunder.Controller.activate({ callsign: 'org.rdk.RDKShell' })
         .then(result => {
             console.log('Successfully activated RDK Shell');
         })
@@ -48,7 +47,7 @@ export function keyIntercept() {
 
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.AudioVolumeMute,
                     modifiers: [],
@@ -65,7 +64,7 @@ export function keyIntercept() {
         })
 
         .then(result => {
-            thunder.on(rdkshellCallsign, 'onSuspended', notification => {
+            thunder.on('org.rdk.RDKShell', 'onSuspended', notification => {
                 if (notification) {
                     console.log('onSuspended notification from KeyIntercept: ' + notification.client);
                 }
@@ -76,7 +75,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.F1,
                     modifiers: [],
@@ -90,7 +89,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Inputs_Shortcut,
                     modifiers: [],
@@ -104,7 +103,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Picture_Setting_Shortcut,
                     modifiers: [],
@@ -118,7 +117,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Power,
                     modifiers: [],
@@ -133,7 +132,7 @@ export function keyIntercept() {
 
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Settings_Shortcut,
                     modifiers: [],
@@ -145,10 +144,10 @@ export function keyIntercept() {
         .catch(err => {
             console.log('Error', err);
         })
-        
+
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.AppCarousel,
                     modifiers: [],
@@ -163,7 +162,7 @@ export function keyIntercept() {
 
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Youtube,
                     modifiers: [],
@@ -177,7 +176,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Amazon,
                     modifiers: [],
@@ -191,7 +190,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Netflix,
                     modifiers: [],
@@ -206,7 +205,7 @@ export function keyIntercept() {
 
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.F7,
                     modifiers: [],
@@ -220,7 +219,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.AudioVolumeUp,
                     modifiers: [],
@@ -234,7 +233,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.AudioVolumeDown,
                     modifiers: [],
@@ -248,7 +247,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'foreground',
                     keyCode: Keymap.AudioVolumeDown,
                     modifiers: [],
@@ -262,7 +261,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'foreground',
                     keyCode: Keymap.AudioVolumeUp,
                     modifiers: [],
@@ -276,7 +275,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'foreground',
                     keyCode: Keymap.AudioVolumeMute,
                     modifiers: [],
@@ -290,7 +289,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.MediaFastForward,
                     modifiers: [],
@@ -304,7 +303,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: 142,
                     modifiers: [],
@@ -318,7 +317,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Home,
                     modifiers: [],
@@ -332,7 +331,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.MediaRewind,
                     modifiers: [],
@@ -346,7 +345,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'ResidentApp',
                     keyCode: Keymap.Pause,
                     modifiers: [],
@@ -360,8 +359,8 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
-                    client: 'Cobalt',
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
+                    client: 'YouTube',
                     keyCode: Keymap.Home,
                     modifiers: [],
                 })
@@ -374,7 +373,35 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
+                    client: 'YouTubeTV',
+                    keyCode: Keymap.Home,
+                    modifiers: [],
+                })
+                .catch(err => {
+                    console.log('Error', err);
+                });
+        })
+        .catch(err => {
+            console.log('Error', err);
+        })
+        .then(result => {
+            thunder
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
+                    client: 'YouTubeKids',
+                    keyCode: Keymap.Home,
+                    modifiers: [],
+                })
+                .catch(err => {
+                    console.log('Error', err);
+                });
+        })
+        .catch(err => {
+            console.log('Error', err);
+        })
+        .then(result => {
+            thunder
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'Amazon',
                     keyCode: Keymap.Home,
                     modifiers: [],
@@ -388,8 +415,8 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
-                    client: 'Cobalt',
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
+                    client: 'YouTube',
                     keyCode: Keymap.Backspace,
                     modifiers: [],
                 })
@@ -402,7 +429,7 @@ export function keyIntercept() {
         })
         .then(result => {
             thunder
-                .call(rdkshellCallsign, 'addKeyIntercept', {
+                .call('org.rdk.RDKShell', 'addKeyIntercept', {
                     client: 'Amazon',
                     keyCode: Keymap.Backspace,
                     modifiers: [],

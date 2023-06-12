@@ -20,7 +20,6 @@ import { Storage } from "@lightningjs/sdk";
 import NetworkApi from "../api/NetworkApi";
 import AppApi from "./AppApi";
 import { appListInfo } from "./../../static/data/AppListInfo.js";
-import { appListInfoOffline } from "../../static/data/AppListInfoOffline";
 import { tvShowsInfo } from "./../../static/data/TvShowsInfo.js";
 import { settingsInfo } from "./../../static/data/SettingsInfo.js";
 import { sidePanelInfo } from "./../../static/data/SidePanelInfo.js";
@@ -64,14 +63,7 @@ export default class HomeApi {
    * Function to get details for app listing.
    */
   getAppListInfo() {
-    let appsMetaData;
-
-    if (IpAddress1 || IpAddress2) {
-      appsMetaData = appListInfo;
-    } else {
-      appsMetaData = appListInfoOffline;
-    }
-
+    let appsMetaData = appListInfo;
     return JSON.parse(JSON.stringify(appsMetaData)) ;
   }
 

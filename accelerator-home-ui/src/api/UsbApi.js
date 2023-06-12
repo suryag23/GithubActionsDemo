@@ -32,7 +32,7 @@ const config = {
         UsbAccess: 2,
     }
 }
-var thunder = ThunderJS(config)
+let thunder = ThunderJS(config)
 /**
  * Class that contains functions which commuicates with thunder API's
  */
@@ -138,7 +138,7 @@ export default class UsbApi {
 
     retrieUsb() {
         this.usbLink = ""
-        var self = this;
+        let self = this;
         return new Promise((resolve, reject) => {
             self.clearLink().then(
                 result => {
@@ -204,9 +204,9 @@ export default class UsbApi {
             cwd = cwd + '/' + arguments[1];
         }
         // to add support for more formats, extension can be added same as below 
-        var extensionForImage = ['.png', '.jpg', '.PNG', '.jpeg', '.JPEG', '.jpg', '.JPG'];
-        var extensionForVideo = ['.mp4', '.MP4', '.mov', '.MOV', '.avi', '.AVI', '.m3u8', '.M3U8', '.mpeg2', '.MPEG2'];
-        var extensionForAudio = ['.mp3', '.mpeg', '.MP3', '.MPEG'];
+        let extensionForImage = ['.png', '.jpg', '.PNG', '.jpeg', '.JPEG', '.jpg', '.JPG'];
+        let extensionForVideo = ['.mp4', '.MP4', '.mov', '.MOV', '.avi', '.AVI', '.m3u8', '.M3U8', '.mpeg2', '.MPEG2'];
+        let extensionForAudio = ['.mp3', '.mpeg', '.MP3', '.MPEG'];
 
         this._discoveredC = result;
         //   console.log("Discovered result :: " + JSON.stringify(result));
@@ -214,7 +214,7 @@ export default class UsbApi {
         this._discoveredC.filter(device => {
             for (let i in extensionForImage) {
                 if (device.name.indexOf(extensionForImage[i]) !== -1) {
-                    var obj1 = {
+                    let obj1 = {
                         displayName: device.name,
                         uri: cwd + '/' + device.name,
                         url: cwd + '/' + device.name,
@@ -232,7 +232,7 @@ export default class UsbApi {
         this._discoveredC.filter(device => {
             for (let i in extensionForVideo) {
                 if (device.name.indexOf(extensionForVideo[i]) !== -1) {
-                    var obj2 = {
+                    let obj2 = {
                         displayName: device.name,
                         //  url: '/images/usb/video-default-tile.jpg',
                         url: '/images/usb/USB_Video_Placeholder.jpg',
@@ -247,7 +247,7 @@ export default class UsbApi {
         this._discoveredC.filter(device => {
             for (let i in extensionForAudio) {
                 if (device.name.indexOf(extensionForAudio[i]) !== -1) {
-                    var obj3 = {
+                    let obj3 = {
                         displayName: device.name,
                         //  url: '/images/usb/music-default-tile.jpg',
                         url: '/images/usb/USB_Audio_Placeholder.jpg',
@@ -263,7 +263,7 @@ export default class UsbApi {
         this._discoveredC.filter(device => {
             if (device.t === 'd') {
                 if (!(device.name === '.' || device.name === "..")) {
-                    var obj4 = {
+                    let obj4 = {
                         displayName: device.name,
                         url: "/images/usb/USB_Folder.jpg",
                         uri: cwd + "/" + device.name

@@ -67,17 +67,12 @@ export default class AppListItem extends Lightning.Component {
         h: this.h
       })
     }
-
-
-
   }
 
   /**
    * Function to change properties of item during focus.
    */
-
   _focus() {
-    
     this.tag('Image').patch({
       x: this.x,
       w: this.w,
@@ -94,7 +89,6 @@ export default class AppListItem extends Lightning.Component {
       y: -12,
       texture: lng.Tools.getShadowRect(this.w, this.h + 24, 0, 0, 0),
   });
-
   }
 
   /**

@@ -32,7 +32,4 @@
        title: 'Image',
        url: '/images/usb/Picture-white-icon-small.png',
      },
-   
   ]
-  
-  

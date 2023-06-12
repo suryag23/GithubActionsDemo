@@ -282,10 +282,8 @@ export default class SettingsScreen extends Lightning.Component {
     this.dtvApi = new DTVApi();
     this.dtvPlugin = false; //plugin availability
     this.dtvApi.activate().then((res) => {
-      // if (res){
       this.dtvPlugin = true;
       this.tag("DTVSettings").alpha = 1;
-      // }
     })
   }
 

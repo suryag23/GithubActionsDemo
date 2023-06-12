@@ -37,7 +37,6 @@
    default: 1,
  };
  const thunder = ThunderJS(config);
- const systemcCallsign = "DTV";
  
  /**
   * Class for DVB Scan screen.
@@ -455,14 +454,13 @@
    }
  
    _firstActive() {
-     let searchEventListener = thunder.on(systemcCallsign, "searchstatus", (notification) => {
+     let searchEventListener = thunder.on("DTV", "searchstatus", (notification) => {
        console.log("SearchStatus Notification: ", JSON.stringify(notification));
        if(notification.finished){
          console.log("notification.finished: ", notification.finished)
          this.setScanFinished();
        }
      })
- 
  
      ///////////////satellite
  

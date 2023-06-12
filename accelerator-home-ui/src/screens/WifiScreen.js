@@ -27,6 +27,8 @@ import { CONFIG } from '../Config/Config'
 /**
 * Class for WiFi screen.
 */
+
+var previousFocusedItemSSid
 export default class WiFiScreen extends Lightning.Component {
 
 
@@ -140,8 +142,7 @@ export default class WiFiScreen extends Lightning.Component {
 
 
   _firstEnable() {
-
-    this.wifiLoading = this.tag('Switch.Loader').animation({
+      this.wifiLoading = this.tag('Switch.Loader').animation({
       duration: 3,
       repeat: -1,
       stopMethod: 'immediate',
@@ -174,7 +175,7 @@ export default class WiFiScreen extends Lightning.Component {
       if (result) {
         this.wifiStatus = true
         this._network.registerEvent('onIPAddressStatusChanged', notification => {
-          console.log(JSON.stringify(notification))
+          console.log("onIPAddressStatusChanged",JSON.stringify(notification))
           if (notification.status == 'LOST') {
             if (notification.interface === 'WIFI') {
               this._wifi.setInterface('ETHERNET', true).then(res => {
@@ -304,6 +305,7 @@ export default class WiFiScreen extends Lightning.Component {
         item.connected = false
         return {
           ref: 'Other' + index,
+          index:index,
           w: 1620,
           h: 90,
           type: WiFiItem,
@@ -311,7 +313,17 @@ export default class WiFiScreen extends Lightning.Component {
         }
       })
     })
-  }
+    let IndexVal=0
+    console.log("previousFocusedItemSSid:::",previousFocusedItemSSid)
+    this._availableNetworks.tag('List').items.forEach(element => {
+      if(element._item.ssid==previousFocusedItemSSid){
+        IndexVal=element.index
+      }
+    });
+    this._availableNetworks.tag('List').setIndex(IndexVal)
+   
+}
+ 
   _handleBack() {
     if(!Router.isNavigating()){
     Router.navigate('settings/network/interface')
@@ -378,13 +390,14 @@ export default class WiFiScreen extends Lightning.Component {
 
         }
         _getFocused() {
+          previousFocusedItemSSid=this._availableNetworks.tag('List').element._item.ssid
           return this._availableNetworks.tag('List').element
         }
-        _handleDown() {
-          this._navigate('AvailableDevices', 'down')
+     _handleDown() {
+        this._navigate('AvailableDevices', 'down')
         }
         _handleUp() {
-          this._navigate('AvailableDevices', 'up')
+        this._navigate('AvailableDevices', 'up')
         }
         _handleEnter() {
           console.log("SSID check", this._availableNetworks.tag('List').element._item)
@@ -393,7 +406,16 @@ export default class WiFiScreen extends Lightning.Component {
           this._wifi.getSSIDKey().then((response)=>{
             console.log("ssid check")
             if(response === item.ssid ){
-              this._wifi.connect().then((response)=>{console.log(response)})
+              this._wifi.connect().then((response)=>{
+                this._wifi.registerEvent('onError', notification => {
+                  if(notification.code === 0||notification.code === 4){
+                    this._wifi.clearSSID()
+                    Router.navigate('settings/network/interface/wifi/connect', { wifiItem: this._availableNetworks.tag('List').element._item })
+                  }
+                  
+                })
+                console.log(response)
+              })
               .catch(err =>{ 
                 Router.navigate('settings/network/interface/wifi/connect', { wifiItem: this._availableNetworks.tag('List').element._item })
                 this._wifi.SaveSSIDKey("").then(()=>{})})
@@ -539,16 +561,21 @@ export default class WiFiScreen extends Lightning.Component {
         Router.focusWidget('Fail')
       }
     })
-    this._wifi.registerEvent('onAvailableSSIDs', notification => {
-      console.log("Notification[onAvailableSSIDs]:", notification.ssids)
-      this.renderDeviceList(notification.ssids)
-      if (!notification.moreData) {
-        setTimeout(() => {
-          this.tag('Switch.Loader').visible = false
-          this.wifiLoading.stop()
-        }, 1000)
-      }
+this._wifi.registerEvent('onAvailableSSIDs', notification => {
+ console.log("Notification[onAvailableSSIDs]:", notification.ssids)
+    this.renderDeviceList(notification.ssids)
+ if (!notification.moreData) {
+ setTimeout(() => {
+  this.tag('Switch.Loader').visible = false
+ this.wifiLoading.stop()
+  }, 1000)
+  }
+  
+  })
+}
+  _inactive(){
+ previousFocusedItemSSid=undefined
 
-    })
   }
 }
+ 

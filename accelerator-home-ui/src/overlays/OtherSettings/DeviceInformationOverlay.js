@@ -226,7 +226,7 @@
                             y: 720,
                             mountY: 0.5,
                             text: {
-                                text: "Youtube:\nAmazon Prime:\nNetflix ESN:",
+                                text: "YouTube:\nAmazon Prime:\nNetflix ESN:",
                                 textColor: COLORS.titleColor,
                                 fontFace: CONFIG.language.font,
                                 fontSize: 25,
@@ -328,7 +328,7 @@
                                  .then(res => {
                                      Storage.set('Netflix_ESN', res)
                                      console.log(`Netflix : netflix esn call returns : `, JSON.stringify(res));
-                                     se.netflixESN = `Youtube: NA \nAmazon Prime: NA \nNetflix ESN: ${res}`
+                                     se.netflixESN = `YouTube: NA \nAmazon Prime: NA \nNetflix ESN: ${res}`
                                  })
                                  .catch(err => {
                                      console.error(`Netflix : error while getting netflix esn : `, JSON.stringify(err))
@@ -342,7 +342,7 @@
                              .then(res => {
                                  Storage.set('Netflix_ESN', res)
                                  console.log(`Netflix : netflix esn call returns : `, JSON.stringify(res));
-                                 self.netflixESN = `Youtube: NA \nAmazon Prime: NA \nNetflix ESN: ${res}`;
+                                 self.netflixESN = `YouTube: NA \nAmazon Prime: NA \nNetflix ESN: ${res}`;
                              })
                              .catch(err => {
                                  console.error(`Netflix : error while getting netflix esn : `, JSON.stringify(err))

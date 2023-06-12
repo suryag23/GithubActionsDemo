@@ -42,24 +42,38 @@ export var appListInfo =[
     appIdentifier: 'n:2'
   },
   {
-    displayName: 'Youtube',
-    applicationType: 'Cobalt',
-    uri: '',
+    displayName: 'YouTube',
+    applicationType: 'YouTube',
+    uri: 'https://www.youtube.com/tv',
     url: '/images/apps/App_YouTube_454x255.png',
     appIdentifier: 'n:3'
+  },
+  {
+    displayName: 'YouTubeTV',
+    applicationType: 'YouTubeTV',
+    uri: 'https://www.youtube.com/tv/upg',
+    url: '/images/apps/App_YouTubeTV_454x255.png',
+    appIdentifier: 'n:4'
+  },
+  {
+    displayName: 'YouTubeKids',
+    applicationType: 'YouTubeKids',
+    uri: 'https://www.youtube.com/tv_kids',
+    url: '/images/apps/App_YouTubeKids_454x255.png',
+    appIdentifier: 'n:5'
   },
   {
     displayName: 'Peacock',
     applicationType: 'LightningApp',
     uri: '',
     url: '/images/apps/App_Peacock_454x255.png',
-    appIdentifier: 'n:4'
+    appIdentifier: 'n:6'
   },
   {
     displayName: 'Xumo',
     applicationType: 'HtmlApp',
     uri: 'https://x1box-app.xumo.com/index.html',
     url: '/images/apps/App_Xumo_454x255.png',
-    appIdentifier: 'n:5'
+    appIdentifier: 'n:7'
   }
 ]

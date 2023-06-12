@@ -208,10 +208,9 @@ var thunder = ThunderJS(config);
             },
           },
   
-
-           DTVSettings: {
+          DTVSettings: {
             alpha: 0.3,
-          y: 540,
+            y: 540,
              type: SettingsMainItem,
              Title: {
                x: 10,
@@ -234,7 +233,6 @@ var thunder = ThunderJS(config);
                src: Utils.asset("images/settings/Arrow.png"),
              },
            },
-           
          },
          AudioScreenOverlay:{
           type: AudioScreenOverlay,
@@ -260,7 +258,6 @@ var thunder = ThunderJS(config);
         type: OtherSettingsScreen,
         visible: false
        }
-       
        }
      };
    }
@@ -282,7 +279,6 @@ var thunder = ThunderJS(config);
       console.log(`Netflix : NFRStatus is found to be disabled`)
       this.tag("NFRStatus.Button").src = "static/images/settings/ToggleOffWhite.png"
     }
-
      this.appApi = new AppApi();
      this.dtvApi = new DTVApi();
      this.dtvPlugin = false; //plugin availability

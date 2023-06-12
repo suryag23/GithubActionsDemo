@@ -20,4 +20,3 @@
  * Class which contains data for app listings.
  */
 export var UsbInnerFolderListInfo = []
-  

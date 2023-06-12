@@ -23,10 +23,12 @@
  import SettingsMainItem from '../../items/SettingsMainItem'
  import Wifi from '../../api/WifiApi'
  import NetworkApi from '../../api/NetworkApi'
+ import AppApi from '../../api/AppApi'
  
  
  const wifi = new Wifi()
  const network = new NetworkApi()
+ var appApi = new AppApi()
  export default class NetworkScreen extends Lightning.Component {
      static _template() {
          return {
@@ -207,7 +209,14 @@
                      })
                    }
                  _handleEnter() {
-                     Router.navigate('menu')
+                    if(appApi.checkAlexaAuthStatus() !== "AlexaUserDenied")
+                    {
+                        Router.navigate('AlexaLoginScreen')
+                    }    
+                    else
+                    {
+                        Router.navigate('menu')
+                    }
                  }
                  _handleUp() {
                      this._setState('Ethernet')

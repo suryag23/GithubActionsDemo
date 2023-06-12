@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Registry, Utils } from "@lightningjs/sdk";
+import { Lightning, Registry, Utils, Storage } from "@lightningjs/sdk";
 import AppApi from "../../api/AppApi";
 import { CONFIG } from "../../Config/Config";
 import { VolumePayload } from "../../Config/AlexaConfig";
@@ -117,8 +117,8 @@ export default class Volume extends Lightning.Component {
     }
 
     setVolume = async (val) => {
-        const value = await this.appApi.setVolumeLevel('HDMI0', val)
-        this.appApi.getVolumeLevel("HDMI0").then(volres =>{
+        const value = await this.appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), val)
+        this.appApi.getVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres =>{
             console.log("volres",volres, parseInt(volres.volumeLevel))
            VolumePayload.msgPayload.event.header.messageId=  "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
             VolumePayload.msgPayload.event.payload.volume =  parseInt(volres.volumeLevel)
@@ -133,8 +133,8 @@ export default class Volume extends Lightning.Component {
     }
 
     setMute = async (val) => {
-        const status = await this.appApi.audio_mute('HDMI0', val) 
-        this.appApi.muteStatus("HDMI0").then(volres =>{
+        const status = await this.appApi.audio_mute(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), val) 
+        this.appApi.muteStatus(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres =>{
             console.log("volres",volres, parseInt(volres.muted))
             VolumePayload.msgPayload.event.header.messageId=  "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
             VolumePayload.msgPayload.event.payload.muted = volres.muted

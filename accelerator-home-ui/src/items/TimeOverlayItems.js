@@ -23,7 +23,7 @@
   * Class for rendering items in Settings screen.
   */
  export default class TimeOverlayItems extends Lightning.Component {
- 
+
      static _template() {
          return {
              TimeItemsContents: {
@@ -40,10 +40,10 @@
                     itemScrollOffset: -6,
                 }
              },
- 
+
          }
      }
- 
+
      /**
       * Function refresh the list.
       */
@@ -60,19 +60,19 @@
              }
          })
      }
- 
+
      _firstEnable() {
          this.appApi = new AppApi()
      }
- 
+
      _handleDown() {
          this.tag('List').setNext()
      }
- 
+
      _handleUp() {
          this.tag('List').setPrevious()
      }
- 
+
      _handleEnter() {
          console.log(`${this._item.zone}/${this.tag('List').element._item[0]}`)
          this.fireAncestors("$updateTimeZone",`${this._item.zone}/${this.tag('List').element._item[0]}`)
@@ -81,9 +81,8 @@
         //  Router.navigate('settings/advanced/device/timezone', { refresh: true })
          return false; //to execute handle enter in parent component
      }
- 
+
      _getFocused() {
          return this.tag('List').element
      }
  }
- 

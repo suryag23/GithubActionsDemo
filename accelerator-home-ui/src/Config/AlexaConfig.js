@@ -21,8 +21,18 @@
 export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map 
     "amzn1.alexa-ask-target.app.70045": {
       "name": "YouTube",
-      "callsign": "Cobalt",
+      "callsign": "YouTube",
       "url": "",
+    },
+    "amzn1.alexa-ask-target.app.50623": {
+        "name": "YouTubeTV",
+        "callsign": "YouTubeTV",
+        "url": "",
+    },
+    "amzn1.alexa-ask-target.app.09817": {
+        "name": "YouTubeKids",
+        "callsign": "YouTubeKids",
+        "url": "",
     },
     "amzn1.alexa-ask-target.app.58952": {
       "name": "CNN go",

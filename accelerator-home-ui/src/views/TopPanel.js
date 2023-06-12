@@ -116,7 +116,6 @@ export default class TopPanel extends Lightning.Component {
     if (text === 'Home') {
       this.tag('Settings').color = 0xffffffff
     }
-
   }
 
   /**
@@ -124,7 +123,6 @@ export default class TopPanel extends Lightning.Component {
 * @param {boolean} toggle
 * Function to change the mic icon.
 */
-
   set changeMic(toggle) {
     if (toggle) {
       this.tag('Mic').src = Utils.asset('/images/topPanel/microphone_mute.png')

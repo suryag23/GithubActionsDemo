@@ -239,7 +239,9 @@ export default class Epg extends Lightning.Component {
         url: channel.url
       }
       const appIdentifiers = {
-        "Cobalt": "n:3",
+        "YouTube": "n:5",
+        "YouTube": "n:4",
+        "YouTube": "n:3",
         "Netflix": "n:1",
         "Amazon": "n:2",
       } //callsign to identifier mapping

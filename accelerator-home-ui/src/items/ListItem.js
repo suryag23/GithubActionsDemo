@@ -50,7 +50,7 @@ export default class ListItem extends Lightning.Component {
       y: this.y - this.bar
     })
     if(!this.data.url) {
-     console.log("data from app carousal: ",this.data);
+      console.log("data from app carousal: ", this.data);
     }
     if (this.data.url.startsWith('/images')) {
       this.tag('Image').patch({

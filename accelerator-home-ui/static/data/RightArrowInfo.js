@@ -20,17 +20,13 @@
  * Class which contains data for app listings.
  */
 export var rightArrowInfo = [
-
     {
         url: '/images/right-small.png',
     },
-
     {
         url: '/images/right-small.png',
     },
-
     {
         url: '/images/right-small.png',
     },
-
 ]

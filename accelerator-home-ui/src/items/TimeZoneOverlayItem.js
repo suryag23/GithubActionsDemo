@@ -23,7 +23,7 @@
   * Class for rendering items in Settings screen.
   */
  export default class TimeZoneOverlayItem extends Lightning.Component {
- 
+
      _construct() {
          this.Arrow = Utils.asset('/images/settings/Arrow.png')
          this.Tick = Utils.asset('/images/settings/Tick.png')
@@ -53,7 +53,7 @@
              },
          }
      }
- 
+
      /**
       * Function to set contents for an item in settings screen.
       */
@@ -83,13 +83,13 @@
              },
          })
      }
- 
+
      _handleEnter() {
         console.log('enter', this._item[1])
         this.fireAncestors("$navigateAndRefreshItems",{ time_region: this._item[1], zone: this._item[0], isActive: this.zone });
         // Router.navigate('settings/advanced/device/timezone/item', { time_region: this._item[1], zone: this._item[0], isActive: this.zone })
      }
- 
+
      _focus() {
          this.tag('TopLine').color = CONFIG.theme.hex
          this.tag('BottomLine').color = CONFIG.theme.hex
@@ -99,7 +99,7 @@
          this.tag('TopLine').h = 6
          this.tag('BottomLine').h = 6
      }
- 
+
      _unfocus() {
          this.tag('TopLine').color = 0xFFFFFFFF
          this.tag('BottomLine').color = 0xFFFFFFFF
@@ -110,4 +110,3 @@
          this.tag('BottomLine').h = 3
      }
  }
- 

@@ -38,6 +38,12 @@ import TvOverlayScreen from '../tvOverlay/TvOverlayScreen'
 import EPGScreen from "../screens/EpgScreens/Epg"
 import DTVPlayer from '../MediaPlayer/DTVPlayer'
 import AppLauncherScreen from '../screens/AppLauncherScreen'
+import CodeScreen from '../screens/CodeScreen'
+import AlexaLoginScreen from '../screens/AlexaLoginScreen'
+import SuccessScreen from '../screens/SuccessScreen'
+import FailureScreen from '../screens/FailureScreen'
+import AlexaConfirmationScreen from '../screens/AlexaConfirmationScreen'
+import CameraStreamingScreen from '../screens/CameraStreamingScreen'
 
 let api = null
 
@@ -142,6 +148,11 @@ export default {
       widgets: ['Volume',"SettingsOverlay", "AppCarousel"]
     },
     {
+      path: 'camera/player',
+      component: CameraStreamingScreen,
+      widgets: ['Menu'],
+    },
+    {
       path:'dtvplayer',
       component: DTVPlayer,
       widgets: ['Volume', 'TvOverlays', 'ChannelOverlay',"SettingsOverlay", "AppCarousel"]
@@ -154,5 +165,25 @@ export default {
       path: '*',
       component: LogoScreen,
     },
+    {
+      path: "FailureScreen",
+      component: FailureScreen
+    },
+    {
+      path: "SuccessScreen",
+      component: SuccessScreen
+    },
+    {
+      path: "AlexaLoginScreen",
+      component: AlexaLoginScreen
+    },
+    {
+      path: "CodeScreen",
+      component: CodeScreen,
+    },
+    {
+      path: "AlexaConfirmationScreen",
+      component: AlexaConfirmationScreen
+    }
   ],
 }

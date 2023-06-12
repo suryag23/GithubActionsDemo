@@ -34,9 +34,5 @@
        title: 'USB',
        url: '/images/usb/usb-white-small.png',
        img: '/images/usb/usb-dark-small.png',
-     },  
+     },
   ]
-
- 
-  
-  
