@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
  import AppApi from '../../api/AppApi'
- import { Lightning, Utils, Storage, Language, Router } from '@lightningjs/sdk'
+ import { Lightning, Utils, Storage, Language } from '@lightningjs/sdk'
  import SettingsMainItem from '../../items/SettingsMainItem'
  import { COLORS } from '../../colors/Colors'
  import { CONFIG } from '../../Config/Config'

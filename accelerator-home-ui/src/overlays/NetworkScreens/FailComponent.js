@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Language, Lightning, Router } from "@lightningjs/sdk";
+import { Language, Lightning } from "@lightningjs/sdk";
 import { CONFIG } from "../../Config/Config";
 
 const errorTitle = 'Error Title'

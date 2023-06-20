@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils, Router, Language } from '@lightningjs/sdk'
+ import { Lightning, Utils } from '@lightningjs/sdk'
  import VideoAndAudioItem from '../../items/VideoAndAudioItem'
  import AppApi from '../../api/AppApi.js';
 
@@ -81,7 +81,7 @@
 
      _focus() {
          this.loadingAnimation.start()
-         var options = []
+         let options = []
          appApi.getSoundMode()
              .then(result => {
                  appApi.getSupportedAudioModes()

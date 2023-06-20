@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Registry, Router, Utils,Storage } from '@lightningjs/sdk'
+import { Lightning, Router, Utils } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import AppApi from '../api/AppApi';
  

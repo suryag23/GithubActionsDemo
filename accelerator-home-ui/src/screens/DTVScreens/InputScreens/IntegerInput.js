@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Utils, Language, Router } from "@lightningjs/sdk";
+import { Lightning, Utils, Language } from "@lightningjs/sdk";
 import { CONFIG } from "../../../Config/Config";
 import keyMap from "../../../Config/Keymap";
 import { COLORS } from "../../../colors/Colors";

@@ -64,7 +64,7 @@ export var appListInfo =[
   },
   {
     displayName: 'Peacock',
-    applicationType: 'LightningApp',
+    applicationType: 'Peacock',
     uri: '',
     url: '/images/apps/App_Peacock_454x255.png',
     appIdentifier: 'n:6'

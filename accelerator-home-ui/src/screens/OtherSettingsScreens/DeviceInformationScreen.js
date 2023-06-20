@@ -273,7 +273,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
 
         this.appApi.getDRMS().then(result => {
             console.log('from device info supported drms ' + JSON.stringify(result))
-            var drms = ""
+            let drms = ""
             result.forEach(element => {
                 drms += `${element.name} :`
                 if (element.keysystems) {
@@ -292,7 +292,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
             if (result.connectedToInternet === true) {
                 this.appApi.getLocation().then(result => {
                     console.log("getLocation from device info " + JSON.stringify(result))
-                    var locationInfo = ""
+                    let locationInfo = ""
                     if (result.city.length !== 0) {
                         locationInfo = "City: " + result.city
                     }

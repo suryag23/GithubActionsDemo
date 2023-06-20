@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Utils, Language, Router } from "@lightningjs/sdk";
+import { Lightning } from "@lightningjs/sdk";
 import TickMarkItem from "../../../items/TickMarkItem";
 
 export default class Modulation extends Lightning.Component {

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils, Language, Router } from '@lightningjs/sdk'
+ import { Lightning, Utils, Language } from '@lightningjs/sdk'
  import SettingsMainItem from '../../items/SettingsMainItem'
  import { COLORS } from '../../colors/Colors'
  import { CONFIG } from '../../Config/Config'
@@ -246,7 +246,7 @@
                      this.loadingAnimation.start()
                      this.tag('TestInternetAccess.Loader').visible = true
                      this._network.isConnectedToInternet().then(result => {
-                         var connectionStatus = Language.translate("Internet Access: ")
+                         let connectionStatus = Language.translate("Internet Access: ")
                          if (result) {
                              connectionStatus += Language.translate("Connected")
                          } else {

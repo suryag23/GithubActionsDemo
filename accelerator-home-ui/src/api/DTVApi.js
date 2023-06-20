@@ -128,6 +128,10 @@ export default class DTVApi {
     });
   }
 
+  getEvents(dvburi) {
+    return customEventList[dvburi]
+  }
+
   //returns the schedule for the given channel with provided dvburi
   scheduleEvents(dvburi) {
     let method = 'scheduleEvents@' + dvburi

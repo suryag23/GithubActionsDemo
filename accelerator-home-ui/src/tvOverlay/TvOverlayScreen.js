@@ -17,9 +17,8 @@
  * limitations under the License.
  **/
 
-import { Lightning, Storage, Utils, Router, Registry } from "@lightningjs/sdk";
+import { Lightning, Storage, Router, Registry } from "@lightningjs/sdk";
 import AppApi from "../api/AppApi";
-import { CONFIG } from "../Config/Config";
 import ThunderJS from "ThunderJS";
 import TvOverlaySettingsScreen from "./components/TvOverlaySettingsScreen";
 import TvOverlayInputScreen from "./components/TvOverlayInputScreen";

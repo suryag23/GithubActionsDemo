@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Language, Lightning, Router } from '@lightningjs/sdk'
+ import { Lightning } from '@lightningjs/sdk'
  import LanguageItem from '../../items/LanguageItem'
  import { availableLanguages } from '../../Config/Config'
  import AppApi from '../../api/AppApi';

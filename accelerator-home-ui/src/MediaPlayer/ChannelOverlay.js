@@ -20,6 +20,7 @@ import { Lightning, Registry, Router } from '@lightningjs/sdk'
 import AppApi from '../api/AppApi';
 import DTVApi from '../api/DTVApi'
 import ChannelItem from './ChannelItem'
+import HomeApi from '../api/HomeApi';
 
 export default class ChannelOverlay extends Lightning.Component {
   /**
@@ -53,12 +54,17 @@ export default class ChannelOverlay extends Lightning.Component {
     this.activeChannelIdx = 0; //this must be initialised in init
   }
   _firstEnable(){
+    this.homeApi = new HomeApi();
     this.dtvApi = new DTVApi();
     this.appApi = new AppApi();
     this.options = [];
     this.overlayTimeout = null;
     this.timeoutDuration = 10000;
-    this.dtvApi.serviceList().then(channels => {
+    this.dtvApi.serviceList().then(async channels => {
+      await this.homeApi.checkChannelComapatability(channels).then(res => {
+        channels = res
+      })
+
       this.options = channels;
       this.tag('Channels').items = this.options.map((item, index) => {
         return {

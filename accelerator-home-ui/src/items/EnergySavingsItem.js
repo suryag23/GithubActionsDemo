@@ -62,8 +62,8 @@ export default class EnergySavingsItem extends Lightning.Component {
   }
 
   _handleEnter() {
-    var self = this;
-    var standbyMode = ""
+    let self = this;
+    let standbyMode = ""
     if (this._item === "Deep Sleep") {
       standbyMode = "DEEP_SLEEP"
     } else if (this._item === "Light Sleep") {
@@ -79,7 +79,7 @@ export default class EnergySavingsItem extends Lightning.Component {
 
   set item(item) {
     this._item = item
-    var self = this;
+    let self = this;
     this.tag('Item').patch({
       Tick: {
         x: 10,

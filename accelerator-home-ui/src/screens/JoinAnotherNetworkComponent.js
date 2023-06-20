@@ -32,7 +32,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
 
 
   handleDone() {
-    var securityCode = this.securityCodes[this.securityCodeIndex].value;
+    let securityCode = this.securityCodes[this.securityCodeIndex].value;
     if (!this.textCollection['EnterSSID']) {
       this._setState("EnterSSID");
     }
@@ -48,7 +48,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         this.tag("Pwd").text.text = "";
       }
 
-      var self = this;
+      let self = this;
       this.startConnectForAnotherNetwork({ ssid: self.textCollection['EnterSSID'], security: securityCode }, self.textCollection['EnterPassword']);
     }
   }

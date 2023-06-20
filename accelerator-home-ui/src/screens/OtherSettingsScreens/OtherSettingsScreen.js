@@ -246,7 +246,7 @@ export default class OtherSettingsScreen extends Lightning.Component {
         }
 
         this._appApi.getPreferredStandbyMode().then(result => {
-            var currentStandbyMode = ""
+            let currentStandbyMode = ""
             if (result.preferredStandbyMode == "LIGHT_SLEEP") {
                 currentStandbyMode = "Light Sleep"
             } else if (result.preferredStandbyMode == "DEEP_SLEEP") {

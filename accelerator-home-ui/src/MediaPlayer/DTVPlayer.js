@@ -19,8 +19,6 @@
 import { Lightning, Router } from "@lightningjs/sdk";
 import AppApi from "../api/AppApi";
 import DTVApi from "../api/DTVApi";
-import { CONFIG } from "../Config/Config";
-
 export default class DTVPlayer extends Lightning.Component {
   static _template() {
     return {

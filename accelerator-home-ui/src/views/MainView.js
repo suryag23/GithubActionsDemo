@@ -294,29 +294,6 @@ export default class MainView extends Lightning.Component {
 
   _handleBack() { }
 
-  async checkAppCompatability (items)  {
-   for(let i=0;i<items.length;i++) {
-    let callsign = items[i].applicationType
-    if(items[i].applicationType !== '') {
-      if(items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
-        callsign = "Cobalt"
-      }
-      else if(items[i].displayName === "Peacock") {
-        callsign = items[i].displayName
-      }
-
-      await this.appApi.getPluginStatus(callsign).then(res => {
-      }).catch(err => {
-          console.log("Error:",err)
-          items.splice(i,1)
-          i--
-        })
-
-    }
-   }
-   return items
-  }
-
   async _init() {
     this.gracenote = false
     this.inputSelect = false //false by default
@@ -341,11 +318,11 @@ export default class MainView extends Lightning.Component {
     let metroApps = this.homeApi.getOfflineMetroApps()
     let showcaseApps = this.homeApi.getShowCaseApps()
 
-    await this.checkAppCompatability(appItems).then(res =>{
+    await this.homeApi.checkAppCompatability(appItems).then(res =>{
       appItems = res
     })
 
-    this.appApi.isConnectedToInternet()
+    await this.appApi.isConnectedToInternet()
       .then(result => {
         if (result) {
           metroApps = this.homeApi.getOnlineMetroApps()
@@ -482,11 +459,11 @@ export default class MainView extends Lightning.Component {
       }
     })
 
-    await this.checkAppCompatability(metroApps).then(res =>{
+    await this.homeApi.checkAppCompatability(metroApps).then(res =>{
       this.metroApps = res
     })
 
-    await this.checkAppCompatability(showcaseApps).then(res =>{
+    await this.homeApi.checkAppCompatability(showcaseApps).then(res =>{
       this.showcaseApps = res
     })
 

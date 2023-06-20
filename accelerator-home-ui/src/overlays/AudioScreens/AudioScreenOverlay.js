@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
- import { Lightning, Utils, Language, Router, Storage } from '@lightningjs/sdk'
+ import { Lightning, Utils, Language, Storage } from '@lightningjs/sdk'
  import SettingsMainItem from '../../items/SettingsMainItem'
  import { COLORS } from "../../colors/Colors";
  import { CONFIG } from "../../Config/Config";

@@ -114,15 +114,15 @@ export default class ResolutionScreen extends Lightning.Component {
 
     _focus() {
         this.loadingAnimation.start()
-        var options = []
-        var sIndex = 0;
+        let options = []
+        let sIndex = 0;
         this.appApi.getResolution().then(resolution => {
             this.appApi.getSupportedResolutions().then(res => {
                 options = [...res]
                 this.tag('ResolutionScreenContents').h = options.length * 90
                 this.tag('ResolutionScreenContents.List').h = options.length * 90
                 this.tag('List').items = options.map((item, index) => {
-                    var bool = false;
+                    let bool = false;
                     if (resolution === item) {
                         bool = true;
                         sIndex = index;

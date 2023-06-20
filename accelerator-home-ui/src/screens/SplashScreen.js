@@ -179,7 +179,7 @@ export default class SplashScreen extends Lightning.Component {
 
   _init() {
     this.appApi = new AppApi()
-    var homeApi = new HomeApi()
+    let homeApi = new HomeApi()
     this.tag('UISwitch.UIList').items = homeApi.getUIInfo().map((item, index) => {
       return {
         ref: 'UI' + index,
@@ -306,8 +306,8 @@ export default class SplashScreen extends Lightning.Component {
               { p: 'x', v: { 0: 1000, 1: 0 } },
             ],
           })
-          var connected = false
-          var timer = setTimeout(() => {
+          let connected = false
+          let timer = setTimeout(() => {
             if (!connected)
               this.tag('AutoRemotePair.Description').text =
                 'Please put the remote in pairing mode, No Bluetooth device found'
@@ -316,7 +316,7 @@ export default class SplashScreen extends Lightning.Component {
               else Router.navigate('home', { path: 'settings' })
             }, 1000)
           }, 10000)
-          var error = () => {
+          let error = () => {
             this.tag('AutoRemotePair.Description').text =
               'Please put the remote in pairing mode, , No Bluetooth device found'
             setTimeout(() => {

@@ -16,11 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Language, Router, Settings, Storage } from '@lightningjs/sdk'
+import { Lightning, Language, Router } from '@lightningjs/sdk'
 import { COLORS } from './../colors/Colors'
 import { CONFIG } from '../Config/Config'
 import AppApi from '../api/AppApi.js';
-import NetworkApi from '../api/NetworkApi'
 import BluetoothApi from '../api/BluetoothApi'
 import ThunderJS from 'ThunderJS'
 
@@ -255,7 +254,7 @@ export default class RCInformationScreen extends Lightning.Component {
         console.log("RCInformationScreen activating RemoteControl plugin")
         await _thunder.on('org.rdk.RemoteControl', 'onStatus', notification => {
                 console.log("RCInformationScreen rcPairingApis Controller ONSTATUS change RC",notification)
-				var triggerPairing = 0;
+				let triggerPairing = 0;
                 if ((notification.status.remoteData != [])) {
                     console.log("RCInformationScreen rcPairingApis RemoteData Length", notification.status.remoteData.length)
                     let RemoteName = []; let connectedStatus =[]; let MacAddress =[];
@@ -295,7 +294,7 @@ export default class RCInformationScreen extends Lightning.Component {
             })
 
         await bluetoothApi.getNetStatus().then(result =>{
-            var triggerPairing = 0;
+            let triggerPairing = 0;
             if (result.status.remoteData === [] && result.status.pairingState != "SEARCHING"){
                 appApi.activateAutoPairing().then(res=>{console.log("RCInformationScreen rcPairingApis startpairing 2", res)})
             }

@@ -16,11 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils, Language, Router } from '@lightningjs/sdk'
+ import { Lightning, Utils, Language } from '@lightningjs/sdk'
  import SettingsMainItem from '../../items/SettingsMainItem'
  import { COLORS } from '../../colors/Colors'
  import { CONFIG } from '../../Config/Config'
- import AppApi from '../../api/AppApi';
+ import AppApi from '../../api/AppApi'
  import NetworkApi from '../../api/NetworkApi'
  import DeviceInformationScreen from './DeviceInformationOverlay';
  import TimeZoneOverlay from './TimeZoneOverlay';

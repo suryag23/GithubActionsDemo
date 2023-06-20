@@ -17,10 +17,8 @@
  * limitations under the License.
  **/
  import { Lightning, Utils, Router, Language } from '@lightningjs/sdk'
- import AppApi from '../../api/AppApi'
  import { CONFIG } from '../../Config/Config'
  
- const appApi = new AppApi()
  /**
   * Class for Reboot Confirmation Screen.
   */

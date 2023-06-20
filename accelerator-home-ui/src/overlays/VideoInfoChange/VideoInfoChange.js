@@ -1,4 +1,4 @@
-import { Lightning, Router, Language } from "@lightningjs/sdk"
+import { Lightning, Router } from "@lightningjs/sdk"
 import { CONFIG } from "../../Config/Config"
 import { COLORS } from "../../colors/Colors.js"
 

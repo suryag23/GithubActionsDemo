@@ -214,7 +214,9 @@ export const startDACApp = async (app) => {
       result = await thunderJS()['org.rdk.RDKShell'].launchApplication({
         client: app.id,
         mimeType: app.type,
-        uri: app.id + ';' + app.version + ';' + app.type
+        uri: app.id + ';' + app.version + ';' + app.type,
+        topmost: true,
+        focus: true
       })
     } else if (app.type === 'application/html') {
       result = await thunderJS()['org.rdk.RDKShell'].launch({ callsign: app.id, uri: app.url, type: 'HtmlApp' })

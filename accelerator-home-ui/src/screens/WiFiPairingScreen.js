@@ -147,7 +147,7 @@ export default class WifiPairingScreen extends Lightning.Component {
     this.passwd = "";
     this.tag("Pwd").text.text = ""
     this.tag('Title').text = item.ssid
-    var options = []
+    let options = []
     this._item = item
     if (item.connected) {
       options = ['Disconnect', 'Cancel']

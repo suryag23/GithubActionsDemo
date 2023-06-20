@@ -16,7 +16,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils } from '@lightningjs/sdk'
  import SettingsItem from './SettingsItem'
  import { COLORS } from '../colors/Colors'
  import { CONFIG } from '../Config/Config'

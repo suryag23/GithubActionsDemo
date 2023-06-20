@@ -2,8 +2,8 @@
  * App version: 3.7 19/07/22
  * SDK version: 4.8.3
  * CLI version: 2.11.0
- * 
- * Generated: Fri, 09 Jun 2023 15:01:52 GMT
+ *
+ * Generated: Fri, 16 Jun 2023 19:13:09 GMT
  */
 
 var APP_accelerator_home_ui = (function () {
@@ -6807,7 +6807,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$i = {
+  const config$f = {
     host: '127.0.0.1',
     port: 9998,
     default: 1,
@@ -6815,7 +6815,7 @@ var APP_accelerator_home_ui = (function () {
       'org.rdk.System': 2
     }
   };
-  const thunder$j = thunderJS$1(config$i);
+  const thunder$j = thunderJS$1(config$f);
   /**
    * Class that contains functions which commuicates with thunder API's
    */
@@ -7127,6 +7127,19 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
+    async getAvailableTypes() {
+      return new Promise((resolve, reject) => {
+        thunder$j.call('org.rdk.RDKShell', 'getAvailableTypes', {}).then(result => {
+          // Include NativeApp as well as its not being included from backend.
+          if (!result.types.includes("NativeApp")) result.types.push("NativeApp");
+          console.log("RDKShell.getAvailableTypes:", JSON.stringify(result));
+          resolve(result.types);
+        }).catch(err => {
+          console.error("AppAPI ResidentApp delete cache failed.", err);
+          resolve(false);
+        });
+      });
+    }
 
     /**
      * Function to launch All types of apps. Accepts 2 params.
@@ -7222,7 +7235,7 @@ var APP_accelerator_home_ui = (function () {
           console.warn("AppAPI launchLocation(IID) not specified while launching netflix");
         }
       }
-      const availableCallsigns = ["Amazon", "YouTube", "YouTubeTV", "YouTubeKids", "HtmlApp", "LightningApp", "Netflix", "NativeApp"];
+      const availableCallsigns = await this.getAvailableTypes();
       if (!availableCallsigns.includes(callsign)) {
         Router.navigate(Storage.get("lastVisitedRoute"));
         return Promise.reject("Can't launch App: " + callsign + " | Error: callsign not found!");
@@ -7338,6 +7351,7 @@ var APP_accelerator_home_ui = (function () {
           "url": url,
           "launchtype": "launch=" + launchLocation
         };
+        params.type = "Cobalt";
       } else if (callsign === "Amazon") {
         let language = localStorage.getItem("Language");
         language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US";
@@ -7517,7 +7531,7 @@ var APP_accelerator_home_ui = (function () {
         //check for hdmi scenario
       }
 
-      if (callsign === "LightningApp" || callsign === "HtmlApp") {
+      if (callsign === "LightningApp" || callsign === "HtmlApp" || callsign === "Peacock") {
         forceDestroy = true; //html and lightning apps need not be suspended.
       }
 
@@ -7585,7 +7599,7 @@ var APP_accelerator_home_ui = (function () {
           } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
             // DAC Demo WorkAround; TODO: use suspendApplication instead of kill
             await thunder$j.call('org.rdk.RDKShell', 'kill', {
-              "callsign": callsign
+              "client": callsign.includes('application/dac.native') ? callsign.substring(0, callsign.indexOf(';')) : callsign
             }).catch(err => {
               console.error("AppAPI Error in kill app: ", callsign, " | trying to destroy the app");
               thunder$j.call('org.rdk.RDKShell', 'destroy', {
@@ -8875,7 +8889,7 @@ var APP_accelerator_home_ui = (function () {
     appIdentifier: 'n:5'
   }, {
     displayName: 'Peacock',
-    applicationType: 'LightningApp',
+    applicationType: 'Peacock',
     uri: '',
     url: '/images/apps/App_Peacock_454x255.png',
     appIdentifier: 'n:6'
@@ -9761,6 +9775,39 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
+    async checkChannelComapatability(items) {
+      for (let i = 0; i < items.length; i++) {
+        let callsign = null;
+        if (items[i].dvburi === "OTT") {
+          callsign = items[i].callsign;
+          if (items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids") {
+            callsign = "Cobalt";
+          }
+          await appApi$j.getPluginStatus(callsign).then(res => {}).catch(err => {
+            console.log("Error:", err);
+            items.splice(i, 1);
+            i--;
+          });
+        }
+      }
+      return items;
+    }
+    async checkAppCompatability(items) {
+      for (let i = 0; i < items.length; i++) {
+        let callsign = items[i].applicationType;
+        if (items[i].applicationType !== '') {
+          if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
+            callsign = "Cobalt";
+          }
+          await appApi$j.getPluginStatus(callsign).then(res => {}).catch(err => {
+            console.log("Error:", err);
+            items.splice(i, 1);
+            i--;
+          });
+        }
+      }
+      return items;
+    }
   }
 
   /**
@@ -9971,12 +10018,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$h = {
+  const config$e = {
     host: "127.0.0.1",
     port: 9998,
     default: 1
   };
-  const thunder$i = thunderJS$1(config$h);
+  const thunder$i = thunderJS$1(config$e);
   let playerID = -1; //set to -1 to indicate nothing is currently playing
 
   let customServiceList = []; //list containing all channel details
@@ -10091,6 +10138,9 @@ var APP_accelerator_home_ui = (function () {
           resolve(arr);
         });
       });
+    }
+    getEvents(dvburi) {
+      return customEventList[dvburi];
     }
 
     //returns the schedule for the given channel with provided dvburi
@@ -10339,12 +10389,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$g = {
+  const config$d = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  var thunder$h = thunderJS$1(config$g);
+  var thunder$h = thunderJS$1(config$d);
 
   /**
    * Class for settings screen.
@@ -11019,7 +11069,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$f = {
+  const config$c = {
     host: '127.0.0.1',
     port: 9998,
     versions: {
@@ -11028,7 +11078,7 @@ var APP_accelerator_home_ui = (function () {
       UsbAccess: 2
     }
   };
-  let thunder$g = thunderJS$1(config$f);
+  let thunder$g = thunderJS$1(config$c);
   /**
    * Class that contains functions which commuicates with thunder API's
    */
@@ -11391,7 +11441,7 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     static supportedApps() {
-      var xcastApps = {
+      let xcastApps = {
         AmazonInstantVideo: 'Amazon',
         YouTube: 'YouTube',
         NetflixApp: 'Netflix',
@@ -14858,24 +14908,6 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     _handleBack() {}
-    async checkAppCompatability(items) {
-      for (let i = 0; i < items.length; i++) {
-        let callsign = items[i].applicationType;
-        if (items[i].applicationType !== '') {
-          if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
-            callsign = "Cobalt";
-          } else if (items[i].displayName === "Peacock") {
-            callsign = items[i].displayName;
-          }
-          await this.appApi.getPluginStatus(callsign).then(res => {}).catch(err => {
-            console.log("Error:", err);
-            items.splice(i, 1);
-            i--;
-          });
-        }
-      }
-      return items;
-    }
     async _init() {
       this.gracenote = false;
       this.inputSelect = false; //false by default
@@ -14899,10 +14931,10 @@ var APP_accelerator_home_ui = (function () {
       let data = this.homeApi.getPartnerAppsInfo();
       let metroApps = this.homeApi.getOfflineMetroApps();
       let showcaseApps = this.homeApi.getShowCaseApps();
-      await this.checkAppCompatability(appItems).then(res => {
+      await this.homeApi.checkAppCompatability(appItems).then(res => {
         appItems = res;
       });
-      this.appApi.isConnectedToInternet().then(result => {
+      await this.appApi.isConnectedToInternet().then(result => {
         if (result) {
           metroApps = this.homeApi.getOnlineMetroApps();
         }
@@ -15022,10 +15054,10 @@ var APP_accelerator_home_ui = (function () {
         }
       });
 
-      await this.checkAppCompatability(metroApps).then(res => {
+      await this.homeApi.checkAppCompatability(metroApps).then(res => {
         this.metroApps = res;
       });
-      await this.checkAppCompatability(showcaseApps).then(res => {
+      await this.homeApi.checkAppCompatability(showcaseApps).then(res => {
         this.showcaseApps = res;
       });
       this.fireAncestors("$mountEventConstructor", registerListener.bind(this));
@@ -19878,7 +19910,7 @@ var APP_accelerator_home_ui = (function () {
       return 'left';
     }
     handleDone() {
-      var securityCode = this.securityCodes[this.securityCodeIndex].value;
+      let securityCode = this.securityCodes[this.securityCodeIndex].value;
       if (!this.textCollection['EnterSSID']) {
         this._setState("EnterSSID");
       } else if (securityCode < 0 || securityCode > 14) {
@@ -19890,7 +19922,7 @@ var APP_accelerator_home_ui = (function () {
           this.textCollection['EnterPassword'] = "";
           this.tag("Pwd").text.text = "";
         }
-        var self = this;
+        let self = this;
         this.startConnectForAnotherNetwork({
           ssid: self.textCollection['EnterSSID'],
           security: securityCode
@@ -21362,7 +21394,7 @@ var APP_accelerator_home_ui = (function () {
       this.passwd = "";
       this.tag("Pwd").text.text = "";
       this.tag('Title').text = item.ssid;
-      var options = [];
+      let options = [];
       this._item = item;
       if (item.connected) {
         options = ['Disconnect', 'Cancel'];
@@ -21592,7 +21624,7 @@ var APP_accelerator_home_ui = (function () {
       if (item.ssid) {
         this.status = item.connected ? 'Connected' : 'Not Connected';
       }
-      var wifiicon = "";
+      let wifiicon = "";
       if (item.signalStrength >= -50) {
         wifiicon = this.WiFi4;
       } else if (item.signalStrength >= -60) {
@@ -22264,12 +22296,12 @@ var APP_accelerator_home_ui = (function () {
 
   var appApi$h = new AppApi();
   var bluetoothApi$1 = new BluetoothApi();
-  const config$e = {
+  const config$b = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  const _thunder$1 = thunderJS$1(config$e);
+  const _thunder$1 = thunderJS$1(config$b);
   class RCInformationScreen extends lng$1.Component {
     _onChanged() {
       this.widgets.menu.updateTopPanelText(Language.translate('Settings  Bluetooth Voice Remote Control'));
@@ -22481,7 +22513,7 @@ var APP_accelerator_home_ui = (function () {
       console.log("RCInformationScreen activating RemoteControl plugin");
       await _thunder$1.on('org.rdk.RemoteControl', 'onStatus', notification => {
         console.log("RCInformationScreen rcPairingApis Controller ONSTATUS change RC", notification);
-        var triggerPairing = 0;
+        let triggerPairing = 0;
         if (notification.status.remoteData != []) {
           console.log("RCInformationScreen rcPairingApis RemoteData Length", notification.status.remoteData.length);
           let RemoteName = [];
@@ -22523,7 +22555,7 @@ var APP_accelerator_home_ui = (function () {
         }
       });
       await bluetoothApi$1.getNetStatus().then(result => {
-        var triggerPairing = 0;
+        let triggerPairing = 0;
         if (result.status.remoteData === [] && result.status.pairingState != "SEARCHING") {
           appApi$h.activateAutoPairing().then(res => {
             console.log("RCInformationScreen rcPairingApis startpairing 2", res);
@@ -23078,12 +23110,16 @@ var APP_accelerator_home_ui = (function () {
     }
 
     _firstEnable() {
+      this.homeApi = new HomeApi();
       this.dtvApi = new DTVApi();
       this.appApi = new AppApi();
       this.options = [];
       this.overlayTimeout = null;
       this.timeoutDuration = 10000;
-      this.dtvApi.serviceList().then(channels => {
+      this.dtvApi.serviceList().then(async channels => {
+        await this.homeApi.checkChannelComapatability(channels).then(res => {
+          channels = res;
+        });
         this.options = channels;
         this.tag('Channels').items = this.options.map((item, index) => {
           return {
@@ -24034,7 +24070,7 @@ var APP_accelerator_home_ui = (function () {
         this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + 'Off';
       }
       this._appApi.getPreferredStandbyMode().then(result => {
-        var currentStandbyMode = "";
+        let currentStandbyMode = "";
         if (result.preferredStandbyMode == "LIGHT_SLEEP") {
           currentStandbyMode = "Light Sleep";
         } else if (result.preferredStandbyMode == "DEEP_SLEEP") {
@@ -24359,8 +24395,8 @@ var APP_accelerator_home_ui = (function () {
       this.appApi = new AppApi();
     }
     _handleEnter() {
-      var self = this;
-      var standbyMode = "";
+      let self = this;
+      let standbyMode = "";
       if (this._item === "Deep Sleep") {
         standbyMode = "DEEP_SLEEP";
       } else if (this._item === "Light Sleep") {
@@ -24375,7 +24411,7 @@ var APP_accelerator_home_ui = (function () {
     }
     set item(item) {
       this._item = item;
-      var self = this;
+      let self = this;
       this.tag('Item').patch({
         Tick: {
           x: 10,
@@ -25246,12 +25282,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$d = {
+  const config$a = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  const thunder$e = thunderJS$1(config$d);
+  const thunder$e = thunderJS$1(config$a);
   class CECApi {
     activate() {
       return new Promise((resolve, reject) => {
@@ -25342,12 +25378,6 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$c = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1
-  };
-  thunderJS$1(config$c);
   /**
    * Class for AdvancedSettings screen.
    */
@@ -26155,7 +26185,7 @@ var APP_accelerator_home_ui = (function () {
       });
       this.appApi.getDRMS().then(result => {
         console.log('from device info supported drms ' + JSON.stringify(result));
-        var drms = "";
+        let drms = "";
         result.forEach(element => {
           drms += "".concat(element.name, " :");
           if (element.keysystems) {
@@ -26174,7 +26204,7 @@ var APP_accelerator_home_ui = (function () {
         if (result.connectedToInternet === true) {
           this.appApi.getLocation().then(result => {
             console.log("getLocation from device info " + JSON.stringify(result));
-            var locationInfo = "";
+            let locationInfo = "";
             if (result.city.length !== 0) {
               locationInfo = "City: " + result.city;
             } else {
@@ -27166,7 +27196,7 @@ var APP_accelerator_home_ui = (function () {
   const appApi$e = new AppApi();
   const _btApi = new BluetoothApi();
   const _wfApi = new Wifi();
-  new HDMIApi();
+
   /**
    * Class for Reboot Confirmation Screen.
    */
@@ -27554,125 +27584,13 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  /**
-   * Class to render items with tick Icon.
-   */
-  class TickMarkItem extends lng$1.Component {
-    /**
-     * Function to render Tick mark Icon elements in the settings.
-     */
-
-    _construct() {
-      this.Tick = Utils.asset("/images/settings/Tick.png");
-    }
-    static _template() {
-      return {
-        zIndex: 1,
-        TopLine: {
-          y: 0,
-          mountY: 0.5,
-          w: 1600,
-          h: 3,
-          rect: true,
-          color: 0xffffffff
-        },
-        Item: {
-          w: 1600,
-          h: 90
-        },
-        BottomLine: {
-          y: 90,
-          mountY: 0.5,
-          w: 1600,
-          h: 3,
-          rect: true,
-          color: 0xffffffff
-        }
-      };
-    }
-    set isTicked(isTicked) {
-      this.tag("Item").patch({
-        Tick: {
-          x: 10,
-          y: 45,
-          mountY: 0.5,
-          h: 32.5,
-          w: 32.5,
-          src: this.Tick,
-          color: 0xffffffff,
-          visible: isTicked
-        }
-      });
-    }
-    _init() {
-      this.tag("Item").patch({
-        Left: {
-          x: 40,
-          y: 45,
-          mountY: 0.5,
-          text: {
-            text: this.itemName,
-            fontSize: 25,
-            textColor: COLORS.textColor,
-            fontFace: CONFIG.language.font
-          }
-        }
-      });
-      this.tag("Item.Tick").on("txError", () => {
-        const url = "http://127.0.0.1:50050/lxresui/static/images/settings/Tick.png";
-        this.tag("Item.Tick").src = url;
-      });
-    }
-    _handleEnter() {
-      this.onHandleEnter(this.uniqID); //expecting a function that gets executed on handleEnter
-    }
-
-    _focus() {
-      this.tag("Item").color = COLORS.hightlightColor;
-      this.tag("TopLine").color = CONFIG.theme.hex;
-      this.tag("BottomLine").color = CONFIG.theme.hex;
-      this.patch({
-        zIndex: 2
-      });
-      this.tag("TopLine").h = 6;
-      this.tag("BottomLine").h = 6;
-    }
-    _unfocus() {
-      this.tag("TopLine").color = 0xffffffff;
-      this.tag("BottomLine").color = 0xffffffff;
-      this.patch({
-        zIndex: 1
-      });
-      this.tag("TopLine").h = 3;
-      this.tag("BottomLine").h = 3;
-    }
-  }
-
-  /**
-   * If not stated otherwise in this file or this component's LICENSE
-   * file the following copyright and licenses apply:
-   *
-   * Copyright 2020 RDK Management
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   **/
   var appApi$d = new AppApi();
-  const config$b = {
+  const config$9 = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  var thunder$d = thunderJS$1(config$b);
+  var thunder$d = thunderJS$1(config$9);
   class SreenSaverScreen extends lng$1.Component {
     _onChanged() {
       this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Screen Saver'));
@@ -28478,7 +28396,7 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this.loadingAnimation.start();
-      var options = [];
+      let options = [];
       appApi$c.getSoundMode().then(result => {
         appApi$c.getSupportedAudioModes().then(res => {
           options = [...res.supportedAudioModes];
@@ -28636,15 +28554,15 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this.loadingAnimation.start();
-      var options = [];
-      var sIndex = 0;
+      let options = [];
+      let sIndex = 0;
       this.appApi.getResolution().then(resolution => {
         this.appApi.getSupportedResolutions().then(res => {
           options = [...res];
           this.tag('ResolutionScreenContents').h = options.length * 90;
           this.tag('ResolutionScreenContents.List').h = options.length * 90;
           this.tag('List').items = options.map((item, index) => {
-            var bool = false;
+            let bool = false;
             if (resolution === item) {
               bool = true;
               sIndex = index;
@@ -30125,12 +30043,12 @@ var APP_accelerator_home_ui = (function () {
    **/
   var appApi$b = new AppApi();
   var bluetoothApi = new BluetoothApi();
-  const config$a = {
+  const config$8 = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  const _thunder = thunderJS$1(config$a);
+  const _thunder = thunderJS$1(config$8);
   class BluetoothScreen$1 extends lng$1.Component {
     static _template() {
       return {
@@ -30917,7 +30835,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  new AppApi();
+
   /**
    * Class for Reboot Confirmation Screen.
    */
@@ -31620,7 +31538,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const homeApi$1 = new HomeApi();
+  const homeApi$2 = new HomeApi();
   class UIList extends lng$1.Component {
     static _template() {
       return {
@@ -31643,7 +31561,7 @@ var APP_accelerator_home_ui = (function () {
       return 'right';
     }
     _firstEnable() {
-      this.tag('UI').add(homeApi$1.getUIInfo().map((element, idx) => {
+      this.tag('UI').add(homeApi$2.getUIInfo().map((element, idx) => {
         return {
           ref: 'UI' + idx,
           w: 300,
@@ -32603,7 +32521,9 @@ var APP_accelerator_home_ui = (function () {
         result = await thunderJS()['org.rdk.RDKShell'].launchApplication({
           client: app.id,
           mimeType: app.type,
-          uri: app.id + ';' + app.version + ';' + app.type
+          uri: app.id + ';' + app.version + ';' + app.type,
+          topmost: true,
+          focus: true
         });
       } else if (app.type === 'application/html') {
         result = await thunderJS()['org.rdk.RDKShell'].launch({
@@ -33657,7 +33577,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  var homeApi = new HomeApi();
+  var homeApi$1 = new HomeApi();
   class DetailsScreen extends lng$1.Component {
     _onChanged() {
       this.widgets.menu.updateTopPanelText(this.name);
@@ -33773,7 +33693,7 @@ var APP_accelerator_home_ui = (function () {
       } else {
         this.tag("Rating.Title").text.text = "";
       }
-      homeApi.getMovieSubscriptions(args.gracenoteItem.program.tmsId).then(response => {
+      homeApi$1.getMovieSubscriptions(args.gracenoteItem.program.tmsId).then(response => {
         let options = response.ovd.movie.videos.video;
         if (options) {
           this.tag("Subscriptions.List").items = options.map((item, index) => {
@@ -33859,6 +33779,118 @@ var APP_accelerator_home_ui = (function () {
       widgets: ['Menu', 'Volume', "AppCarousel"]
     }]
   };
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
+  /**
+   * Class to render items with tick Icon.
+   */
+  class TickMarkItem extends lng$1.Component {
+    /**
+     * Function to render Tick mark Icon elements in the settings.
+     */
+
+    _construct() {
+      this.Tick = Utils.asset("/images/settings/Tick.png");
+    }
+    static _template() {
+      return {
+        zIndex: 1,
+        TopLine: {
+          y: 0,
+          mountY: 0.5,
+          w: 1600,
+          h: 3,
+          rect: true,
+          color: 0xffffffff
+        },
+        Item: {
+          w: 1600,
+          h: 90
+        },
+        BottomLine: {
+          y: 90,
+          mountY: 0.5,
+          w: 1600,
+          h: 3,
+          rect: true,
+          color: 0xffffffff
+        }
+      };
+    }
+    set isTicked(isTicked) {
+      this.tag("Item").patch({
+        Tick: {
+          x: 10,
+          y: 45,
+          mountY: 0.5,
+          h: 32.5,
+          w: 32.5,
+          src: this.Tick,
+          color: 0xffffffff,
+          visible: isTicked
+        }
+      });
+    }
+    _init() {
+      this.tag("Item").patch({
+        Left: {
+          x: 40,
+          y: 45,
+          mountY: 0.5,
+          text: {
+            text: this.itemName,
+            fontSize: 25,
+            textColor: COLORS.textColor,
+            fontFace: CONFIG.language.font
+          }
+        }
+      });
+      this.tag("Item.Tick").on("txError", () => {
+        const url = "http://127.0.0.1:50050/lxresui/static/images/settings/Tick.png";
+        this.tag("Item.Tick").src = url;
+      });
+    }
+    _handleEnter() {
+      this.onHandleEnter(this.uniqID); //expecting a function that gets executed on handleEnter
+    }
+
+    _focus() {
+      this.tag("Item").color = COLORS.hightlightColor;
+      this.tag("TopLine").color = CONFIG.theme.hex;
+      this.tag("BottomLine").color = CONFIG.theme.hex;
+      this.patch({
+        zIndex: 2
+      });
+      this.tag("TopLine").h = 6;
+      this.tag("BottomLine").h = 6;
+    }
+    _unfocus() {
+      this.tag("TopLine").color = 0xffffffff;
+      this.tag("BottomLine").color = 0xffffffff;
+      this.patch({
+        zIndex: 1
+      });
+      this.tag("TopLine").h = 3;
+      this.tag("BottomLine").h = 3;
+    }
+  }
 
   /**
    * If not stated otherwise in this file or this component's LICENSE
@@ -34562,13 +34594,13 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const dtvApi$3 = new DTVApi();
-  const config$9 = {
+  const dtvApi$4 = new DTVApi();
+  const config$7 = {
     host: "127.0.0.1",
     port: 9998,
     default: 1
   };
-  const thunder$a = thunderJS$1(config$9);
+  const thunder$a = thunderJS$1(config$7);
   const systemcCallsign = "DTV";
 
   /**
@@ -34994,7 +35026,7 @@ var APP_accelerator_home_ui = (function () {
         if (notification.finished) {
           console.log("notification.finished: ", notification.finished);
           this.setScanFinished();
-          dtvApi$3.noOfServices().then(res => {
+          dtvApi$4.noOfServices().then(res => {
             this.tag("ErrorNotification.Content").text.text = Language.translate("Found ") + res + Language.translate(" services.");
             this.tag("ErrorNotification").visible = true;
           });
@@ -35004,42 +35036,42 @@ var APP_accelerator_home_ui = (function () {
       ///////////////satellite
 
       this.satelliteList = [];
-      dtvApi$3.satelliteList().then(res => {
+      dtvApi$4.satelliteList().then(res => {
         this.satelliteList = res;
       });
 
       ///////////////////polarity
 
       this.polarityList = [];
-      dtvApi$3.polarityList().then(res => {
+      dtvApi$4.polarityList().then(res => {
         this.polarityList = res;
       });
 
       ///////////////////symbolRate
       //symbol rate has some predefined values additional to custom imput
       this.symbolRateList = [];
-      dtvApi$3.symbolRateList().then(res => {
+      dtvApi$4.symbolRateList().then(res => {
         this.symbolRateList = res;
       });
 
       ////////////////////FEC
 
       this.fecList = [];
-      dtvApi$3.fecList().then(res => {
+      dtvApi$4.fecList().then(res => {
         this.fecList = res;
       });
 
       ///////////////////modulation
 
       this.modulationList = [];
-      dtvApi$3.modulationList().then(res => {
+      dtvApi$4.modulationList().then(res => {
         this.modulationList = res;
       });
 
       ///////////////////searchtype
 
       this.searchtypeList = [];
-      dtvApi$3.searchtypeList().then(res => {
+      dtvApi$4.searchtypeList().then(res => {
         this.searchtypeList = res;
       });
     }
@@ -35175,7 +35207,7 @@ var APP_accelerator_home_ui = (function () {
           if (this.satelliteList.length > 0) {
             this._setState("Satellite.SelectSatellite");
           } else {
-            dtvApi$3.satelliteList().then(res => {
+            dtvApi$4.satelliteList().then(res => {
               this.satelliteList = res;
             });
           }
@@ -35515,12 +35547,12 @@ var APP_accelerator_home_ui = (function () {
               }
             };
             console.log(JSON.stringify(serviceSearchParams));
-            dtvApi$3.startServiceSearch(serviceSearchParams).then(res => {
+            dtvApi$4.startServiceSearch(serviceSearchParams).then(res => {
               this.setScanInProgress();
               console.log(res);
               setTimeout(() => {
                 this.setScanFinished(); //to give back controls after 30 sec in case searchstatus event fails
-                dtvApi$3.noOfServices().then(res => {
+                dtvApi$4.noOfServices().then(res => {
                   this.tag("ErrorNotification.Content").text.text = Language.translate("Found ") + res + Language.translate(" services.");
                   this.tag("ErrorNotification").visible = true;
                 });
@@ -36974,12 +37006,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$8 = {
+  const config$6 = {
     host: "127.0.0.1",
     port: 9998,
     default: 1
   };
-  var thunder$9 = thunderJS$1(config$8);
+  var thunder$9 = thunderJS$1(config$6);
   class TvOverlayScreen extends lng$1.Component {
     set params(args) {
       this._type = args.type;
@@ -37396,6 +37428,8 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   let k = 5;
+  const homeApi = new HomeApi();
+  const dtvApi$3 = new DTVApi();
   class Epg extends lng$1.Component {
     static _template() {
       return {
@@ -37587,8 +37621,21 @@ var APP_accelerator_home_ui = (function () {
     _handleBack() {
       Router.navigate("menu");
     }
-    _handleEnter() {
+    getEventURI(events) {
+      let showName = this.gridInstance[this.currentCellIndex].txt;
+      let eventUri = null;
+      for (let i = 0; i < events.length; i++) {
+        if (events[i].name === showName) {
+          eventUri = events[i].iptvuri;
+        }
+      }
+      return eventUri;
+    }
+    async _handleEnter() {
       let channel = this.getCurrentChannel();
+      let events = await dtvApi$3.getEvents(channel.dvburi);
+      let eventUri = null;
+      eventUri = this.getEventURI(events);
       if (channel.dvburi === "OTT") {
         let params = {
           launchLocation: "epgScreen",
@@ -37606,10 +37653,10 @@ var APP_accelerator_home_ui = (function () {
           params.appIdentifier = appIdentifier;
         }
         this.appApi.launchApp(channel.callsign, params);
-      } else if (channel.dvburi.startsWith("C_")) {
+      } else if (channel.dvburi.startsWith("C_") && eventUri != null) {
         if (!Router.isNavigating()) {
           let playerParams = {
-            url: channel.iptvuri,
+            url: eventUri,
             //video url for playing
             isChannel: true,
             channelName: channel.channelName,
@@ -37640,10 +37687,10 @@ var APP_accelerator_home_ui = (function () {
     setShows4Channels(channels) {
       let headStart = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       this.strtindexesofrows = [];
-      var ltp = this.ltp;
-      var rtp = new Date(this.ltp.getTime() + 3 * 60 * 60 * 1000);
-      var cells = [];
-      var self = this;
+      let ltp = this.ltp;
+      let rtp = new Date(this.ltp.getTime() + 3 * 60 * 60 * 1000);
+      let cells = [];
+      let self = this;
       function filterShowsBasedOnTimeWindow(shows, index) {
         let inc = headStart < 0 ? -1 : 1;
         let i = Math.abs(headStart);
@@ -37765,13 +37812,13 @@ var APP_accelerator_home_ui = (function () {
         let t = (now - self.ltp >= 0 ? now - self.ltp : 0) / (1000 * 60 * 30) * 236;
         tBar.w = t;
         dTriangle.x = t + k;
-      }, 2000);
+      }, 0);
     }
     setBoldText() {
       let l = this.strtindexesofrows[this.currentlyFocusedRow];
       let r = this.strtindexesofrows[this.currentlyFocusedRow + 1] - 1;
       this.channelGridInstance[this.currentlyFocusedRow].setBoldText();
-      for (var i = l; i <= r; i++) {
+      for (let i = l; i <= r; i++) {
         this.gridInstance[i].setBoldText();
       }
     }
@@ -37779,7 +37826,7 @@ var APP_accelerator_home_ui = (function () {
       let l = this.strtindexesofrows[this.currentlyFocusedRow];
       let r = this.strtindexesofrows[this.currentlyFocusedRow + 1] - 1;
       this.channelGridInstance[this.currentlyFocusedRow].unsetBoldText();
-      for (var i = l; i <= r; i++) {
+      for (let i = l; i <= r; i++) {
         this.gridInstance[i].unsetBoldText();
       }
     }
@@ -37871,7 +37918,10 @@ var APP_accelerator_home_ui = (function () {
           }
         }
         return new Promise((resolve, reject) => {
-          self.DTV.serviceList().then(channels => {
+          self.DTV.serviceList().then(async channels => {
+            await homeApi.checkChannelComapatability(channels).then(res => {
+              channels = res;
+            });
             let traversedChannels = 0;
             channels.map((channel, i) => {
               if (channel.dvburi === "OTT") {
@@ -38088,8 +38138,15 @@ var APP_accelerator_home_ui = (function () {
           this.setBoldText();
           this.paintCell();
         }
-        updateDayLabel(starttime) {
+        async updateDayLabel(starttime) {
           let daylabel = this.tag('DayLabel');
+          let dTriangle = this.tag('DownTriangle');
+          let channel = this.getCurrentChannel();
+          let eventUri = null;
+          if (channel.dvburi.startsWith("C_")) {
+            let events = await dtvApi$3.getEvents(channel.dvburi);
+            eventUri = this.getEventURI(events);
+          }
           setTimeout(function () {
             let today = new Date();
             today.setHours(0);
@@ -38097,15 +38154,29 @@ var APP_accelerator_home_ui = (function () {
             today.setSeconds(0);
             today.setMilliseconds(0);
             let t = today.getTime();
-            t = starttime - t;
             let day = 24 * 60 * 60 * 1000;
-            if (t < day) {
-              daylabel.text = 'TODAY';
-            } else if (t < 2 * day) {
-              daylabel.text = 'TOMORROW';
+            if (starttime == 0) {
+              daylabel.text.text = 'TODAY';
+            } else if (starttime > t) {
+              t = starttime - t;
+              if (t < day) {
+                daylabel.text.text = 'TODAY';
+              } else {
+                let cellStartTime = new Date(starttime);
+                daylabel.text.text = cellStartTime.getDate() + '-' + (cellStartTime.getMonth() + 1) + '-' + cellStartTime.getFullYear();
+              }
             } else {
-              let cellStartTime = new Date(starttime);
-              daylabel.text = cellStartTime.getDate() + '-' + (cellStartTime.getMonth() + 1) + '-' + cellStartTime.getFullYear();
+              t = t - starttime;
+              if (t < day) {
+                daylabel.text.text = 'TODAY';
+              } else {
+                if (dTriangle.__active && eventUri === null) {
+                  daylabel.text.text = 'TODAY';
+                } else {
+                  let cellStartTime = new Date(starttime);
+                  daylabel.text.text = cellStartTime.getDate() + '-' + (cellStartTime.getMonth() + 1) + '-' + cellStartTime.getFullYear();
+                }
+              }
             }
           }, 0);
         }
@@ -38328,12 +38399,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$7 = {
+  const config$5 = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  var thunder$8 = thunderJS$1(config$7);
+  var thunder$8 = thunderJS$1(config$5);
   var appApi$8 = new AppApi();
   class CodeScreen extends lng$1.Component {
     static _template() {
@@ -38511,12 +38582,6 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$6 = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1
-  };
-  thunderJS$1(config$6);
   var appApi$7 = new AppApi();
   class AlexaLoginScreen extends lng$1.Component {
     static _template() {
@@ -40242,13 +40307,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$5 = {
+  const config$4 = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  const thunder$7 = thunderJS$1(config$5);
-  new AppApi();
+  const thunder$7 = thunderJS$1(config$4);
   function keyIntercept() {
     thunder$7.Controller.activate({
       callsign: 'org.rdk.RDKShell'
@@ -40788,12 +40852,12 @@ var APP_accelerator_home_ui = (function () {
     }
   };
 
-  const config$4 = {
+  const config$3 = {
     host: '127.0.0.1',
     port: 9998,
     default: 1
   };
-  var thunder$6 = thunderJS$1(config$4);
+  var thunder$6 = thunderJS$1(config$3);
   class Volume extends lng$1.Component {
     constructor() {
       super(...arguments);
@@ -41041,7 +41105,7 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this.loadingAnimation.start();
-      var options = [];
+      let options = [];
       appApi$4.getSoundMode().then(result => {
         appApi$4.getSupportedAudioModes().then(res => {
           options = [...res.supportedAudioModes];
@@ -41525,15 +41589,15 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this.loadingAnimation.start();
-      var options = [];
-      var sIndex = 0;
+      let options = [];
+      let sIndex = 0;
       this.appApi.getResolution().then(resolution => {
         this.appApi.getSupportedResolutions().then(res => {
           options = [...res];
           this.tag('ResolutionScreenContents').h = options.length * 90;
           this.tag('ResolutionScreenContents.List').h = options.length * 90;
           this.tag('List').items = options.map((item, index) => {
-            var bool = false;
+            let bool = false;
             if (resolution === item) {
               bool = true;
               sIndex = index;
@@ -42741,7 +42805,7 @@ var APP_accelerator_home_ui = (function () {
       this.passwd = "";
       this.tag("Pwd").text.text = "";
       this.tag('Title').text = item.ssid;
-      var options = [];
+      let options = [];
       this._item = item;
       if (item.connected) {
         options = ['Disconnect', 'Cancel'];
@@ -44053,7 +44117,7 @@ var APP_accelerator_home_ui = (function () {
           this.loadingAnimation.start();
           this.tag('TestInternetAccess.Loader').visible = true;
           this._network.isConnectedToInternet().then(result => {
-            var connectionStatus = Language.translate("Internet Access: ");
+            let connectionStatus = Language.translate("Internet Access: ");
             if (result) {
               connectionStatus += Language.translate("Connected");
             } else {
@@ -45014,12 +45078,12 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const dtvApi$2 = new DTVApi();
-  const config$3 = {
+  const config$2 = {
     host: "127.0.0.1",
     port: 9998,
     default: 1
   };
-  const thunder$4 = thunderJS$1(config$3);
+  const thunder$4 = thunderJS$1(config$2);
 
   /**
    * Class for DVB Scan screen.
@@ -46523,7 +46587,7 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this.loadingAnimation.start();
-      var standbyMode = "";
+      let standbyMode = "";
       this._appApi.getPreferredStandbyMode().then(result => {
         if (result.preferredStandbyMode == "LIGHT_SLEEP") {
           standbyMode = Language.translate("Light Sleep");
@@ -47320,7 +47384,7 @@ var APP_accelerator_home_ui = (function () {
       });
       this.appApi.getDRMS().then(result => {
         console.log('from device info supported drms ' + JSON.stringify(result));
-        var drms = "";
+        let drms = "";
         result.forEach(element => {
           drms += "".concat(element.name, " :");
           if (element.keysystems) {
@@ -47339,7 +47403,7 @@ var APP_accelerator_home_ui = (function () {
         if (result.connectedToInternet === true) {
           this.appApi.getLocation().then(result => {
             console.log("getLocation from device info " + JSON.stringify(result));
-            var locationInfo = "";
+            let locationInfo = "";
             if (result.city.length !== 0) {
               locationInfo = "City: " + result.city;
             } else {
@@ -48554,15 +48618,10 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const config$2 = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1
-  };
-  thunderJS$1(config$2);
+
   /**
-   * Class for AdvancedSettings screen.
-   */
+  * Class for AdvancedSettings screen.
+  */
 
   class AdvanceSettingsScreen extends lng$1.Component {
     static _template() {
@@ -49101,7 +49160,7 @@ var APP_accelerator_home_ui = (function () {
         this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + 'Off';
       }
       this._appApi.getPreferredStandbyMode().then(result => {
-        var currentStandbyMode = "";
+        let currentStandbyMode = "";
         if (result.preferredStandbyMode == "LIGHT_SLEEP") {
           currentStandbyMode = "Light Sleep";
         } else if (result.preferredStandbyMode == "DEEP_SLEEP") {
@@ -49963,7 +50022,7 @@ var APP_accelerator_home_ui = (function () {
         self.metroApps = self.homeApi.getOfflineMetroApps();
         self.premiumApps = self.homeApi.getAppListInfo();
         self.showcaseApps = self.homeApi.getShowCaseApps();
-      }).then(() => {
+      }).then(async () => {
         let order = Storage.get("appCarouselOrder");
         console.log("order", order);
         let apps = [];
@@ -50014,6 +50073,9 @@ var APP_accelerator_home_ui = (function () {
           });
           apps = [...self.premiumApps, ...self.showcaseApps, ...self.metroApps];
         }
+        await this.homeApi.checkAppCompatability(apps).then(res => {
+          apps = res;
+        });
         this.appItems = apps;
         self._setState("AppList.0");
         this.patch({

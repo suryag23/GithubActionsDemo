@@ -18,7 +18,6 @@
  **/
 
 import { Lightning } from "@lightningjs/sdk";
-import { CONFIG } from "../../Config/Config";
 import TvOverlaySettingsItem from "../../items/TvOverlaySettingsItem";
 import PictureSettingsApi from "../../api/PictureSettingsApi";
 

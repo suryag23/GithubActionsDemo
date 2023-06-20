@@ -16,10 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-
-import { Router, Storage } from "@lightningjs/sdk";
 import ThunderJS from "ThunderJS";
-import AppApi from "../api/AppApi";
 import Keymap from "../Config/Keymap";
 
 const config = {
@@ -28,7 +25,7 @@ const config = {
     default: 1,
 };
 const thunder = ThunderJS(config);
-const appApi = new AppApi()
+
 
 export function keyIntercept() {
     thunder.Controller.activate({ callsign: 'org.rdk.RDKShell' })

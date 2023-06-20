@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
- import { Lightning, Utils } from '@lightningjs/sdk'
+ import { Lightning } from '@lightningjs/sdk'
  import { CONFIG } from '../Config/Config'
  
  

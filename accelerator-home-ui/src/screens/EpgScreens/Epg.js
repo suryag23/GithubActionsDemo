@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Utils, Router, Language, Storage } from '@lightningjs/sdk'
+import { Lightning, Utils, Router, Language } from '@lightningjs/sdk'
 import ChannelItem from './ChannelItem'
 import DTVApi from '../../api/DTVApi'
 import Shows from './Shows'
@@ -25,8 +25,11 @@ import Cell from './Cell'
 import CellCursor from './CellCursor'
 import { CONFIG } from "../../Config/Config"
 import AppApi from '../../api/AppApi'
+import HomeApi from '../../api/HomeApi'
 
 let k = 5
+const homeApi = new HomeApi()
+const dtvApi = new DTVApi()
 
 export default class Epg extends Lightning.Component {
 
@@ -231,9 +234,23 @@ export default class Epg extends Lightning.Component {
     Router.navigate("menu")
   }
 
-  _handleEnter() {
-    let channel = this.getCurrentChannel();
-    if (channel.dvburi === "OTT") {
+  getEventURI(events){
+    let showName = this.gridInstance[this.currentCellIndex].txt
+     let eventUri = null
+     for(let i = 0; i < events.length; i++) {
+      if(events[i].name === showName) {
+        eventUri = events[i].iptvuri
+      }
+     }
+     return eventUri
+  }
+
+  async _handleEnter() {
+   let channel = this.getCurrentChannel();
+   let events = await dtvApi.getEvents(channel.dvburi)
+   let eventUri = null
+   eventUri=this.getEventURI(events);
+   if (channel.dvburi === "OTT") {
       let params = {
         launchLocation: "epgScreen",
         url: channel.url
@@ -250,15 +267,15 @@ export default class Epg extends Lightning.Component {
         params.appIdentifier = appIdentifier
       }
       this.appApi.launchApp(channel.callsign,params)
-    } else if(channel.dvburi.startsWith("C_")){
+    } else if(channel.dvburi.startsWith("C_") && eventUri != null){
       if (!Router.isNavigating()) {
         let playerParams = {
-          url: channel.iptvuri, //video url for playing
+          url: eventUri, //video url for playing
           isChannel: true,
           channelName: channel.channelName,
-          showName: this.gridInstance[this.currentCellIndex].insText, 
-          showDescription: this.gridInstance[this.currentCellIndex].description, 
-          channelIndex: this.D - 8 + this.currentlyFocusedRow 
+          showName: this.gridInstance[this.currentCellIndex].insText,
+          showDescription: this.gridInstance[this.currentCellIndex].description,
+          channelIndex: this.D - 8 + this.currentlyFocusedRow
         }
         Router.navigate("player",playerParams)
       }
@@ -286,12 +303,12 @@ export default class Epg extends Lightning.Component {
 
   setShows4Channels(channels, headStart = 0) {
     this.strtindexesofrows = []
-    var ltp = this.ltp
-    var rtp = new Date(this.ltp.getTime() + 3 * 60 * 60 * 1000)
+    let ltp = this.ltp
+    let rtp = new Date(this.ltp.getTime() + 3 * 60 * 60 * 1000)
 
 
-    var cells = []
-    var self = this
+    let cells = []
+    let self = this
     function filterShowsBasedOnTimeWindow(shows, index) {
       let inc = headStart < 0 ? -1 : 1
       let i = Math.abs(headStart)
@@ -421,14 +438,14 @@ export default class Epg extends Lightning.Component {
       let t = ((now - self.ltp >= 0 ? now - self.ltp : 0) / (1000 * 60 * 30)) * 236
       tBar.w = t
       dTriangle.x = t + k
-    }, 2000)
+    }, 0)
   }
 
   setBoldText() {
     let l = this.strtindexesofrows[this.currentlyFocusedRow]
     let r = this.strtindexesofrows[this.currentlyFocusedRow + 1] - 1
     this.channelGridInstance[this.currentlyFocusedRow].setBoldText()
-    for (var i = l; i <= r; i++) {
+    for (let i = l; i <= r; i++) {
       this.gridInstance[i].setBoldText()
     }
   }
@@ -438,7 +455,7 @@ export default class Epg extends Lightning.Component {
     let r = this.strtindexesofrows[this.currentlyFocusedRow + 1] - 1
     this.channelGridInstance[this.currentlyFocusedRow].unsetBoldText()
 
-    for (var i = l; i <= r; i++) {
+    for (let i = l; i <= r; i++) {
       this.gridInstance[i].unsetBoldText()
     }
   }
@@ -544,7 +561,10 @@ export default class Epg extends Lightning.Component {
 
       return new Promise((resolve, reject) => {
         self.DTV.serviceList()
-          .then(channels => {
+          .then(async channels => {
+            await homeApi.checkChannelComapatability(channels).then(res => {
+              channels = res
+             })
             let traversedChannels = 0;
             channels.map((channel, i) => {
 
@@ -791,8 +811,16 @@ export default class Epg extends Lightning.Component {
           this.setBoldText()
           this.paintCell()
         }
-        updateDayLabel(starttime) {
+        async updateDayLabel(starttime) {
           let daylabel = this.tag('DayLabel')
+          let dTriangle = this.tag('DownTriangle')
+          let channel = this.getCurrentChannel();
+          let eventUri = null
+          if(channel.dvburi.startsWith("C_")){
+          let events = await dtvApi.getEvents(channel.dvburi)
+           eventUri=this.getEventURI(events);
+          }
+          
           setTimeout(function () {
             let today = new Date()
             today.setHours(0)
@@ -800,21 +828,30 @@ export default class Epg extends Lightning.Component {
             today.setSeconds(0)
             today.setMilliseconds(0)
             let t = today.getTime()
-            t = starttime - t
             let day = 24 * 60 * 60 * 1000
-            if (t < day) {
-              daylabel.text = 'TODAY'
-            } else if (t < 2 * day) {
-              daylabel.text = 'TOMORROW'
-            } else {
-              let cellStartTime = new Date(starttime)
-              daylabel.text =
-                cellStartTime.getDate() +
-                '-' +
-                (cellStartTime.getMonth() + 1) +
-                '-' +
-                cellStartTime.getFullYear()
-            }
+            if(starttime==0){
+              daylabel.text.text = 'TODAY'
+             }else if(starttime>t){
+              t = starttime - t
+              if (t < day) {
+                daylabel.text.text = 'TODAY'
+              } else{
+                let cellStartTime = new Date(starttime)
+                daylabel.text.text = cellStartTime.getDate() +'-' + (cellStartTime.getMonth() + 1) + '-' +cellStartTime.getFullYear()
+              }
+             }else{
+              t = t-starttime
+              if (t < day) {
+                daylabel.text.text = 'TODAY'
+              } else {
+                if(dTriangle.__active&&eventUri===null){
+                  daylabel.text.text = 'TODAY'
+                } else{
+                let cellStartTime = new Date(starttime)
+                daylabel.text.text = cellStartTime.getDate() +'-' + (cellStartTime.getMonth() + 1) + '-' +cellStartTime.getFullYear()
+              }
+            } 
+             }
           }, 0)
         }
 

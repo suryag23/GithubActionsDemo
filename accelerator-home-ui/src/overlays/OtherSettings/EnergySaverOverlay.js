@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Router, Utils, Language } from '@lightningjs/sdk'
+ import { Lightning, Utils, Language } from '@lightningjs/sdk'
  import AppApi from '../../api/AppApi';
  import EnergySavingsItem from '../../items/EnergySavingsItem'
  
@@ -103,7 +103,7 @@
      }
      _focus() {
          this.loadingAnimation.start()
-         var standbyMode = ""
+         let standbyMode = ""
          this._appApi.getPreferredStandbyMode().then(result => {
              if (result.preferredStandbyMode == "LIGHT_SLEEP") {
                  standbyMode = Language.translate("Light Sleep")

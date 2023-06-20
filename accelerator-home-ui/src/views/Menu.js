@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Router, Storage } from "@lightningjs/sdk"
+import { Lightning, Router } from "@lightningjs/sdk"
 import HomeApi from "../api/HomeApi"
 import SidePanel from "./SidePanel"
 import TopPanel from "./TopPanel"

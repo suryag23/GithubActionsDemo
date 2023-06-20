@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Router } from '@lightningjs/sdk'
+ import { Lightning } from '@lightningjs/sdk'
  import { CONFIG } from '../../Config/Config'
  import ConfirmAndCancel from '../../items/ConfirmAndCancel'
  import PasswordSwitch from '../../screens/PasswordSwitch'
@@ -122,7 +122,7 @@
      this.passwd = "";
      this.tag("Pwd").text.text = ""
      this.tag('Title').text = item.ssid
-     var options = []
+     let options = []
      this._item = item
      if (item.connected) {
        options = ['Disconnect', 'Cancel']

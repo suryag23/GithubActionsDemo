@@ -31,7 +31,6 @@ const config = {
     'org.rdk.System': 2
   }
 }
-let pluginParams=[];
 const thunder = ThunderJS(config)
 /**
  * Class that contains functions which commuicates with thunder API's
@@ -381,6 +380,20 @@ export default class AppApi {
     })
   }
 
+  async getAvailableTypes() {
+    return new Promise((resolve, reject) => {
+      thunder.call('org.rdk.RDKShell', 'getAvailableTypes', {}).then(result => {
+        // Include NativeApp as well as its not being included from backend.
+        if (!result.types.includes("NativeApp")) result.types.push("NativeApp");
+        console.log("RDKShell.getAvailableTypes:", JSON.stringify(result))
+        resolve(result.types)
+      }).catch(err => {
+        console.error("AppAPI ResidentApp delete cache failed.", err);
+        resolve(false)
+      })
+    })
+  }
+
   /**
    * Function to launch All types of apps. Accepts 2 params.
    * @param {String} callsign String required callsign of the particular app.
@@ -445,7 +458,7 @@ export default class AppApi {
       }
     }
 
-    const availableCallsigns = ["Amazon", "YouTube", "YouTubeTV", "YouTubeKids", "HtmlApp", "LightningApp", "Netflix", "NativeApp"];
+    const availableCallsigns = await this.getAvailableTypes();
 
     if (!availableCallsigns.includes(callsign)) {
       Router.navigate(Storage.get("lastVisitedRoute"));
@@ -558,6 +571,7 @@ export default class AppApi {
         "url": url,
         "launchtype":"launch=" + launchLocation
       }
+      params.type = "Cobalt";
     }
 
     else if(callsign === "Amazon"){
@@ -737,7 +751,7 @@ export default class AppApi {
       //check for hdmi scenario
     }
 
-    if (callsign === "LightningApp" || callsign === "HtmlApp") {
+    if (callsign === "LightningApp" || callsign === "HtmlApp" || callsign === "Peacock") {
       forceDestroy = true //html and lightning apps need not be suspended.
     }
 
@@ -797,7 +811,7 @@ export default class AppApi {
           return Promise.resolve(true)
         } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
           // DAC Demo WorkAround; TODO: use suspendApplication instead of kill
-          await thunder.call('org.rdk.RDKShell', 'kill', { "callsign": callsign }).catch(err => {
+          await thunder.call('org.rdk.RDKShell', 'kill', {"client": (callsign.includes('application/dac.native')? callsign.substring(0, callsign.indexOf(';')): callsign)}).catch(err => {
             console.error("AppAPI Error in kill app: ", callsign, " | trying to destroy the app");
             thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
           })

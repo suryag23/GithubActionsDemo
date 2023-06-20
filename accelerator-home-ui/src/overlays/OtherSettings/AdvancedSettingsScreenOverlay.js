@@ -16,21 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils, Language, Router } from '@lightningjs/sdk'
+ import { Lightning, Utils, Language } from '@lightningjs/sdk'
  import SettingsMainItem from '../../items/SettingsMainItem'
  import { COLORS } from '../../colors/Colors'
  import { CONFIG } from '../../Config/Config'
  import CECApi from '../../api/CECApi'
- import ThunderJS from 'ThunderJS'
  import DeviceScreen from './DeviceScreenOverlay'
  
- const config = {
-     host: '127.0.0.1',
-     port: 9998,
-     default: 1,
- }
- let thunder = ThunderJS(config);
- /**
+  /**
   * Class for AdvancedSettings screen.
   */
  

@@ -16,14 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils, Storage } from '@lightningjs/sdk'
+import { Lightning, Utils } from '@lightningjs/sdk'
 import AppApi from '../api/AppApi';
 import { CONFIG } from '../Config/Config'
 /**
  * Class to render items in Subscription in details screen .
  */
 let index = 0;
-let subscriptionValues;
 export default class SubscriptionItem extends Lightning.Component {
   static _template() {
     return {

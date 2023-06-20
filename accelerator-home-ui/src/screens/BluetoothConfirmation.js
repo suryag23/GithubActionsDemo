@@ -18,7 +18,6 @@
  **/
 import { Lightning } from '@lightningjs/sdk'
 import { CONFIG } from "../Config/Config"
-let _item
 /**
  * Class for pairing screen for the Bluetooth.
  */

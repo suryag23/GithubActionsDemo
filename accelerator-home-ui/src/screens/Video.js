@@ -1,4 +1,4 @@
-import { Lightning, Router, Utils, VideoPlayer } from "@lightningjs/sdk";
+import { Lightning, Utils, VideoPlayer } from "@lightningjs/sdk";
 
 export default class Splash extends Lightning.Component {
   static _template() {

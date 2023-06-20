@@ -65,7 +65,7 @@ export default class AudioOutputScreen extends Lightning.Component {
 
     _focus() {
         this.appApi.getConnectedAudioPorts().then(res => {
-            var options = [...res.connectedAudioPorts];
+            let options = [...res.connectedAudioPorts];
             this.tag('AudioOutputScreenContents').h = options.length * 90
             this.tag('AudioOutputScreenContents.List').h = options.length * 90
             this.tag('AudioOutputScreenContents.List').items = options.map((item, index) => {

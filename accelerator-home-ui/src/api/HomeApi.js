@@ -225,4 +225,40 @@ export default class HomeApi {
       });
     });
   }
+  async checkChannelComapatability(items) {
+    for(let i = 0; i < items.length; i++) {
+      let callsign = null
+      if(items[i].dvburi === "OTT"){
+      callsign = items[i].callsign
+      if(items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids"){
+        callsign = "Cobalt"
+      } 
+      await appApi.getPluginStatus(callsign).then(res => {
+      }).catch(err => {
+        console.log("Error:",err)
+        items.splice(i,1)
+        i--
+      })
+    }
+  }
+  return items
+  }
+  async checkAppCompatability (items)  {
+    for(let i=0;i<items.length;i++) {
+     let callsign = items[i].applicationType
+     if(items[i].applicationType !== '') {
+       if(items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
+         callsign = "Cobalt"
+       }
+
+       await appApi.getPluginStatus(callsign).then(res => {
+       }).catch(err => {
+           console.log("Error:",err)
+           items.splice(i,1)
+           i--
+         })
+     }
+    }
+    return items
+   }
 }

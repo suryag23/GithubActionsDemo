@@ -21,12 +21,11 @@
  import BluetoothApi from '../../api/BluetoothApi'
  import { CONFIG } from '../../Config/Config'
  import WifiApi from '../../api/WifiApi'
- import HDMIApi from '../../api/HDMIApi'
  
  const appApi = new AppApi()
  const _btApi = new BluetoothApi()
  const _wfApi = new WifiApi()
- const hdmiApi = new HDMIApi()
+
  /**
   * Class for Reboot Confirmation Screen.
   */

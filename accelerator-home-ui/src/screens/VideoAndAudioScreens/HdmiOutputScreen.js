@@ -94,7 +94,7 @@ export default class HdmiOutputScreen extends Lightning.Component {
 
     _focus() {
         this.loadingAnimation.start()
-        var options = []
+        let options = []
         appApi.getSoundMode()
             .then(result => {
                 appApi.getSupportedAudioModes()

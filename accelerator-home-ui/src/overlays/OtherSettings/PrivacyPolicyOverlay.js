@@ -16,10 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Router } from '@lightningjs/sdk'
+ import { Lightning } from '@lightningjs/sdk'
  import { COLORS } from '../../colors/Colors'
  import { CONFIG } from '../../Config/Config'
- import { Language } from '@lightningjs/sdk';
  
  const _privacyPolicy = `Privacy
   Welcome to RDKCentral.com, a website owned and operated by RDK Management, LLC (“RDK Management,” “we,” or “us”). This privacy policy discloses the privacy practices for this website only, including an explanation of:

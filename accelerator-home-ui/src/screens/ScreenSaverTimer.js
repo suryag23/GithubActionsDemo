@@ -18,7 +18,6 @@
  **/
 import { Language, Lightning, Router, Storage } from '@lightningjs/sdk'
 import SettingsItem from '../items/SettingsItem'
-import TickMarkItem from "../items/TickMarkItem";
 import AppApi from '../api/AppApi';
 import ThunderJS from 'ThunderJS';
 

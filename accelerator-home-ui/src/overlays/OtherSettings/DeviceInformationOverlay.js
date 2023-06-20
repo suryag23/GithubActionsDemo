@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Language, Router, Settings, Storage } from '@lightningjs/sdk'
+ import { Lightning, Language, Settings, Storage } from '@lightningjs/sdk'
  import { COLORS } from '../../colors/Colors'
  import { CONFIG } from '../../Config/Config'
  import AppApi from '../../api/AppApi.js';
@@ -265,7 +265,7 @@
  
          this.appApi.getDRMS().then(result => {
              console.log('from device info supported drms ' + JSON.stringify(result))
-             var drms = ""
+             let drms = ""
              result.forEach(element => {
                  drms += `${element.name} :`
                  if (element.keysystems) {
@@ -284,7 +284,7 @@
              if (result.connectedToInternet === true) {
                  this.appApi.getLocation().then(result => {
                      console.log("getLocation from device info " + JSON.stringify(result))
-                     var locationInfo = ""
+                     let locationInfo = ""
                      if (result.city.length !== 0) {
                          locationInfo = "City: " + result.city
                      }

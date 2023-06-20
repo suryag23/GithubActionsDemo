@@ -26,8 +26,7 @@ import { UsbInnerFolderListInfo } from "../../static/data/UsbInnerFolderListInfo
 import UsbListItem from '../items/UsbListItem.js'
 import LightningPlayerControls from "../MediaPlayer/LightningPlayerControl"
 
-let videoAudioUrl = "";
-let videoAudioTitle = "";
+
 let isAudio = false;
 var usbApi = new UsbApi();
 

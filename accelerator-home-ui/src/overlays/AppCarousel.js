@@ -61,7 +61,6 @@ export default class AppCarousel extends Lightning.Component {
     ]
   }
   _focus() {
-    let apps = []
     let self = this
     console.log("self.homeApi.getAppListInfo()",self.homeApi.getAppListInfo());
     self.appApi.isConnectedToInternet()
@@ -83,7 +82,7 @@ export default class AppCarousel extends Lightning.Component {
         self.metroApps = self.homeApi.getOfflineMetroApps()
         self.premiumApps = self.homeApi.getAppListInfo()
         self.showcaseApps = self.homeApi.getShowCaseApps()
-      }).then(() => {
+      }).then(async () => {
         let order = Storage.get("appCarouselOrder")
         console.log("order",order)
         let apps = []
@@ -138,7 +137,11 @@ export default class AppCarousel extends Lightning.Component {
           })
           apps = [...self.premiumApps, ...self.showcaseApps, ...self.metroApps]
         }
-        
+
+        await this.homeApi.checkAppCompatability(apps).then(res =>{
+          apps = res
+        })
+
         this.appItems = apps
         self._setState("AppList.0")
         this.patch({
