@@ -21,6 +21,7 @@ import AppApi from '../api/AppApi'
 import { CONFIG } from '../Config/Config'
 
 const appApi = new AppApi()
+
 /**
  * Class for Reboot Confirmation Screen.
  */
@@ -107,17 +108,12 @@ export default class AlexaConfirmationScreen extends Lightning.Component {
 
     _handleBack() {
         if(!Router.isNavigating()){
-        Router.back()
+            Router.back()
         }
     }
 
-
-
-
-
     static _states() {
         return [
-
             class YesButton extends this {
                 $enter() {
                     this._focus()
@@ -191,6 +187,4 @@ export default class AlexaConfirmationScreen extends Lightning.Component {
             }
         ]
     }
-
-
 }

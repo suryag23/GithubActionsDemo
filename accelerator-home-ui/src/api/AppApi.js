@@ -418,7 +418,7 @@ export default class AppApi {
       Storage.set(callsign+"LaunchLocation", args.launchLocation)
     }
 
-    let url,preventInternetCheck,preventCurrentExit,launchLocation;
+    let url,preventInternetCheck,preventCurrentExit,launchLocation, gracenoteUrl = null;
     if(args){
       url = args.url;
       preventInternetCheck = args.preventInternetCheck;
@@ -428,7 +428,6 @@ export default class AppApi {
 
     const launchLocationKeyMapping = {
       //currently supported launch locations by the UI and mapping to corresponding reason/keys for IID
-      // TODO: Extend for YT variants
       "mainView": { "YouTube": "menu", "YouTubeTV": "menu", "YouTubeKids": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
       "dedicatedButton": { "YouTube": "remote", "YouTubeTV": "remote", "YouTubeKids": "remote", "Netflix": "App_launched_via_Netflix_Button" },
       "appsMenu": { "YouTube": "menu", "YouTubeTV": "menu", "YouTubeKids": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Section" },
@@ -439,6 +438,10 @@ export default class AppApi {
     };
     if(launchLocation && launchLocationKeyMapping[launchLocation]){
       if(callsign === "Netflix" || callsign.startsWith("YouTube")){
+        /* Gracenote provides shortened url which shall only be deeplinked; do not use for activation. */
+        if (launchLocation === "gracenote") {
+          gracenoteUrl = url
+        }
         launchLocation = launchLocationKeyMapping[launchLocation][callsign]
       }
     }
@@ -540,7 +543,12 @@ export default class AppApi {
     } else if(callsign.startsWith("YouTube")){
       let language = localStorage.getItem("Language");
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US" //default to english US if language is not available.
-      url = url ? url : Storage.get(callsign+"DefaultURL");
+      if (gracenoteUrl === null) {
+        url = url ? url : Storage.get(callsign+"DefaultURL");
+      } else {
+        /* Gracenote provided url cannot be used for 'Configuring' plugin. Use only to deeplink. */
+        url = Storage.get(callsign+"DefaultURL");
+      }
       if(url){
         if (!url.includes("?")){
           url += "?"
@@ -695,9 +703,11 @@ export default class AppApi {
               }); //if netflix splash screen was launched resident app was kept visible Netflix until app launched.
             }
 
-            if (callsign.startsWith("YouTube") && res.launchType === "resume") {
+            if (callsign.startsWith("YouTube") && ((res.launchType === "resume") || (gracenoteUrl != null))) {
               // Page visibility requirement; 'launch' need to be 'deeplink'ed when app is 'resumed'.
-              if (!url) {
+              if (gracenoteUrl != null) {
+                url = gracenoteUrl;
+              } else if (!url) {
                 url = params.configuration.url;
               }
               console.log("AppAPI Calling "+callsign+".deeplink with url: " + url);
@@ -1518,19 +1528,25 @@ export default class AppApi {
     })
   }
 
-  //Get serial number
+  getModelName() {
+    return new Promise((resolve, reject) => {
+      thunder.call('DeviceInfo', 'modelname').then(result => {
+        resolve(result.model)
+	    }).catch(err => {
+        console.error("AppAPI DeviceInfo modelname failed:", err);
+        resolve("RDK-VA")
+      })
+    })
+  }
+
   getSerialNumber() {
     return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.System', 'getSerialNumber')
-        .then(result => {
-          console.log(JSON.stringify(result, 3, null))
-          resolve(result)
-        })
-        .catch(err => {
-          console.error("AppAPI System getSerialNumber error:", JSON.stringify(err, 3, null));
-          resolve('N/A')
-        })
+      thunder.call('DeviceInfo', 'serialnumber').then(result => {
+        resolve(result.serialnumber)
+      }).catch(err => {
+        console.error("AppAPI DeviceInfo serialnumber error:", JSON.stringify(err, 3, null));
+        resolve('0123456789')
+      })
     })
   }
 
@@ -2211,16 +2227,16 @@ getTimerValue() {
   resetAVSCredentials(){
     return new Promise((resolve, reject) => {
       Storage.set("AlexaVoiceAssitantState", "AlexaAuthPending");
-      const systemCallsign = 'org.rdk.VoiceControl'
-      thunder
-        .call(systemCallsign, 'sendVoiceMessage', {"msgPayload":{"event": "ResetAVS"}})
+      thunder.Controller.activate({ callsign: 'SmartScreen' }).then(() => {
+        console.log("Alexa resetAVSCredentials; activating SmartScreen instance.")
+      })
+      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', {"msgPayload":{"event": "ResetAVS"}})
         .then(result => {
           resolve(result)
-          })
-          .catch(err => {
-            resolve(false)
-          })
-      })
+        }).catch(err => {
+          resolve(false)
+        })
+    })
   }
 
   /**
@@ -2236,6 +2252,12 @@ getTimerValue() {
 
   setAlexaAuthStatus(newState = false){
     Storage.set("AlexaVoiceAssitantState", newState)
+    if (newState === "AlexaUserDenied") {
+      /* Free up Smartscreen resources */
+      thunder.Controller.deactivate({ callsign: 'SmartScreen' }).then(() => {
+        console.log("Alexa AlexaUserDenied; deactivating SmartScreen instance.")
+      })
+    }
     console.warn("setAlexaAuthStatus with ", newState)
   }
 

@@ -21,7 +21,7 @@ import { CONFIG } from '../Config/Config'
 import AppApi from '../api/AppApi'
 
 var appApi = new AppApi();
-  
+
 export default class AlexaLoginScreen extends Lightning.Component {
     static _template() {
         return {
@@ -91,19 +91,19 @@ export default class AlexaLoginScreen extends Lightning.Component {
                 }
             }
         }
-            
+
         }
-    
+
     }
 
     _init(){
     }
     _focus() {
         this._setState('SignInButton')
-      }
-      _active(){
+    }
+    _active(){
         this._setState('SignInButton')
-      }
+    }
 
     static _states() {
         return[
@@ -146,7 +146,7 @@ export default class AlexaLoginScreen extends Lightning.Component {
                     this._unfocus()
                 }
             },
-                     
+
           class BackButton extends this {
             $enter() {
               this.tag("BackButton")

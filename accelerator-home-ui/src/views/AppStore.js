@@ -85,11 +85,8 @@ export default class AppStore extends Lightning.Component {
         this.options = {
             0: async () => {
                 const installedApplications = await getInstalledDACApps()
-                this.tag('Apps').add(Catalog.map((element) => {
-                    let isInstalled = installedApplications.find((a) => {
-                        return a.id === element.id })
-                    if (isInstalled)
-                        return { h: AppStoreItem.height + 90, w: AppStoreItem.width, info: element }
+                this.tag('Apps').add(installedApplications.map((element) => {
+                    return { h: AppStoreItem.height + 90, w: AppStoreItem.width, info: element }
                 }));
             },
             1: async () => {
@@ -99,11 +96,8 @@ export default class AppStore extends Lightning.Component {
             },
             2: async () => {
                 const installedApplications = await getInstalledDACApps()
-                this.tag('ManagedApps').add(Catalog.map((element) => {
-                    let isInstalled = installedApplications.find((a) => {
-                         return a.id === element.id })
-                    if (isInstalled)
-                        return { h: ManageAppItem.height + 90, w: ManageAppItem.width, info: element }
+                this.tag('ManagedApps').add(installedApplications.map((element) => {
+                    return { h: ManageAppItem.height + 90, w: ManageAppItem.width, info: element }
                 }));
             },
         }

@@ -75,11 +75,12 @@ export default class Volume extends Lightning.Component {
         this.volTimeout = null
         this.volume = 0
         this.mute = false;
-        this.updateValues();
     }
 
-    onVolumeKeyDown() {
+    async onVolumeKeyDown() {
+        this.volume = await this.getVolume();
         this.focus();
+        this._updateText(this.volume);
         this.volTimeout && Registry.clearTimeout(this.volTimeout)
         this.volTimeout = Registry.setTimeout(() => {
             this.unfocus()
@@ -91,8 +92,10 @@ export default class Volume extends Lightning.Component {
         }
     }
 
-    onVolumeKeyUp() {
+    async onVolumeKeyUp() {
+        this.volume = await this.getVolume();
         this.focus();
+        this._updateText(this.volume);
         this.volTimeout && Registry.clearTimeout(this.volTimeout)
         this.volTimeout = Registry.setTimeout(() => {
             this.unfocus()
@@ -104,8 +107,10 @@ export default class Volume extends Lightning.Component {
         }
     }
 
-    onVolumeMute() {
+    async onVolumeMute() {
+        this.volume = await this.getVolume();
         this.focus();
+        this._updateText(this.volume);
         this.volTimeout && Registry.clearTimeout(this.volTimeout)
         this.volTimeout = Registry.setTimeout(() => {
             this.unfocus()
@@ -114,6 +119,17 @@ export default class Volume extends Lightning.Component {
             this.mute = !this.mute
             this._updateIcon(this.mute)
         }
+    }
+
+    async onVolumeChanged() {
+        this.volume = await this.getVolume();
+        this.focus();
+        this._updateText(this.volume);
+        this.volTimeout && Registry.clearTimeout(this.volTimeout)
+        this.volTimeout = Registry.setTimeout(() => {
+            this.unfocus()
+        }, 2000)
+        this._updateText(this.volume)
     }
 
     setVolume = async (val) => {
@@ -133,7 +149,7 @@ export default class Volume extends Lightning.Component {
     }
 
     setMute = async (val) => {
-        const status = await this.appApi.audio_mute(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), val) 
+        const status = await this.appApi.audio_mute(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), val)
         this.appApi.muteStatus(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres =>{
             console.log("volres",volres, parseInt(volres.muted))
             VolumePayload.msgPayload.event.header.messageId=  "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
@@ -175,24 +191,32 @@ export default class Volume extends Lightning.Component {
         })
     }
 
-    updateValues() {
-        this.appApi.getConnectedAudioPorts()
-            .then(res => {
-                this.appApi.getVolumeLevel(res.connectedAudioPorts[0])
-                    .then(res1 => {
-                        this.appApi.muteStatus(res.connectedAudioPorts[0])
-                            .then(result => {
-                                this.mute = result.muted;
-                                this._updateIcon(this.mute);
-                            });
-                        if (res1) {
-                            this.volume = parseInt(res1.volumeLevel);
-                            this._updateText(this.volume);
-                        }
-                    });
+    getAudioPort() {
+        return new Promise((resolve, reject) => {
+        this.appApi.getConnectedAudioPorts().then(res => {
+            console.log("Volume Audio port:",res.connectedAudioPorts[0])
+            resolve(res.connectedAudioPorts[0])
+        })}).catch(err => {
+            console.error('Volume getConnectedAudioPorts error:', JSON.stringify(err, 3, null))
+            reject(false)
+        })
+    }
+
+    getVolume() {
+        return new Promise(async (resolve, reject) => {
+            let audioport = await this.getAudioPort()
+            this.appApi.getVolumeLevel(audioport).then(res1 => {
+                this.appApi.muteStatus(audioport).then(result => {
+                    this.mute = result.muted;
+                    this._updateIcon(this.mute);
+                });
+                if (res1) {
+                    resolve(parseInt(res1.volumeLevel));
+                }
+            }).catch(err => {
+                console.error('Volume getVolumeLevel error:', JSON.stringify(err, 3, null))
+                reject(false)
             })
-            .catch(err => {
-                this._updateText(this.volume)
-            })
+        })
     }
 }

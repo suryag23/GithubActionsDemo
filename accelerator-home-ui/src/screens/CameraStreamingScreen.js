@@ -19,9 +19,7 @@
 import { Lightning, Router, Utils, VideoPlayer, Language } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config';
 
-
 export default class CameraStreamingScreen extends Lightning.Component {
-
     static _template() {
         return {
          Background: {
@@ -34,7 +32,7 @@ export default class CameraStreamingScreen extends Lightning.Component {
               h: 520,
               type: Lightning.shaders.Hole,
           },
-          visible: true 
+          visible: true
       },
           Riot: {
             x: 300,
@@ -165,29 +163,23 @@ export default class CameraStreamingScreen extends Lightning.Component {
               x: 1470, y: 800, w: 550, h: 6, rect: true, mountX: 0.5,
             },
           },
-
-         
-        
       }
-      }
+    }
 
     _init(){
-
       this._setState('Switch1')
-      
     }
 
     set params(args){
       VideoPlayer.position(350, 270)
       VideoPlayer.size(890, 600);
-      VideoPlayer.open(args.cameraUrl) 
+      VideoPlayer.open(args.cameraUrl)
     }
 
     _handleBack(){
-      Router.navigate('menu')
       VideoPlayer.close()
+      Router.navigate('menu')
     }
-
 
     static _states() {
       return[
@@ -287,6 +279,4 @@ export default class CameraStreamingScreen extends Lightning.Component {
         }
       ]
     }
-
-
 }

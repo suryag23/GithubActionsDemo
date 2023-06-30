@@ -18,8 +18,10 @@
  **/
 import { Lightning, Registry, Router, Utils } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
+import AppApi from '../api/AppApi'
 
- 
+const appApi = new AppApi();
+
 export default class SuccessScreen extends Lightning.Component {
     static _template() {
         return {
@@ -133,20 +135,31 @@ export default class SuccessScreen extends Lightning.Component {
     _focus() {
         Registry.clear();
         this._setState('DoneButton')
-      }
-      _active(){
+    }
+    _active(){
         this._setState('DoneButton')
-      }
+    }
 
-      static _states() {
+    static _states() {
         return[
             class DoneButton extends this{
                 $enter() {
                   this.tag("DoneButton")
                 }
                 _handleEnter(){
+                    appApi.checkStatus('SmartScreen').then(result => {
+                        console.log("Alexa SuccessScreen SmartScreen checkStatus: " +result)
+                        switch(result[0].state) {
+                          case "Activation":
+                          case "deactivated":
+                          case "Deactivation":
+                          case "Precondition":
+                          case "suspended":
+                            appApi.activateController('SmartScreen')
+                            break;
+                        }
+                    })
                     Router.navigate('menu')
-                   
                 }
                 _focus() {
                     this.tag('DoneButton').patch({
@@ -168,11 +181,13 @@ export default class SuccessScreen extends Lightning.Component {
                         }
                     })
                 }
-                
+
                 $exit() {
                   //this.show()
                   this.tag('DoneButton')
                 }
-            }]}
+            }
+        ]
+    }
 }
 

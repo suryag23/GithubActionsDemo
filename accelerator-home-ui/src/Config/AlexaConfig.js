@@ -18,7 +18,7 @@
  **/
 //Payloads, and other keys related to alexa and voiceControl plugin.
 
-export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map 
+export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map
     "amzn1.alexa-ask-target.app.70045": {
       "name": "YouTube",
       "callsign": "YouTube",
@@ -56,7 +56,7 @@ export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map
     },
     "amzn1.alexa-ask-target.app.94721": {
         "name": "NBCU Peacock",
-        "callsign": "LightningApp",
+        "callsign": "Peacock",
         "url": "",
     },
     "amzn1.alexa-ask-target.app.92933": {
@@ -184,11 +184,11 @@ export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map
                          "name":"playbackState",
                           "value": { "state": "Pause/stop/Resume/Play" },
                         "timeOfSample": new Date().getFullYear() + "-"
-                        + (new Date().getMonth()+1)  + "-" 
-                        + new Date().getDate() + "T"  
-                        + new Date().getHours() + ":"  
-                        + new Date().getMinutes() + ":" 
-                        + new Date().getSeconds()+"Z", 
+                        + (new Date().getMonth()+1)  + "-"
+                        + new Date().getDate() + "T"
+                        + new Date().getHours() + ":"
+                        + new Date().getMinutes() + ":"
+                        + new Date().getSeconds()+"Z",
                         "uncertaintyInMilliseconds": 0
                     }]
                 }
@@ -196,8 +196,8 @@ export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map
         }
     }
 }
-export const VolumePayload = {  
-    "msgPayload": { 
+export const VolumePayload = {
+    "msgPayload": {
          "event": {
         "header": {
             "namespace": "Speaker",

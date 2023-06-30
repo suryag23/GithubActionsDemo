@@ -72,6 +72,29 @@ export default class CECApi {
                 })
         })
     }
+    getOSDName() {
+        return new Promise((resolve, reject) => {
+            thunder.call('org.rdk.HdmiCec_2', 'getOSDName')
+                .then(result => {
+                    resolve(result)
+                })
+                .catch(err => {
+                    resolve({ enabled: false })
+                })
+        })
+    }
+    setOSDName(osdname){
+        return new Promise((resolve, reject) => {
+            thunder.call('org.rdk.HdmiCec_2', 'setOSDName', {name: osdname})
+                .then(result => {
+                resolve(result)
+                })
+                .catch(err => {
+                    console.error('setOSDName', err);
+                    resolve({ success: false })
+                })
+        })
+    }
 
     performOTP() {
         return new Promise((resolve, reject) => {

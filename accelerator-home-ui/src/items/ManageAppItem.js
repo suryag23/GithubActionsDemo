@@ -84,7 +84,7 @@ export default class ManageAppItem extends Lightning.Component {
                 src: data.url,
             });
         }
-        this.tag('Text').text.text = data.name
+        this.tag('Text').text.text = data.installed[0].appName
     }
 
     static get width() {
@@ -147,10 +147,10 @@ export default class ManageAppItem extends Lightning.Component {
         this.tag("Text").alpha = 0
     }
     _handleEnter() {
-        this._app.url = this.data.uri
+        this._app.url = this.data.installed[0].url
         this._app.id = this.data.id
-        this._app.name = this.data.name
-        this._app.version = this.data.version
+        this._app.name = this.data.installed[0].appName
+        this._app.version = this.data.installed[0].version
         this._app.type= this.data.type
         this.myfireUNINSTALL()
     }

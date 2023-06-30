@@ -240,10 +240,20 @@ export const startDACApp = async (app) => {
       if (Array.isArray(response.clients) && response.clients.includes(app.id.toLowerCase())) {
         console.log("DACApi " +app.id+ " got a match in getClients response; could be in suspended mode, resume it.");
         thunderJS()['org.rdk.RDKShell'].resumeApplication({ client: app.id }).then(result => {
-          if (!result.success) return false;
+          if (!result.success) {
+            return false;
+          } else if (result.success) {
+            if (Storage.get("applicationType") === "") {
+              thunder.call('org.rdk.RDKShell', 'setVisibility', { "client": "ResidentApp", "visible": false })
+            }
+          }
         })
       }
     })
+  } else if (result.success) {
+    if (Storage.get("applicationType") === "") {
+      thunder.call('org.rdk.RDKShell', 'setVisibility', { "client": "ResidentApp", "visible": false })
+    }
   } else {
     // Nothing to do here.
   }

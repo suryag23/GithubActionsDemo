@@ -2,8 +2,8 @@
  * App version: 3.7 19/07/22
  * SDK version: 4.8.3
  * CLI version: 2.11.0
- *
- * Generated: Fri, 16 Jun 2023 19:13:09 GMT
+ * 
+ * Generated: Wed, 28 Jun 2023 13:33:22 GMT
  */
 
 var APP_accelerator_home_ui = (function () {
@@ -7164,7 +7164,11 @@ var APP_accelerator_home_ui = (function () {
       if (callsign.startsWith("YouTube")) {
         Storage.set(callsign + "LaunchLocation", args.launchLocation);
       }
-      let url, preventInternetCheck, preventCurrentExit, launchLocation;
+      let url,
+        preventInternetCheck,
+        preventCurrentExit,
+        launchLocation,
+        gracenoteUrl = null;
       if (args) {
         url = args.url;
         preventInternetCheck = args.preventInternetCheck;
@@ -7173,7 +7177,6 @@ var APP_accelerator_home_ui = (function () {
       }
       const launchLocationKeyMapping = {
         //currently supported launch locations by the UI and mapping to corresponding reason/keys for IID
-        // TODO: Extend for YT variants
         "mainView": {
           "YouTube": "menu",
           "YouTubeTV": "menu",
@@ -7219,6 +7222,10 @@ var APP_accelerator_home_ui = (function () {
       };
       if (launchLocation && launchLocationKeyMapping[launchLocation]) {
         if (callsign === "Netflix" || callsign.startsWith("YouTube")) {
+          /* Gracenote provides shortened url which shall only be deeplinked; do not use for activation. */
+          if (launchLocation === "gracenote") {
+            gracenoteUrl = url;
+          }
           launchLocation = launchLocationKeyMapping[launchLocation][callsign];
         }
       }
@@ -7319,7 +7326,12 @@ var APP_accelerator_home_ui = (function () {
       } else if (callsign.startsWith("YouTube")) {
         let language = localStorage.getItem("Language");
         language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US"; //default to english US if language is not available.
-        url = url ? url : Storage.get(callsign + "DefaultURL");
+        if (gracenoteUrl === null) {
+          url = url ? url : Storage.get(callsign + "DefaultURL");
+        } else {
+          /* Gracenote provided url cannot be used for 'Configuring' plugin. Use only to deeplink. */
+          url = Storage.get(callsign + "DefaultURL");
+        }
         if (url) {
           if (!url.includes("?")) {
             url += "?";
@@ -7475,9 +7487,11 @@ var APP_accelerator_home_ui = (function () {
                 }); //if netflix splash screen was launched resident app was kept visible Netflix until app launched.
               }
 
-              if (callsign.startsWith("YouTube") && res.launchType === "resume") {
+              if (callsign.startsWith("YouTube") && (res.launchType === "resume" || gracenoteUrl != null)) {
                 // Page visibility requirement; 'launch' need to be 'deeplink'ed when app is 'resumed'.
-                if (!url) {
+                if (gracenoteUrl != null) {
+                  url = gracenoteUrl;
+                } else if (!url) {
                   url = params.configuration.url;
                 }
                 console.log("AppAPI Calling " + callsign + ".deeplink with url: " + url);
@@ -8224,16 +8238,23 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
-
-    //Get serial number
+    getModelName() {
+      return new Promise((resolve, reject) => {
+        thunder$j.call('DeviceInfo', 'modelname').then(result => {
+          resolve(result.model);
+        }).catch(err => {
+          console.error("AppAPI DeviceInfo modelname failed:", err);
+          resolve("RDK-VA");
+        });
+      });
+    }
     getSerialNumber() {
       return new Promise((resolve, reject) => {
-        thunder$j.call('org.rdk.System', 'getSerialNumber').then(result => {
-          console.log(JSON.stringify(result, 3, null));
-          resolve(result);
+        thunder$j.call('DeviceInfo', 'serialnumber').then(result => {
+          resolve(result.serialnumber);
         }).catch(err => {
-          console.error("AppAPI System getSerialNumber error:", JSON.stringify(err, 3, null));
-          resolve('N/A');
+          console.error("AppAPI DeviceInfo serialnumber error:", JSON.stringify(err, 3, null));
+          resolve('0123456789');
         });
       });
     }
@@ -8788,8 +8809,12 @@ var APP_accelerator_home_ui = (function () {
     resetAVSCredentials() {
       return new Promise((resolve, reject) => {
         Storage.set("AlexaVoiceAssitantState", "AlexaAuthPending");
-        const systemCallsign = 'org.rdk.VoiceControl';
-        thunder$j.call(systemCallsign, 'sendVoiceMessage', {
+        thunder$j.Controller.activate({
+          callsign: 'SmartScreen'
+        }).then(() => {
+          console.log("Alexa resetAVSCredentials; activating SmartScreen instance.");
+        });
+        thunder$j.call('org.rdk.VoiceControl', 'sendVoiceMessage', {
           "msgPayload": {
             "event": "ResetAVS"
           }
@@ -8813,6 +8838,14 @@ var APP_accelerator_home_ui = (function () {
     setAlexaAuthStatus() {
       let newState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
       Storage.set("AlexaVoiceAssitantState", newState);
+      if (newState === "AlexaUserDenied") {
+        /* Free up Smartscreen resources */
+        thunder$j.Controller.deactivate({
+          callsign: 'SmartScreen'
+        }).then(() => {
+          console.log("Alexa AlexaUserDenied; deactivating SmartScreen instance.");
+        });
+      }
       console.warn("setAlexaAuthStatus with ", newState);
     }
 
@@ -9618,8 +9651,8 @@ var APP_accelerator_home_ui = (function () {
   }).catch(() => {
     Storage.set("ipAddress", null);
   });
-  let appApi$j = new AppApi();
-  appApi$j.getIP().then(ip => {
+  let appApi$k = new AppApi();
+  appApi$k.getIP().then(ip => {
     IpAddress2 = ip;
   });
 
@@ -9724,7 +9757,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getMovieSubscriptions(id) {
       return new Promise((resolve, reject) => {
-        appApi$j.fetchApiKey().then(res => {
+        appApi$k.fetchApiKey().then(res => {
           // console.log("Key is: ", res);
           // console.log("tmsID is :", id);
           try {
@@ -9739,7 +9772,7 @@ var APP_accelerator_home_ui = (function () {
     }
     getAPIKey() {
       return new Promise((resolve, reject) => {
-        appApi$j.fetchApiKey().then(res => {
+        appApi$k.fetchApiKey().then(res => {
           let [day, month, year] = [new Date().getUTCDate(), new Date().getUTCMonth(), new Date().getUTCFullYear()];
           month += 1;
           day = day.toString();
@@ -9783,7 +9816,7 @@ var APP_accelerator_home_ui = (function () {
           if (items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids") {
             callsign = "Cobalt";
           }
-          await appApi$j.getPluginStatus(callsign).then(res => {}).catch(err => {
+          await appApi$k.getPluginStatus(callsign).then(res => {}).catch(err => {
             console.log("Error:", err);
             items.splice(i, 1);
             i--;
@@ -9799,7 +9832,7 @@ var APP_accelerator_home_ui = (function () {
           if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
             callsign = "Cobalt";
           }
-          await appApi$j.getPluginStatus(callsign).then(res => {}).catch(err => {
+          await appApi$k.getPluginStatus(callsign).then(res => {}).catch(err => {
             console.log("Error:", err);
             items.splice(i, 1);
             i--;
@@ -11400,7 +11433,33 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
-
+    getFriendlyName() {
+      return new Promise((resolve, reject) => {
+        this._thunder.call('org.rdk.Xcast', 'getFriendlyName').then(res => {
+          resolve(res);
+        }).catch(err => {
+          console.log('Xdial getFriendlyName error', err);
+          reject(err);
+        });
+      });
+    }
+    setFriendlyName(name) {
+      return new Promise((resolve, reject) => {
+        this._thunder.call('org.rdk.Xcast', 'setFriendlyName', {
+          friendlyname: name
+        }).then(result => {
+          console.log("Xcast setFriendlyName: " + name + " result: ", JSON.stringify(result));
+          resolve(result);
+        }).catch(err => {
+          console.error(err);
+          resolve(false);
+        });
+      }).then(val => {
+        console.log("The resolved value is:", val);
+      }).catch(error => {
+        console.error("An error occurred:", error);
+      });
+    }
     /**
      *
      * @param {string} eventId
@@ -20586,7 +20645,7 @@ var APP_accelerator_home_ui = (function () {
     * Class for Other Settings Screen.
     */
 
-  var appApi$i = new AppApi();
+  var appApi$j = new AppApi();
   var defaultInterface$1 = "";
   var currentInterface$1 = [];
   class NetworkInfo$1 extends lng$1.Component {
@@ -20828,13 +20887,13 @@ var APP_accelerator_home_ui = (function () {
       };
     }
     getIPSetting(interfaceName) {
-      appApi$i.getIPSetting(interfaceName).then(result => {
+      appApi$j.getIPSetting(interfaceName).then(result => {
         this.tag('InternetProtocol.Value').text.text = result.ipversion;
       }).catch(err => console.log(err));
     }
     _focus() {
       //Getting the default interface
-      appApi$i.getDefaultInterface().then(result => {
+      appApi$j.getDefaultInterface().then(result => {
         defaultInterface$1 = result.interface;
         this.getIPSetting(defaultInterface$1);
         if (defaultInterface$1 === "WIFI") {
@@ -20854,12 +20913,12 @@ var APP_accelerator_home_ui = (function () {
         }
 
         //Filtering the current interface
-        appApi$i.getInterfaces().then(result => {
+        appApi$j.getInterfaces().then(result => {
           currentInterface$1 = result.interfaces.filter(data => data.interface === defaultInterface$1);
           //console.log(currentInterface);
           if (currentInterface$1[0].connected) {
             this.tag("Status.Value").text.text = "Connected";
-            appApi$i.getConnectedSSID().then(result => {
+            appApi$j.getConnectedSSID().then(result => {
               if (parseInt(result.signalStrength) >= -50) {
                 this.tag("SignalStrength.Value").text.text = "Excellent";
               } else if (parseInt(result.signalStrength) >= -60) {
@@ -20871,7 +20930,7 @@ var APP_accelerator_home_ui = (function () {
               }
               this.tag("SSID.Value").text.text = "".concat(result.ssid);
             }).catch(error => console.log(error));
-            appApi$i.getIPSetting(defaultInterface$1).then(result => {
+            appApi$j.getIPSetting(defaultInterface$1).then(result => {
               this.tag('IPAddress.Value').text.text = "".concat(result.ipaddr);
               this.tag("Gateway.Value").text.text = "".concat(result.gateway);
             }).catch(error => console.log(error));
@@ -22294,7 +22353,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Video and Audio screen.
    */
 
-  var appApi$h = new AppApi();
+  var appApi$i = new AppApi();
   var bluetoothApi$1 = new BluetoothApi();
   const config$b = {
     host: '127.0.0.1',
@@ -22495,7 +22554,7 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this._setState("RCInformationScreen");
-      appApi$h.getPluginStatus('org.rdk.RemoteControl').then(result => {
+      appApi$i.getPluginStatus('org.rdk.RemoteControl').then(result => {
         if (result[0].state != "activated") {
           bluetoothApi$1.remotepluginactivate();
           _thunder$1.on('Controller', 'statechange', notification => {
@@ -22549,7 +22608,7 @@ var APP_accelerator_home_ui = (function () {
           triggerPairing = notification.status.pairingState === "SEARCHING" ? 0 : 1;
         }
         if (triggerPairing) {
-          appApi$h.activateAutoPairing().then(res => {
+          appApi$i.activateAutoPairing().then(res => {
             console.log("RCInformationScreen rcPairingApis startpairing 1", res);
           });
         }
@@ -22557,7 +22616,7 @@ var APP_accelerator_home_ui = (function () {
       await bluetoothApi$1.getNetStatus().then(result => {
         let triggerPairing = 0;
         if (result.status.remoteData === [] && result.status.pairingState != "SEARCHING") {
-          appApi$h.activateAutoPairing().then(res => {
+          appApi$i.activateAutoPairing().then(res => {
             console.log("RCInformationScreen rcPairingApis startpairing 2", res);
           });
         } else if (result.status.remoteData != []) {
@@ -22592,7 +22651,7 @@ var APP_accelerator_home_ui = (function () {
           this.tag("RCUName.Value").text.text = RemoteName;
         }
         if (triggerPairing) {
-          appApi$h.activateAutoPairing().then(res => {
+          appApi$i.activateAutoPairing().then(res => {
             console.log("RCInformationScreen rcPairingApis startpairing 3", res);
           });
         }
@@ -24711,7 +24770,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const appApi$g = new AppApi();
+  const appApi$h = new AppApi();
   const thunder$f = thunderJS$1({
     host: '127.0.0.1',
     port: 9998,
@@ -24765,8 +24824,8 @@ var APP_accelerator_home_ui = (function () {
           item: item
         };
       });
-      appApi$g.deactivateResidentApp(loader$2);
-      appApi$g.setVisibility('ResidentApp', true);
+      appApi$h.deactivateResidentApp(loader$2);
+      appApi$h.setVisibility('ResidentApp', true);
       thunder$f.call('org.rdk.RDKShell', 'moveToFront', {
         client: 'ResidentApp'
       }).then(result => {
@@ -24807,8 +24866,8 @@ var APP_accelerator_home_ui = (function () {
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html";
             let notification_url = location.origin + path + url;
             console.log(notification_url);
-            appApi$g.launchResident(notification_url, loader$2).catch(err => {});
-            appApi$g.setVisibility('ResidentApp', false);
+            appApi$h.launchResident(notification_url, loader$2).catch(err => {});
+            appApi$h.setVisibility('ResidentApp', false);
             location.reload();
           }
         }
@@ -24847,7 +24906,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Privacy Screen.
    */
 
-  const xcastApi$1 = new XcastApi();
+  const xcastApi$2 = new XcastApi();
   let cookieToggle = false;
   class PrivacyScreen$1 extends lng$1.Component {
     _onChanged() {
@@ -25015,7 +25074,7 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     checkLocalDeviceStatus() {
-      xcastApi$1.getEnabled().then(res => {
+      xcastApi$2.getEnabled().then(res => {
         if (res.enabled) {
           this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOnOrange.png');
         } else {
@@ -25026,15 +25085,15 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     toggleLocalDeviceDiscovery() {
-      xcastApi$1.getEnabled().then(res => {
+      xcastApi$2.getEnabled().then(res => {
         if (!res.enabled) {
-          xcastApi$1.activate().then(res => {
+          xcastApi$2.activate().then(res => {
             if (res) {
               this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOnOrange.png');
             }
           });
         } else {
-          xcastApi$1.deactivate().then(res => {
+          xcastApi$2.deactivate().then(res => {
             if (res) {
               this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png');
             }
@@ -25330,6 +25389,31 @@ var APP_accelerator_home_ui = (function () {
           resolve(result);
         }).catch(err => {
           console.error('CEC Set Enabled', err);
+          resolve({
+            success: false
+          });
+        });
+      });
+    }
+    getOSDName() {
+      return new Promise((resolve, reject) => {
+        thunder$e.call('org.rdk.HdmiCec_2', 'getOSDName').then(result => {
+          resolve(result);
+        }).catch(err => {
+          resolve({
+            enabled: false
+          });
+        });
+      });
+    }
+    setOSDName(osdname) {
+      return new Promise((resolve, reject) => {
+        thunder$e.call('org.rdk.HdmiCec_2', 'setOSDName', {
+          name: osdname
+        }).then(result => {
+          resolve(result);
+        }).catch(err => {
+          console.error('setOSDName', err);
           resolve({
             success: false
           });
@@ -26506,7 +26590,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const appApi$f = new AppApi();
+  const appApi$g = new AppApi();
   /**
    * Class for Reboot Confirmation Screen.
    */
@@ -26646,7 +26730,7 @@ var APP_accelerator_home_ui = (function () {
           this._focus();
         }
         _handleEnter() {
-          appApi$f.reboot().then(result => {
+          appApi$g.reboot().then(result => {
             console.log('device rebooting' + JSON.stringify(result));
             this._setState('Rebooting');
           });
@@ -27193,7 +27277,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const appApi$e = new AppApi();
+  const appApi$f = new AppApi();
   const _btApi = new BluetoothApi();
   const _wfApi = new Wifi();
 
@@ -27335,7 +27419,7 @@ var APP_accelerator_home_ui = (function () {
     }
     async _performFactoryReset() {
       // Deactivate SmartScreen instance to prevent overlay when Auth is revoked.
-      appApi$e.getPluginStatus("SmartScreen").then(res => {
+      appApi$f.getPluginStatus("SmartScreen").then(res => {
         if (res[0].state !== "deactivated") {
           thunder.Controller.deactivate({
             callsign: 'SmartScreen'
@@ -27348,30 +27432,30 @@ var APP_accelerator_home_ui = (function () {
       }).catch(err => {
         console.error("FactoryResetConfirmationScreen getPluginStatus SmartScreen ERROR: ", err);
       });
-      appApi$e.setAlexaAuthStatus("AlexaAuthPending");
-      let getsuportedmode = await appApi$e.getSupportedAudioPorts();
+      appApi$f.setAlexaAuthStatus("AlexaAuthPending");
+      let getsuportedmode = await appApi$f.getSupportedAudioPorts();
       console.log("getspmode", getsuportedmode);
       for (let i = 0; i < getsuportedmode.supportedAudioPorts.length; i++) {
         if (getsuportedmode.supportedAudioPorts[i] != 'SPDIF0') {
-          let rsbass = await appApi$e.resetBassEnhancer(getsuportedmode.supportedAudioPorts[i]).catch(err => {
+          let rsbass = await appApi$f.resetBassEnhancer(getsuportedmode.supportedAudioPorts[i]).catch(err => {
             console.log("resetBassEnhancer", err);
           });
           if (rsbass.success != true) {
             console.log("resetBassEnhancer", rsbass);
           } //throw new Error(rsbass); }//{Promise.reject(false); return} 
-          let rsDialog = await appApi$e.resetDialogEnhancement(getsuportedmode.supportedAudioPorts[i]).catch(err => {
+          let rsDialog = await appApi$f.resetDialogEnhancement(getsuportedmode.supportedAudioPorts[i]).catch(err => {
             console.log("resetDialogEnhancement", err);
           }); //{Promise.reject(JSON.stringify(err))});
           if (rsDialog.success != true) {
             console.log("resetDialogEnhancement", rsDialog);
           }
-          let rsVirtualizer = await appApi$e.resetSurroundVirtualizer(getsuportedmode.supportedAudioPorts[i]).catch(err => {
+          let rsVirtualizer = await appApi$f.resetSurroundVirtualizer(getsuportedmode.supportedAudioPorts[i]).catch(err => {
             console.log("resetSurroundVirtualizer", err);
           });
           if (rsVirtualizer.success != true) {
             console.log("resetSurroundVirtualizer", rsVirtualizer);
           }
-          let rsvolumelvel = await appApi$e.resetVolumeLeveller(getsuportedmode.supportedAudioPorts[i]).catch(err => {
+          let rsvolumelvel = await appApi$f.resetVolumeLeveller(getsuportedmode.supportedAudioPorts[i]).catch(err => {
             console.log("resetVolumeLeveller", err);
           });
           if (rsvolumelvel.success != true) {
@@ -27393,9 +27477,9 @@ var APP_accelerator_home_ui = (function () {
           }
         }
       }
-      let contollerStat = await appApi$e.checkStatus("Monitor");
+      let contollerStat = await appApi$f.checkStatus("Monitor");
       for (let i = 0; i < contollerStat[0].configuration.observables.length; i++) {
-        let monitorstat = await appApi$e.monitorStatus(contollerStat[0].configuration.observables[i].callsign).catch(err => {
+        let monitorstat = await appApi$f.monitorStatus(contollerStat[0].configuration.observables[i].callsign).catch(err => {
           console.log("monitorStatus", err);
         });
         if (monitorstat.length < 0) {
@@ -27403,37 +27487,37 @@ var APP_accelerator_home_ui = (function () {
         }
       }
       // warehouse apis
-      let internalReset = await appApi$e.internalReset().catch(err => {
+      let internalReset = await appApi$f.internalReset().catch(err => {
         console.log("internalReset", err);
       });
       if (internalReset.success != true || internalReset.error) {
         console.log("internalReset", internalReset);
       }
-      let isClean = await appApi$e.isClean().catch(err => {
+      let isClean = await appApi$f.isClean().catch(err => {
         console.log("isClean", err);
       });
       if (isClean.success != true) {
         console.log("isClean", isClean);
       }
-      let lightReset = await appApi$e.lightReset().catch(err => {
+      let lightReset = await appApi$f.lightReset().catch(err => {
         console.log("lightReset", err);
       });
       if (lightReset.success != true || lightReset.error) {
         console.log("lightReset", lightReset);
       }
-      let resetDevice = await appApi$e.resetDevice().catch(err => {
+      let resetDevice = await appApi$f.resetDevice().catch(err => {
         console.log("resetDevice", err);
       });
       if (resetDevice.success != true || resetDevice.error) {
         console.log("resetDevice", resetDevice);
       }
-      let rsactivitytime = await appApi$e.resetInactivityTime().catch(err => {
+      let rsactivitytime = await appApi$f.resetInactivityTime().catch(err => {
         console.log("resetInactivityTime", err);
       });
       if (rsactivitytime.success != true) {
         console.log("rsactivitytime", rsactivitytime);
       }
-      let clearLastDeepSleepReason = await appApi$e.clearLastDeepSleepReason().catch(err => {
+      let clearLastDeepSleepReason = await appApi$f.clearLastDeepSleepReason().catch(err => {
         console.log("clearLastDeepSleepReason", err);
       });
       if (clearLastDeepSleepReason.success != true) {
@@ -27451,7 +27535,7 @@ var APP_accelerator_home_ui = (function () {
       if (wifidisconnect.success != true) {
         console.log("wifidisconnect", wifidisconnect);
       }
-      await appApi$e.reboot().then(result => {
+      await appApi$f.reboot().then(result => {
         console.log('device rebooting' + JSON.stringify(result));
       });
     }
@@ -27584,7 +27668,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  var appApi$d = new AppApi();
+  var appApi$e = new AppApi();
   const config$9 = {
     host: '127.0.0.1',
     port: 9998,
@@ -27672,7 +27756,7 @@ var APP_accelerator_home_ui = (function () {
     }
 
     async _focus() {
-      let FocusedValue = await appApi$d.getTimerValue();
+      let FocusedValue = await appApi$e.getTimerValue();
       console.log("focusedValue", FocusedValue);
       this.options = [{
         value: 'Off',
@@ -27716,17 +27800,17 @@ var APP_accelerator_home_ui = (function () {
     }
     setTimerValue(time) {
       if (time === "Off") {
-        appApi$d.enabledisableinactivityReporting(false).then(resp => console.log(resp));
+        appApi$e.enabledisableinactivityReporting(false).then(resp => console.log(resp));
       } else {
         // 10
-        appApi$d.enabledisableinactivityReporting(true).then(resp => {
-          appApi$d.setInactivityInterval(parseInt(time)).then(res => {
+        appApi$e.enabledisableinactivityReporting(true).then(resp => {
+          appApi$e.setInactivityInterval(parseInt(time)).then(res => {
             console.log("setinactivityres", res);
             Storage.set('TimeoutInterval1', time);
             console.log("successfully set the timer to ".concat(time, " minutes"));
             thunder$d.on('org.rdk.RDKShell', 'onUserInactivity', notification => {
               console.log("UserInactivityStatusNotification: ", JSON.stringify(notification));
-              appApi$d.getAvCodeStatus().then(result => {
+              appApi$e.getAvCodeStatus().then(result => {
                 console.log("Avdecoder", result.avDecoderStatus);
                 if ((result.avDecoderStatus === "IDLE" || result.avDecoderStatus === "PAUSE") && Storage.get("applicationType") === "") {
                   this.fireAncestors("$hideImage", 1);
@@ -27758,7 +27842,7 @@ var APP_accelerator_home_ui = (function () {
           this.timerValue = this.options[this.tag('List').index].value; //10 minutes
           this.timerValue = this.timerValue === "Off" ? "Off" : this.timerValue.substring(0, 2); // 10
           console.log("TimerValue", this.timerValue);
-          appApi$d.SaveTimerValue(this.timerValue); // storing in persistence store
+          appApi$e.SaveTimerValue(this.timerValue); // storing in persistence store
           this.setTimerValue(this.timerValue); // enable and setinactivity process
           this.fireAncestors('$screenSaverTime', this.options[this.tag('List').index].value);
         }
@@ -28327,7 +28411,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for HDMI Output Screen.
    */
-  var appApi$c = new AppApi();
+  var appApi$d = new AppApi();
   class HdmiOutputScreen$1 extends lng$1.Component {
     pageTransition() {
       return 'left';
@@ -28397,8 +28481,8 @@ var APP_accelerator_home_ui = (function () {
     _focus() {
       this.loadingAnimation.start();
       let options = [];
-      appApi$c.getSoundMode().then(result => {
-        appApi$c.getSupportedAudioModes().then(res => {
+      appApi$d.getSoundMode().then(result => {
+        appApi$d.getSupportedAudioModes().then(res => {
           options = [...res.supportedAudioModes];
           this.tag('HdmiOutputScreenContents').h = options.length * 90;
           this.tag('HdmiOutputScreenContents.List').h = options.length * 90;
@@ -30041,7 +30125,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  var appApi$b = new AppApi();
+  var appApi$c = new AppApi();
   var bluetoothApi = new BluetoothApi();
   const config$8 = {
     host: '127.0.0.1',
@@ -30236,7 +30320,7 @@ var APP_accelerator_home_ui = (function () {
         }
         console.log("SplashBluetoothScreen async RemoteControl checking condition to kick start pairing");
         if ((notification.status.remoteData === [] || rcuNotConnectedStartPairing) && notification.status.pairingState != "SEARCHING") {
-          appApi$b.activateAutoPairing();
+          appApi$c.activateAutoPairing();
         }
       });
       var RCInterval = Registry.setInterval(() => {
@@ -30255,7 +30339,7 @@ var APP_accelerator_home_ui = (function () {
           if (result.status.remoteData === [] && result.status.pairingState != "SEARCHING" || rcuNotConnectedStartPairing) {
             //|| result.status.pairingState === "SEARCHING" ){
             console.log("SplashBluetoothScreen async RCInterval RemoteControl getNetStatus activateAutoPairing 4");
-            appApi$b.activateAutoPairing().then(status => {
+            appApi$c.activateAutoPairing().then(status => {
               console.log("Invoked activateAutoPairing() and got ", status);
               Registry.clearInterval(RCInterval); // org.rdk.RemoteControl 'onStatus' notification will do the rest.
             });
@@ -30264,7 +30348,7 @@ var APP_accelerator_home_ui = (function () {
       }, 30000, true);
     }
     _init() {
-      appApi$b.getPluginStatus('org.rdk.RemoteControl').then(result => {
+      appApi$c.getPluginStatus('org.rdk.RemoteControl').then(result => {
         if (result[0].state != "activated") {
           bluetoothApi.remotepluginactivate();
           _thunder.on('Controller', 'statechange', notification => {
@@ -30280,7 +30364,7 @@ var APP_accelerator_home_ui = (function () {
         }
       }).catch(err => {
         console.log('SplashBluetoothScreen init remote autoPair plugin error:', JSON.stringify(err));
-        appApi$b.getPluginStatusParams('org.rdk.Bluetooth').then(pluginresult => {
+        appApi$c.getPluginStatusParams('org.rdk.Bluetooth').then(pluginresult => {
           console.log("SplashBluetoothScreen init status", pluginresult[1]);
           if (pluginresult[1] === 'deactivated') {
             bluetoothApi.btactivate().then(result => {
@@ -30419,7 +30503,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  const appApi$a = new AppApi();
+  const appApi$b = new AppApi();
   const loader$1 = 'Loader';
   class LanguageScreen$1 extends lng$1.Component {
     static _template() {
@@ -30548,8 +30632,8 @@ var APP_accelerator_home_ui = (function () {
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html";
             let notification_url = location.origin + path + url;
             console.log(notification_url);
-            appApi$a.launchResident(notification_url, loader$1).catch(err => {});
-            appApi$a.setVisibility('ResidentApp', false);
+            appApi$b.launchResident(notification_url, loader$1).catch(err => {});
+            appApi$b.setVisibility('ResidentApp', false);
             location.reload();
           }
         }
@@ -30618,7 +30702,7 @@ var APP_accelerator_home_ui = (function () {
    **/
   const wifi$3 = new Wifi();
   const network = new Network();
-  var appApi$9 = new AppApi();
+  var appApi$a = new AppApi();
   class NetworkScreen extends lng$1.Component {
     static _template() {
       return {
@@ -30801,7 +30885,7 @@ var APP_accelerator_home_ui = (function () {
           });
         }
         _handleEnter() {
-          if (appApi$9.checkAlexaAuthStatus() !== "AlexaUserDenied") {
+          if (appApi$a.checkAlexaAuthStatus() !== "AlexaUserDenied") {
             Router.navigate('AlexaLoginScreen');
           } else {
             Router.navigate('menu');
@@ -32556,10 +32640,26 @@ var APP_accelerator_home_ui = (function () {
           thunderJS()['org.rdk.RDKShell'].resumeApplication({
             client: app.id
           }).then(result => {
-            if (!result.success) return false;
+            if (!result.success) {
+              return false;
+            } else if (result.success) {
+              if (Storage.get("applicationType") === "") {
+                thunder$b.call('org.rdk.RDKShell', 'setVisibility', {
+                  "client": "ResidentApp",
+                  "visible": false
+                });
+              }
+            }
           });
         }
       });
+    } else if (result.success) {
+      if (Storage.get("applicationType") === "") {
+        thunder$b.call('org.rdk.RDKShell', 'setVisibility', {
+          "client": "ResidentApp",
+          "visible": false
+        });
+      }
     } else ;
     try {
       result = await thunderJS()['org.rdk.RDKShell'].moveToFront({
@@ -32677,7 +32777,7 @@ var APP_accelerator_home_ui = (function () {
           src: data.url
         });
       }
-      this.tag('Text').text.text = data.name;
+      this.tag('Text').text.text = data.installed[0].appName;
     }
     static get width() {
       return 300;
@@ -32706,10 +32806,10 @@ var APP_accelerator_home_ui = (function () {
       this.tag("Text").alpha = 0;
     }
     async _handleEnter() {
-      this._app.url = this.data.uri;
+      this._app.url = this.data.installed[0].url;
       this._app.id = this.data.id;
-      this._app.name = this.data.name;
-      this._app.version = this.data.version;
+      this._app.name = this.data.installed[0].appName;
+      this._app.version = this.data.installed[0].version;
       this._app.type = this.data.type;
       this._app.isRunning = await startDACApp(this._app);
     }
@@ -33121,7 +33221,7 @@ var APP_accelerator_home_ui = (function () {
           src: data.url
         });
       }
-      this.tag('Text').text.text = data.name;
+      this.tag('Text').text.text = data.installed[0].appName;
     }
     static get width() {
       return 300;
@@ -33178,10 +33278,10 @@ var APP_accelerator_home_ui = (function () {
       this.tag("Text").alpha = 0;
     }
     _handleEnter() {
-      this._app.url = this.data.uri;
+      this._app.url = this.data.installed[0].url;
       this._app.id = this.data.id;
-      this._app.name = this.data.name;
-      this._app.version = this.data.version;
+      this._app.name = this.data.installed[0].appName;
+      this._app.version = this.data.installed[0].version;
       this._app.type = this.data.type;
       this.myfireUNINSTALL();
     }
@@ -33262,11 +33362,8 @@ var APP_accelerator_home_ui = (function () {
       this.options = {
         0: async () => {
           const installedApplications = await getInstalledDACApps();
-          this.tag('Apps').add(Catalog.map(element => {
-            let isInstalled = installedApplications.find(a => {
-              return a.id === element.id;
-            });
-            if (isInstalled) return {
+          this.tag('Apps').add(installedApplications.map(element => {
+            return {
               h: AppStoreItem.height + 90,
               w: AppStoreItem.width,
               info: element
@@ -33284,11 +33381,8 @@ var APP_accelerator_home_ui = (function () {
         },
         2: async () => {
           const installedApplications = await getInstalledDACApps();
-          this.tag('ManagedApps').add(Catalog.map(element => {
-            let isInstalled = installedApplications.find(a => {
-              return a.id === element.id;
-            });
-            if (isInstalled) return {
+          this.tag('ManagedApps').add(installedApplications.map(element => {
+            return {
               h: ManageAppItem.height + 90,
               w: ManageAppItem.width,
               info: element
@@ -38405,7 +38499,7 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   };
   var thunder$8 = thunderJS$1(config$5);
-  var appApi$8 = new AppApi();
+  var appApi$9 = new AppApi();
   class CodeScreen extends lng$1.Component {
     static _template() {
       return {
@@ -38497,11 +38591,11 @@ var APP_accelerator_home_ui = (function () {
           console.log('avs code coming from CodeScreen');
           if (notification.xr_speech_avs.state === "refreshed") {
             // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
-            appApi$8.setAlexaAuthStatus("AlexaHandleError");
+            appApi$9.setAlexaAuthStatus("AlexaHandleError");
             Router.navigate("SuccessScreen");
           } else if (notification.xr_speech_avs.state === "uninitialized" || notification.xr_speech_avs.state === "authorizing") {
             console.log("notification state is uninitialised");
-            appApi$8.setAlexaAuthStatus("AlexaAuthPending");
+            appApi$9.setAlexaAuthStatus("AlexaAuthPending");
           } else if (notification.xr_speech_avs.state === "unrecoverable error") {
             console.log("notification state is unrecoverable error");
             // Could be AUTH token Timeout; refresh it.
@@ -38582,7 +38676,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  var appApi$7 = new AppApi();
+  var appApi$8 = new AppApi();
   class AlexaLoginScreen extends lng$1.Component {
     static _template() {
       return {
@@ -38700,7 +38794,7 @@ var APP_accelerator_home_ui = (function () {
           });
         }
         async _handleEnter() {
-          if (appApi$7.checkAlexaAuthStatus() != "AlexaUserDenied") {
+          if (appApi$8.checkAlexaAuthStatus() != "AlexaUserDenied") {
             console.log("Code coming from AlexaLoginScreen");
             Router.navigate("CodeScreen");
           }
@@ -38770,6 +38864,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
+  const appApi$7 = new AppApi();
   class SuccessScreen extends lng$1.Component {
     static _template() {
       return {
@@ -38916,6 +39011,18 @@ var APP_accelerator_home_ui = (function () {
           this.tag("DoneButton");
         }
         _handleEnter() {
+          appApi$7.checkStatus('SmartScreen').then(result => {
+            console.log("Alexa SuccessScreen SmartScreen checkStatus: " + result);
+            switch (result[0].state) {
+              case "Activation":
+              case "deactivated":
+              case "Deactivation":
+              case "Precondition":
+              case "suspended":
+                appApi$7.activateController('SmartScreen');
+                break;
+            }
+          });
           Router.navigate('menu');
         }
         _focus() {
@@ -39093,6 +39200,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const appApi$5 = new AppApi();
+
   /**
    * Class for Reboot Confirmation Screen.
    */
@@ -39473,8 +39581,8 @@ var APP_accelerator_home_ui = (function () {
       VideoPlayer.open(args.cameraUrl);
     }
     _handleBack() {
-      Router.navigate('menu');
       VideoPlayer.close();
+      Router.navigate('menu');
     }
     static _states() {
       return [class Switch1 extends this {
@@ -40659,7 +40767,7 @@ var APP_accelerator_home_ui = (function () {
   //Payloads, and other keys related to alexa and voiceControl plugin.
 
   const AlexaLauncherKeyMap = {
-    //app/shortcuts identifier and callsign map 
+    //app/shortcuts identifier and callsign map
     "amzn1.alexa-ask-target.app.70045": {
       "name": "YouTube",
       "callsign": "YouTube",
@@ -40697,7 +40805,7 @@ var APP_accelerator_home_ui = (function () {
     },
     "amzn1.alexa-ask-target.app.94721": {
       "name": "NBCU Peacock",
-      "callsign": "LightningApp",
+      "callsign": "Peacock",
       "url": ""
     },
     "amzn1.alexa-ask-target.app.92933": {
@@ -40943,10 +41051,11 @@ var APP_accelerator_home_ui = (function () {
       this.volTimeout = null;
       this.volume = 0;
       this.mute = false;
-      this.updateValues();
     }
-    onVolumeKeyDown() {
+    async onVolumeKeyDown() {
+      this.volume = await this.getVolume();
       this.focus();
+      this._updateText(this.volume);
       this.volTimeout && Registry.clearTimeout(this.volTimeout);
       this.volTimeout = Registry.setTimeout(() => {
         this.unfocus();
@@ -40956,8 +41065,10 @@ var APP_accelerator_home_ui = (function () {
         if (this.setVolume(this.volume)) this._updateText(this.volume);
       }
     }
-    onVolumeKeyUp() {
+    async onVolumeKeyUp() {
+      this.volume = await this.getVolume();
       this.focus();
+      this._updateText(this.volume);
       this.volTimeout && Registry.clearTimeout(this.volTimeout);
       this.volTimeout = Registry.setTimeout(() => {
         this.unfocus();
@@ -40967,8 +41078,10 @@ var APP_accelerator_home_ui = (function () {
         if (this.setVolume(this.volume)) this._updateText(this.volume);
       }
     }
-    onVolumeMute() {
+    async onVolumeMute() {
+      this.volume = await this.getVolume();
       this.focus();
+      this._updateText(this.volume);
       this.volTimeout && Registry.clearTimeout(this.volTimeout);
       this.volTimeout = Registry.setTimeout(() => {
         this.unfocus();
@@ -40977,6 +41090,16 @@ var APP_accelerator_home_ui = (function () {
         this.mute = !this.mute;
         this._updateIcon(this.mute);
       }
+    }
+    async onVolumeChanged() {
+      this.volume = await this.getVolume();
+      this.focus();
+      this._updateText(this.volume);
+      this.volTimeout && Registry.clearTimeout(this.volTimeout);
+      this.volTimeout = Registry.setTimeout(() => {
+        this.unfocus();
+      }, 2000);
+      this._updateText(this.volume);
     }
     _updateText(val) {
       this.tag('Text').text.text = val;
@@ -41006,20 +41129,32 @@ var APP_accelerator_home_ui = (function () {
         }
       });
     }
-    updateValues() {
-      this.appApi.getConnectedAudioPorts().then(res => {
-        this.appApi.getVolumeLevel(res.connectedAudioPorts[0]).then(res1 => {
-          this.appApi.muteStatus(res.connectedAudioPorts[0]).then(result => {
+    getAudioPort() {
+      return new Promise((resolve, reject) => {
+        this.appApi.getConnectedAudioPorts().then(res => {
+          console.log("Volume Audio port:", res.connectedAudioPorts[0]);
+          resolve(res.connectedAudioPorts[0]);
+        });
+      }).catch(err => {
+        console.error('Volume getConnectedAudioPorts error:', JSON.stringify(err, 3, null));
+        reject(false);
+      });
+    }
+    getVolume() {
+      return new Promise(async (resolve, reject) => {
+        let audioport = await this.getAudioPort();
+        this.appApi.getVolumeLevel(audioport).then(res1 => {
+          this.appApi.muteStatus(audioport).then(result => {
             this.mute = result.muted;
             this._updateIcon(this.mute);
           });
           if (res1) {
-            this.volume = parseInt(res1.volumeLevel);
-            this._updateText(this.volume);
+            resolve(parseInt(res1.volumeLevel));
           }
+        }).catch(err => {
+          console.error('Volume getVolumeLevel error:', JSON.stringify(err, 3, null));
+          reject(false);
         });
-      }).catch(err => {
-        this._updateText(this.volume);
       });
     }
   }
@@ -46819,7 +46954,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Privacy Screen.
    */
 
-  const xcastApi = new XcastApi();
+  const xcastApi$1 = new XcastApi();
   class PrivacyScreen extends lng$1.Component {
     static _template() {
       return {
@@ -46966,7 +47101,7 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     checkLocalDeviceStatus() {
-      xcastApi.getEnabled().then(res => {
+      xcastApi$1.getEnabled().then(res => {
         if (res.enabled) {
           this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOnOrange.png');
         } else {
@@ -46977,15 +47112,15 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     toggleLocalDeviceDiscovery() {
-      xcastApi.getEnabled().then(res => {
+      xcastApi$1.getEnabled().then(res => {
         if (!res.enabled) {
-          xcastApi.activate().then(res => {
+          xcastApi$1.activate().then(res => {
             if (res) {
               this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOnOrange.png');
             }
           });
         } else {
-          xcastApi.deactivate().then(res => {
+          xcastApi$1.deactivate().then(res => {
             if (res) {
               this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png');
             }
@@ -50276,6 +50411,7 @@ var APP_accelerator_home_ui = (function () {
   var dtvApi$1 = new DTVApi();
   new HDMIApi();
   var cecApi = new CECApi();
+  var xcastApi = new XcastApi();
   class App extends Router.App {
     static getFonts() {
       return [{
@@ -50477,10 +50613,11 @@ var APP_accelerator_home_ui = (function () {
         Router.navigate('epg');
         return true;
       } else if (key.keyCode == keyMap.Amazon) {
-        ({
+        let params = {
+          launchLocation: "dedicatedButton",
           appIdentifier: self.appIdentifiers["Amazon"]
-        });
-        appApi.launchApp("Amazon").catch(err => {
+        };
+        appApi.launchApp("Amazon", params).catch(err => {
           console.error("Error in launching Amazon via dedicated key: " + JSON.stringify(err));
         });
         return true;
@@ -50730,6 +50867,27 @@ var APP_accelerator_home_ui = (function () {
       appApi.cobaltStateChangeEvent();
       this.xcastApi = new XcastApi();
       this.xcastApi.activate().then(result => {
+        let serialNumber;
+        try {
+          appApi.getSerialNumber().then(res => {
+            serialNumber = res;
+            console.log("App getSerialNumber result:", serialNumber);
+            appApi.getModelName().then(modelName => {
+              let friendlyName = modelName + "_" + serialNumber;
+              this.xcastApi.setFriendlyName(friendlyName).then(result => {
+                console.log("App XCAST setFriendlyName result:", result);
+              }).catch(error => {
+                console.error("App Error setting friendlyName:", error);
+              });
+            }).catch(error => {
+              console.error("App Error retrieving modelName:", error);
+            });
+          }).catch(error => {
+            console.error("App Error getSerialNumber:", error);
+          });
+        } catch (error) {
+          console.log(error);
+        }
         if (result) {
           this.registerXcastListeners();
         }
@@ -50824,6 +50982,10 @@ var APP_accelerator_home_ui = (function () {
       });
       thunder$1.on('org.rdk.RDKShell', 'onApplicationDisconnected', notification => {
         console.log("onApplicationDisconnectedNotification: ", JSON.stringify(notification));
+        // DO NOT HANDLE THIS, see RDKUI-474 for details.
+        // if (notification.hasOwnProperty("client") && (Storage.get("applicationType").includes(notification.client))) {
+        //   appApi.exitApp(Storage.get("applicationType"));
+        // }
       });
 
       //video info change events begin here---------------------
@@ -50946,6 +51108,24 @@ var APP_accelerator_home_ui = (function () {
 
       //ACTIVATING HDMI CEC PLUGIN
       cecApi.activate().then(res => {
+        let getfriendlyname, getosdname;
+        setTimeout(() => {
+          xcastApi.getFriendlyName().then(res => {
+            getfriendlyname = res.friendlyname;
+            console.log("XcastApi getFriendlyName :" + getfriendlyname);
+          }).catch(err => {
+            console.error('XcastApi getFriendlyName Error: ', err);
+          });
+          cecApi.getOSDName().then(result => {
+            getosdname = result.name;
+            console.log("CECApi getOSDName :" + getosdname);
+            if (getfriendlyname !== getosdname) {
+              cecApi.setOSDName(getfriendlyname);
+            }
+          }).catch(err => {
+            console.error('CECApi getOSDName Error :', err);
+          });
+        }, 5000);
         cecApi.getActiveSourceStatus().then(res => {
           Storage.set("UICacheCECActiveSourceStatus", res);
           console.log("App getActiveSourceStatus: " + res + " UICacheCECActiveSourceStatus:" + Storage.get("UICacheCECActiveSourceStatus"));
@@ -51273,43 +51453,62 @@ var APP_accelerator_home_ui = (function () {
               console.log("Alexa.RemoteVideoPlayer: " + JSON.stringify(header));
               if (header.name === "SearchAndDisplayResults" || header.name === "SearchAndPlay") {
                 console.log("Alexa.RemoteVideoPlayer: SearchAndDisplayResults || SearchAndPlay: " + JSON.stringify(header));
-                payload && payload.entities.map(item => {
-                  if (item.type === "App" || item.type === "MediaType") {
-                    console.log("Alexa.RemoteVideoPlayer: SearchAndDisplayResults || SearchAndPlay: Payload: " + JSON.stringify(payload));
-                    if (item.value === "Netflix") {
-                      let replacedText = payload.searchText.transcribed.replace("netflix", "");
-                      console.log("replacedtext", replacedText);
-                      const netflixLaunchParams = {
-                        url: encodeURI(replacedText.trim()),
-                        launchLocation: "alexa",
-                        appIdentifier: self.appIdentifiers["Netflix"]
-                      };
-                      console.log("Netflix search is getting invoked using alexa params: " + JSON.stringify(netflixLaunchParams));
-                      appApi.launchApp("Netflix", netflixLaunchParams).then(res => {
-                        console.log("Netflix launched successfully using alexa search: " + JSON.stringify(res));
-                      }).catch(err => {
-                        console.log("Netflix launched FAILED using alexa search: " + JSON.stringify(err));
-                      });
+                /* Find if payload contains Destination App */
+                if (payload.hasOwnProperty("entities")) {
+                  let entityId = payload.entities.filter(obj => Object.keys(obj).some(key => obj[key].hasOwnProperty("ENTITY_ID")));
+                  if (entityId.length && AlexaLauncherKeyMap[entityId[0].externalIds.ENTITY_ID]) {
+                    /* ENTITY_ID or vsk key found; meaning Target App is there in response. */
+                    let replacedText = payload.searchText.transcribed.replace(entityId[0].value.toLowerCase(), "").trim();
+                    let appCallsign = AlexaLauncherKeyMap[entityId[0].externalIds.ENTITY_ID].callsign;
+                    //let appUrl = AlexaLauncherKeyMap[entityId[0].externalIds.ENTITY_ID].url
+                    let launchParams = {
+                      url: "",
+                      launchLocation: "alexa",
+                      appIdentifier: self.appIdentifiers[appCallsign]
+                    };
+                    if ("Netflix" === appCallsign) {
+                      launchParams.url = encodeURI(replacedText);
+                    } else if (appCallsign.startsWith("YouTube")) {
+                      launchParams.url = Storage.get(appCallsign + "DefaultURL") + "&va=" + (header.name === "SearchAndPlay" ? "play" : "search") + "&vq=" + encodeURI(replacedText);
                     }
-                    if (item.value.startsWith("YouTube") || item.type == "MediaType") {
-                      let replacedText = payload.searchText.transcribed.replace("youtube", "");
-                      console.log("replacedtext", replacedText);
-                      const cobaltLaunchParams = {
-                        url: Storage.get(item.value + "DefaultURL") + "&va=" + (header.name === "SearchAndPlay" ? "play" : "search") + "&vq=" + encodeURI(replacedText.trim()),
-                        launchLocation: "alexa",
-                        appIdentifier: self.appIdentifiers[item.value]
-                      };
-                      console.log(item.value + " search is getting invoked using alexa params: " + JSON.stringify(cobaltLaunchParams));
-                      appApi.launchApp(item.value, cobaltLaunchParams).then(res => {
-                        console.log(item.value + " launched successfully using alexa search: " + JSON.stringify(res));
-                      }).catch(err => {
-                        console.log(item.value + " launched FAILED using alexa search: " + JSON.stringify(err));
-                      });
-                      replacedText = null;
-                      cobaltLaunchParams = null;
-                    }
+                    console.log("Alexa.RemoteVideoPlayer: launchApp " + appCallsign + " with params " + launchParams);
+                    appApi.launchApp(appCallsign, launchParams).then(res => {
+                      console.log("Alexa.RemoteVideoPlayer:" + appCallsign + " launched successfully using alexa search: " + JSON.stringify(res));
+                    }).catch(err => {
+                      console.log("Alexa.RemoteVideoPlayer:" + appCallsign + " launch FAILED using alexa search: " + JSON.stringify(err));
+                    });
+                    replacedText = null;
+                    appCallsign = null;
+                    launchParams = null;
+                  } else if (!entityId.length && Storage.get("applicationType") != "") {
+                    /* TODO: Current focused app is not ResidentApp; redirect generic search to it if supported. */
+                    console.warn("Alexa.RemoteVideoPlayer: " + Storage.get("applicationType") + " is the focued app; need Voice search integration support to it.");
+                  } else if (!entityId.length && Storage.get("applicationType") == "") {
+                    /* Generic global search without a target app; redirect to Youtube as of now. */
+                    let replacedText = payload.searchText.transcribed.trim();
+                    let appCallsign = AlexaLauncherKeyMap["amzn1.alexa-ask-target.app.70045"].callsign;
+                    let launchParams = {
+                      url: "",
+                      launchLocation: "alexa",
+                      appIdentifier: self.appIdentifiers[appCallsign]
+                    };
+                    launchParams.url = Storage.get(appCallsign + "DefaultURL") + "&va=" + (header.name === "SearchAndPlay" ? "play" : "search") + "&vq=" + encodeURI(replacedText);
+                    console.log("Alexa.RemoteVideoPlayer: global search launchApp " + appCallsign + " with params " + launchParams);
+                    appApi.launchApp(appCallsign, launchParams).then(res => {
+                      console.log("Alexa.RemoteVideoPlayer:" + appCallsign + " launched successfully using alexa search: " + JSON.stringify(res));
+                    }).catch(err => {
+                      console.log("Alexa.RemoteVideoPlayer:" + appCallsign + " launch FAILED using alexa search: " + JSON.stringify(err));
+                    });
+                    replacedText = null;
+                    appCallsign = null;
+                    launchParams = null;
+                  } else {
+                    /* Possibly an unsupported App. */
+                    console.warn("Alexa.RemoteVideoPlayer: got ENTITY_ID " + entityId[0].externalIds.ENTITY_ID + "but no match in AlexaLauncherKeyMap.");
                   }
-                });
+                } else {
+                  console.warn("Alexa.RemoteVideoPlayer: payload does not have entities; may not work.");
+                }
               }
             } else if (header.namespace === "Alexa.PlaybackController") {
               console.log("chek", notification.xr_speech_avs.directive.header);
@@ -51370,7 +51569,9 @@ var APP_accelerator_home_ui = (function () {
                 VolumePayload.msgPayload.event.payload.muted = false;
                 console.log("adjust volume", VolumePayload);
                 console.log("checkvolume", VolumePayload.msgPayload.event.payload.volume);
-                appApi.setVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", VolumePayload.msgPayload.event.payload.volume).then(res => {});
+                appApi.setVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", VolumePayload.msgPayload.event.payload.volume).then(res => {
+                  this.tag("Volume").onVolumeChanged();
+                });
               }
               if (header.name === "SetMute") {
                 VolumePayload.msgPayload.event.header.messageId = header.messageId;

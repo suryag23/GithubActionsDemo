@@ -52,6 +52,7 @@ var appApi = new AppApi();
 var dtvApi = new DTVApi();
 var hdmiApi = new HDMIApi()
 var cecApi = new CECApi();
+var xcastApi = new XcastApi();
 
 
 export default class App extends Router.App {
@@ -260,9 +261,10 @@ export default class App extends Router.App {
     }
     else if (key.keyCode == Keymap.Amazon) {
       let params = {
+        launchLocation: "dedicatedButton",
         appIdentifier: self.appIdentifiers["Amazon"]
       }
-      appApi.launchApp( "Amazon" ).catch(err => {
+      appApi.launchApp( "Amazon" , params).catch(err => {
         console.error("Error in launching Amazon via dedicated key: " + JSON.stringify(err))
       });
       return true
@@ -509,12 +511,35 @@ export default class App extends Router.App {
     Storage.set("lastVisitedRoute", "menu"); //setting to menu so that it will be always defaulted to #menu
     appApi.enableDisplaySettings().then(res => { console.log(`results : ${JSON.stringify(res)}`) }).catch(err => { console.error("error while enabling displaysettings") })
     appApi.cobaltStateChangeEvent()
+
     this.xcastApi = new XcastApi()
     this.xcastApi.activate().then(result => {
+      let serialNumber;
+      try {
+        appApi.getSerialNumber().then(res => {
+          serialNumber = res;
+          console.log("App getSerialNumber result:", serialNumber);
+          appApi.getModelName().then(modelName => {
+            let friendlyName = modelName + "_" + serialNumber;
+            this.xcastApi.setFriendlyName(friendlyName).then(result => {
+              console.log("App XCAST setFriendlyName result:", result);
+            }).catch(error => {
+              console.error("App Error setting friendlyName:", error);
+            });
+          }).catch(error => {
+            console.error("App Error retrieving modelName:", error);
+          });
+        }).catch(error => {
+          console.error("App Error getSerialNumber:", error);
+        });
+      } catch (error) {
+        console.log(error);
+      }
       if (result) {
         this.registerXcastListeners()
       }
     })
+
     keyIntercept()
     if (!availableLanguages.includes(localStorage.getItem('Language'))) {
       localStorage.setItem('Language', 'English')
@@ -601,6 +626,10 @@ export default class App extends Router.App {
 
     thunder.on('org.rdk.RDKShell', 'onApplicationDisconnected', notification => {
       console.log("onApplicationDisconnectedNotification: ", JSON.stringify(notification))
+      // DO NOT HANDLE THIS, see RDKUI-474 for details.
+      // if (notification.hasOwnProperty("client") && (Storage.get("applicationType").includes(notification.client))) {
+      //   appApi.exitApp(Storage.get("applicationType"));
+      // }
     })
 
     //video info change events begin here---------------------
@@ -729,6 +758,24 @@ export default class App extends Router.App {
 
   //ACTIVATING HDMI CEC PLUGIN
   cecApi.activate().then((res) => {
+    let getfriendlyname,getosdname;
+    setTimeout(() => {
+      xcastApi.getFriendlyName().then(res =>{
+        getfriendlyname = res.friendlyname;
+        console.log("XcastApi getFriendlyName :"+getfriendlyname);
+      }).catch(err => {
+        console.error('XcastApi getFriendlyName Error: ', err);
+      })
+      cecApi.getOSDName().then(result =>{
+        getosdname = result.name;
+        console.log("CECApi getOSDName :"+getosdname);
+        if(getfriendlyname !== getosdname) {
+          cecApi.setOSDName(getfriendlyname);
+        }
+      }).catch(err => {
+        console.error('CECApi getOSDName Error :', err);
+      })
+    }, 5000);
     cecApi.getActiveSourceStatus().then((res)=>{
       Storage.set("UICacheCECActiveSourceStatus", res);
       console.log("App getActiveSourceStatus: " +res+ " UICacheCECActiveSourceStatus:" +Storage.get("UICacheCECActiveSourceStatus"));
@@ -1053,43 +1100,62 @@ export default class App extends Router.App {
             console.log("Alexa.RemoteVideoPlayer: "+JSON.stringify(header))
             if(header.name === "SearchAndDisplayResults" || header.name === "SearchAndPlay"){
               console.log("Alexa.RemoteVideoPlayer: SearchAndDisplayResults || SearchAndPlay: "+JSON.stringify(header))
-              payload && payload.entities.map(item =>{
-                if(item.type === "App" ||  item.type === "MediaType"){
-                  console.log("Alexa.RemoteVideoPlayer: SearchAndDisplayResults || SearchAndPlay: Payload: "+JSON.stringify(payload))
-                  if (item.value === "Netflix") {
-                    let replacedText = payload.searchText.transcribed.replace("netflix","")
-                    console.log("replacedtext",replacedText)
-                    const netflixLaunchParams = {
-                      url: encodeURI(replacedText.trim()),
-                      launchLocation: "alexa",
-                      appIdentifier:self.appIdentifiers["Netflix"]
-                    }
-                    console.log("Netflix search is getting invoked using alexa params: "+JSON.stringify(netflixLaunchParams));
-                    appApi.launchApp("Netflix",netflixLaunchParams).then(res => {
-                      console.log("Netflix launched successfully using alexa search: "+JSON.stringify(res))
-                    }).catch(err => {
-                      console.log("Netflix launched FAILED using alexa search: "+JSON.stringify(err))
-                    })
+              /* Find if payload contains Destination App */
+              if (payload.hasOwnProperty("entities")) {
+                let entityId = payload.entities.filter(obj => Object.keys(obj).some(key => obj[key].hasOwnProperty("ENTITY_ID")));
+                if (entityId.length && AlexaLauncherKeyMap[entityId[0].externalIds.ENTITY_ID]) {
+                  /* ENTITY_ID or vsk key found; meaning Target App is there in response. */
+                  let replacedText = payload.searchText.transcribed.replace(entityId[0].value.toLowerCase(),"").trim();
+                  let appCallsign = AlexaLauncherKeyMap[entityId[0].externalIds.ENTITY_ID].callsign
+                  //let appUrl = AlexaLauncherKeyMap[entityId[0].externalIds.ENTITY_ID].url
+                  let launchParams = {
+                    url: "",
+                    launchLocation: "alexa",
+                    appIdentifier:self.appIdentifiers[appCallsign]
                   }
-                  if(item.value.startsWith("YouTube") || item.type == "MediaType"){
-                    let replacedText = payload.searchText.transcribed.replace("youtube","")
-                    console.log("replacedtext",replacedText)
-                    const cobaltLaunchParams = {
-                      url: Storage.get(item.value+"DefaultURL")+"&va="+((header.name === "SearchAndPlay")?"play":"search")+"&vq=" + encodeURI(replacedText.trim()),
-                      launchLocation: "alexa",
-                      appIdentifier:self.appIdentifiers[item.value]
-                    }
-                    console.log(item.value +" search is getting invoked using alexa params: "+JSON.stringify(cobaltLaunchParams));
-                    appApi.launchApp(item.value, cobaltLaunchParams).then(res => {
-                      console.log(item.value+" launched successfully using alexa search: "+JSON.stringify(res))
-                    }).catch(err => {
-                      console.log(item.value+" launched FAILED using alexa search: "+JSON.stringify(err))
-                    })
-                    replacedText = null;
-                    cobaltLaunchParams = null;
+                  if ("Netflix" === appCallsign) {
+                    launchParams.url = encodeURI(replacedText);
+                  } else if (appCallsign.startsWith("YouTube")) {
+                    launchParams.url = Storage.get(appCallsign+"DefaultURL")+"&va="+((header.name === "SearchAndPlay")?"play":"search")+"&vq=" + encodeURI(replacedText);
                   }
+                  console.log("Alexa.RemoteVideoPlayer: launchApp " + appCallsign + " with params " + launchParams)
+                  appApi.launchApp(appCallsign, launchParams).then(res => {
+                    console.log("Alexa.RemoteVideoPlayer:" + appCallsign + " launched successfully using alexa search: " + JSON.stringify(res))
+                  }).catch(err => {
+                    console.log("Alexa.RemoteVideoPlayer:" + appCallsign + " launch FAILED using alexa search: " + JSON.stringify(err))
+                  })
+                  replacedText = null;
+                  appCallsign = null;
+                  launchParams = null;
+                } else if (!entityId.length && (Storage.get("applicationType") != "")) {
+                  /* TODO: Current focused app is not ResidentApp; redirect generic search to it if supported. */
+                  console.warn("Alexa.RemoteVideoPlayer: " + Storage.get("applicationType") + " is the focued app; need Voice search integration support to it.");
+                } else if (!entityId.length && (Storage.get("applicationType") == "")) {
+                  /* Generic global search without a target app; redirect to Youtube as of now. */
+                  let replacedText = payload.searchText.transcribed.trim();
+                  let appCallsign = AlexaLauncherKeyMap["amzn1.alexa-ask-target.app.70045"].callsign
+                  let launchParams = {
+                    url: "",
+                    launchLocation: "alexa",
+                    appIdentifier:self.appIdentifiers[appCallsign]
+                  }
+                  launchParams.url = Storage.get(appCallsign+"DefaultURL")+"&va="+((header.name === "SearchAndPlay")?"play":"search")+"&vq=" + encodeURI(replacedText);
+                  console.log("Alexa.RemoteVideoPlayer: global search launchApp " + appCallsign + " with params " + launchParams)
+                  appApi.launchApp(appCallsign, launchParams).then(res => {
+                    console.log("Alexa.RemoteVideoPlayer:" + appCallsign + " launched successfully using alexa search: " + JSON.stringify(res))
+                  }).catch(err => {
+                    console.log("Alexa.RemoteVideoPlayer:" + appCallsign + " launch FAILED using alexa search: " + JSON.stringify(err))
+                  })
+                  replacedText = null;
+                  appCallsign = null;
+                  launchParams = null;
+                } else {
+                  /* Possibly an unsupported App. */
+                  console.warn("Alexa.RemoteVideoPlayer: got ENTITY_ID " + entityId[0].externalIds.ENTITY_ID + "but no match in AlexaLauncherKeyMap.");
                 }
-              })
+              } else {
+                console.warn("Alexa.RemoteVideoPlayer: payload does not have entities; may not work.");
+              }
             }
           }
           else if(header.namespace === "Alexa.PlaybackController"){
@@ -1153,7 +1219,9 @@ export default class App extends Router.App {
               VolumePayload.msgPayload.event.payload.muted = false
               console.log("adjust volume", VolumePayload)
               console.log("checkvolume", VolumePayload.msgPayload.event.payload.volume)
-              appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), VolumePayload.msgPayload.event.payload.volume).then(res =>{})
+              appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), VolumePayload.msgPayload.event.payload.volume).then(res =>{
+                this.tag("Volume").onVolumeChanged()
+              })
             }
             if(header.name === "SetMute"){
               VolumePayload.msgPayload.event.header.messageId = header.messageId

@@ -107,7 +107,31 @@ export default class XcastApi {
         })
     })
   }
-
+  getFriendlyName() {
+    return new Promise((resolve, reject) => {
+      this._thunder.call('org.rdk.Xcast', 'getFriendlyName')
+        .then(res => {
+          resolve(res)
+        })
+        .catch(err => {
+          console.log('Xdial getFriendlyName error', err);
+          reject(err)
+        })
+    })
+  }
+  setFriendlyName(name) {
+    return new Promise((resolve, reject) => {
+      this._thunder.call('org.rdk.Xcast', 'setFriendlyName', {friendlyname: name}).then(result => {
+        console.log("Xcast setFriendlyName: "+ name +" result: ",JSON.stringify(result))
+        resolve(result);
+      }).catch(err => { console.error(err); resolve(false); });
+    }).then(val => {
+      console.log("The resolved value is:", val);
+    })
+    .catch(error =>{
+      console.error("An error occurred:", error);
+    });
+  }
   /**
    *
    * @param {string} eventId
