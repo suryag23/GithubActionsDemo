@@ -103,6 +103,7 @@ export default class CodeScreen extends Lightning.Component {
         this._setState('Description')
     }
     _focus() {
+        if(appApi.checkAlexaAuthStatus() !== "AlexaUserDenied"){
          thunder.Controller.activate({callsign: "org.rdk.VoiceControl"}).then(res => {
             
          thunder.on("org.rdk.VoiceControl", 'onServerMessage', notification => {
@@ -129,8 +130,9 @@ export default class CodeScreen extends Lightning.Component {
          })
          }).catch(err => {
          console.log("VoiceControl Plugin Activation ERROR!: ",err)
-       })
-       this._setState('Description')
+         })
+         this._setState('Description')
+       }
     }
    
     _active() {

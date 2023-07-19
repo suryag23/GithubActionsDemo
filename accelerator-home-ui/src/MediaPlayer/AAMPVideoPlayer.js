@@ -116,7 +116,9 @@ export default class AAMPVideoPlayer extends Lightning.Component {
             fastfwd: 'fastfwd',
             fastrwd: 'fastrwd',
             nextTrack: 'nextTrack',
-            prevTrack: 'prevTrack'
+            prevTrack: 'prevTrack',
+            seekFwd: 'seekFwd',
+            seekRwd:'seekRwd'
           },
         },
       },
@@ -337,6 +339,14 @@ export default class AAMPVideoPlayer extends Lightning.Component {
     } catch (error) {
       console.error('Playback Failed ' + error)
     }
+  }
+
+  seekFwd() {
+    this.player.seek(this.position+10)
+  }
+
+  seekRwd() {
+    this.player.seek(this.position-10)
   }
 
   nextTrack() {

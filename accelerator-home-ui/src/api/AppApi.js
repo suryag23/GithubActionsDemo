@@ -21,6 +21,7 @@ import { Router, Settings, Storage } from '@lightningjs/sdk';
 import HDMIApi from './HDMIApi';;
 import NetflixIIDs from "../../static/data/NetflixIIDs.json";
 import HomeApi from './HomeApi';
+import { AlexaLauncherKeyMap, ApplicationStateReporter} from '../Config/AlexaConfig';
 import { availableLanguageCodes } from '../Config/Config';
 
 const config = {
@@ -625,6 +626,19 @@ export default class AppApi {
         thunder.call("org.rdk.RDKShell", "launchApplication", params).then(res => {
           console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
           if (res.success) {
+            for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
+              if (value.callsign === callsign) {
+                ApplicationStateReporter.event.payload.value.id = key;
+                ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
+                ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
+                console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
+                thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
+                  console.error("VoiceControl sendVoiceMessage error:", err);
+                  resolve(false)
+                })
+                break;
+              }
+            }
             if(args.appIdentifier){
               let order = Storage.get("appCarouselOrder")
               if(!order){
@@ -657,6 +671,19 @@ export default class AppApi {
         thunder.call("org.rdk.RDKShell", "launch", params).then(res => {
           console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
           if (res.success) {
+            for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
+              if (value.callsign === callsign) {
+                ApplicationStateReporter.event.payload.value.id = key;
+                ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
+                ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
+                console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
+                thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
+                  console.error("VoiceControl sendVoiceMessage error:", err);
+                  resolve(false)
+                })
+                break;
+              }
+            }
             if(args.appIdentifier){
               let order = Storage.get("appCarouselOrder")
               if(!order){
@@ -2274,4 +2301,46 @@ getTimerValue() {
     Storage.set("AlexaSmartscreenAudioPlaybackState", newState)
     console.log("setAlexaSmartscreenAudioPlaybackState with ", newState)
   }
+  getAlexaDeviceSettings() {
+    return new Promise((resolve, reject) => {
+      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Get Device Settings" } })
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          resolve(false)
+        })
+    })
+  }
+  setLanguageinAlexa(updatedLanguage) {    
+     let updatedLan=[]
+     updatedLan.push(updatedLanguage)
+    console.log("updatedLanguage :"+updatedLan)
+    return new Promise((resolve, reject) => {
+      const systemCallsign = 'org.rdk.VoiceControl'
+      thunder
+        .call(systemCallsign, 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "locale": updatedLan } } })
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          resolve(false)
+        })
+    })
+  }
+  setTimeZoneinAlexa(updatedTimeZone) {
+    return new Promise((resolve, reject) => {
+      const systemCallsign = 'org.rdk.VoiceControl'
+      thunder
+        .call(systemCallsign, 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "timezone": updatedTimeZone } } })
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          resolve(false)
+        })
+    })
+
+  }
+
 }

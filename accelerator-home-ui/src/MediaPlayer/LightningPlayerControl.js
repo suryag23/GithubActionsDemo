@@ -83,9 +83,11 @@ export default class LightningPlayerControls extends Lightning.Component {
         x: 820,
         y: 125,
         children: [
+          {src: Utils.asset('images/player/rewind.png'), x: 17, y: 17},
           { src: Utils.asset('images/Media Player/Icon_Back_White_16k.png'), x: 17, y: 17 },
           { src: Utils.asset('images/Media Player/Icon_Pause_White_16k.png'), x: 17, y: 17 },
           { src: Utils.asset('images/Media Player/Icon_Next_White_16k.png'), x: 17, y: 17 },
+          {src: Utils.asset('images/player/fast-forward.png'), x: 17, y: 17},
         ].map((item, idx) => ({
           x: idx * 75,
           // texture: Lightning.Tools.getRoundRect(80, 80, 40, 0, 0, true, 0xff8e8e8e),
@@ -104,10 +106,10 @@ export default class LightningPlayerControls extends Lightning.Component {
      * Variable to store the duration of the video content.
      */
     this.videoDuration = 0
-    this.tag('Buttons').children[0].patch({
+    this.tag('Buttons').children[1].patch({
       alpha: 1
     })
-    this.tag('Buttons').children[2].patch({
+    this.tag('Buttons').children[3].patch({
       alpha: 1
     })
     this.toggle = false
@@ -178,14 +180,14 @@ export default class LightningPlayerControls extends Lightning.Component {
 
   hideNextPrevious(){
     this.isChannel = true
-    this.tag('Buttons').children[0].visible=false
-    this.tag('Buttons').children[2].visible=false
+    this.tag('Buttons').children[1].visible=false
+    this.tag('Buttons').children[3].visible=false
   }
 
   showNextPrevious(){
     this.isChannel = false
-    this.tag('Buttons').children[0].visible=true
-    this.tag('Buttons').children[2].visible=true
+    this.tag('Buttons').children[1].visible=true
+    this.tag('Buttons').children[3].visible=true
   }
   /**
    * Timer function to track the inactivity of the player controls.
@@ -207,7 +209,7 @@ export default class LightningPlayerControls extends Lightning.Component {
             : Utils.asset('images/Media Player/Icon_Pause_Orange_16k.png')
           this.timer()
           this.tag('Buttons')
-            .children[1].tag('ControlIcon')
+            .children[2].tag('ControlIcon')
             .patch({
               texture: Lightning.Tools.getSvgTexture(this.focus, 50, 50)
             })
@@ -217,7 +219,7 @@ export default class LightningPlayerControls extends Lightning.Component {
             ? Utils.asset('images/Media Player/Icon_Play_White_16k.png')
             : Utils.asset('images/Media Player/Icon_Pause_White_16k.png')
           this.tag('Buttons')
-            .children[1].tag('ControlIcon')
+            .children[2].tag('ControlIcon')
             .patch({
               texture: Lightning.Tools.getSvgTexture(this.unfocus, 50, 50)
             })
@@ -236,7 +238,7 @@ export default class LightningPlayerControls extends Lightning.Component {
             : Utils.asset('images/Media Player/Icon_Pause_Orange_16k.png')
           this.timer()
           this.tag('Buttons')
-            .children[1].tag('ControlIcon')
+            .children[2].tag('ControlIcon')
             .patch({
               texture: Lightning.Tools.getSvgTexture(this.focus, 50, 50)
             })
@@ -245,10 +247,16 @@ export default class LightningPlayerControls extends Lightning.Component {
           if(!this.isChannel){
             this._setState('Forward')
           }
+          else {
+            this._setState('seekFwd')
+          }
         }
         _handleLeft() {
           if(!this.isChannel){
             this._setState('Rewind')
+          }
+          else {
+            this._setState('seekRwd')
           }
         }
         _getFocused() {
@@ -260,7 +268,7 @@ export default class LightningPlayerControls extends Lightning.Component {
         $enter() {
           this.timer()
           this.tag('Buttons')
-            .children[2].tag('ControlIcon')
+            .children[3].tag('ControlIcon')
             .patch({
               texture: Lightning.Tools.getSvgTexture(
                 Utils.asset('images/Media Player/Icon_Next_Orange_16k.png'),
@@ -271,7 +279,7 @@ export default class LightningPlayerControls extends Lightning.Component {
         }
         $exit() {
           this.tag('Buttons')
-            .children[2].tag('ControlIcon')
+            .children[3].tag('ControlIcon')
             .patch({
               texture: Lightning.Tools.getSvgTexture(
                 Utils.asset('images/Media Player/Icon_Next_White_16k.png'),
@@ -281,7 +289,7 @@ export default class LightningPlayerControls extends Lightning.Component {
             })
         }
         _handleRight() {
-          // this._setState('Extras')
+          this._setState('seekFwd')
         }
         _handleLeft() {
           this._setState('PlayPause')
@@ -299,7 +307,7 @@ export default class LightningPlayerControls extends Lightning.Component {
         $enter() {
           this.timer()
           this.tag('Buttons')
-            .children[0].tag('ControlIcon')
+            .children[1].tag('ControlIcon')
             .patch({
               texture: Lightning.Tools.getSvgTexture(
                 Utils.asset('images/Media Player/Icon_Back_Orange_16k.png'),
@@ -310,7 +318,7 @@ export default class LightningPlayerControls extends Lightning.Component {
         }
         $exit() {
           this.tag('Buttons')
-            .children[0].tag('ControlIcon')
+            .children[1].tag('ControlIcon')
             .patch({
               texture: Lightning.Tools.getSvgTexture(
                 Utils.asset('images/Media Player/Icon_Back_White_16k.png'),
@@ -320,7 +328,7 @@ export default class LightningPlayerControls extends Lightning.Component {
             })
         }
         _handleLeft() {
-          // this._setState('AudioOptions')
+          this._setState('seekRwd')
         }
         _handleRight() {
           this._setState('PlayPause')
@@ -328,6 +336,90 @@ export default class LightningPlayerControls extends Lightning.Component {
         _handleEnter() {
           this.toggle = false
           this.signal('prevTrack')
+        }
+        _getFocused() {
+          this.timer()
+        }
+      },
+      class seekFwd extends this{
+        $enter() {
+          this.timer()
+          this.tag('Buttons')
+            .children[4].tag('ControlIcon')
+            .patch({
+              texture: Lightning.Tools.getSvgTexture(
+                Utils.asset('images/Media Player/SeekFwd.png'),
+                50,
+                50
+              ),
+            })
+        }
+        $exit() {
+          this.tag('Buttons')
+            .children[4].tag('ControlIcon')
+            .patch({
+              texture: Lightning.Tools.getSvgTexture(
+                Utils.asset('images/player/fast-forward.png'),
+                50,
+                50
+              ),
+            })
+        }
+        _handleLeft() {
+          if(!this.isChannel) {
+           this._setState('Forward')
+          }
+          else {
+            this._setState('PlayPause')
+          }
+        }
+        _handleRight() {
+        }
+        _handleEnter() {
+          this.toggle = false
+          this.signal('seekFwd')
+        }
+        _getFocused() {
+          this.timer()
+        }
+      },
+      class seekRwd extends this {
+        $enter() {
+          this.timer()
+          this.tag('Buttons')
+            .children[0].tag('ControlIcon')
+            .patch({
+              texture: Lightning.Tools.getSvgTexture(
+                Utils.asset('images/Media Player/SeekRwd.png'),
+                50,
+                50
+              ),
+            })
+        }
+        $exit() {
+          this.tag('Buttons')
+            .children[0].tag('ControlIcon')
+            .patch({
+              texture: Lightning.Tools.getSvgTexture(
+                Utils.asset('images/player/rewind.png'),
+                50,
+                50
+              ),
+            })
+        }
+        _handleLeft() {
+        }
+        _handleRight() {
+          if(!this.isChannel) {
+          this._setState('Rewind')
+          }
+          else {
+            this._setState('PlayPause')
+          }
+        }
+        _handleEnter() {
+          this.toggle = false
+          this.signal('seekRwd')
         }
         _getFocused() {
           this.timer()

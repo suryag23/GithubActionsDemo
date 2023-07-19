@@ -18,7 +18,8 @@
  **/
 //Payloads, and other keys related to alexa and voiceControl plugin.
 
-export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map
+//app/shortcuts identifier and callsign map
+export const AlexaLauncherKeyMap = {
     "amzn1.alexa-ask-target.app.70045": {
       "name": "YouTube",
       "callsign": "YouTube",
@@ -143,29 +144,30 @@ export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map
         "name": "Privacy Settings",
         "route": "settings/other/privacy"
     },
-  };
-  export const errorPayload =
-  {
+};
+
+export const errorPayload = {
     "msgPayload":{
-    "event": {
-      "header": {
-        "namespace": "Alexa",
-        "name": "ErrorResponse",
-        "messageId": "Unique identifier, preferably a version 4 UUID",
-         "correlationToken": "Opaque correlation token that matches the request",
-        "payloadVersion": "3"
-      },
-      "endpoint":{
-        "endpointId": "Endpoint ID"
-      },
-      "payload": {
-        "type": "Error type",
-        "message": "Error message"
-      }
+        "event": {
+            "header": {
+                "namespace": "Alexa",
+                "name": "ErrorResponse",
+                "messageId": "Unique identifier, preferably a version 4 UUID",
+                "correlationToken": "Opaque correlation token that matches the request",
+                "payloadVersion": "3"
+            },
+            "endpoint":{
+                "endpointId": "Endpoint ID"
+            },
+            "payload": {
+                "type": "Error type",
+                "message": "Error message"
+            }
+        }
     }
-   }
-  }
-  export const PlaybackStateReport = {
+}
+
+export const PlaybackStateReport = {
     "msgPayload": {
         "event": {
             "header":
@@ -196,17 +198,63 @@ export const AlexaLauncherKeyMap = { //app/shortcuts identifier and callsign map
         }
     }
 }
+
 export const VolumePayload = {
     "msgPayload": {
-         "event": {
+        "event": {
+            "header": {
+                "namespace": "Speaker",
+                "name": "VolumeChanged",
+                "messageId": "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
+            },
+            "payload": {
+                "volume": 30,
+                "muted": false
+            }
+        }
+    }
+}
+
+export const ApplicationStateReporter = {
+    "event": {
         "header": {
-            "namespace": "Speaker",
-            "name": "VolumeChanged",
-            "messageId": "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
+            "namespace": "Alexa",
+            "name": "ChangeReport",
+            "messageId": "3d2521f2-4e93-4158-b91e-ba04637b91a9",
+            "payloadVersion": "3"
+        },
+        "endpoint": {
+            "endpointId": "rdk-video-device"
         },
         "payload": {
-            "volume": 30,
-            "muted": false
+            "namespace": "Alexa.ApplicationStateReporter",
+            "name": "foregroundApplication",
+            "value": {
+            "id": "amzn1.alexa-ask-target.shortcut.33122",
+            "version": "2019020342",
+            "type": "vsk",
+            "metadata": {
+                "categories": [
+                "LAUNCHER"
+                ],
+                "isVisible": true
+            },
+            "timeOfSample": "2023-04-03T16:20:50.52Z",
+            "uncertaintyInMilliseconds": 0
+            }
         }
-    }}
+    },
+    "context": {
+        "properties": [
+            {
+                "namespace": "Alexa.EndpointHealth",
+                "name": "connectivity",
+                "value": {
+                    "value": "OK"
+                },
+                "timeOfSample": "2021-12-01T18:20:50Z",
+                "uncertaintyInMilliseconds": 0
+            }
+        ]
+    }
 }

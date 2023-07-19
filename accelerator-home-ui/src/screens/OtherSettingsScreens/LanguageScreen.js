@@ -18,7 +18,7 @@
  **/
 import { Language, Lightning, Router } from '@lightningjs/sdk'
 import LanguageItem from '../../items/LanguageItem'
-import { availableLanguages } from '../../Config/Config'
+import { availableLanguages, availableLanguageCodes } from '../../Config/Config'
 import AppApi from '../../api/AppApi';
 import thunderJS from 'ThunderJS';
 
@@ -126,6 +126,19 @@ export default class LanguageScreen extends Lightning.Component {
         _handleEnter() {
           if (localStorage.getItem('Language') !== availableLanguages[this._Languages.tag('List').index]) {
             localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index])
+            let updatedLanguage=availableLanguageCodes[localStorage.getItem('Language')]
+            if(appApi.checkAlexaAuthStatus() === "AlexaHandleError") {
+             appApi.getAlexaDeviceSettings().then((response) => { })
+                thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
+                  if(notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage){
+                    for(let i=0;i<notification.xr_speech_avs.deviceSettings.supportedLocales.length;i++){
+                    if(updatedLanguage===notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()){
+                      appApi.setLanguageinAlexa(updatedLanguage)
+                     }
+                   }
+                  }
+                })  
+            }
             let path = location.pathname.split('index.html')[0]
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html"
             let notification_url = location.origin + path + url

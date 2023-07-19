@@ -88,6 +88,9 @@ export default class TimeZone extends Lightning.Component {
                     data.push([i, this.resp[i], this.zone !== undefined ? this.zone.split('/')[0] === i : false])
                 }
             }
+            if(this.appApi.checkAlexaAuthStatus() === "AlexaHandleError") {                   
+                this.appApi.setTimeZoneinAlexa(this.zone)
+            }
         } catch (error) {
             console.log('no api present', error)
         }

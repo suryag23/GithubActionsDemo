@@ -3,7 +3,7 @@
  * SDK version: 4.8.3
  * CLI version: 2.11.0
  * 
- * Generated: Wed, 28 Jun 2023 13:33:22 GMT
+ * Generated: Tue, 18 Jul 2023 12:57:30 GMT
  */
 
 var APP_accelerator_home_ui = (function () {
@@ -6807,6 +6807,259 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
+  //Payloads, and other keys related to alexa and voiceControl plugin.
+
+  //app/shortcuts identifier and callsign map
+  const AlexaLauncherKeyMap = {
+    "amzn1.alexa-ask-target.app.70045": {
+      "name": "YouTube",
+      "callsign": "YouTube",
+      "url": ""
+    },
+    "amzn1.alexa-ask-target.app.50623": {
+      "name": "YouTubeTV",
+      "callsign": "YouTubeTV",
+      "url": ""
+    },
+    "amzn1.alexa-ask-target.app.09817": {
+      "name": "YouTubeKids",
+      "callsign": "YouTubeKids",
+      "url": ""
+    },
+    "amzn1.alexa-ask-target.app.58952": {
+      "name": "CNN go",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.CNN"
+    },
+    "amzn1.alexa-ask-target.app.72095": {
+      "name": "Prime Video",
+      "callsign": "Amazon",
+      "url": ""
+    },
+    "amzn1.alexa-ask-target.app.36377": {
+      "name": "Netflix",
+      "callsign": "Netflix",
+      "url": ""
+    },
+    "amzn1.alexa-ask-target.app.34908": {
+      "name": "XUMO",
+      "callsign": "HtmlApp",
+      "url": "https://x1box-app.xumo.com/index.html"
+    },
+    "amzn1.alexa-ask-target.app.94721": {
+      "name": "NBCU Peacock",
+      "callsign": "Peacock",
+      "url": ""
+    },
+    "amzn1.alexa-ask-target.app.92933": {
+      "name": "Vimeo",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.VimeoRelease"
+    },
+    "amzn1.alexa-ask-target.app.96247": {
+      "name": "The Weather Network",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.WeatherNetwork"
+    },
+    "amzn1.alexa-ask-target.app.48144": {
+      "name": "Euronews",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Euronews"
+    },
+    "amzn1.alexa-ask-target.app.54002": {
+      "name": "AccuWeather - Weather for Life",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.AccuWeather"
+    },
+    "amzn1.alexa-ask-target.app.58518": {
+      "name": "Al Jazeera",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Aljazeera"
+    },
+    "amzn1.alexa-ask-target.app.41915": {
+      "name": "Radioline",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Radioline"
+    },
+    "amzn1.alexa-ask-target.app.45441": {
+      "name": "Wallstreet Journal",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.WallStreetJournal"
+    },
+    "amzn1.alexa-ask-target.app.47328": {
+      "name": "Radio by MyTuner",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.appgeneration.mytuner"
+    },
+    "amzn1.alexa-ask-target.app.79431": {
+      "name": "Tastemade TV",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Tastemade"
+    },
+    "amzn1.alexa-ask-target.app.16283": {
+      "name": "Bloomberg TV+",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.bloomberg.metrological.x1"
+    },
+    "amzn1.alexa-ask-target.app.79143": {
+      "name": "Free Games by PlayWorks",
+      "callsign": "LightningApp",
+      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.playworks.pwkids"
+    },
+    //shortcuts
+    "amzn1.alexa-ask-target.shortcut.33122": {
+      "name": "Home",
+      "route": "menu"
+    },
+    "amzn1.alexa-ask-target.shortcut.28647": {
+      "name": "Apps",
+      "route": "apps"
+    },
+    "amzn1.alexa-ask-target.shortcut.68228": {
+      "name": "Guide",
+      "route": "epg"
+    },
+    "amzn1.alexa-ask-target.shortcut.07395": {
+      "name": "Settings",
+      "route": "settings"
+    },
+    "amzn1.alexa-ask-target.shortcut.94081": {
+      "name": "Bluetooth Settings",
+      "route": "settings/bluetooth"
+    },
+    "amzn1.alexa-ask-target.shortcut.58566": {
+      "name": "Network Settings",
+      "route": "settings/network"
+    },
+    "amzn1.alexa-ask-target.shortcut.12736": {
+      "name": "Privacy Settings",
+      "route": "settings/other/privacy"
+    }
+  };
+  const errorPayload = {
+    "msgPayload": {
+      "event": {
+        "header": {
+          "namespace": "Alexa",
+          "name": "ErrorResponse",
+          "messageId": "Unique identifier, preferably a version 4 UUID",
+          "correlationToken": "Opaque correlation token that matches the request",
+          "payloadVersion": "3"
+        },
+        "endpoint": {
+          "endpointId": "Endpoint ID"
+        },
+        "payload": {
+          "type": "Error type",
+          "message": "Error message"
+        }
+      }
+    }
+  };
+  const PlaybackStateReport = {
+    "msgPayload": {
+      "event": {
+        "header": {
+          "namespace": "Alexa",
+          "name": "ChangeReport",
+          "messageId": "3d2521f2-4e93-4158-b91e-ba04637b91a9",
+          "payloadVersion": "3"
+        },
+        "endpoint": {
+          "endpointId": "rdk-video-device"
+        },
+        "payload": {
+          "change": {
+            "cause": {
+              "type": "PHYSICAL_INTERACTION"
+            },
+            "properties": [{
+              "namespace": "Alexa.PlaybackStateReporter",
+              "name": "playbackState",
+              "value": {
+                "state": "Pause/stop/Resume/Play"
+              },
+              "timeOfSample": new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + "T" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "Z",
+              "uncertaintyInMilliseconds": 0
+            }]
+          }
+        }
+      }
+    }
+  };
+  const VolumePayload = {
+    "msgPayload": {
+      "event": {
+        "header": {
+          "namespace": "Speaker",
+          "name": "VolumeChanged",
+          "messageId": "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
+        },
+        "payload": {
+          "volume": 30,
+          "muted": false
+        }
+      }
+    }
+  };
+  const ApplicationStateReporter = {
+    "event": {
+      "header": {
+        "namespace": "Alexa",
+        "name": "ChangeReport",
+        "messageId": "3d2521f2-4e93-4158-b91e-ba04637b91a9",
+        "payloadVersion": "3"
+      },
+      "endpoint": {
+        "endpointId": "rdk-video-device"
+      },
+      "payload": {
+        "namespace": "Alexa.ApplicationStateReporter",
+        "name": "foregroundApplication",
+        "value": {
+          "id": "amzn1.alexa-ask-target.shortcut.33122",
+          "version": "2019020342",
+          "type": "vsk",
+          "metadata": {
+            "categories": ["LAUNCHER"],
+            "isVisible": true
+          },
+          "timeOfSample": "2023-04-03T16:20:50.52Z",
+          "uncertaintyInMilliseconds": 0
+        }
+      }
+    },
+    "context": {
+      "properties": [{
+        "namespace": "Alexa.EndpointHealth",
+        "name": "connectivity",
+        "value": {
+          "value": "OK"
+        },
+        "timeOfSample": "2021-12-01T18:20:50Z",
+        "uncertaintyInMilliseconds": 0
+      }]
+    }
+  };
+
+  /**
+   * If not stated otherwise in this file or this component's LICENSE
+   * file the following copyright and licenses apply:
+   *
+   * Copyright 2020 RDK Management
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   **/
   const config$f = {
     host: '127.0.0.1',
     port: 9998,
@@ -7410,6 +7663,19 @@ var APP_accelerator_home_ui = (function () {
           thunder$j.call("org.rdk.RDKShell", "launchApplication", params).then(res => {
             console.log("AppAPI ".concat(callsign, " : Launch results in ").concat(JSON.stringify(res)));
             if (res.success) {
+              for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
+                if (value.callsign === callsign) {
+                  ApplicationStateReporter.event.payload.value.id = key;
+                  ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
+                  ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
+                  console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
+                  thunder$j.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
+                    console.error("VoiceControl sendVoiceMessage error:", err);
+                    resolve(false);
+                  });
+                  break;
+                }
+              }
               if (args.appIdentifier) {
                 let order = Storage.get("appCarouselOrder");
                 if (!order) {
@@ -7444,6 +7710,19 @@ var APP_accelerator_home_ui = (function () {
           thunder$j.call("org.rdk.RDKShell", "launch", params).then(res => {
             console.log("AppAPI ".concat(callsign, " : Launch results in ").concat(JSON.stringify(res)));
             if (res.success) {
+              for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
+                if (value.callsign === callsign) {
+                  ApplicationStateReporter.event.payload.value.id = key;
+                  ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
+                  ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
+                  console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
+                  thunder$j.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
+                    console.error("VoiceControl sendVoiceMessage error:", err);
+                    resolve(false);
+                  });
+                  break;
+                }
+              }
               if (args.appIdentifier) {
                 let order = Storage.get("appCarouselOrder");
                 if (!order) {
@@ -8861,6 +9140,56 @@ var APP_accelerator_home_ui = (function () {
       Storage.set("AlexaSmartscreenAudioPlaybackState", newState);
       console.log("setAlexaSmartscreenAudioPlaybackState with ", newState);
     }
+    getAlexaDeviceSettings() {
+      return new Promise((resolve, reject) => {
+        thunder$j.call('org.rdk.VoiceControl', 'sendVoiceMessage', {
+          "msgPayload": {
+            "DeviceSettings": "Get Device Settings"
+          }
+        }).then(result => {
+          resolve(result);
+        }).catch(err => {
+          resolve(false);
+        });
+      });
+    }
+    setLanguageinAlexa(updatedLanguage) {
+      let updatedLan = [];
+      updatedLan.push(updatedLanguage);
+      console.log("updatedLanguage :" + updatedLan);
+      return new Promise((resolve, reject) => {
+        const systemCallsign = 'org.rdk.VoiceControl';
+        thunder$j.call(systemCallsign, 'sendVoiceMessage', {
+          "msgPayload": {
+            "DeviceSettings": "Set Device Settings",
+            "values": {
+              "locale": updatedLan
+            }
+          }
+        }).then(result => {
+          resolve(result);
+        }).catch(err => {
+          resolve(false);
+        });
+      });
+    }
+    setTimeZoneinAlexa(updatedTimeZone) {
+      return new Promise((resolve, reject) => {
+        const systemCallsign = 'org.rdk.VoiceControl';
+        thunder$j.call(systemCallsign, 'sendVoiceMessage', {
+          "msgPayload": {
+            "DeviceSettings": "Set Device Settings",
+            "values": {
+              "timezone": updatedTimeZone
+            }
+          }
+        }).then(result => {
+          resolve(result);
+        }).catch(err => {
+          resolve(false);
+        });
+      });
+    }
   }
 
   /**
@@ -8965,10 +9294,10 @@ var APP_accelerator_home_ui = (function () {
     displayName: 'Let it Snow',
     url: '/images/tvShows/let-it-snow.jpg'
   }, {
-    displayName: 'Do Little',
+    displayName: 'FOG DASH',
     url: '/images/tvShows/do-little.jpg'
   }, {
-    displayName: 'Summerland',
+    displayName: 'FOG HLS',
     url: '/images/tvShows/summerland.jpg'
   }];
 
@@ -15598,9 +15927,22 @@ var APP_accelerator_home_ui = (function () {
           } catch {
             this.internetConnectivity = false;
           }
+          let displayName = this.tag('TVShows').items[this.tag('TVShows').index].data.displayName;
           if (this.internetConnectivity) {
-            //this.fireAncestors('$goToPlayer')
-            Router.navigate('player');
+            if (displayName === "FOG HLS") {
+              let params = {
+                url: "http://127.0.0.1:9080/tsb?clientId=FOG_AAMP&recordedUrl=https%3A%2F%2Fcph-p2p-msl.akamaized.net%2Fhls%2Flive%2F2000341%2Ftest%2Fmaster.m3u8"
+              };
+              Router.navigate("player", params);
+            } else if (displayName === "FOG DASH") {
+              let params = {
+                url: "http://127.0.0.1:9080/tsb?clientId=FOG_AAMP&recordedUrl=https%3A%2F%2Flin001-gb-s8-tst-ll.cdn01.skycdp.com%2FSKYNEHD_HD_SUD_SKYUKD_4050_18_0000000000000018163.mpd"
+              };
+              Router.navigate("player", params);
+            } else {
+              //this.fireAncestors('$goToPlayer')
+              Router.navigate('player');
+            }
           }
         }
         $exit() {
@@ -22810,6 +23152,10 @@ var APP_accelerator_home_ui = (function () {
           x: 820,
           y: 125,
           children: [{
+            src: Utils.asset('images/player/rewind.png'),
+            x: 17,
+            y: 17
+          }, {
             src: Utils.asset('images/Media Player/Icon_Back_White_16k.png'),
             x: 17,
             y: 17
@@ -22819,6 +23165,10 @@ var APP_accelerator_home_ui = (function () {
             y: 17
           }, {
             src: Utils.asset('images/Media Player/Icon_Next_White_16k.png'),
+            x: 17,
+            y: 17
+          }, {
+            src: Utils.asset('images/player/fast-forward.png'),
             x: 17,
             y: 17
           }].map((item, idx) => ({
@@ -22838,10 +23188,10 @@ var APP_accelerator_home_ui = (function () {
        * Variable to store the duration of the video content.
        */
       this.videoDuration = 0;
-      this.tag('Buttons').children[0].patch({
+      this.tag('Buttons').children[1].patch({
         alpha: 1
       });
-      this.tag('Buttons').children[2].patch({
+      this.tag('Buttons').children[3].patch({
         alpha: 1
       });
       this.toggle = false;
@@ -22913,13 +23263,13 @@ var APP_accelerator_home_ui = (function () {
     }
     hideNextPrevious() {
       this.isChannel = true;
-      this.tag('Buttons').children[0].visible = false;
-      this.tag('Buttons').children[2].visible = false;
+      this.tag('Buttons').children[1].visible = false;
+      this.tag('Buttons').children[3].visible = false;
     }
     showNextPrevious() {
       this.isChannel = false;
-      this.tag('Buttons').children[0].visible = true;
-      this.tag('Buttons').children[2].visible = true;
+      this.tag('Buttons').children[1].visible = true;
+      this.tag('Buttons').children[3].visible = true;
     }
     /**
      * Timer function to track the inactivity of the player controls.
@@ -22937,13 +23287,13 @@ var APP_accelerator_home_ui = (function () {
         $enter() {
           this.focus = this.toggle ? Utils.asset('images/Media Player/Icon_Play_Orange_16k.png') : Utils.asset('images/Media Player/Icon_Pause_Orange_16k.png');
           this.timer();
-          this.tag('Buttons').children[1].tag('ControlIcon').patch({
+          this.tag('Buttons').children[2].tag('ControlIcon').patch({
             texture: lng$1.Tools.getSvgTexture(this.focus, 50, 50)
           });
         }
         $exit() {
           this.unfocus = this.toggle ? Utils.asset('images/Media Player/Icon_Play_White_16k.png') : Utils.asset('images/Media Player/Icon_Pause_White_16k.png');
-          this.tag('Buttons').children[1].tag('ControlIcon').patch({
+          this.tag('Buttons').children[2].tag('ControlIcon').patch({
             texture: lng$1.Tools.getSvgTexture(this.unfocus, 50, 50)
           });
         }
@@ -22958,18 +23308,22 @@ var APP_accelerator_home_ui = (function () {
           this.toggle = !this.toggle;
           this.focus = this.toggle ? Utils.asset('images/Media Player/Icon_Play_Orange_16k.png') : Utils.asset('images/Media Player/Icon_Pause_Orange_16k.png');
           this.timer();
-          this.tag('Buttons').children[1].tag('ControlIcon').patch({
+          this.tag('Buttons').children[2].tag('ControlIcon').patch({
             texture: lng$1.Tools.getSvgTexture(this.focus, 50, 50)
           });
         }
         _handleRight() {
           if (!this.isChannel) {
             this._setState('Forward');
+          } else {
+            this._setState('seekFwd');
           }
         }
         _handleLeft() {
           if (!this.isChannel) {
             this._setState('Rewind');
+          } else {
+            this._setState('seekRwd');
           }
         }
         _getFocused() {
@@ -22978,17 +23332,17 @@ var APP_accelerator_home_ui = (function () {
       }, class Forward extends this {
         $enter() {
           this.timer();
-          this.tag('Buttons').children[2].tag('ControlIcon').patch({
+          this.tag('Buttons').children[3].tag('ControlIcon').patch({
             texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Next_Orange_16k.png'), 50, 50)
           });
         }
         $exit() {
-          this.tag('Buttons').children[2].tag('ControlIcon').patch({
+          this.tag('Buttons').children[3].tag('ControlIcon').patch({
             texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Next_White_16k.png'), 50, 50)
           });
         }
         _handleRight() {
-          // this._setState('Extras')
+          this._setState('seekFwd');
         }
         _handleLeft() {
           this._setState('PlayPause');
@@ -23003,17 +23357,17 @@ var APP_accelerator_home_ui = (function () {
       }, class Rewind extends this {
         $enter() {
           this.timer();
-          this.tag('Buttons').children[0].tag('ControlIcon').patch({
+          this.tag('Buttons').children[1].tag('ControlIcon').patch({
             texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Back_Orange_16k.png'), 50, 50)
           });
         }
         $exit() {
-          this.tag('Buttons').children[0].tag('ControlIcon').patch({
+          this.tag('Buttons').children[1].tag('ControlIcon').patch({
             texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Back_White_16k.png'), 50, 50)
           });
         }
         _handleLeft() {
-          // this._setState('AudioOptions')
+          this._setState('seekRwd');
         }
         _handleRight() {
           this._setState('PlayPause');
@@ -23021,6 +23375,60 @@ var APP_accelerator_home_ui = (function () {
         _handleEnter() {
           this.toggle = false;
           this.signal('prevTrack');
+        }
+        _getFocused() {
+          this.timer();
+        }
+      }, class seekFwd extends this {
+        $enter() {
+          this.timer();
+          this.tag('Buttons').children[4].tag('ControlIcon').patch({
+            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/SeekFwd.png'), 50, 50)
+          });
+        }
+        $exit() {
+          this.tag('Buttons').children[4].tag('ControlIcon').patch({
+            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/player/fast-forward.png'), 50, 50)
+          });
+        }
+        _handleLeft() {
+          if (!this.isChannel) {
+            this._setState('Forward');
+          } else {
+            this._setState('PlayPause');
+          }
+        }
+        _handleRight() {}
+        _handleEnter() {
+          this.toggle = false;
+          this.signal('seekFwd');
+        }
+        _getFocused() {
+          this.timer();
+        }
+      }, class seekRwd extends this {
+        $enter() {
+          this.timer();
+          this.tag('Buttons').children[0].tag('ControlIcon').patch({
+            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/SeekRwd.png'), 50, 50)
+          });
+        }
+        $exit() {
+          this.tag('Buttons').children[0].tag('ControlIcon').patch({
+            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/player/rewind.png'), 50, 50)
+          });
+        }
+        _handleLeft() {}
+        _handleRight() {
+          if (!this.isChannel) {
+            this._setState('Rewind');
+          } else {
+            this._setState('PlayPause');
+          }
+        }
+        _handleEnter() {
+          this.toggle = false;
+          this.signal('seekRwd');
         }
         _getFocused() {
           this.timer();
@@ -23432,7 +23840,9 @@ var APP_accelerator_home_ui = (function () {
               fastfwd: 'fastfwd',
               fastrwd: 'fastrwd',
               nextTrack: 'nextTrack',
-              prevTrack: 'prevTrack'
+              prevTrack: 'prevTrack',
+              seekFwd: 'seekFwd',
+              seekRwd: 'seekRwd'
             }
           }
         },
@@ -23655,6 +24065,12 @@ var APP_accelerator_home_ui = (function () {
       } catch (error) {
         console.error('Playback Failed ' + error);
       }
+    }
+    seekFwd() {
+      this.player.seek(this.position + 10);
+    }
+    seekRwd() {
+      this.player.seek(this.position - 10);
     }
     nextTrack() {
       if (this.data[this.currentIndex + 1]) {
@@ -24862,6 +25278,19 @@ var APP_accelerator_home_ui = (function () {
         _handleEnter() {
           if (localStorage.getItem('Language') !== availableLanguages[this._Languages.tag('List').index]) {
             localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index]);
+            let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')];
+            if (appApi$h.checkAlexaAuthStatus() === "AlexaHandleError") {
+              appApi$h.getAlexaDeviceSettings().then(response => {});
+              thunder$f.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
+                if (notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage) {
+                  for (let i = 0; i < notification.xr_speech_avs.deviceSettings.supportedLocales.length; i++) {
+                    if (updatedLanguage === notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()) {
+                      appApi$h.setLanguageinAlexa(updatedLanguage);
+                    }
+                  }
+                }
+              });
+            }
             let path = location.pathname.split('index.html')[0];
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html";
             let notification_url = location.origin + path + url;
@@ -27029,6 +27458,9 @@ var APP_accelerator_home_ui = (function () {
           if (typeof this.resp[i] === 'object') {
             data.push([i, this.resp[i], this.zone !== undefined ? this.zone.split('/')[0] === i : false]);
           }
+        }
+        if (this.appApi.checkAlexaAuthStatus() === "AlexaHandleError") {
+          this.appApi.setTimeZoneinAlexa(this.zone);
         }
       } catch (error) {
         console.log('no api present', error);
@@ -38579,33 +39011,35 @@ var APP_accelerator_home_ui = (function () {
       this._setState('Description');
     }
     _focus() {
-      thunder$8.Controller.activate({
-        callsign: "org.rdk.VoiceControl"
-      }).then(res => {
-        thunder$8.on("org.rdk.VoiceControl", 'onServerMessage', notification => {
-          console.log("VoiceControl.onServerMessage Notification: ", notification);
-          this.VoiceControlData = notification;
-          this.tag('Description').text.text = "Go to ".concat(notification.xr_speech_avs.url, ", enter this code");
-          this.tag("Description2").visible = true;
-          this.tag("Description2").text.text = "".concat(notification.xr_speech_avs.code);
-          console.log('avs code coming from CodeScreen');
-          if (notification.xr_speech_avs.state === "refreshed") {
-            // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
-            appApi$9.setAlexaAuthStatus("AlexaHandleError");
-            Router.navigate("SuccessScreen");
-          } else if (notification.xr_speech_avs.state === "uninitialized" || notification.xr_speech_avs.state === "authorizing") {
-            console.log("notification state is uninitialised");
-            appApi$9.setAlexaAuthStatus("AlexaAuthPending");
-          } else if (notification.xr_speech_avs.state === "unrecoverable error") {
-            console.log("notification state is unrecoverable error");
-            // Could be AUTH token Timeout; refresh it.
-            Router.navigate("FailureScreen");
-          }
+      if (appApi$9.checkAlexaAuthStatus() !== "AlexaUserDenied") {
+        thunder$8.Controller.activate({
+          callsign: "org.rdk.VoiceControl"
+        }).then(res => {
+          thunder$8.on("org.rdk.VoiceControl", 'onServerMessage', notification => {
+            console.log("VoiceControl.onServerMessage Notification: ", notification);
+            this.VoiceControlData = notification;
+            this.tag('Description').text.text = "Go to ".concat(notification.xr_speech_avs.url, ", enter this code");
+            this.tag("Description2").visible = true;
+            this.tag("Description2").text.text = "".concat(notification.xr_speech_avs.code);
+            console.log('avs code coming from CodeScreen');
+            if (notification.xr_speech_avs.state === "refreshed") {
+              // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
+              appApi$9.setAlexaAuthStatus("AlexaHandleError");
+              Router.navigate("SuccessScreen");
+            } else if (notification.xr_speech_avs.state === "uninitialized" || notification.xr_speech_avs.state === "authorizing") {
+              console.log("notification state is uninitialised");
+              appApi$9.setAlexaAuthStatus("AlexaAuthPending");
+            } else if (notification.xr_speech_avs.state === "unrecoverable error") {
+              console.log("notification state is unrecoverable error");
+              // Could be AUTH token Timeout; refresh it.
+              Router.navigate("FailureScreen");
+            }
+          });
+        }).catch(err => {
+          console.log("VoiceControl Plugin Activation ERROR!: ", err);
         });
-      }).catch(err => {
-        console.log("VoiceControl Plugin Activation ERROR!: ", err);
-      });
-      this._setState('Description');
+        this._setState('Description');
+      }
     }
     _active() {
       this._setState('Description');
@@ -40745,220 +41179,6 @@ var APP_accelerator_home_ui = (function () {
     var key = _toPrimitive(arg, "string");
     return typeof key === "symbol" ? key : String(key);
   }
-
-  /**
-   * If not stated otherwise in this file or this component's LICENSE
-   * file the following copyright and licenses apply:
-   *
-   * Copyright 2020 RDK Management
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   **/
-  //Payloads, and other keys related to alexa and voiceControl plugin.
-
-  const AlexaLauncherKeyMap = {
-    //app/shortcuts identifier and callsign map
-    "amzn1.alexa-ask-target.app.70045": {
-      "name": "YouTube",
-      "callsign": "YouTube",
-      "url": ""
-    },
-    "amzn1.alexa-ask-target.app.50623": {
-      "name": "YouTubeTV",
-      "callsign": "YouTubeTV",
-      "url": ""
-    },
-    "amzn1.alexa-ask-target.app.09817": {
-      "name": "YouTubeKids",
-      "callsign": "YouTubeKids",
-      "url": ""
-    },
-    "amzn1.alexa-ask-target.app.58952": {
-      "name": "CNN go",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.CNN"
-    },
-    "amzn1.alexa-ask-target.app.72095": {
-      "name": "Prime Video",
-      "callsign": "Amazon",
-      "url": ""
-    },
-    "amzn1.alexa-ask-target.app.36377": {
-      "name": "Netflix",
-      "callsign": "Netflix",
-      "url": ""
-    },
-    "amzn1.alexa-ask-target.app.34908": {
-      "name": "XUMO",
-      "callsign": "HtmlApp",
-      "url": "https://x1box-app.xumo.com/index.html"
-    },
-    "amzn1.alexa-ask-target.app.94721": {
-      "name": "NBCU Peacock",
-      "callsign": "Peacock",
-      "url": ""
-    },
-    "amzn1.alexa-ask-target.app.92933": {
-      "name": "Vimeo",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.VimeoRelease"
-    },
-    "amzn1.alexa-ask-target.app.96247": {
-      "name": "The Weather Network",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.WeatherNetwork"
-    },
-    "amzn1.alexa-ask-target.app.48144": {
-      "name": "Euronews",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Euronews"
-    },
-    "amzn1.alexa-ask-target.app.54002": {
-      "name": "AccuWeather - Weather for Life",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.AccuWeather"
-    },
-    "amzn1.alexa-ask-target.app.58518": {
-      "name": "Al Jazeera",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Aljazeera"
-    },
-    "amzn1.alexa-ask-target.app.41915": {
-      "name": "Radioline",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Radioline"
-    },
-    "amzn1.alexa-ask-target.app.45441": {
-      "name": "Wallstreet Journal",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.WallStreetJournal"
-    },
-    "amzn1.alexa-ask-target.app.47328": {
-      "name": "Radio by MyTuner",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.appgeneration.mytuner"
-    },
-    "amzn1.alexa-ask-target.app.79431": {
-      "name": "Tastemade TV",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Tastemade"
-    },
-    "amzn1.alexa-ask-target.app.16283": {
-      "name": "Bloomberg TV+",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.bloomberg.metrological.x1"
-    },
-    "amzn1.alexa-ask-target.app.79143": {
-      "name": "Free Games by PlayWorks",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.playworks.pwkids"
-    },
-    //shortcuts
-    "amzn1.alexa-ask-target.shortcut.33122": {
-      "name": "Home",
-      "route": "menu"
-    },
-    "amzn1.alexa-ask-target.shortcut.28647": {
-      "name": "Apps",
-      "route": "apps"
-    },
-    "amzn1.alexa-ask-target.shortcut.68228": {
-      "name": "Guide",
-      "route": "epg"
-    },
-    "amzn1.alexa-ask-target.shortcut.07395": {
-      "name": "Settings",
-      "route": "settings"
-    },
-    "amzn1.alexa-ask-target.shortcut.94081": {
-      "name": "Bluetooth Settings",
-      "route": "settings/bluetooth"
-    },
-    "amzn1.alexa-ask-target.shortcut.58566": {
-      "name": "Network Settings",
-      "route": "settings/network"
-    },
-    "amzn1.alexa-ask-target.shortcut.12736": {
-      "name": "Privacy Settings",
-      "route": "settings/other/privacy"
-    }
-  };
-  const errorPayload = {
-    "msgPayload": {
-      "event": {
-        "header": {
-          "namespace": "Alexa",
-          "name": "ErrorResponse",
-          "messageId": "Unique identifier, preferably a version 4 UUID",
-          "correlationToken": "Opaque correlation token that matches the request",
-          "payloadVersion": "3"
-        },
-        "endpoint": {
-          "endpointId": "Endpoint ID"
-        },
-        "payload": {
-          "type": "Error type",
-          "message": "Error message"
-        }
-      }
-    }
-  };
-  const PlaybackStateReport = {
-    "msgPayload": {
-      "event": {
-        "header": {
-          "namespace": "Alexa",
-          "name": "ChangeReport",
-          "messageId": "3d2521f2-4e93-4158-b91e-ba04637b91a9",
-          "payloadVersion": "3"
-        },
-        "endpoint": {
-          "endpointId": "rdk-video-device"
-        },
-        "payload": {
-          "change": {
-            "cause": {
-              "type": "PHYSICAL_INTERACTION"
-            },
-            "properties": [{
-              "namespace": "Alexa.PlaybackStateReporter",
-              "name": "playbackState",
-              "value": {
-                "state": "Pause/stop/Resume/Play"
-              },
-              "timeOfSample": new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + "T" + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds() + "Z",
-              "uncertaintyInMilliseconds": 0
-            }]
-          }
-        }
-      }
-    }
-  };
-  const VolumePayload = {
-    "msgPayload": {
-      "event": {
-        "header": {
-          "namespace": "Speaker",
-          "name": "VolumeChanged",
-          "messageId": "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
-        },
-        "payload": {
-          "volume": 30,
-          "muted": false
-        }
-      }
-    }
-  };
 
   const config$3 = {
     host: '127.0.0.1',
@@ -51246,11 +51466,19 @@ var APP_accelerator_home_ui = (function () {
     listenToVoiceControl() {
       let self = this;
       console.log("App listenToVoiceControl method got called, Activating and listening to VoiceControl Plugin");
-      const systemcCallsign = "org.rdk.VoiceControl";
       thunder$1.Controller.activate({
-        callsign: systemcCallsign
+        callsign: 'org.rdk.VoiceControl'
       }).then(res => {
         console.log("App VoiceControl Plugin Activation result: ", res);
+        /* Alexa App State Report: HOME */
+        ApplicationStateReporter.event.payload.value.id = "amzn1.alexa-ask-target.shortcut.33122";
+        ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
+        ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
+        console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
+        thunder$1.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
+          console.error("VoiceControl sendVoiceMessage error:", err);
+          resolve(false);
+        });
         appApi.getVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(volres => {
           VolumePayload.msgPayload.event.payload.volume = volres.volumeLevel;
         });
@@ -51265,6 +51493,19 @@ var APP_accelerator_home_ui = (function () {
         });
         if (appApi.checkAlexaAuthStatus() === "AlexaHandleError") {
           // Work Around: Actiavte SmartScreen asssuming Auth completed.
+          let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')];
+          let updatedTimeZone = appApi.getZone();
+          appApi.getAlexaDeviceSettings().then(response => {});
+          thunder$1.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
+            if (notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage) {
+              for (let i = 0; i < notification.xr_speech_avs.deviceSettings.supportedLocales.length; i++) {
+                if (updatedLanguage === notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()) {
+                  appApi.setLanguageinAlexa(updatedLanguage);
+                }
+              }
+            }
+          });
+          appApi.setTimeZoneinAlexa(updatedTimeZone);
           console.log("App checkAlexaAuthStatus is AlexaHandleError; activating SmartScreen.");
           appApi.getPluginStatus("SmartScreen").then(res => {
             console.log("App getPluginStatus result: " + JSON.stringify(res));
@@ -51282,7 +51523,7 @@ var APP_accelerator_home_ui = (function () {
           });
         }
         console.log("App VoiceControl check if user has denied ALEXA:", appApi.checkAlexaAuthStatus());
-        thunder$1.on(systemcCallsign, 'onServerMessage', notification => {
+        thunder$1.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
           console.log("VoiceControl.onServerMessage Notification: ", notification);
           if (appApi.checkAlexaAuthStatus() !== "AlexaUserDenied") {
             if (notification.xr_speech_avs.state_reporter === "authorization_req" || notification.xr_speech_avs.code) {
@@ -51409,9 +51650,8 @@ var APP_accelerator_home_ui = (function () {
                     PlaybackStateReport.msgPayload.event.endpoint.endpointId = notification.xr_speech_avs.directive.endpoint.endpointId;
                     PlaybackStateReport.msgPayload.event.payload.change.properties[0].value.state = "Pause";
                     console.log("Sending playbackstatereport to Pause:", PlaybackStateReport);
-                    thunder$1.call('org.rdk.VoiceControl', 'sendVoiceMessage', PlaybackStateReport).then(result => {
-                      console.log("alexaPlayback", result);
-                    }).catch(err => {
+                    thunder$1.call('org.rdk.VoiceControl', 'sendVoiceMessage', PlaybackStateReport).catch(err => {
+                      console.error("VoiceControl sendVoiceMessage error:", err);
                       resolve(false);
                     });
                   }
@@ -51441,7 +51681,21 @@ var APP_accelerator_home_ui = (function () {
                     });
                   } else if (targetRoute) {
                     console.log("Alexa.Launcher is trying to route to ", JSON.stringify(targetRoute));
-                    this.jumpToRoute(targetRoute); // exits the app if any and navigates to the specific route.
+                    // exits the app if any and navigates to the specific route.
+                    this.jumpToRoute(targetRoute);
+                    for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
+                      if (value.hasOwnProperty("route") && value.route === targetRoute) {
+                        ApplicationStateReporter.event.payload.value.id = key;
+                        ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
+                        ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
+                        console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
+                        thunder$1.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
+                          console.error("VoiceControl sendVoiceMessage error:", err);
+                          resolve(false);
+                        });
+                        break;
+                      }
+                    }
                   }
                 } else {
                   console.log("Alexa.Launcher is trying to launch an unsupported app : " + JSON.stringify(payload));
@@ -51520,6 +51774,36 @@ var APP_accelerator_home_ui = (function () {
               }).catch(err => {
                 resolve(false);
               });
+              let currentApp = Storage.get("applicationType");
+              let playbackOperations = new Set(["Play", "Pause", "FastForward", "Rewind", "Shuffle", "Repeat"]);
+              if (currentApp.startsWith("YouTube")) {
+                if (playbackOperations.has(notification.xr_speech_avs.directive.header.name)) {
+                  let url = Storage.get(currentApp + "DefaultURL") + "&va=media" + notification.xr_speech_avs.directive.header.name + "&vs=2&inApp=true";
+                  console.log("Operation performed with deeplink URL: " + url);
+                  thunder$1.call(currentApp, 'deeplink', url);
+                } else if (notification.xr_speech_avs.directive.header.name === "Next" || notification.xr_speech_avs.directive.header.name === "Previous") {
+                  let url = Storage.get(currentApp + "DefaultURL") + "&va=media" + notification.xr_speech_avs.directive.header.name + "Video&vs=2&inApp=true";
+                  console.log("Operation performed with deeplink URL: " + url);
+                  thunder$1.call(currentApp, 'deeplink', url);
+                }
+              }
+            } else if (header.namespace === "Alexa.SeekController") {
+              console.log("Seek controller", notification.xr_speech_avs.directive);
+              let currentApp = Storage.get("applicationType");
+              if (currentApp.startsWith("YouTube")) {
+                let time = notification.xr_speech_avs.directive.payload.deltaPositionMilliseconds / 1000;
+                let minutes = Math.abs(parseInt(time / 60));
+                let seconds = Math.abs(parseInt(time % 60));
+                if (time < 0) {
+                  let url = Storage.get(currentApp + "DefaultURL") + "&va=mediaRewind&vaa=" + minutes + "m" + seconds + "s" + "&vs=2&inApp=true";
+                  console.log("Operation performed with deeplink URL: " + url);
+                  thunder$1.call(currentApp, 'deeplink', url);
+                } else {
+                  let url = Storage.get(currentApp + "DefaultURL") + "&va=mediaFastForward&vaa=" + minutes + "m" + seconds + "s" + "&vs=2&inApp=true";
+                  console.log("Operation performed with deeplink URL: " + url);
+                  thunder$1.call(currentApp, 'deeplink', url);
+                }
+              }
             } else if (header.namespace === "AudioPlayer") {
               if (header.name === "Play") {
                 appApi.visible("SmartScreen", true);
@@ -51582,14 +51866,14 @@ var APP_accelerator_home_ui = (function () {
             }
           }
         });
-        thunder$1.on(systemcCallsign, 'onKeywordVerification', notification => {
+        thunder$1.on('org.rdk.VoiceControl', 'onKeywordVerification', notification => {
           console.log("VoiceControl.onKeywordVerification Notification: " + JSON.stringify(notification));
         });
-        thunder$1.on(systemcCallsign, 'onSessionBegin', notification => {
+        thunder$1.on('org.rdk.VoiceControl', 'onSessionBegin', notification => {
           this.$hideImage(0);
           console.log("VoiceControl.onSessionBegin Notification: " + JSON.stringify(notification));
         });
-        thunder$1.on(systemcCallsign, 'onSessionEnd', notification => {
+        thunder$1.on('org.rdk.VoiceControl', 'onSessionEnd', notification => {
           console.log("VoiceControl.onSessionEnd Notification: " + JSON.stringify(notification));
           if (notification.result === "success" && notification.success.transcription === "User request to disable Alexa") {
             console.warn("App VoiceControl.onSessionEnd got disable Alexa.");
@@ -51598,13 +51882,13 @@ var APP_accelerator_home_ui = (function () {
           }
         });
 
-        thunder$1.on(systemcCallsign, 'onStreamBegin', notification => {
+        thunder$1.on('org.rdk.VoiceControl', 'onStreamBegin', notification => {
           console.log("VoiceControl.onStreamBegin Notification: " + JSON.stringify(notification));
         });
-        thunder$1.on(systemcCallsign, 'onStreamEnd', notification => {
+        thunder$1.on('org.rdk.VoiceControl', 'onStreamEnd', notification => {
           console.log("VoiceControl.onStreamEnd Notification: " + JSON.stringify(notification));
         });
-        thunder$1.on(systemcCallsign, 'onSuspend', notification => {
+        thunder$1.on('org.rdk.VoiceControl', 'onSuspend', notification => {
           console.log("VoiceControl.onSuspend Notification: " + JSON.stringify(notification));
         });
       }).catch(err => {

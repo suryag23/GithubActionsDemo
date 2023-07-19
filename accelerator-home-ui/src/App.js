@@ -21,7 +21,7 @@ import ThunderJS from 'ThunderJS';
 import routes from './routes/routes';
 import AppApi from '../src/api/AppApi.js';
 import XcastApi from '../src/api/XcastApi';
-import { CONFIG, availableLanguages } from './Config/Config';
+import { CONFIG, availableLanguages, availableLanguageCodes } from './Config/Config';
 import Keymap from './Config/Keymap';
 import Menu from './views/Menu'
 import Failscreen from './screens/FailScreen';
@@ -32,7 +32,7 @@ import DTVApi from './api/DTVApi';
 import TvOverlayScreen from './tvOverlay/TvOverlayScreen';
 import ChannelOverlay from './MediaPlayer/ChannelOverlay';
 import SettingsOverlay from './overlays/SettingsOverlay';
-import { AlexaLauncherKeyMap, errorPayload, PlaybackStateReport, VolumePayload} from './Config/AlexaConfig';
+import { AlexaLauncherKeyMap, errorPayload, PlaybackStateReport, VolumePayload, ApplicationStateReporter} from './Config/AlexaConfig';
 import AppCarousel from './overlays/AppCarousel';
 import VideoScreen  from './screens/Video';
 import VideoInfoChange from './overlays/VideoInfoChange/VideoInfoChange.js';
@@ -904,10 +904,18 @@ export default class App extends Router.App {
   listenToVoiceControl() {
     let self = this;
     console.log("App listenToVoiceControl method got called, Activating and listening to VoiceControl Plugin")
-    const systemcCallsign = "org.rdk.VoiceControl"
 
-    thunder.Controller.activate({callsign: systemcCallsign}).then(res => {
+    thunder.Controller.activate({callsign: 'org.rdk.VoiceControl'}).then(res => {
       console.log("App VoiceControl Plugin Activation result: ",res)
+      /* Alexa App State Report: HOME */
+      ApplicationStateReporter.event.payload.value.id = "amzn1.alexa-ask-target.shortcut.33122";
+      ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
+      ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
+      console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
+      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
+        console.error("VoiceControl sendVoiceMessage error:", err);
+        resolve(false)
+      })
       appApi.getVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres => {
         VolumePayload.msgPayload.event.payload.volume = volres.volumeLevel
       })
@@ -920,6 +928,19 @@ export default class App extends Router.App {
       })
       if(appApi.checkAlexaAuthStatus() === "AlexaHandleError") {
         // Work Around: Actiavte SmartScreen asssuming Auth completed.
+        let updatedLanguage=availableLanguageCodes[localStorage.getItem('Language')]
+        let updatedTimeZone = appApi.getZone()
+        appApi.getAlexaDeviceSettings().then((response) => { })
+        thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
+        if(notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage){
+            for(let i=0;i<notification.xr_speech_avs.deviceSettings.supportedLocales.length;i++){      
+              if(updatedLanguage===notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()){ 
+                  appApi.setLanguageinAlexa(updatedLanguage)
+             }
+           }
+          }            
+        })         
+        appApi.setTimeZoneinAlexa(updatedTimeZone)
         console.log("App checkAlexaAuthStatus is AlexaHandleError; activating SmartScreen.");
         appApi.getPluginStatus("SmartScreen").then(res => {
           console.log("App getPluginStatus result: " + JSON.stringify(res));
@@ -937,7 +958,7 @@ export default class App extends Router.App {
 
       console.log("App VoiceControl check if user has denied ALEXA:", appApi.checkAlexaAuthStatus())
 
-      thunder.on(systemcCallsign, 'onServerMessage', notification => {
+      thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
         console.log("VoiceControl.onServerMessage Notification: ", notification)
 
         if(appApi.checkAlexaAuthStatus() !== "AlexaUserDenied") {
@@ -1061,8 +1082,9 @@ export default class App extends Router.App {
                   PlaybackStateReport.msgPayload.event.endpoint.endpointId = notification.xr_speech_avs.directive.endpoint.endpointId
                   PlaybackStateReport.msgPayload.event.payload.change.properties[0].value.state = "Pause";
                   console.log("Sending playbackstatereport to Pause:", PlaybackStateReport)
-                  thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',PlaybackStateReport).then(result =>{console.log("alexaPlayback", result)}).catch(err => {
-                  resolve(false)
+                  thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',PlaybackStateReport).catch(err => {
+                    console.error("VoiceControl sendVoiceMessage error:", err);
+                    resolve(false)
                   })
                 }
                 console.log("Alexa is trying to launch "+ appCallsign + " using params: "+ JSON.stringify(params))
@@ -1089,7 +1111,21 @@ export default class App extends Router.App {
                   });
                 } else if(targetRoute){
                   console.log("Alexa.Launcher is trying to route to ", JSON.stringify(targetRoute))
-                  this.jumpToRoute(targetRoute);// exits the app if any and navigates to the specific route.
+                  // exits the app if any and navigates to the specific route.
+                  this.jumpToRoute(targetRoute);
+                  for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
+                    if (value.hasOwnProperty("route") && (value.route === targetRoute)) {
+                      ApplicationStateReporter.event.payload.value.id = key;
+                      ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
+                      ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
+                      console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
+                      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
+                        console.error("VoiceControl sendVoiceMessage error:", err);
+                        resolve(false)
+                      })
+                      break;
+                    }
+                  }
                 }
               } else {
                 console.log("Alexa.Launcher is trying to launch an unsupported app : "+JSON.stringify(payload))
@@ -1166,6 +1202,46 @@ export default class App extends Router.App {
             thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',PlaybackStateReport).then(result =>{console.log("alexaPlayback", result)}).catch(err => {
             resolve(false)
             })
+            let currentApp=Storage.get("applicationType")
+            let playbackOperations=new Set(["Play","Pause","FastForward","Rewind","Shuffle","Repeat"])
+            if(currentApp.startsWith("YouTube"))
+            {
+                if(playbackOperations.has(notification.xr_speech_avs.directive.header.name))
+                {
+                  let url = Storage.get(currentApp+"DefaultURL")+"&va=media"+notification.xr_speech_avs.directive.header.name+"&vs=2&inApp=true";
+                  console.log("Operation performed with deeplink URL: " + url)
+                  thunder.call(currentApp, 'deeplink', url)
+                }
+                else if(notification.xr_speech_avs.directive.header.name === "Next" || notification.xr_speech_avs.directive.header.name === "Previous")
+                {
+                  let url = Storage.get(currentApp+"DefaultURL")+"&va=media"+notification.xr_speech_avs.directive.header.name+"Video&vs=2&inApp=true";
+                  console.log("Operation performed with deeplink URL: " + url)
+                  thunder.call(currentApp, 'deeplink', url)
+                }
+            }
+          }
+          else if(header.namespace === "Alexa.SeekController")
+          {
+              console.log("Seek controller",notification.xr_speech_avs.directive)
+              let currentApp=Storage.get("applicationType")
+              if(currentApp.startsWith("YouTube"))
+              {
+                  let time=notification.xr_speech_avs.directive.payload.deltaPositionMilliseconds/1000
+                  let minutes=Math.abs(parseInt(time/60))
+                  let seconds=Math.abs(parseInt(time%60))
+                  if(time<0)
+                  {
+                    let url=Storage.get(currentApp+"DefaultURL")+"&va=mediaRewind&vaa="+minutes+"m"+seconds+"s"+"&vs=2&inApp=true";
+                    console.log("Operation performed with deeplink URL: " + url)
+                    thunder.call(currentApp, 'deeplink', url)
+                  }
+                  else
+                  {
+                    let url=Storage.get(currentApp+"DefaultURL")+"&va=mediaFastForward&vaa="+minutes+"m"+seconds+"s"+"&vs=2&inApp=true";
+                    console.log("Operation performed with deeplink URL: " + url)
+                    thunder.call(currentApp, 'deeplink', url)
+                  }
+              }
           }
           else if(header.namespace === "AudioPlayer"){
             if (header.name === "Play") {
@@ -1233,16 +1309,16 @@ export default class App extends Router.App {
         }
       })
 
-      thunder.on(systemcCallsign, 'onKeywordVerification', notification => {
+      thunder.on('org.rdk.VoiceControl', 'onKeywordVerification', notification => {
         console.log("VoiceControl.onKeywordVerification Notification: " + JSON.stringify(notification))
       })
 
-      thunder.on(systemcCallsign, 'onSessionBegin', notification => {
+      thunder.on('org.rdk.VoiceControl', 'onSessionBegin', notification => {
         this.$hideImage(0);
         console.log("VoiceControl.onSessionBegin Notification: " + JSON.stringify(notification))
       })
 
-      thunder.on(systemcCallsign, 'onSessionEnd', notification => {
+      thunder.on('org.rdk.VoiceControl', 'onSessionEnd', notification => {
         console.log("VoiceControl.onSessionEnd Notification: " + JSON.stringify(notification))
         if (notification.result === "success" && notification.success.transcription === "User request to disable Alexa") {
           console.warn("App VoiceControl.onSessionEnd got disable Alexa.")
@@ -1251,18 +1327,17 @@ export default class App extends Router.App {
         }
       })
 
-      thunder.on(systemcCallsign, 'onStreamBegin', notification => {
+      thunder.on('org.rdk.VoiceControl', 'onStreamBegin', notification => {
         console.log("VoiceControl.onStreamBegin Notification: " + JSON.stringify(notification))
       })
 
-      thunder.on(systemcCallsign, 'onStreamEnd', notification => {
+      thunder.on('org.rdk.VoiceControl', 'onStreamEnd', notification => {
         console.log("VoiceControl.onStreamEnd Notification: " + JSON.stringify(notification))
       })
 
-      thunder.on(systemcCallsign, 'onSuspend', notification => {
+      thunder.on('org.rdk.VoiceControl', 'onSuspend', notification => {
         console.log("VoiceControl.onSuspend Notification: " + JSON.stringify(notification))
       })
-
     }).catch(err => {
       console.log("VoiceControl Plugin Activation ERROR!: ",err)
     })

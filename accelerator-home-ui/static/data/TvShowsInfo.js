@@ -33,11 +33,11 @@ export var tvShowsInfo = [
     url: '/images/tvShows/let-it-snow.jpg',
   },
   {
-    displayName: 'Do Little',
+    displayName: 'FOG DASH',
     url: '/images/tvShows/do-little.jpg',
   },
   {
-    displayName: 'Summerland',
+    displayName: 'FOG HLS',
     url: '/images/tvShows/summerland.jpg',
   },
 ]
