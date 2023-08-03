@@ -179,7 +179,7 @@ export default class Volume extends Lightning.Component {
                 y: -30
             }
         })
-        this.updateValues();
+    
     }
 
     unfocus() { //the volume widget would never be actually focused

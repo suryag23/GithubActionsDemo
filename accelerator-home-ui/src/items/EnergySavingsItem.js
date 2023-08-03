@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Utils } from '@lightningjs/sdk'
+import { Lightning, Utils, Language } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config.js'
 import AppApi from '../api/AppApi'
 
@@ -64,9 +64,9 @@ export default class EnergySavingsItem extends Lightning.Component {
   _handleEnter() {
     let self = this;
     let standbyMode = ""
-    if (this._item === "Deep Sleep") {
+    if (this._item === Language.translate("Deep Sleep")) {
       standbyMode = "DEEP_SLEEP"
-    } else if (this._item === "Light Sleep") {
+    } else if (this._item === Language.translate("Light Sleep")) {
       standbyMode = "LIGHT_SLEEP"
     }
     this.appApi.setPreferredStandbyMode(standbyMode).then(result => {

@@ -2271,10 +2271,10 @@ getTimerValue() {
    * Return respective map so that logic can be drawn based on that.
    */
   checkAlexaAuthStatus(){
-      if (Storage.get("AlexaVoiceAssitantState") === undefined || Storage.get("AlexaVoiceAssitantState") === null || Storage.get("AlexaVoiceAssitantState") === "AlexaAuthPending")
-          return "AlexaAuthPending"; // Do not handle Alexa Related Errors; only Handle its Auth status.
-      else
-          return Storage.get("AlexaVoiceAssitantState"); // Return the stored value of AlexaVoiceAssitantState
+    if (Storage.get("AlexaVoiceAssitantState") === undefined || Storage.get("AlexaVoiceAssitantState") === null || Storage.get("AlexaVoiceAssitantState") === "AlexaAuthPending")
+      return "AlexaAuthPending"; // Do not handle Alexa Related Errors; only Handle its Auth status.
+    else
+      return Storage.get("AlexaVoiceAssitantState"); // Return the stored value of AlexaVoiceAssitantState
   }
 
   setAlexaAuthStatus(newState = false){
@@ -2292,10 +2292,10 @@ getTimerValue() {
    * To track playback state of Alexa Smartscreen App(AmazonMusic or anything else)
    */
   checkAlexaSmartscreenAudioPlaybackState(){
-      if (Storage.get("AlexaSmartscreenAudioPlaybackState") === null || Storage.get("AlexaSmartscreenAudioPlaybackState") === "null")
-          return "stopped"; // Assume default state.
-      else
-          return Storage.get("AlexaSmartscreenAudioPlaybackState");
+    if (Storage.get("AlexaSmartscreenAudioPlaybackState") === null || Storage.get("AlexaSmartscreenAudioPlaybackState") === "null")
+      return "stopped"; // Assume default state.
+    else
+      return Storage.get("AlexaSmartscreenAudioPlaybackState");
   }
   setAlexaSmartscreenAudioPlaybackState(newState = false){
     Storage.set("AlexaSmartscreenAudioPlaybackState", newState)
@@ -2312,35 +2312,37 @@ getTimerValue() {
         })
     })
   }
-  setLanguageinAlexa(updatedLanguage) {    
-     let updatedLan=[]
-     updatedLan.push(updatedLanguage)
-    console.log("updatedLanguage :"+updatedLan)
+  setUILanguage(updatedLanguage) {
     return new Promise((resolve, reject) => {
-      const systemCallsign = 'org.rdk.VoiceControl'
-      thunder
-        .call(systemCallsign, 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "locale": updatedLan } } })
+      thunder.call('org.rdk.UserPreferences', 'setUILanguage',{"ui_language": updatedLanguage}).then(result => {
+        resolve(result)
+      }).catch(err => {
+        resolve(false)
+      })
+    })
+  }
+  setLanguageinAlexa(updatedLanguage) {
+    let updatedLan = []
+    updatedLan.push(updatedLanguage)
+    console.log("setLanguageinAlexa sending :" + updatedLan)
+    return new Promise((resolve, reject) => {
+      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "locale": updatedLan } } })
         .then(result => {
           resolve(result)
-        })
-        .catch(err => {
+        }).catch(err => {
           resolve(false)
         })
     })
   }
   setTimeZoneinAlexa(updatedTimeZone) {
+    console.log("setTimeZoneinAlexa sending :" + updatedTimeZone)
     return new Promise((resolve, reject) => {
-      const systemCallsign = 'org.rdk.VoiceControl'
-      thunder
-        .call(systemCallsign, 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "timezone": updatedTimeZone } } })
+      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "timezone": updatedTimeZone } } })
         .then(result => {
           resolve(result)
-        })
-        .catch(err => {
+        }).catch(err => {
           resolve(false)
         })
     })
-
   }
-
 }

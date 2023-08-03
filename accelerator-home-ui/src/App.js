@@ -487,6 +487,11 @@ export default class App extends Router.App {
       console.log("App detected deviceType as:", ((result.devicetype != null)?result.devicetype:"tv"));
       Storage.set("deviceType", ((result.devicetype != null)?result.devicetype:"tv"));
     });
+    thunder.Controller.activate({ callsign: 'org.rdk.UserPreferences' }).then(result => {
+      console.log("Result of UserPreferences activation plugin: "+result)
+    }).catch(err => {
+      reject(err)
+    })
     appApi.getPluginStatus("org.rdk.DeviceDiagnostics").then(res =>{
       console.log("App DeviceDiagnostics state:", res[0].state)
       if(res[0].state === "deactivated"){
@@ -873,6 +878,8 @@ export default class App extends Router.App {
       console.warn("App HdmiCec_2 onActiveSourceStatusUpdated discarding.");
     }
   })
+  let currentLanguage=availableLanguageCodes[localStorage.getItem('Language')]
+  appApi.setUILanguage(currentLanguage)
   }
 
   _firstEnable() {
@@ -917,7 +924,12 @@ export default class App extends Router.App {
         resolve(false)
       })
       appApi.getVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres => {
+         if(Number.isInteger(volres.volumeLevel)){
         VolumePayload.msgPayload.event.payload.volume = volres.volumeLevel
+         }
+         else{
+           VolumePayload.msgPayload.event.payload.volume =  parseInt(volres.volumeLevel)
+         }
       })
       appApi.muteStatus(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(muteRes => {
         VolumePayload.msgPayload.event.payload.muted = muteRes.muted
@@ -927,20 +939,11 @@ export default class App extends Router.App {
         resolve(false)
       })
       if(appApi.checkAlexaAuthStatus() === "AlexaHandleError") {
-        // Work Around: Actiavte SmartScreen asssuming Auth completed.
-        let updatedLanguage=availableLanguageCodes[localStorage.getItem('Language')]
+        let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
         let updatedTimeZone = appApi.getZone()
-        appApi.getAlexaDeviceSettings().then((response) => { })
-        thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
-        if(notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage){
-            for(let i=0;i<notification.xr_speech_avs.deviceSettings.supportedLocales.length;i++){      
-              if(updatedLanguage===notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()){ 
-                  appApi.setLanguageinAlexa(updatedLanguage)
-             }
-           }
-          }            
-        })         
+        appApi.setUILanguage(updatedLanguage)
         appApi.setTimeZoneinAlexa(updatedTimeZone)
+        appApi.getAlexaDeviceSettings().then((response) => { })
         console.log("App checkAlexaAuthStatus is AlexaHandleError; activating SmartScreen.");
         appApi.getPluginStatus("SmartScreen").then(res => {
           console.log("App getPluginStatus result: " + JSON.stringify(res));
@@ -963,12 +966,6 @@ export default class App extends Router.App {
 
         if(appApi.checkAlexaAuthStatus() !== "AlexaUserDenied") {
           if(notification.xr_speech_avs.state_reporter === "authorization_req" || notification.xr_speech_avs.code){
-            // DAB Demo Work Around - disabling.
-            //Storage.set("code", notification.xr_speech_avs.code)
-            //Storage.set("url", notification.xr_speech_avs.url)
-            //if(Router.getActiveHash() != "AlexaScreen" && Router.getActiveHash() != "CodeScreen1"){
-            //  Router.navigate("AlexaScreen")
-            //}
             console.log("Alexa Auth URL is ", notification.xr_speech_avs.url)
             if (!Router.isNavigating() && appApi.isConnectedToInternet() && (Router.getActiveHash() === "menu")) {
               console.log("App Activating SmartScreen instance for Alexa Authentication.");
@@ -1304,6 +1301,17 @@ export default class App extends Router.App {
               VolumePayload.msgPayload.event.payload.volume = payload.volume
               VolumePayload.msgPayload.event.payload.muted = payload.mute
               appApi.audio_mute(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"),VolumePayload.msgPayload.event.payload.muted).then(res =>{})
+            }
+          }
+        }
+        if ((appApi.checkAlexaAuthStatus() != "AlexaUserDenied") && notification.xr_speech_avs.deviceSettings) {
+          let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
+          if (notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage) {
+            /* Get Alexa matching Locale String */
+            for (let i = 0; i < notification.xr_speech_avs.deviceSettings.supportedLocales.length; i++) {
+              if (updatedLanguage === notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()) {
+                appApi.setLanguageinAlexa(updatedLanguage)
+              }
             }
           }
         }

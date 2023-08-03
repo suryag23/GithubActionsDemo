@@ -65,7 +65,7 @@ export default class Polarity extends Lightning.Component {
           h: 90,
           type: TickMarkItem,
           isTicked: selected === item, //boolean
-          itemName: item.charAt(0).toUpperCase() + item.slice(1), //pass the formated item name
+          itemName: Language.translate(item.charAt(0).toUpperCase() + item.slice(1)), //pass the formated item name          
           uniqID: item, //pass a uniq id that is to be returned when handle enter is pressed
           onHandleEnter: this.refreshItems.bind(this), //pass this function to refresh the tickmarks
         };

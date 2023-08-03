@@ -174,6 +174,19 @@ export default class CameraStreamingScreen extends Lightning.Component {
       VideoPlayer.position(350, 270)
       VideoPlayer.size(890, 600);
       VideoPlayer.open(args.cameraUrl)
+      VideoPlayer.consumer(this)
+    }
+
+    $videoPlayerEvent(eventName) {
+      if (eventName === "Error" || eventName === "Abort") {
+        VideoPlayer.reload()
+      }
+      else if(eventName === "Ended") {
+        if (!Router.isNavigating()) {
+          VideoPlayer.close()
+          Router.navigate('camera/player/ExitScreen')
+        }
+      }
     }
 
     _handleBack(){

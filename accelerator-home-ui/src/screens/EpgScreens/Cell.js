@@ -18,7 +18,7 @@
  * limitations under the License.
  **/
 
-import { Lightning } from "@lightningjs/sdk";
+import { Lightning,Language } from "@lightningjs/sdk";
 import { CONFIG } from "../../Config/Config";
 export default class Cell extends Lightning.Component {
 
@@ -35,7 +35,7 @@ export default class Cell extends Lightning.Component {
         Title: {
           x: 10, y: 45, mountY: 0.5,
           text: {
-            text: ins ? ins : "No Shows are being aired at the moment",
+            text: ins ? ins : Language.translate("No Shows are being aired at the moment"),            
             fontFace: CONFIG.language.font,
             fontStyle: 'normal',
             fontSize: 21,
@@ -47,7 +47,7 @@ export default class Cell extends Lightning.Component {
       },
 
     })
-    this.insText = ins ? ins : "No Shows are being aired at the moment";
+    this.insText = ins ? ins : Language.translate("No Shows are being aired at the moment");
   }
 
   get txt() {

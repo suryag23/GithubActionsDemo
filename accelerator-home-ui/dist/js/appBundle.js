@@ -1,9 +1,9 @@
 /**
  * App version: 3.7 19/07/22
  * SDK version: 4.8.3
- * CLI version: 2.11.0
- * 
- * Generated: Tue, 18 Jul 2023 12:57:30 GMT
+ * CLI version: 2.12.0
+ *
+ * Generated: Thu, 03 Aug 2023 15:46:29 GMT
  */
 
 var APP_accelerator_home_ui = (function () {
@@ -504,7 +504,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    */
 
-  var lng$1 = window.lng;
+  var t = window.lng;
 
   /*
    * If not stated otherwise in this file or this component's LICENSE file the
@@ -550,7 +550,7 @@ var APP_accelerator_home_ui = (function () {
       mediaUrl$1 = config.mediaUrl;
     }
   };
-  class Mediaplayer extends lng$1.Component {
+  class Mediaplayer extends t.Component {
     _construct() {
       this._skipRenderToTexture = false;
       this._metrics = null;
@@ -566,7 +566,7 @@ var APP_accelerator_home_ui = (function () {
               visible: false,
               pivot: 0.5,
               texture: {
-                type: lng$1.textures.StaticTexture,
+                type: t.textures.StaticTexture,
                 options: {}
               }
             }
@@ -719,7 +719,7 @@ var APP_accelerator_home_ui = (function () {
         // Allow consumer to add settings.
         settings = Object.assign(settings, this._consumer.getMediaplayerSettings());
       }
-      if (!lng$1.Utils.equalValues(this._stream, settings.stream)) {
+      if (!t.Utils.equalValues(this._stream, settings.stream)) {
         if (settings.stream && settings.stream.keySystem) {
           navigator.requestMediaKeySystemAccess(settings.stream.keySystem.id, settings.stream.keySystem.config).then(keySystemAccess => {
             return keySystemAccess.createMediaKeys();
@@ -865,7 +865,7 @@ var APP_accelerator_home_ui = (function () {
       return this.videoTextureView.texture;
     }
     _setVideoArea(videoPos) {
-      if (lng$1.Utils.equalValues(this._videoPos, videoPos)) {
+      if (t.Utils.equalValues(this._videoPos, videoPos)) {
         return;
       }
       this._videoPos = videoPos;
@@ -1935,7 +1935,7 @@ var APP_accelerator_home_ui = (function () {
   }
   function getEnumerableOwnPropertySymbols(target) {
     return Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols(target).filter(function (symbol) {
-      return target.propertyIsEnumerable(symbol);
+      return Object.propertyIsEnumerable.call(target, symbol);
     }) : [];
   }
   function getKeys(target) {
@@ -2141,7 +2141,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class VersionLabel extends lng$1.Component {
+  class VersionLabel extends t.Component {
     static _template() {
       return {
         rect: true,
@@ -2189,12 +2189,12 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class FpsIndicator extends lng$1.Component {
+  class FpsIndicator extends t.Component {
     static _template() {
       return {
         rect: true,
         color: 0xffffffff,
-        texture: lng$1.Tools.getRoundRect(80, 80, 40),
+        texture: t.Tools.getRoundRect(80, 80, 40),
         h: 80,
         w: 80,
         x: 100,
@@ -2203,7 +2203,7 @@ var APP_accelerator_home_ui = (function () {
         Background: {
           x: 3,
           y: 3,
-          texture: lng$1.Tools.getRoundRect(72, 72, 36),
+          texture: t.Tools.getRoundRect(72, 72, 36),
           color: 0xff008000
         },
         Counter: {
@@ -2358,7 +2358,7 @@ var APP_accelerator_home_ui = (function () {
       }
     });
   };
-  var Language = {
+  var Language$1 = {
     translate(key) {
       let replacements = [...arguments].slice(1);
 
@@ -2768,7 +2768,7 @@ var APP_accelerator_home_ui = (function () {
       defaultOptions$1.stage['h'] = 720;
       defaultOptions$1.stage['precision'] = 1280 / 1920;
     }
-    return class Application extends lng$1.Application {
+    return class Application extends t.Application {
       constructor(options) {
         const config = cjs(defaultOptions$1, options);
         // Deepmerge breaks HTMLCanvasElement, so restore the passed in canvas.
@@ -3315,7 +3315,7 @@ var APP_accelerator_home_ui = (function () {
     return typeof v === 'boolean';
   };
   const isPage = v => {
-    if (v instanceof lng$1.Element || isComponentConstructor(v)) {
+    if (v instanceof t.Element || isComponentConstructor(v)) {
       return true;
     }
     return false;
@@ -3948,7 +3948,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class RoutedApp extends lng$1.Component {
+  class RoutedApp extends t.Component {
     static _template() {
       return {
         Pages: {
@@ -4748,7 +4748,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class PinInput extends lng$1.Component {
+  class PinInput extends t.Component {
     static _template() {
       return {
         w: 120,
@@ -4757,7 +4757,7 @@ var APP_accelerator_home_ui = (function () {
         color: 0xff949393,
         alpha: 0.5,
         shader: {
-          type: lng$1.shaders.RoundedRectangle,
+          type: t.shaders.RoundedRectangle,
           radius: 10
         },
         Nr: {
@@ -4797,7 +4797,7 @@ var APP_accelerator_home_ui = (function () {
       }
     }
   }
-  class PinDialog extends lng$1.Component {
+  class PinDialog extends t.Component {
     static _template() {
       return {
         zIndex: 1,
@@ -4814,7 +4814,7 @@ var APP_accelerator_home_ui = (function () {
           rect: true,
           color: 0xdd333333,
           shader: {
-            type: lng$1.shaders.RoundedRectangle,
+            type: t.shaders.RoundedRectangle,
             radius: 10
           },
           Info: {
@@ -5106,7 +5106,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class VideoTexture extends lng$1.Component {
+  class VideoTexture extends t.Component {
     static _template() {
       return {
         Video: {
@@ -5114,7 +5114,7 @@ var APP_accelerator_home_ui = (function () {
           visible: false,
           pivot: 0.5,
           texture: {
-            type: lng$1.textures.StaticTexture,
+            type: t.textures.StaticTexture,
             options: {}
           }
         }
@@ -5879,7 +5879,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class ScaledImageTexture extends lng$1.textures.ImageTexture {
+  class ScaledImageTexture extends t.textures.ImageTexture {
     constructor(stage) {
       super(stage);
       this._scalingOptions = undefined;
@@ -5903,7 +5903,7 @@ var APP_accelerator_home_ui = (function () {
    * If not stated otherwise in this file or this component's LICENSE file the
    * following copyright and licenses apply:
    *
-   * Copyright 2021 Metrological
+   * Copyright 2023 Metrological
    *
    * Licensed under the Apache License, Version 2.0 (the License);
    * you may not use this file except in compliance with the License.
@@ -6041,7 +6041,7 @@ var APP_accelerator_home_ui = (function () {
       id: requestId,
       method: [plugin, version, method].join('.')
     };
-    params || params === false ? typeof params === 'object' && Object.keys(params).length === 0 ? null : body.params = params : null;
+    params !== undefined ? body.params = params : null;
     return body;
   };
   var getVersion = (versionsConfig, plugin, params) => {
@@ -6336,7 +6336,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class Error$1 extends lng$1.Component {
+  class Error$1 extends t.Component {
     static _template() {
       return {
         rect: true,
@@ -9153,13 +9153,23 @@ var APP_accelerator_home_ui = (function () {
         });
       });
     }
+    setUILanguage(updatedLanguage) {
+      return new Promise((resolve, reject) => {
+        thunder$j.call('org.rdk.UserPreferences', 'setUILanguage', {
+          "ui_language": updatedLanguage
+        }).then(result => {
+          resolve(result);
+        }).catch(err => {
+          resolve(false);
+        });
+      });
+    }
     setLanguageinAlexa(updatedLanguage) {
       let updatedLan = [];
       updatedLan.push(updatedLanguage);
-      console.log("updatedLanguage :" + updatedLan);
+      console.log("setLanguageinAlexa sending :" + updatedLan);
       return new Promise((resolve, reject) => {
-        const systemCallsign = 'org.rdk.VoiceControl';
-        thunder$j.call(systemCallsign, 'sendVoiceMessage', {
+        thunder$j.call('org.rdk.VoiceControl', 'sendVoiceMessage', {
           "msgPayload": {
             "DeviceSettings": "Set Device Settings",
             "values": {
@@ -9174,9 +9184,9 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     setTimeZoneinAlexa(updatedTimeZone) {
+      console.log("setTimeZoneinAlexa sending :" + updatedTimeZone);
       return new Promise((resolve, reject) => {
-        const systemCallsign = 'org.rdk.VoiceControl';
-        thunder$j.call(systemCallsign, 'sendVoiceMessage', {
+        thunder$j.call('org.rdk.VoiceControl', 'sendVoiceMessage', {
           "msgPayload": {
             "DeviceSettings": "Set Device Settings",
             "values": {
@@ -10219,7 +10229,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for rendering items in Settings screen.
    */
-  class SettingsItem extends lng$1.Component {
+  class SettingsItem extends t.Component {
     _construct() {
       this.Tick = Utils.asset('/images/settings/Tick.png');
     }
@@ -10258,7 +10268,7 @@ var APP_accelerator_home_ui = (function () {
         Tick: {
           y: 45,
           mountY: 0.5,
-          texture: lng$1.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
+          texture: t.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
           color: 0xffffffff,
           visible: false
         },
@@ -10761,9 +10771,9 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for settings screen.
    */
-  class SettingsScreen extends lng$1.Component {
+  class SettingsScreen extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings'));
     }
     pageTransition() {
       return 'left';
@@ -10784,7 +10794,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Network Configuration'),
+                text: Language$1.translate('Network Configuration'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -10808,7 +10818,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Pair Remote Control'),
+                text: Language$1.translate('Pair Remote Control'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -10832,7 +10842,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Video'),
+                text: Language$1.translate('Video'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -10856,7 +10866,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Audio'),
+                text: Language$1.translate('Audio'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -10880,7 +10890,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Other Settings'),
+                text: Language$1.translate('Other Settings'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -10904,7 +10914,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Native Frame Rate'),
+                text: Language$1.translate('Native Frame Rate'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -10929,7 +10939,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Live TV'),
+                text: Language$1.translate('Live TV'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -10953,7 +10963,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Voice Remote Control'),
+                text: Language$1.translate('Voice Remote Control'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -11195,7 +11205,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class to render items in main view.
    */
-  class ListItem extends lng$1.Component {
+  class ListItem extends t.Component {
     /**
      * Function to render various elements in the main view item.
      */
@@ -11862,7 +11872,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class to render items in main view.
    */
-  class GracenoteItem extends lng$1.Component {
+  class GracenoteItem extends t.Component {
     /**
      * Function to render various elements in the main view item.
      */
@@ -11992,7 +12002,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class CollectionWrapper extends lng$1.Component {
+  class CollectionWrapper extends t.Component {
     static _template() {
       return {
         Wrapper: {}
@@ -12020,8 +12030,8 @@ var APP_accelerator_home_ui = (function () {
       this._scrollTransition = this.wrapper.transition(axis);
     }
     _indexChanged(obj) {
+      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       let {
-        previousIndex: previous,
         index: target,
         dataLength: max,
         mainIndex,
@@ -12029,32 +12039,108 @@ var APP_accelerator_home_ui = (function () {
         lines
       } = obj;
       if (!isNaN(previousMainIndex) && !isNaN(mainIndex) && !isNaN(lines)) {
-        previous = previousMainIndex;
         target = mainIndex;
         max = lines;
       }
       if (this._requestsEnabled && !this._requestingItems) {
-        if (previous < target && target + this._requestThreshold >= max) {
-          this._requestingItems = true;
-          this.signal('onRequestItems', obj).then(response => {
-            const type = typeof response;
-            if (Array.isArray(response) || type === 'object' || type === 'string' || type === 'number') {
-              this.add(response);
-            }
-            if (response === false) {
-              this.enableRequests = false;
-            }
-            this._requestingItems = false;
-          });
+        if (target + this._requestThreshold >= max) {
+          this.requestItems(false, obj);
         }
       }
       this._refocus();
-      this.scrollCollectionWrapper(obj);
-      if (previous !== target) {
+      this.scrollCollectionWrapper(obj, options);
+      if (obj.previousIndex !== obj.index) {
         this.signal('onIndexChanged', obj);
       }
     }
+    requestItems() {
+      let reload = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      let obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+      if (obj === undefined) {
+        obj = {
+          previousIndex: 0,
+          index: this._index,
+          mainIndex: this._mainIndex || 0,
+          previousMainIndex: this._mainIndex || 0,
+          crossIndex: this._crossIndex || 0,
+          previousCrossIndex: this._crossIndex || 0,
+          lines: this._lines && this._lines.length || 0,
+          dataLength: this._items && this._items.length || 0
+        };
+      }
+      this._requestingItems = true;
+      this._request(obj).then(response => {
+        this._requestingItems = false;
+        if (reload) {
+          this.clear();
+        }
+        const type = typeof response;
+        if (Array.isArray(response) && response.length > 0 || type === 'object' || type === 'string' || type === 'number') {
+          this.add(response);
+          obj.dataLength = this._items && this._items.length || 0;
+          this.signal('onRequestItemsAdded', obj);
+        }
+      });
+    }
+    _request(obj) {
+      return new Promise(resolve => {
+        this.signal('onRequestItems', obj).then(response => {
+          if (response === undefined || response === false || Array.isArray(response) && response.length === 0) {
+            this.enableRequests = false;
+          }
+          resolve(response);
+        });
+      });
+    }
+    _requestMore(index) {
+      var _this = this;
+      let data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      let options = arguments.length > 2 ? arguments[2] : undefined;
+      const obj = {
+        previousIndex: this._index,
+        index,
+        mainIndex: this._mainIndex || 0,
+        previousMainIndex: this._previous && this._previous.mainIndex || 0,
+        crossIndex: this._crossIndex || 0,
+        previousCrossIndex: this._previous && this._previous.crossIndex || 0,
+        lines: this._lines && this._lines.length || 0,
+        dataLength: data.length + (this._items && this._items.length || 0)
+      };
+      this._requestingItems = true;
+      return new Promise(resolve => {
+        this._request(obj).then(function () {
+          let response = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+          if (response) {
+            const newData = [...data, ...response];
+            if (index > _this._items.length + newData.length) {
+              _this._requestMore(index, newData).then(resolve);
+            } else {
+              _this.add(newData);
+              obj.dataLength = _this._items && _this._items.length || 0;
+              _this.signal('onRequestItemsAdded', obj);
+              _this._requestingItems = false;
+              _this.setIndex(index, options);
+              resolve(true);
+            }
+          } else {
+            _this._requestingItems = false;
+            resolve(false);
+          }
+        });
+      });
+    }
     setIndex(index) {
+      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      if (this._requestsEnabled && index > this._items.length - 1) {
+        if (!this._requestingItems) {
+          this._requestMore(index, [], options);
+        }
+        return true;
+      }
+      if (this._items.length === 0) {
+        this._index = 0;
+        return false;
+      }
       const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
       const previousIndex = this._index;
       this._index = targetIndex;
@@ -12062,18 +12148,18 @@ var APP_accelerator_home_ui = (function () {
         previousIndex,
         index: targetIndex,
         dataLength: this._items.length
-      });
+      }, options);
       return previousIndex !== targetIndex;
     }
     clear() {
       this._uids = [];
       this._items = [];
       this._index = 0;
-      if (this._scrollTransition) {
+      if (this._scrollTransition && this._scrollTransition.isRunning()) {
         this._scrollTransition.reset(0, 1);
       }
       if (this.wrapper) {
-        const hadChildren = this.wrapper.children > 0;
+        const hadChildren = this.wrapper.children.length > 0;
         this.wrapper.patch({
           x: 0,
           y: 0,
@@ -12085,23 +12171,27 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     add(item) {
-      this.addAt(item);
+      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      this.addAt(item, this._items.length, options);
     }
     addAt(item) {
       let index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this._items.length;
+      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       if (index >= 0 && index <= this._items.length) {
         if (!Array.isArray(item)) {
           item = [item];
         }
         const items = this._normalizeDataItems(item);
         this._items.splice(index, 0, ...items);
-        this.plotItems();
-        this.setIndex(this._index);
+        this.plotItems(options);
+        const targetIndex = index < this._index ? this._index + items.length : this._index;
+        this.setIndex(targetIndex, options);
       } else {
         throw new Error('addAt: The index ' + index + ' is out of bounds ' + this._items.length);
       }
     }
     remove(target) {
+      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       if (this.hasItems && target.assignedID) {
         const itemWrappers = this.itemWrappers;
         for (let i = 0; i < this._items.length; i++) {
@@ -12110,7 +12200,10 @@ var APP_accelerator_home_ui = (function () {
             item = itemWrappers[i].component;
           }
           if (target.assignedID === item.assignedID) {
-            return this.removeAt(i);
+            if (i === this._items.length - 1 && item.hasFocus()) {
+              this._index = this._index - 1;
+            }
+            return this.removeAt(i, 1, options);
           }
         }
       } else {
@@ -12119,21 +12212,26 @@ var APP_accelerator_home_ui = (function () {
     }
     removeAt(index) {
       let amount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       if (index < 0 && index >= this._items.length) {
         throw new Error('removeAt: The index ' + index + ' is out of bounds ' + this._items.length);
       }
       const item = this._items[index];
       this._items.splice(index, amount);
-      this.plotItems();
+      if (this._items.length > 0) {
+        this.plotItems(options);
+      }
+      this.setIndex(this.index);
       return item;
     }
     reload(item) {
+      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       this.clear();
-      this.add(item);
+      this.add(item, options);
     }
-    plotItems(items, options) {
-      //placeholder
-    }
+    plotItems() {
+    } //placeholder
+
     reposition() {
       let time = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 70;
       if (this._repositionDebounce) {
@@ -12148,43 +12246,57 @@ var APP_accelerator_home_ui = (function () {
       this.signal('onItemsRepositioned');
     }
     up() {
-      return this._attemptNavigation(-1, 1);
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this._attemptNavigation(-1, 1, options);
     }
     down() {
-      return this._attemptNavigation(1, 1);
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this._attemptNavigation(1, 1, options);
     }
     left() {
-      return this._attemptNavigation(-1, 0);
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this._attemptNavigation(-1, 0, options);
     }
     right() {
-      return this._attemptNavigation(1, 0);
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this._attemptNavigation(1, 0, options);
     }
     first() {
-      return this.setIndex(0);
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this.setIndex(0, options);
     }
     last() {
-      return this.setIndex(this._items.length - 1);
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this.setIndex(this._items.length - 1, options);
     }
     next() {
-      return this.setIndex(this._index + 1);
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this.setIndex(this._index + 1, options);
     }
     previous() {
-      return this.setIndex(this._index - 1);
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return this.setIndex(this._index - 1, options);
     }
     _attemptNavigation(shift, direction) {
+      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       if (this.hasItems) {
-        return this.navigate(shift, direction);
+        return this.navigate(shift, direction, options);
       }
       return false;
     }
     navigate(shift) {
       let direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this._direction;
+      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       if (direction !== this._direction) {
         return false;
       }
-      return this.setIndex(this._index + shift);
+      return this.setIndex(this._index + shift, options);
     }
     scrollCollectionWrapper(obj) {
+      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      const {
+        immediate = false
+      } = options;
       let {
         previousIndex: previous,
         index: target,
@@ -12265,7 +12377,7 @@ var APP_accelerator_home_ui = (function () {
           scroll = marginFrom - cw[main];
         }
       }
-      if (this.active && !isNaN(scroll) && this._scrollTransition) {
+      if (!immediate && this.active && !isNaN(scroll) && this._scrollTransition) {
         if (this._scrollTransition.isRunning()) {
           this._scrollTransition.reset(scroll, 0.05);
         } else {
@@ -12317,7 +12429,7 @@ var APP_accelerator_home_ui = (function () {
     _generateUniqueID() {
       let id = '';
       while (this._uids[id] || id === '') {
-        id = Math.random().toString(36).substr(2, 9);
+        id = Math.random().toString(36).substring(2, 9);
       }
       this._uids[id] = true;
       return id;
@@ -12459,7 +12571,7 @@ var APP_accelerator_home_ui = (function () {
       return this.wrapper.children[this._index];
     }
     get currentItem() {
-      return this.currentItemWrapper.component;
+      return this.currentItemWrapper && this.currentItemWrapper.component || undefined;
     }
     set direction(string) {
       this._direction = CollectionWrapper.DIRECTION[string] || CollectionWrapper.DIRECTION.row;
@@ -12504,7 +12616,7 @@ var APP_accelerator_home_ui = (function () {
     set scroll(value) {
       this._scroll = value;
     }
-    get scrollTo() {
+    get scroll() {
       return this._scroll;
     }
     set autoResize(bool) {
@@ -12543,7 +12655,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class Cursor extends lng$1.Component {
+  class Cursor extends t.Component {
     static _template() {
       return {
         alpha: 0
@@ -12613,7 +12725,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class ItemWrapper extends lng$1.Component {
+  class ItemWrapper extends t.Component {
     static _template() {
       return {
         clipbox: true
@@ -12695,7 +12807,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class KeyWrapper extends lng$1.Component {
+  class KeyWrapper extends t.Component {
     static _template() {
       return {
         clipbox: true
@@ -12812,12 +12924,25 @@ var APP_accelerator_home_ui = (function () {
       this._previous = undefined;
     }
     setIndex(index) {
+      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      if (this._requestsEnabled && index > this._items.length - 1) {
+        if (!this._requestingItems) {
+          this._requestMore(index, [], options);
+        }
+        return true;
+      }
+      if (this._items.length === 0) {
+        this._mainIndex = 0;
+        this._crossIndex = 0;
+        this._index = 0;
+        return false;
+      }
       const targetIndex = limitWithinRange(index, 0, this._items.length - 1);
       const previousIndex = this._index;
       const {
         mainIndex: previousMainIndex,
         crossIndex: previousCrossIndex
-      } = this._findLocationOfIndex(this._index);
+      } = this._findLocationOfIndex(previousIndex);
       const {
         mainIndex,
         crossIndex
@@ -12839,7 +12964,8 @@ var APP_accelerator_home_ui = (function () {
         previousCrossIndex,
         lines: this._lines.length,
         dataLength: this._items.length
-      });
+      }, options);
+      return previousIndex !== targetIndex;
     }
     _findLocationOfIndex(index) {
       for (let i = 0; i < this._lines.length; i++) {
@@ -12856,6 +12982,10 @@ var APP_accelerator_home_ui = (function () {
       };
     }
     plotItems() {
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      const {
+        immediate = false
+      } = options;
       const items = this._items;
       const wrapper = this.wrapper;
       const {
@@ -12925,12 +13055,19 @@ var APP_accelerator_home_ui = (function () {
       wrapper.children = newChildren;
       animateItems.forEach(index => {
         const item = wrapper.children[index];
-        item.patch({
-          smooth: {
+        if (immediate) {
+          item.patch({
             x: item.assignedX,
             y: item.assignedY
-          }
-        });
+          });
+        } else {
+          item.patch({
+            smooth: {
+              x: item.assignedX,
+              y: item.assignedY
+            }
+          });
+        }
       });
       const biggestInLastLine = this._getBiggestInLine(cl);
       this._resizeWrapper({
@@ -13006,6 +13143,7 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     navigate(shift, direction) {
+      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       const {
         directionIsRow,
         cross,
@@ -13060,7 +13198,7 @@ var APP_accelerator_home_ui = (function () {
         };
       }
       if (this._index !== targetIndex) {
-        this.setIndex(targetIndex);
+        this.setIndex(targetIndex, options);
         return true;
       }
       return false;
@@ -13096,6 +13234,9 @@ var APP_accelerator_home_ui = (function () {
       this._mainSpacing = num;
       this._crossSpacing = num;
     }
+    get spacing() {
+      return this._spacing;
+    }
   }
 
   /*
@@ -13116,7 +13257,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class InputField extends lng$1.Component {
+  class InputField extends t.Component {
     static _template() {
       return {
         PreLabel: {
@@ -13321,7 +13462,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class Key$1 extends lng$1.Component {
+  class Key$1 extends t.Component {
     static _template() {
       return {
         Background: {
@@ -13481,7 +13622,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class Keyboard$1 extends lng$1.Component {
+  class Keyboard$1 extends t.Component {
     static _template() {
       return {
         Keys: {
@@ -13494,6 +13635,7 @@ var APP_accelerator_home_ui = (function () {
       this._inputField = undefined;
       this._maxCharacters = 56;
       this.navigationWrapAround = false;
+      this._snapToRow = false;
       this.resetFocus();
     }
     resetFocus() {
@@ -13555,13 +13697,20 @@ var APP_accelerator_home_ui = (function () {
               action = key.action || key;
             }
           }
-          const keySpacing = keyType.margin || keyType.type.margin;
-          const {
-            w = keyType.type.width || 0,
-            h = keyType.type.height || 0,
-            marginLeft = keyType.type.marginLeft || keySpacing || 0,
-            marginRight = keyType.type.marginRight || keySpacing || rowHorizontalSpacing
-          } = keyType;
+          let keySpacing = keyType && keyType.margin || 0;
+          let w = 0;
+          let h = 0;
+          let marginLeft = 0;
+          let marginRight = rowHorizontalSpacing;
+          if (keyType.type) {
+            keySpacing = keyType.type.margin || keySpacing;
+            w = keyType.type.width || w;
+            h = keyType.type.height || h;
+            marginLeft = keyType.type.marginLeft || marginLeft;
+            marginRight = keyType.type.marginRight || marginRight;
+          }
+          w = keyType.w || w;
+          h = keyType.h || h;
           rowHeight = h > rowHeight ? h : rowHeight;
           const currentPosition = keyPosition + marginLeft;
           keyPosition += marginLeft + w + marginRight;
@@ -13747,6 +13896,56 @@ var APP_accelerator_home_ui = (function () {
         this._inputField = undefined;
       }
     }
+    _findKeyInRow(currentKey, currentRow, targetRow) {
+      const currentX = currentRow.x - currentRow.w * currentRow.mountX + currentKey.x;
+      const m = targetRow.children.map(key => {
+        const keyX = targetRow.x - targetRow.w * targetRow.mountX + key.x;
+        if (keyX <= currentX && (this._snapToRow || currentX < keyX + key.w)) {
+          return keyX + key.w - currentX;
+        }
+        if (keyX >= currentX && (this._snapToRow || keyX < currentX + currentKey.w)) {
+          return currentX + currentKey.w - keyX;
+        }
+        return -1;
+      });
+      if (!this._snapToRow) {
+        let acc = -1;
+        let t = -1;
+        for (let i = 0; i < m.length; i++) {
+          if (m[i] === -1 && acc > -1) {
+            break;
+          }
+          if (m[i] > acc) {
+            acc = m[i];
+            t = i;
+          }
+        }
+        return t;
+      }
+      let t = m.indexOf(currentKey.w);
+      if (t === -1 && m.length > 0) {
+        let acc = this.w;
+        for (let i = 0; i < m.length; i++) {
+          if (m[i] >= 0) {
+            const cutoff = currentX + currentKey.w - currentX - m[i];
+            if (cutoff < acc) {
+              acc = cutoff;
+              t = i;
+            }
+          }
+        }
+        if (t === -1) {
+          acc = this.w;
+          for (let i = 0; i < m.length; i++) {
+            if (Math.abs(m[i]) < acc) {
+              acc = Math.abs(m[i]);
+              t = i;
+            }
+          }
+        }
+      }
+      return t;
+    }
     navigate(direction, shift) {
       const targetIndex = (direction === 'row' ? this._columnIndex : this._rowIndex) + shift;
       const currentRow = this.rows[this._rowIndex];
@@ -13770,34 +13969,14 @@ var APP_accelerator_home_ui = (function () {
           const targetRow = this.rows[targetIndex];
           const currentKey = this.currentKeyWrapper;
           const currentRow = this.rows[this._rowIndex];
-          const currentX = currentRow.x - currentRow.w * currentRow.mountX + currentKey.x;
-          const m = targetRow.children.map(key => {
-            const keyX = targetRow.x - targetRow.w * targetRow.mountX + key.x;
-            if (keyX <= currentX && currentX < keyX + key.w) {
-              return keyX + key.w - currentX;
-            }
-            if (keyX >= currentX && keyX <= currentX + currentKey.w) {
-              return currentX + currentKey.w - keyX;
-            }
-            return -1;
-          });
-          let acc = -1;
-          let t = -1;
-          for (let i = 0; i < m.length; i++) {
-            if (m[i] === -1 && acc > -1) {
-              break;
-            }
-            if (m[i] > acc) {
-              acc = m[i];
-              t = i;
-            }
-          }
+          let t = this._findKeyInRow(currentKey, currentRow, targetRow);
           if (t > -1) {
             this._rowIndex = targetIndex;
             this._columnIndex = t;
           } // if no next row found and wraparound is on, loop back to first row
           else if (this.navigationWrapAround) {
-            this._columnIndex = Math.min(this.rows[0].children.length - 1, this._columnIndex);
+            t = this._findKeyInRow(currentKey, currentRow, this.rows[0]);
+            this._columnIndex = t > -1 ? t : Math.min(this.rows[0].children.length - 1, this._columnIndex);
             return this._rowIndex = 0;
           }
         }
@@ -13867,11 +14046,17 @@ var APP_accelerator_home_ui = (function () {
     get maxCharacters() {
       return this._maxCharacters;
     }
+    set snapToRow(bool) {
+      this._snapToRow = bool;
+    }
+    get snapToRow() {
+      return true;
+    }
     get rows() {
       return this._keys && this._keys.children;
     }
     get currentKeyWrapper() {
-      return this.rows && this.rows[this._rowIndex].children[this._columnIndex];
+      return this.rows && this.rows[this._rowIndex] && this.rows[this._rowIndex].children[this._columnIndex];
     }
     get currentKey() {
       return this.currentKeyWrapper && this.currentKeyWrapper.key;
@@ -13898,6 +14083,10 @@ var APP_accelerator_home_ui = (function () {
    */
   class List extends CollectionWrapper {
     plotItems() {
+      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      const {
+        immediate = false
+      } = options;
       const items = this._items;
       const wrapper = this.wrapper;
       const {
@@ -13949,12 +14138,19 @@ var APP_accelerator_home_ui = (function () {
       wrapper.children = newChildren;
       animateItems.forEach(index => {
         const item = wrapper.children[index];
-        item.patch({
-          smooth: {
+        if (immediate) {
+          item.patch({
             x: item.assignedX,
             y: item.assignedY
-          }
-        });
+          });
+        } else {
+          item.patch({
+            smooth: {
+              x: item.assignedX,
+              y: item.assignedY
+            }
+          });
+        }
       });
       this._resizeWrapper(crossSize);
     }
@@ -14014,14 +14210,14 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class ScrollingLabel extends lng$1.Component {
+  class ScrollingLabel extends t.Component {
     static _template() {
       return {
         LabelClipper: {
           w: w => w,
           rtt: true,
           shader: {
-            type: lng$1.shaders.FadeOut
+            type: t.shaders.FadeOut
           },
           LabelWrapper: {
             Label: {
@@ -14228,7 +14424,7 @@ var APP_accelerator_home_ui = (function () {
     }
     return target;
   };
-  class Stepper extends lng$1.Component {
+  class Stepper extends t.Component {
     static _template() {
       return {
         h: 80,
@@ -14545,7 +14741,7 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  class ColorShift extends lng$1.Component {
+  class ColorShift extends t.Component {
     static _template() {
       return {
         w: 574,
@@ -14733,7 +14929,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class CarouselItem extends lng$1.Component {
+  class CarouselItem extends t.Component {
     static _template() {
       return {
         Focus: {
@@ -14745,7 +14941,7 @@ var APP_accelerator_home_ui = (function () {
           h: 50,
           rect: true,
           shader: {
-            type: lng$1.shaders.RoundedRectangle,
+            type: t.shaders.RoundedRectangle,
             radius: 25
           }
         },
@@ -14861,7 +15057,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    */
-  class ProgressBar$1 extends lng$1.Component {
+  class ProgressBar extends t.Component {
     static _template() {
       return {
         w: 300,
@@ -14872,7 +15068,7 @@ var APP_accelerator_home_ui = (function () {
           rect: true,
           rtt: true,
           shader: {
-            type: lng$1.shaders.RoundedRectangle,
+            type: t.shaders.RoundedRectangle,
             radius: 5
           },
           Progress: {
@@ -14880,7 +15076,7 @@ var APP_accelerator_home_ui = (function () {
             w: 10,
             rect: true,
             shader: {
-              type: lng$1.shaders.RoundedRectangle,
+              type: t.shaders.RoundedRectangle,
               radius: 0
             }
           }
@@ -15013,12 +15209,12 @@ var APP_accelerator_home_ui = (function () {
    **/
 
   /** Class for main view component in home UI */
-  class MainView extends lng$1.Component {
+  class MainView extends t.Component {
     /**
      * Function to render various elements in main view.
      */
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('home'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('home'));
     }
     static _template() {
       return {
@@ -15040,7 +15236,7 @@ var APP_accelerator_home_ui = (function () {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: Language.translate('Popular Movies'),
+              text: Language$1.translate('Popular Movies'),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF
             },
@@ -15054,7 +15250,7 @@ var APP_accelerator_home_ui = (function () {
               paddingLeft: 20,
               wrap: false
             },
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1745,
             h: 400,
             itemSize: 500,
@@ -15074,7 +15270,7 @@ var APP_accelerator_home_ui = (function () {
               text: {
                 fontFace: CONFIG.language.font,
                 fontSize: 25,
-                text: Language.translate('Input Select'),
+                text: Language$1.translate('Input Select'),
                 fontStyle: 'normal',
                 textColor: 0xFFFFFFFF
               },
@@ -15083,7 +15279,7 @@ var APP_accelerator_home_ui = (function () {
             Slider: {
               x: -20,
               y: 37,
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               flex: {
                 direction: 'row',
                 paddingLeft: 20,
@@ -15104,7 +15300,7 @@ var APP_accelerator_home_ui = (function () {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: Language.translate('Featured Content'),
+              text: Language$1.translate('Featured Content'),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF
             },
@@ -15127,7 +15323,7 @@ var APP_accelerator_home_ui = (function () {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: Language.translate('Lightning Apps'),
+              text: Language$1.translate('Lightning Apps'),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF
             }
@@ -15135,7 +15331,7 @@ var APP_accelerator_home_ui = (function () {
           MetroApps: {
             x: -20,
             y: 435,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             flex: {
               direction: 'row',
               paddingLeft: 20,
@@ -15157,7 +15353,7 @@ var APP_accelerator_home_ui = (function () {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: Language.translate('Featured Video on Demand'),
+              text: Language$1.translate('Featured Video on Demand'),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF
             }
@@ -15167,7 +15363,7 @@ var APP_accelerator_home_ui = (function () {
             y: 710,
             w: 1745,
             h: 400,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             flex: {
               direction: 'row',
               paddingLeft: 20,
@@ -15187,7 +15383,7 @@ var APP_accelerator_home_ui = (function () {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: Language.translate('Lightning Showcase'),
+              text: Language$1.translate('Lightning Showcase'),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF
             }
@@ -15195,7 +15391,7 @@ var APP_accelerator_home_ui = (function () {
           ShowcaseApps: {
             x: -20,
             y: 978,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             flex: {
               direction: 'row',
               paddingLeft: 20,
@@ -15218,7 +15414,7 @@ var APP_accelerator_home_ui = (function () {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: Language.translate('Partner Apps'),
+              text: Language$1.translate('Partner Apps'),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF
             }
@@ -15226,7 +15422,7 @@ var APP_accelerator_home_ui = (function () {
           UsbApps: {
             x: -20,
             y: 1243,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             flex: {
               direction: 'row',
               paddingLeft: 20,
@@ -16082,7 +16278,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for pairing screen for the Bluetooth.
    */
-  class BluetoothPairingScreen$1 extends lng$1.Component {
+  class BluetoothPairingScreen$1 extends t.Component {
     set params(args) {
       if (args.bluetoothItem) {
         this.item(args.bluetoothItem);
@@ -16163,7 +16359,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Unpair"),
+                  text: Language$1.translate("Unpair"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -16182,7 +16378,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Cancel"),
+                  text: Language$1.translate("Cancel"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -16394,7 +16590,7 @@ var APP_accelerator_home_ui = (function () {
     set item(item) {
       this._item = item;
       this.connected = item.connected ? 'Connected' : 'Not Connected';
-      this.status = item.paired ? this.connected : 'Not Paired';
+      this.status = item.paired ? Language$1.translate(this.connected) : Language$1.translate('Not Paired');
       this.tag('Item').patch({
         Left: {
           x: 10,
@@ -16884,7 +17080,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for pairing screen for the Bluetooth.
    */
-  class BluetoothConfirmation extends lng$1.Component {
+  class BluetoothConfirmation extends t.Component {
     static _template() {
       return {
         w: 1920,
@@ -16980,9 +17176,9 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Bluetooth screen.
    */
-  class BluetoothScreen$2 extends lng$1.Component {
+  class BluetoothScreen$2 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Bluetooth On/Off'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Bluetooth On/Off'));
     }
     static _template() {
       return {
@@ -17013,7 +17209,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Bluetooth On/Off'),
+                text: Language$1.translate('Bluetooth On/Off'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -17037,7 +17233,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Searching for Devices'),
+                text: Language$1.translate('Searching for Devices'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -17058,7 +17254,7 @@ var APP_accelerator_home_ui = (function () {
             PairedNetworks: {
               y: 180,
               List: {
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 w: 1920 - 300,
                 itemSize: 90,
                 horizontal: false,
@@ -17073,7 +17269,7 @@ var APP_accelerator_home_ui = (function () {
               visible: false,
               List: {
                 w: 1920 - 300,
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 itemSize: 90,
                 horizontal: false,
                 invertDirection: true,
@@ -17092,7 +17288,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Add A Device'),
+                text: Language$1.translate('Add A Device'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -17760,7 +17956,7 @@ var APP_accelerator_home_ui = (function () {
    * @param {Object|function} styles - Object or callback that takes theme as an argument, ultimately the returned value
    * @param {Object} theme - theme to be provided to styles
    */
-  var createStyles$1 = ((styles, theme) => {
+  var createStyles = ((styles, theme) => {
     return typeof styles === 'function' ? styles(theme) : styles;
   });
 
@@ -18059,9 +18255,9 @@ var APP_accelerator_home_ui = (function () {
   *
   * SPDX-License-Identifier: Apache-2.0
   */
-  function withStyles$1(Base, styles, theme) {
+  function withStyles(Base, styles, theme) {
     const _theme = theme || Base.theme;
-    const _styles = Base.styles ? clone$1(Base.styles, createStyles$1(styles, _theme)) : createStyles$1(styles, _theme);
+    const _styles = Base.styles ? clone$1(Base.styles, createStyles(styles, _theme)) : createStyles(styles, _theme);
     return class extends Base {
       static get name() {
         return Base.name;
@@ -18092,7 +18288,7 @@ var APP_accelerator_home_ui = (function () {
    *
    * SPDX-License-Identifier: Apache-2.0
    */
-  class Icon extends lng$1.Component {
+  class Icon extends t.Component {
     static _template() {
       return {
         color: 0xffffffff,
@@ -18128,10 +18324,10 @@ var APP_accelerator_home_ui = (function () {
     };
     switch (true) {
       case isSvgTag(icon):
-        template.texture = lng$1.Tools.getSvgTexture("data:image/svg+xml,".concat(encodeURIComponent(icon)), w, h);
+        template.texture = t.Tools.getSvgTexture("data:image/svg+xml,".concat(encodeURIComponent(icon)), w, h);
         break;
       case isSvgURI(icon):
-        template.texture = lng$1.Tools.getSvgTexture(icon, w, h);
+        template.texture = t.Tools.getSvgTexture(icon, w, h);
         break;
       case isImageURI(icon):
         template.src = icon;
@@ -18157,7 +18353,7 @@ var APP_accelerator_home_ui = (function () {
    *
    * SPDX-License-Identifier: Apache-2.0
    */
-  const styles$1 = {
+  const styles = {
     w: 113,
     //150
     h: 90,
@@ -18192,7 +18388,7 @@ var APP_accelerator_home_ui = (function () {
       }
     }
   };
-  class Button extends lng$1.Component {
+  class Button extends t.Component {
     static _template() {
       return {
         w: this.styles.w,
@@ -18309,12 +18505,12 @@ var APP_accelerator_home_ui = (function () {
     _updateStroke() {
       if (this.stroke && !this._focused) {
         const radius = this.radius || this.styles.radius;
-        this.texture = lng$1.Tools.getRoundRect(RoundRect.getWidth(this.w), RoundRect.getHeight(this.h), radius, 0x00, true, 0xffffffff);
+        this.texture = t.Tools.getRoundRect(RoundRect.getWidth(this.w), RoundRect.getHeight(this.h), radius, 0x00, true, 0xffffffff);
         this._Stroke.color = this.strokeColor;
-        this._Stroke.texture = lng$1.Tools.getRoundRect(RoundRect.getWidth(this.w), RoundRect.getHeight(this.h), radius, this.strokeWeight, 0xffffffff, true, this.background);
+        this._Stroke.texture = t.Tools.getRoundRect(RoundRect.getWidth(this.w), RoundRect.getHeight(this.h), radius, this.strokeWeight, 0xffffffff, true, this.background);
       } else {
         const radius = this.radius || this.styles.radius;
-        this.texture = lng$1.Tools.getRoundRect(RoundRect.getWidth(this.w), RoundRect.getHeight(this.h), radius);
+        this.texture = t.Tools.getRoundRect(RoundRect.getWidth(this.w), RoundRect.getHeight(this.h), radius);
         this._Stroke.texture = false;
       }
     }
@@ -18447,7 +18643,7 @@ var APP_accelerator_home_ui = (function () {
       return this.tag('Stroke');
     }
   }
-  var Button$1 = withStyles$1(Button, styles$1);
+  var Button$1 = withStyles(Button, styles);
 
   /**
    * Copyright 2020 Comcast Cable Communications Management, LLC
@@ -18466,7 +18662,7 @@ var APP_accelerator_home_ui = (function () {
    *
    * SPDX-License-Identifier: Apache-2.0
    */
-  class FocusManager extends lng$1.Component {
+  class FocusManager extends t.Component {
     constructor(stage) {
       super(stage);
       this.patch({
@@ -18932,7 +19128,7 @@ var APP_accelerator_home_ui = (function () {
    *
    * SPDX-License-Identifier: Apache-2.0
    */
-  class FadeShader extends lng$1.shaders.WebGLDefaultShader {
+  class FadeShader extends t.shaders.WebGLDefaultShader {
     constructor(context) {
       super(context);
       this._margin = {
@@ -18979,7 +19175,7 @@ var APP_accelerator_home_ui = (function () {
    *
    * SPDX-License-Identifier: Apache-2.0
    */
-  class MarqueeText extends lng$1.Component {
+  class MarqueeText extends t.Component {
     static _template() {
       return {
         TextClipper: {
@@ -19485,7 +19681,7 @@ var APP_accelerator_home_ui = (function () {
   * Copyright 2021 Comcast Cable Communications Management, LLC
   * Licensed under the Apache License, Version 2.0
   */
-  class Keyboard extends lng$1.Component {
+  class Keyboard extends t.Component {
     _construct() {
       this._whenEnabled = new Promise(resolve => this._firstEnable = resolve);
     }
@@ -20306,7 +20502,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const wifi$5 = new Wifi();
-  class JoinAnotherNetworkComponent$1 extends lng$1.Component {
+  class JoinAnotherNetworkComponent$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -20394,7 +20590,7 @@ var APP_accelerator_home_ui = (function () {
         NetworkBox: {
           x: 400,
           y: 160,
-          texture: lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
+          texture: t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
         },
         NetworkText: {
           x: 420,
@@ -20422,7 +20618,7 @@ var APP_accelerator_home_ui = (function () {
         TypeBox: {
           x: 400,
           y: 230,
-          texture: lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false),
+          texture: t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false),
           ArrowForward: {
             h: 30,
             w: 45,
@@ -20466,7 +20662,7 @@ var APP_accelerator_home_ui = (function () {
         PasswordBox: {
           x: 400,
           y: 300,
-          texture: lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
+          texture: t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
         },
         Pwd: {
           x: 420,
@@ -20527,7 +20723,7 @@ var APP_accelerator_home_ui = (function () {
     static _states() {
       return [class EnterSSID extends this {
         $enter() {
-          this.tag('NetworkBox').texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
+          this.tag('NetworkBox').texture = t.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
         }
         _handleDown() {
           this._setState("EnterSecurity");
@@ -20536,11 +20732,11 @@ var APP_accelerator_home_ui = (function () {
           this._setState('Keyboard');
         }
         $exit() {
-          this.tag('NetworkBox').texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
+          this.tag('NetworkBox').texture = t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
         }
       }, class EnterSecurity extends this {
         $enter() {
-          this.tag("TypeBox").texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
+          this.tag("TypeBox").texture = t.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
         }
         _handleUp() {
           this._setState("EnterSSID");
@@ -20575,14 +20771,14 @@ var APP_accelerator_home_ui = (function () {
           }
         }
         $exit() {
-          this.tag("TypeBox").texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
+          this.tag("TypeBox").texture = t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
         }
       }, class EnterPassword extends this {
         $enter() {
           if (this.pwdUnReachable) {
             this._setState("EnterSecurity");
           }
-          this.tag('PasswordBox').texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
+          this.tag('PasswordBox').texture = t.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
         }
         _handleUp() {
           this._setState("EnterSecurity");
@@ -20594,7 +20790,7 @@ var APP_accelerator_home_ui = (function () {
           this._setState('Keyboard');
         }
         $exit() {
-          this.tag('PasswordBox').texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
+          this.tag('PasswordBox').texture = t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
         }
       }, class Keyboard extends this {
         $enter(state) {
@@ -20720,7 +20916,7 @@ var APP_accelerator_home_ui = (function () {
     * Class for Other Network Config Screen.
     */
 
-  class NetworkConfigurationScreen$1 extends lng$1.Component {
+  class NetworkConfigurationScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -20741,7 +20937,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Network Info'),
+                text: Language$1.translate('Network Info'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -20766,7 +20962,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Network Interface: '),
+                text: Language$1.translate('Network Interface: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -20790,7 +20986,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Test Internet Access: '),
+                text: Language$1.translate('Test Internet Access: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -20817,7 +21013,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Static Mode'),
+                text: Language$1.translate('Static Mode'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -20870,10 +21066,10 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     _unfocus() {
-      this.tag('TestInternetAccess.Title').text.text = Language.translate('Test Internet Access: ');
+      this.tag('TestInternetAccess.Title').text.text = Language$1.translate('Test Internet Access: ');
     }
     $NetworkInterfaceText(text) {
-      this.tag('NetworkInterface.Title').text.text = Language.translate('Network Interface: ') + text;
+      this.tag('NetworkInterface.Title').text.text = Language$1.translate('Network Interface: ') + text;
     }
     _handleBack() {
       if (!Router.isNavigating()) {
@@ -20881,7 +21077,7 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Network Configuration'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Network Configuration'));
     }
     static _states() {
       return [class NetworkInfo extends this {
@@ -20934,11 +21130,11 @@ var APP_accelerator_home_ui = (function () {
           this.loadingAnimation.start();
           this.tag('TestInternetAccess.Loader').visible = true;
           this._network.isConnectedToInternet().then(result => {
-            var connectionStatus = Language.translate("Internet Access: ");
+            var connectionStatus = Language$1.translate("Internet Access: ");
             if (result) {
-              connectionStatus += Language.translate("Connected");
+              connectionStatus += Language$1.translate("Connected");
             } else {
-              connectionStatus += Language.translate("Not Connected");
+              connectionStatus += Language$1.translate("Not Connected");
             }
             setTimeout(() => {
               this.tag('TestInternetAccess.Loader').visible = false;
@@ -20990,7 +21186,7 @@ var APP_accelerator_home_ui = (function () {
   var appApi$j = new AppApi();
   var defaultInterface$1 = "";
   var currentInterface$1 = [];
-  class NetworkInfo$1 extends lng$1.Component {
+  class NetworkInfo$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -21000,7 +21196,7 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Network Configuration  Network Info'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Network Configuration  Network Info'));
     }
     static _template() {
       return {
@@ -21019,7 +21215,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Status: '),
+                text: Language$1.translate('Status: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21046,7 +21242,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Connection Type: '),
+                text: Language$1.translate('Connection Type: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21073,7 +21269,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('IP Address: '),
+                text: Language$1.translate('IP Address: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21099,7 +21295,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Gateway: '),
+                text: Language$1.translate('Gateway: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21126,7 +21322,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('MAC Address: '),
+                text: Language$1.translate('MAC Address: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21153,7 +21349,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Internet Protocol: '),
+                text: Language$1.translate('Internet Protocol: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21180,7 +21376,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('SSID: '),
+                text: Language$1.translate('SSID: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21207,7 +21403,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Signal Strength: '),
+                text: Language$1.translate('Signal Strength: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21313,7 +21509,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const wifi$4 = new Wifi();
-  class NetworkInterfaceScreen$1 extends lng$1.Component {
+  class NetworkInterfaceScreen$1 extends t.Component {
     _construct() {
       this.LoadingIcon = Utils.asset('images/settings/Loading.png');
     }
@@ -21333,7 +21529,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('WiFi'),
+                text: Language$1.translate('WiFi'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21357,7 +21553,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Ethernet'),
+                text: Language$1.translate('Ethernet'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -21458,7 +21654,7 @@ var APP_accelerator_home_ui = (function () {
       return 'left';
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Network Configuration  Network Interface'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Network Configuration  Network Interface'));
     }
     static _states() {
       return [class WiFi extends this {
@@ -21523,7 +21719,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for rendering items in Settings screen.
    */
-  class ConfirmAndCancel extends lng$1.Component {
+  class ConfirmAndCancel extends t.Component {
     static _template() {
       return {
         Item: {
@@ -21534,7 +21730,7 @@ var APP_accelerator_home_ui = (function () {
           rect: true,
           color: 0xffffffff,
           shader: {
-            type: lng$1.shaders.RoundedRectangle,
+            type: t.shaders.RoundedRectangle,
             radius: 0
           }
         }
@@ -21602,7 +21798,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class PasswordSwitch extends lng$1.Component {
+  class PasswordSwitch extends t.Component {
     static _template() {
       return {
         src: Utils.asset('images/settings/ToggleOffWhite.png')
@@ -21653,7 +21849,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class WifiPairingScreen$1 extends lng$1.Component {
+  class WifiPairingScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -21716,7 +21912,7 @@ var APP_accelerator_home_ui = (function () {
             x: 417,
             y: 208,
             zIndex: 2,
-            texture: lng$1.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false)
+            texture: t.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false)
           },
           PasswrdSwitch: {
             h: 45,
@@ -21744,7 +21940,7 @@ var APP_accelerator_home_ui = (function () {
           List: {
             x: 417,
             y: 331,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1080,
             h: 400,
             itemSize: 28,
@@ -21934,7 +22130,7 @@ var APP_accelerator_home_ui = (function () {
         }
       }, class PasswordSwitchState extends this {
         $enter() {
-          this.tag("PasswordBox").texture = lng$1.Tools.getRoundRect(1279, 88, 0, 3, CONFIG.theme.hex, false);
+          this.tag("PasswordBox").texture = t.Tools.getRoundRect(1279, 88, 0, 3, CONFIG.theme.hex, false);
         }
         _handleDown() {
           this._setState("Pair");
@@ -21953,7 +22149,7 @@ var APP_accelerator_home_ui = (function () {
           this.isOn = bool;
         }
         $exit() {
-          this.tag("PasswordBox").texture = lng$1.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false);
+          this.tag("PasswordBox").texture = t.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false);
         }
       }];
     }
@@ -21977,7 +22173,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class WiFiItem extends lng$1.Component {
+  class WiFiItem extends t.Component {
     _construct() {
       this.Lock = Utils.asset('/images/settings/Lock.png');
       this.WiFi1 = Utils.asset('/images/settings/WiFi1.png');
@@ -22068,7 +22264,7 @@ var APP_accelerator_home_ui = (function () {
           },
           Lock: {
             color: 0xffffffff,
-            texture: lng$1.Tools.getSvgTexture(this.Lock, 32.5, 32.5),
+            texture: t.Tools.getSvgTexture(this.Lock, 32.5, 32.5),
             alpha: 1
           },
           Icon: {
@@ -22076,7 +22272,7 @@ var APP_accelerator_home_ui = (function () {
             flexItem: {
               marginLeft: 15
             },
-            texture: lng$1.Tools.getSvgTexture(wifiicon, 32.5, 32.5)
+            texture: t.Tools.getSvgTexture(wifiicon, 32.5, 32.5)
           }
         }
       });
@@ -22131,7 +22327,7 @@ var APP_accelerator_home_ui = (function () {
   */
 
   var previousFocusedItemSSid;
-  class WiFiScreen$1 extends lng$1.Component {
+  class WiFiScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -22151,7 +22347,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('WiFi On/Off'),
+                text: Language$1.translate('WiFi On/Off'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -22188,7 +22384,7 @@ var APP_accelerator_home_ui = (function () {
                 margin: 0
               },
               List: {
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 w: 1920 - 300,
                 itemSize: 90,
                 horizontal: false,
@@ -22204,7 +22400,7 @@ var APP_accelerator_home_ui = (function () {
               },
               List: {
                 w: 1920 - 300,
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 itemSize: 90,
                 horizontal: false,
                 invertDirection: true,
@@ -22223,7 +22419,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Join Another Network'),
+                text: Language$1.translate('Join Another Network'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -22426,7 +22622,7 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Network Configuration  Network Interface  WiFi'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Network Configuration  Network Interface  WiFi'));
     }
     static _states() {
       return [class Switch extends this {
@@ -22703,9 +22899,9 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   };
   const _thunder$1 = thunderJS$1(config$b);
-  class RCInformationScreen extends lng$1.Component {
+  class RCInformationScreen extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Bluetooth Voice Remote Control'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Bluetooth Voice Remote Control'));
     }
     pageTransition() {
       return 'left';
@@ -22733,7 +22929,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate("MacAddress"),
+                text: Language$1.translate("MacAddress"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -22765,7 +22961,7 @@ var APP_accelerator_home_ui = (function () {
               y: 135,
               mountY: 0.5,
               text: {
-                text: Language.translate("RCU Name"),
+                text: Language$1.translate("RCU Name"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -22797,7 +22993,7 @@ var APP_accelerator_home_ui = (function () {
               y: 225,
               mountY: 0.5,
               text: {
-                text: Language.translate("Connection Status"),
+                text: Language$1.translate("Connection Status"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -22829,7 +23025,7 @@ var APP_accelerator_home_ui = (function () {
               y: 315,
               mountY: 0.5,
               text: {
-                text: Language.translate(" Battery percent"),
+                text: Language$1.translate(" Battery percent"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 wordWrapWidth: 1600,
@@ -22865,7 +23061,7 @@ var APP_accelerator_home_ui = (function () {
               y: 405,
               mountY: 0.5,
               text: {
-                text: Language.translate("Software Version"),
+                text: Language$1.translate("Software Version"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -23102,7 +23298,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class to render the UI controls for the video player.
    */
-  class LightningPlayerControls extends lng$1.Component {
+  class LightningPlayerControls extends t.Component {
     /**
      * Function to create components for the player controls.
      */
@@ -23111,7 +23307,7 @@ var APP_accelerator_home_ui = (function () {
         TimeBar: {
           x: 90,
           y: 93.5,
-          texture: lng$1.Tools.getRoundRect(1740, 20, 10, 0, 0, true, 0xffffffff)
+          texture: t.Tools.getRoundRect(1740, 20, 10, 0, 0, true, 0xffffffff)
         },
         ProgressWrapper: {
           x: 90,
@@ -23120,7 +23316,7 @@ var APP_accelerator_home_ui = (function () {
           h: 35,
           clipping: true,
           ProgressBar: {
-            texture: lng$1.Tools.getRoundRect(1740, 20, 10, 0, 0, true, CONFIG.theme.hex)
+            texture: t.Tools.getRoundRect(1740, 20, 10, 0, 0, true, CONFIG.theme.hex)
             // x: 90,
             // y: 93.5,
           }
@@ -23177,7 +23373,7 @@ var APP_accelerator_home_ui = (function () {
             ControlIcon: {
               x: item.x,
               y: item.y,
-              texture: lng$1.Tools.getSvgTexture(item.src, 50, 50)
+              texture: t.Tools.getSvgTexture(item.src, 50, 50)
             }
           }))
         }
@@ -23288,13 +23484,13 @@ var APP_accelerator_home_ui = (function () {
           this.focus = this.toggle ? Utils.asset('images/Media Player/Icon_Play_Orange_16k.png') : Utils.asset('images/Media Player/Icon_Pause_Orange_16k.png');
           this.timer();
           this.tag('Buttons').children[2].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(this.focus, 50, 50)
+            texture: t.Tools.getSvgTexture(this.focus, 50, 50)
           });
         }
         $exit() {
           this.unfocus = this.toggle ? Utils.asset('images/Media Player/Icon_Play_White_16k.png') : Utils.asset('images/Media Player/Icon_Pause_White_16k.png');
           this.tag('Buttons').children[2].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(this.unfocus, 50, 50)
+            texture: t.Tools.getSvgTexture(this.unfocus, 50, 50)
           });
         }
         _handleEnter() {
@@ -23309,7 +23505,7 @@ var APP_accelerator_home_ui = (function () {
           this.focus = this.toggle ? Utils.asset('images/Media Player/Icon_Play_Orange_16k.png') : Utils.asset('images/Media Player/Icon_Pause_Orange_16k.png');
           this.timer();
           this.tag('Buttons').children[2].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(this.focus, 50, 50)
+            texture: t.Tools.getSvgTexture(this.focus, 50, 50)
           });
         }
         _handleRight() {
@@ -23333,12 +23529,12 @@ var APP_accelerator_home_ui = (function () {
         $enter() {
           this.timer();
           this.tag('Buttons').children[3].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Next_Orange_16k.png'), 50, 50)
+            texture: t.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Next_Orange_16k.png'), 50, 50)
           });
         }
         $exit() {
           this.tag('Buttons').children[3].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Next_White_16k.png'), 50, 50)
+            texture: t.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Next_White_16k.png'), 50, 50)
           });
         }
         _handleRight() {
@@ -23358,12 +23554,12 @@ var APP_accelerator_home_ui = (function () {
         $enter() {
           this.timer();
           this.tag('Buttons').children[1].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Back_Orange_16k.png'), 50, 50)
+            texture: t.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Back_Orange_16k.png'), 50, 50)
           });
         }
         $exit() {
           this.tag('Buttons').children[1].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Back_White_16k.png'), 50, 50)
+            texture: t.Tools.getSvgTexture(Utils.asset('images/Media Player/Icon_Back_White_16k.png'), 50, 50)
           });
         }
         _handleLeft() {
@@ -23383,12 +23579,12 @@ var APP_accelerator_home_ui = (function () {
         $enter() {
           this.timer();
           this.tag('Buttons').children[4].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/SeekFwd.png'), 50, 50)
+            texture: t.Tools.getSvgTexture(Utils.asset('images/Media Player/SeekFwd.png'), 50, 50)
           });
         }
         $exit() {
           this.tag('Buttons').children[4].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/player/fast-forward.png'), 50, 50)
+            texture: t.Tools.getSvgTexture(Utils.asset('images/player/fast-forward.png'), 50, 50)
           });
         }
         _handleLeft() {
@@ -23410,12 +23606,12 @@ var APP_accelerator_home_ui = (function () {
         $enter() {
           this.timer();
           this.tag('Buttons').children[0].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/Media Player/SeekRwd.png'), 50, 50)
+            texture: t.Tools.getSvgTexture(Utils.asset('images/Media Player/SeekRwd.png'), 50, 50)
           });
         }
         $exit() {
           this.tag('Buttons').children[0].tag('ControlIcon').patch({
-            texture: lng$1.Tools.getSvgTexture(Utils.asset('images/player/rewind.png'), 50, 50)
+            texture: t.Tools.getSvgTexture(Utils.asset('images/player/rewind.png'), 50, 50)
           });
         }
         _handleLeft() {}
@@ -23457,7 +23653,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class ChannelItem$1 extends lng$1.Component {
+  class ChannelItem$1 extends t.Component {
     static _template() {
       return {
         zIndex: 1,
@@ -23545,7 +23741,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class ChannelOverlay extends lng$1.Component {
+  class ChannelOverlay extends t.Component {
     /**
      * Function to create components for the player controls.
      */
@@ -23561,7 +23757,7 @@ var APP_accelerator_home_ui = (function () {
             y: 5,
             w: 232,
             h: 891,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             // clipping:true,
             itemSize: 81,
             roll: true,
@@ -23742,7 +23938,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class to render AAMP video player.
    */
-  class AAMPVideoPlayer extends lng$1.Component {
+  class AAMPVideoPlayer extends t.Component {
     /**
      * Function to render player controls.
      */
@@ -23782,7 +23978,7 @@ var APP_accelerator_home_ui = (function () {
           y: 560,
           mount: 0.5,
           texture: {
-            type: lng$1.textures.ImageTexture,
+            type: t.textures.ImageTexture,
             src: 'static/images/Media Player/Audio_Background_16k.jpg',
             resizeMode: {
               type: 'contain',
@@ -24332,12 +24528,12 @@ var APP_accelerator_home_ui = (function () {
    * Class for Other Settings Screen.
    */
 
-  class OtherSettingsScreen$1 extends lng$1.Component {
+  class OtherSettingsScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings'));
     }
     static _template() {
       return {
@@ -24356,7 +24552,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Sleep Timer: Off'),
+                text: Language$1.translate('Sleep Timer: Off'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -24382,7 +24578,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Remote Control'),
+                text: Language$1.translate('Remote Control'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -24407,7 +24603,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Screen-Saver: '),
+                text: Language$1.translate('Screen-Saver: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -24431,7 +24627,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Energy Saver: '),
+                text: Language$1.translate('Energy Saver: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -24456,7 +24652,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Language'),
+                text: Language$1.translate('Language'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -24481,7 +24677,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Privacy'),
+                text: Language$1.translate('Privacy'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -24505,7 +24701,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Advanced Settings'),
+                text: Language$1.translate('Advanced Settings'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -24529,20 +24725,20 @@ var APP_accelerator_home_ui = (function () {
       this._setState('SleepTimer');
     }
     $updateStandbyMode(standbyMode) {
-      this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + standbyMode;
+      this.tag("EnergySaver.Title").text.text = Language$1.translate("Energy Saver: ") + Language$1.translate(standbyMode);
     }
     $sleepTimerText(text) {
-      this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + text;
+      this.tag('SleepTimer.Title').text.text = Language$1.translate('Sleep Timer: ') + text;
     }
     $screenSaverTime(text) {
-      this.tag('ScreenSaver.Title').text.text = Language.translate('Screen-Saver: ') + text;
+      this.tag('ScreenSaver.Title').text.text = Language$1.translate('Screen-Saver: ') + text;
     }
     _focus() {
       this._setState(this.state);
       if (Storage.get('TimeoutInterval')) {
-        this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + Storage.get('TimeoutInterval');
+        this.tag('SleepTimer.Title').text.text = Language$1.translate('Sleep Timer: ') + Storage.get('TimeoutInterval');
       } else {
-        this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + 'Off';
+        this.tag('SleepTimer.Title').text.text = Language$1.translate('Sleep Timer: ') + 'Off';
       }
       this._appApi.getPreferredStandbyMode().then(result => {
         let currentStandbyMode = "";
@@ -24551,7 +24747,7 @@ var APP_accelerator_home_ui = (function () {
         } else if (result.preferredStandbyMode == "DEEP_SLEEP") {
           currentStandbyMode = "Deep Sleep";
         }
-        this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + currentStandbyMode;
+        this.tag("EnergySaver.Title").text.text = Language$1.translate("Energy Saver: ") + Language$1.translate(currentStandbyMode);
       });
     }
     _handleBack() {
@@ -24706,9 +24902,9 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class SleepTimerScreen$1 extends lng$1.Component {
+  class SleepTimerScreen$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Sleep Timer'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Sleep Timer'));
     }
     pageTransition() {
       return 'left';
@@ -24724,7 +24920,7 @@ var APP_accelerator_home_ui = (function () {
           x: 200,
           List: {
             w: 1920 - 300,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             itemSize: 90,
             horizontal: false,
             invertDirection: true,
@@ -24832,7 +25028,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class EnergySavingsItem extends lng$1.Component {
+  class EnergySavingsItem extends t.Component {
     _construct() {
       this.Tick = Utils.asset('/images/settings/Tick.png');
     }
@@ -24872,9 +25068,9 @@ var APP_accelerator_home_ui = (function () {
     _handleEnter() {
       let self = this;
       let standbyMode = "";
-      if (this._item === "Deep Sleep") {
+      if (this._item === Language$1.translate("Deep Sleep")) {
         standbyMode = "DEEP_SLEEP";
-      } else if (this._item === "Light Sleep") {
+      } else if (this._item === Language$1.translate("Light Sleep")) {
         standbyMode = "LIGHT_SLEEP";
       }
       this.appApi.setPreferredStandbyMode(standbyMode).then(result => {
@@ -24892,7 +25088,7 @@ var APP_accelerator_home_ui = (function () {
           x: 10,
           y: 45,
           mountY: 0.5,
-          texture: lng$1.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
+          texture: t.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
           color: 0xffffffff,
           visible: self.isTicked ? true : false //implement the logic to show the tick
         },
@@ -24949,9 +25145,9 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class EnergySavingsScreen$1 extends lng$1.Component {
+  class EnergySavingsScreen$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Energy Saver'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Energy Saver'));
     }
     pageTransition() {
       return 'left';
@@ -24966,7 +25162,7 @@ var APP_accelerator_home_ui = (function () {
           x: 200,
           y: 275,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -25023,7 +25219,7 @@ var APP_accelerator_home_ui = (function () {
 
     _firstEnable() {
       this._appApi = new AppApi();
-      this.options = [Language.translate("Deep Sleep"), Language.translate("Light Sleep")];
+      this.options = [Language$1.translate("Deep Sleep"), Language$1.translate("Light Sleep")];
       this.tag('EnerygySavingContents').h = this.options.length * 90;
       this.tag('EnerygySavingContents.List').h = this.options.length * 90;
       this.loadingAnimation = this.tag('Loader').animation({
@@ -25051,9 +25247,9 @@ var APP_accelerator_home_ui = (function () {
       var standbyMode = "";
       this._appApi.getPreferredStandbyMode().then(result => {
         if (result.preferredStandbyMode == "LIGHT_SLEEP") {
-          standbyMode = Language.translate("Light Sleep");
+          standbyMode = Language$1.translate("Light Sleep");
         } else if (result.preferredStandbyMode == "DEEP_SLEEP") {
-          standbyMode = Language.translate("Deep Sleep");
+          standbyMode = Language$1.translate("Deep Sleep");
         }
         this.tag('List').items = this.options.map((item, index) => {
           return {
@@ -25139,7 +25335,7 @@ var APP_accelerator_home_ui = (function () {
           y: 45,
           mountY: 0.5,
           text: {
-            text: Language.translate(item),
+            text: Language$1.translate(item),
             fontSize: 25,
             textColor: COLORS.textColor,
             fontFace: CONFIG.language.font
@@ -25193,9 +25389,9 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   });
   const loader$2 = 'Loader';
-  class LanguageScreen$2 extends lng$1.Component {
+  class LanguageScreen$2 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Language'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Language'));
     }
     pageTransition() {
       return 'left';
@@ -25214,7 +25410,7 @@ var APP_accelerator_home_ui = (function () {
               margin: 0
             },
             List: {
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 1920 - 300,
               itemSize: 90,
               horizontal: false,
@@ -25291,6 +25487,7 @@ var APP_accelerator_home_ui = (function () {
                 }
               });
             }
+            appApi$h.setUILanguage(updatedLanguage);
             let path = location.pathname.split('index.html')[0];
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html";
             let notification_url = location.origin + path + url;
@@ -25337,9 +25534,9 @@ var APP_accelerator_home_ui = (function () {
 
   const xcastApi$2 = new XcastApi();
   let cookieToggle = false;
-  class PrivacyScreen$1 extends lng$1.Component {
+  class PrivacyScreen$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Privacy'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Privacy'));
     }
     pageTransition() {
       return 'left';
@@ -25361,7 +25558,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Local Device Discovery'),
+                text: Language$1.translate('Local Device Discovery'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -25385,7 +25582,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('USB Media Devices'),
+                text: Language$1.translate('USB Media Devices'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -25409,7 +25606,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Audio Input'),
+                text: Language$1.translate('Audio Input'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -25433,7 +25630,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Clear Cookies and App Data'),
+                text: Language$1.translate('Clear Cookies and App Data'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -25457,7 +25654,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Privacy Policy and License'),
+                text: Language$1.translate('Privacy Policy and License'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -25691,9 +25888,9 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const _privacyPolicy$1 = "Privacy\n Welcome to RDKCentral.com, a website owned and operated by RDK Management, LLC (\u201CRDK Management,\u201D \u201Cwe,\u201D or \u201Cus\u201D). This privacy policy discloses the privacy practices for this website only, including an explanation of:\n \n the categories of personally identifiable information about you that may be collected and how that information is used;\n how we collect and use non-personally identifiable information about your use of the website;\n the categories of persons or entities with whom the information may be shared;\n the choices that are available to you regarding collection, use, and distribution of the information;\n how you can opt out of RDK-related promotional e-mail;\n the kind of security procedures that are in place to protect the loss, misuse or alteration of information;\n how you can review and request changes to the information; and\n how we notify users of this website of changes to this privacy policy.\n Questions regarding this policy should be directed to \u201CRDK Management \u2013 Privacy Feedback\u201D and can be submitted via e-mail to info@rdkcentral.com.\n \n \n What categories of information do we collect?\n The information collected by RDK Management falls into two categories: (1) information voluntarily supplied by users of the website and (2) tracking information recorded as users navigate through the website. Some of this information is personally identifiable information (i.e., information that identifies a particular person, such as e-mail address), but much of it is not.\n \n To make use of some features on our website, like the RDK Wiki, users need to register and provide certain information as part of the registration process. We may ask, for example, for your name, e-mail address, street address, and zip code. We might also request information about your employer and the type of work that you do, in order to determine whether your employer is a member of the RDK program, to help us ensure that you are given access to the correct portions of the website, and to tailor our website content and e-mail (if you\u2019ve registered to receive e-mail) to your interests to make it more useful to you. If you are a registered user, our systems will remember some of this information the next time you log in and use our website, but you can always review and change your information by logging in and editing your profile here.\n \n The more you tell us about yourself, the more value we can offer you. Supplying this information is entirely voluntary. But if you choose not to supply the information, we may be unable to provide you with access to all of the features of this website. There are certain features of this website, including the Wiki and requesting to receive RDK-related promotional e-mail, that you will not be able to use unless you provide certain personally identifiable information about yourself. When you submit any personally identifiable information over this website, RDK Management (i) will use the information for the purposes described at the time you submit it and (ii) may use the information to contact you, subject to the contact preferences in your profile. If you want to remain completely anonymous, you\u2019re still free to take advantage of the publicly available content on our website without registration.\n \n Does RDK Management analyze my interaction with this website?\n Some of the third-party service providers that RDK Management uses to deliver services, like analytics providers, may collect information on this website as disclosed in this privacy policy. This information may include personally identifiable information or may be used to contact you online.\n \n We and our service providers may use cookies to provide these services. The World Wide Web Consortium (W3C) has started a process to develop a \u201CDo Not Track\u201D Standard. Since the definitions and rules for such a standard have not yet been defined, RDK Management does not yet respond to \u201CDo Not Track\u201D signals sent from browsers.\n \n You may opt out of receiving cookies from the companies that provide services on this website by going to www.networkadvertising.org/consumer/opt_out.asp or http://www.aboutads.info/choices.\n \n What categories of persons or entities do we share personally identifiable information with?\n We consider the personally identifiable information contained in our business records to be confidential. We may sometimes disclose personally identifiable information about you to our affiliates or to others who work for us. We may also disclose personally identifiable information about you to service providers and vendors, and to others who provide products and services to us. For example, when you use certain functions on this website you may notice that the website actually collecting or processing the information may be other than an RDK Management website. We may be required by law or legal process to disclose certain personally identifiable information about you to lawyers and parties in connection with litigation and to law enforcement personnel. For example, we may be required by law to disclose personally identifiable information about you without your consent and without notice in order to comply with a valid legal process such as a subpoena, court order, or search warrant.\n \n What do we do to personalize your use of this website?\n We, or our service providers, may customize this website based on non-personal information including: (i) the IP address associated with your computer for purposes of determining your approximate geographic location; (ii) the type of web page that is being displayed; or (iii) the content on the page that is shown. Because this activity automatically applies to all users and it is purely contextual, this type of content delivery cannot be customized or controlled by individual users. We may also personalize this website based on the information that you provided us during registration. You may modify this information as further described in this Privacy Policy.\n \n To help make our website more responsive to the needs of our users, we use a standard feature of browser software called a \u201Ccookie.\u201D We use cookies to help us tailor our website to your needs, to deliver a better, more personalized service, and to remember certain choices you\u2019ve made so you don\u2019t have to re-enter them.\n \n RDK Management uses cookies, among other things, to remember your username and password, if you choose to store them, as well as to remember some of your personalization preferences and website features. RDK Management does not store your name or other personal information in cookies. You may read about enabling, disabling, and deleting cookies here. Of course, if you set your browser not to accept cookies or you delete them, you may not be able to take advantage of the personalized features enjoyed by other users of our website.\n \n The cookies we use don\u2019t directly identify users of our website as particular persons. Rather, they contain information sufficient to simplify and improve a user\u2019s experience on our website. For example, we may use session-based cookies to track the pages on our website visited by our users. We can build a better website if we know which pages our users are visiting and how often. Or, we may use persistent cookies to simplify access to a user\u2019s account information over our website, for example.\n \n In connection with the standard operation of RDK Management\u2019s systems, certain non-personally identifiable information about users of this website is recorded. This information is used primarily to tailor and enhance users\u2019 experience using the website. We may use this information in an aggregate, non-personally identifiable form to, among other things, measure the use of our website and determine which pages are the most popular with website users.\n \n We may also use one or more audience segmenting technology providers to help present content on this website. These providers uses cookies, web beacons, or similar technologies on your computer or mobile or other device to serve you advertisements or content tailored to interests you have shown by browsing on this and other websites you have visited. It also helps determine whether you have seen a particular piece of content before and in order to avoid sending you duplicates. In doing so, these providers collect non-personally identifiable information such as your browser type, your operating system, web pages visited, time of visits, content viewed, ads viewed, and other click stream data. When you visit this website, these providers may use cookies or web beacons to note which product and service descriptions your browser visited. The use of cookies, web beacons, or similar technologies by these providers is subject to their own privacy policies, not RDK Management\u2019s privacy policy for this website. If you do not want the benefits of the cookies used by these providers, you may opt-out of them by visiting http://www.networkadvertising.org/consumer/opt_out.asp or by visiting their opt-out pages.\n \n Your Access to and Control over your information?\n You may opt out of any future contacts from us at any time. You can do the following at any time via email to support@rdkcentral.com or info@rdkcentral.com or unsubscribe to emails.\n \n Request to see all the information stored in the system\n Accuracy of your data can be checked or corrected.\n Personal data will be archived, in case user does not access our system for 90 days. However, user can request for deletion by writing to us at support@rdkcentral.com\n Express any concern you have about our use of your data\n Opt out from receiving emails by clicking unsubscribe.\n How do users opt out of RDK-related promotional e-mail?\n You can opt out of receiving RDK-related promotional e-mail from RDK Management using the opt-out link found in the footer of any of these e-mails. You can also e-mail the request to the attention of \u201CRDK Management \u2013 E-mail Opt Out\u201D via e-mail to info@rdkcentral.com.\n \n Other Websites\n \n To make our website more valuable to our users, we may offer some features in conjunction with other providers. Our website may also include links to other websites whose privacy policies and practices we don\u2019t control. Once you leave our website by linking to another one (you can tell where you are by checking the address \u2013 known as a URL \u2013 in the location bar on your browser), use of any information you provide is governed by the privacy policy of the operator of the website you\u2019re visiting. That policy may differ from ours. If you can\u2019t find the privacy policy of any of these websites via a link from the site\u2019s homepage, you should contact the website directly for more information.\n \n Security\n \n All information gathered on our website is stored within a database accessible only to RDK Management, its affiliates, and their specifically-authorized contractors and vendors. However, as effective as any security measure implemented by RDK Management may be, no security system is impenetrable. We cannot guarantee the complete security of our database, nor can we guarantee that information you supply won\u2019t be intercepted while being transmitted to us over the Internet. If you don\u2019t want us to know any particular information about you, don\u2019t include it in anything that you submit or post to this website or send to us in e-mail. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our policies.\n \n Changes to this Privacy Policy\n \n We may change this privacy policy from time to time. If we change this privacy policy at some point in the future, we\u2019ll post the changes on our website and by continuing to use the website after we post any changes, you accept and agree to this privacy statement, as modified.\n \n A Special Note About Children\n \n This website is not directed to children under the age of 13, and RDK Management does not knowingly collect personally identifiable information from anyone under the age of 18 on this website.\n \n Contacting us:\n \n If you have any questions about RDK Management, LLC privacy policy, the data we hold on you, or you would like to exercise one of your data protection rights, please do not hesitate to contact us.\n \n Data Protection Officer:  Herman-Jan Smith\n \n Email us at: hj.smith@rdkcentral.com\n \n Contacting the appropriate authority:\n \n Should you wish to report a complaint or if you feel that Our Company has not addressed your concern in a satisfactory manner, you may contact the Information Commissioner\u2019s Office.\n \n Email: compliance_team@rdkcentral.com\n \n Address:  1701 JFK Boulevard, Philadelphia, PA 19103 U.S.A";
-  class PrivacyPolicyScreen$1 extends lng$1.Component {
+  class PrivacyPolicyScreen$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Privacy  Policy'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Privacy  Policy'));
     }
     pageTransition() {
       return 'left';
@@ -25895,9 +26092,9 @@ var APP_accelerator_home_ui = (function () {
    * Class for AdvancedSettings screen.
    */
 
-  class AdvanceSettingsScreen$1 extends lng$1.Component {
+  class AdvanceSettingsScreen$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Advanced Settings'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Advanced Settings'));
     }
     pageTransition() {
       return 'left';
@@ -25920,7 +26117,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('TTS Options'),
+                text: Language$1.translate('TTS Options'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -25945,7 +26142,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('CEC Control'),
+                text: Language$1.translate('CEC Control'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -25971,7 +26168,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Bug Report'),
+                text: Language$1.translate('Bug Report'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -25997,7 +26194,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Contact Support'),
+                text: Language$1.translate('Contact Support'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26021,7 +26218,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Device'),
+                text: Language$1.translate('Device'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26199,9 +26396,9 @@ var APP_accelerator_home_ui = (function () {
    * Class for Video and Audio screen.
    */
 
-  class DeviceScreen$1 extends lng$1.Component {
+  class DeviceScreen$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Advanced Settings  Device'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Advanced Settings  Device'));
     }
     pageTransition() {
       return 'left';
@@ -26222,7 +26419,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Info'),
+                text: Language$1.translate('Info'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26246,7 +26443,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Time Zone'),
+                text: Language$1.translate('Time Zone'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26270,7 +26467,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Check for Firmware Update'),
+                text: Language$1.translate('Check for Firmware Update'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26294,7 +26491,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Reboot'),
+                text: Language$1.translate('Reboot'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26309,7 +26506,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Factory Reset'),
+                text: Language$1.translate('Factory Reset'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26459,9 +26656,9 @@ var APP_accelerator_home_ui = (function () {
    * Class for Video and Audio screen.
    */
 
-  class DeviceInformationScreen$1 extends lng$1.Component {
+  class DeviceInformationScreen$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Advanced Settings  Device  Info'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Advanced Settings  Device  Info'));
     }
     pageTransition() {
       return 'left';
@@ -26489,7 +26686,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate("Chipset"),
+                text: Language$1.translate("Chipset"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26521,7 +26718,7 @@ var APP_accelerator_home_ui = (function () {
               y: 135,
               mountY: 0.5,
               text: {
-                text: Language.translate("Serial Number"),
+                text: Language$1.translate("Serial Number"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26553,7 +26750,7 @@ var APP_accelerator_home_ui = (function () {
               y: 225,
               mountY: 0.5,
               text: {
-                text: Language.translate("Location"),
+                text: Language$1.translate("Location"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26585,7 +26782,7 @@ var APP_accelerator_home_ui = (function () {
               y: 360,
               mountY: 0.5,
               text: {
-                text: Language.translate("Supported DRM & Key-System"),
+                text: Language$1.translate("Supported DRM & Key-System"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 wordWrapWidth: 1600,
@@ -26621,7 +26818,7 @@ var APP_accelerator_home_ui = (function () {
               y: 540,
               mountY: 0.5,
               text: {
-                text: Language.translate("Firmware version"),
+                text: Language$1.translate("Firmware version"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26653,7 +26850,7 @@ var APP_accelerator_home_ui = (function () {
               y: 720,
               mountY: 0.5,
               text: {
-                text: Language.translate("App Info"),
+                text: Language$1.translate("App Info"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -26820,9 +27017,9 @@ var APP_accelerator_home_ui = (function () {
    * Class for Firmware screen.
    */
 
-  class FirmwareScreen$1 extends lng$1.Component {
+  class FirmwareScreen$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Advanced Settings  Device  Firmware Update'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Advanced Settings  Device  Firmware Update'));
     }
     pageTransition() {
       return 'left';
@@ -26842,7 +27039,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Firmware State: '),
+                text: Language$1.translate('Firmware State: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 22
@@ -26855,7 +27052,7 @@ var APP_accelerator_home_ui = (function () {
               y: 90,
               mountY: 0.5,
               text: {
-                text: Language.translate('Firmware Versions: '),
+                text: Language$1.translate('Firmware Versions: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 22
@@ -26868,7 +27065,7 @@ var APP_accelerator_home_ui = (function () {
               y: 135,
               mountY: 0.5,
               text: {
-                text: Language.translate("Downloaded Firmware Version: "),
+                text: Language$1.translate("Downloaded Firmware Version: "),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 22
@@ -26902,7 +27099,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Check for Update"),
+                  text: Language$1.translate("Check for Update"),
                   fontFace: CONFIG.language.font,
                   fontSize: 24
                 }
@@ -26954,11 +27151,11 @@ var APP_accelerator_home_ui = (function () {
       const downloadState = ['Uninitialized', 'Requesting', 'Downloading', 'Failed', 'DownLoad Complete', 'Validation Complete', 'Preparing to Reboot'];
       this._appApi.getFirmwareUpdateState().then(res => {
         console.log("getFirmwareUpdateState from firmware screen " + JSON.stringify(res));
-        this.tag('State.Title').text.text = Language.translate("Firmware State: ") + downloadState[res.firmwareUpdateState];
+        this.tag('State.Title').text.text = Language$1.translate("Firmware State: ") + downloadState[res.firmwareUpdateState];
       });
       this._appApi.getDownloadFirmwareInfo().then(res => {
         console.log("getDownloadFirmwareInfo from firmware screen " + JSON.stringify(res));
-        this.tag('Version.Title').text.text = Language.translate("Firmware Versions: ") + res.currentFWVersion;
+        this.tag('Version.Title').text.text = Language$1.translate("Firmware Versions: ") + res.currentFWVersion;
       });
       this._setState('FirmwareUpdate');
     }
@@ -26968,7 +27165,7 @@ var APP_accelerator_home_ui = (function () {
         if (res.downloadPercent < 0) {
           this.tag('DownloadedPercent.Title').text.text = "";
         } else {
-          this.tag('DownloadedPercent.Title').text.text = Language.translate("Download Progress: ") + res.downloadPercent + "%";
+          this.tag('DownloadedPercent.Title').text.text = Language$1.translate("Download Progress: ") + res.downloadPercent + "%";
         }
       }).catch(err => {
         console.error(err);
@@ -26978,7 +27175,7 @@ var APP_accelerator_home_ui = (function () {
       this._appApi.updateFirmware().then(res => {
         this._appApi.getDownloadFirmwareInfo().then(result => {
           console.log("getDownloadFirmwareInfo : ".concat(JSON.stringify(result.downloadFWVersion)));
-          this.tag('DownloadedVersion.Title').text.text = Language.translate('Downloaded Firmware Version: ') + "".concat(result.downloadFWVersion ? result.downloadFWVersion : 'NA');
+          this.tag('DownloadedVersion.Title').text.text = Language$1.translate('Downloaded Firmware Version: ') + "".concat(result.downloadFWVersion ? result.downloadFWVersion : 'NA');
         }).catch(err => {
           console.error(err);
         });
@@ -27023,7 +27220,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Reboot Confirmation Screen.
    */
-  class RebootConfirmationScreen$1 extends lng$1.Component {
+  class RebootConfirmationScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -27041,7 +27238,7 @@ var APP_accelerator_home_ui = (function () {
             y: 0,
             mountX: 0.5,
             text: {
-              text: Language.translate("Reboot"),
+              text: Language$1.translate("Reboot"),
               fontFace: CONFIG.language.font,
               fontSize: 40,
               textColor: CONFIG.theme.hex
@@ -27060,7 +27257,7 @@ var APP_accelerator_home_ui = (function () {
             y: 125,
             mountX: 0.5,
             text: {
-              text: Language.translate("Click Confirm to reboot!"),
+              text: Language$1.translate("Click Confirm to reboot!"),
               fontFace: CONFIG.language.font,
               fontSize: 25
             }
@@ -27083,7 +27280,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Confirm"),
+                  text: Language$1.translate("Confirm"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -27102,7 +27299,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Cancel"),
+                  text: Language$1.translate("Cancel"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -27276,7 +27473,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for rendering items in Settings screen.
    */
-  class TimeZoneItem extends lng$1.Component {
+  class TimeZoneItem extends t.Component {
     _construct() {
       this.Arrow = Utils.asset('/images/settings/Arrow.png');
       this.Tick = Utils.asset('/images/settings/Tick.png');
@@ -27318,13 +27515,13 @@ var APP_accelerator_home_ui = (function () {
           x: 1600,
           mountX: 1,
           mountY: 0.5,
-          texture: lng$1.Tools.getSvgTexture(this.Arrow, 45, 45),
+          texture: t.Tools.getSvgTexture(this.Arrow, 45, 45),
           color: 0xffffffff
         },
         Tick: {
           y: 45,
           mountY: 0.5,
-          texture: lng$1.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
+          texture: t.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
           color: 0xffffffff,
           visible: item[2]
         },
@@ -27369,9 +27566,9 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  class TimeZone$1 extends lng$1.Component {
+  class TimeZone$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Advanced Settings  Device  Time'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Advanced Settings  Device  Time'));
     }
 
     /**
@@ -27395,7 +27592,7 @@ var APP_accelerator_home_ui = (function () {
           x: 200,
           y: 275,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -27530,7 +27727,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for rendering items in Settings screen.
    */
-  class TimeItem extends lng$1.Component {
+  class TimeItem extends t.Component {
     _construct() {
       this.Tick = Utils.asset('/images/settings/Tick.png');
     }
@@ -27569,7 +27766,7 @@ var APP_accelerator_home_ui = (function () {
         Tick: {
           y: 45,
           mountY: 0.5,
-          texture: lng$1.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
+          texture: t.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
           color: 0xffffffff,
           visible: item[1]
         },
@@ -27627,7 +27824,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for rendering items in Settings screen.
    */
-  class TimeItems extends lng$1.Component {
+  class TimeItems extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -27641,7 +27838,7 @@ var APP_accelerator_home_ui = (function () {
           x: 200,
           y: 185,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -27716,7 +27913,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Reboot Confirmation Screen.
    */
-  class RebootConfirmationScreen extends lng$1.Component {
+  class RebootConfirmationScreen extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -27734,7 +27931,7 @@ var APP_accelerator_home_ui = (function () {
             y: 0,
             mountX: 0.5,
             text: {
-              text: Language.translate("Factory Reset"),
+              text: Language$1.translate("Factory Reset"),
               fontFace: CONFIG.language.font,
               fontSize: 40,
               textColor: CONFIG.theme.hex
@@ -27753,7 +27950,7 @@ var APP_accelerator_home_ui = (function () {
             y: 125,
             mountX: 0.5,
             text: {
-              text: Language.translate("Click Confirm to FactoryReset!"),
+              text: Language$1.translate("Click Confirm to FactoryReset!"),
               fontFace: CONFIG.language.font,
               fontSize: 25
             }
@@ -27776,7 +27973,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Confirm"),
+                  text: Language$1.translate("Confirm"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -27795,7 +27992,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Cancel"),
+                  text: Language$1.translate("Cancel"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -28107,9 +28304,9 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   };
   var thunder$d = thunderJS$1(config$9);
-  class SreenSaverScreen extends lng$1.Component {
+  class SreenSaverScreen extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Screen Saver'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Other Settings  Screen Saver'));
     }
     pageTransition() {
       return 'left';
@@ -28125,7 +28322,7 @@ var APP_accelerator_home_ui = (function () {
           x: 200,
           List: {
             w: 1920 - 300,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             itemSize: 90,
             horizontal: false,
             invertDirection: true,
@@ -28385,12 +28582,12 @@ var APP_accelerator_home_ui = (function () {
    * Class for Audio screen.
    */
 
-  class AudioScreen$1 extends lng$1.Component {
+  class AudioScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Audio'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Audio'));
     }
     static _template() {
       return {
@@ -28410,7 +28607,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Audio Output: ') + " HDMI",
+                text: Language$1.translate('Audio Output: ') + " HDMI",
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -28434,7 +28631,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Output Mode: '),
+                text: Language$1.translate('Output Mode: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -28459,7 +28656,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Full Dynamic Range'),
+                text: Language$1.translate('Full Dynamic Range'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -28484,7 +28681,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Audio Language: ') + "Auto",
+                text: Language$1.translate('Audio Language: ') + "Auto",
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -28509,7 +28706,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Navigation Feedback'),
+                text: Language$1.translate('Navigation Feedback'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -28534,7 +28731,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Bluetooth: ') + "None",
+                text: Language$1.translate('Bluetooth: ') + "None",
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -28560,7 +28757,7 @@ var APP_accelerator_home_ui = (function () {
     _focus() {
       this._setState(this.state);
       this.appApi.getSoundMode().then(result => {
-        this.tag('OutputMode.Title').text.text = Language.translate('Output Mode: ') + result.soundMode;
+        this.tag('OutputMode.Title').text.text = Language$1.translate('Output Mode: ') + result.soundMode;
       });
     }
     hide() {
@@ -28719,7 +28916,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class VideoAndAudioItem extends lng$1.Component {
+  class VideoAndAudioItem extends t.Component {
     _construct() {
       this.Tick = Utils.asset('/images/settings/Tick.png');
     }
@@ -28782,7 +28979,7 @@ var APP_accelerator_home_ui = (function () {
           x: 10,
           y: 45,
           mountY: 0.5,
-          texture: lng$1.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
+          texture: t.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
           color: 0xffffffff,
           visible: this.isTicked ? true : false //implement the logic to show the tick
         },
@@ -28844,12 +29041,12 @@ var APP_accelerator_home_ui = (function () {
    * Class for HDMI Output Screen.
    */
   var appApi$d = new AppApi();
-  class HdmiOutputScreen$1 extends lng$1.Component {
+  class HdmiOutputScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Audio  Output Mode'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Audio  Output Mode'));
     }
     static _template() {
       return {
@@ -28861,7 +29058,7 @@ var APP_accelerator_home_ui = (function () {
           x: 200,
           y: 275,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -28987,12 +29184,12 @@ var APP_accelerator_home_ui = (function () {
    * Class for Resolution Screen.
    */
 
-  class ResolutionScreen$1 extends lng$1.Component {
+  class ResolutionScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Video  Resolution'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Video  Resolution'));
     }
     static _template() {
       return {
@@ -29004,7 +29201,7 @@ var APP_accelerator_home_ui = (function () {
           x: 200,
           y: 275,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -29140,12 +29337,12 @@ var APP_accelerator_home_ui = (function () {
    * Class for Video screen.
    */
 
-  class VideoScreen$1 extends lng$1.Component {
+  class VideoScreen$1 extends t.Component {
     pageTransition() {
       return 'left';
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings  Video'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings  Video'));
     }
     static _template() {
       return {
@@ -29163,7 +29360,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Resolution: '),
+                text: Language$1.translate('Resolution: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -29187,7 +29384,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('High Dynamic Range: '),
+                text: Language$1.translate('High Dynamic Range: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -29204,7 +29401,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Match Content: '),
+                text: Language$1.translate('Match Content: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -29230,7 +29427,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Output Format:'),
+                text: Language$1.translate('Output Format:'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -29256,7 +29453,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Chroma:'),
+                text: Language$1.translate('Chroma:'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -29281,7 +29478,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('HDCP Status: '),
+                text: Language$1.translate('HDCP Status: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -29297,15 +29494,15 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this._appApi.getResolution().then(resolution => {
-        this.tag("Resolution.Title").text.text = Language.translate('Resolution: ') + resolution;
+        this.tag("Resolution.Title").text.text = Language$1.translate('Resolution: ') + resolution;
       }).catch(err => {
         console.log("Error fetching the Resolution");
       });
       this._appApi.getHDCPStatus().then(result => {
         if (result.isHDCPCompliant && result.isHDCPEnabled) {
-          this.tag("HDCP.Title").text.text = "".concat(Language.translate('HDCP Status: '), "Enabled, Version: ").concat(result.currentHDCPVersion);
+          this.tag("HDCP.Title").text.text = "".concat(Language$1.translate('HDCP Status: '), "Enabled, Version: ").concat(result.currentHDCPVersion);
         } else {
-          this.tag("HDCP.Title").text.text = "".concat(Language.translate('HDCP Status: '), "Not Supported ");
+          this.tag("HDCP.Title").text.text = "".concat(Language$1.translate('HDCP Status: '), "Not Supported ");
         }
       });
       this._appApi.getHDRSetting().then(result => {
@@ -29317,7 +29514,7 @@ var APP_accelerator_home_ui = (function () {
           "HdrDolbyvision": "Dolby Vision",
           "HdrTechnicolor": "Technicolor HDR"
         };
-        this.tag("HDR.Title").text.text = Language.translate('High Dynamic Range: ') + availableHDROptions[result];
+        this.tag("HDR.Title").text.text = Language$1.translate('High Dynamic Range: ') + availableHDROptions[result];
       });
       this._setState(this.state);
     }
@@ -29479,12 +29676,12 @@ var APP_accelerator_home_ui = (function () {
    **/
   const errorTitle$1 = 'Error Title';
   const errorMsg$1 = 'Error Message';
-  class Failscreen extends lng$1.Component {
+  class Failscreen extends t.Component {
     notify(args) {
       console.log(args);
       if (args.title && args.msg) {
         this.tag('FailScreen.Title').text.text = args.title;
-        this.tag('FailScreen.Message').text.text = Language.translate(args.msg);
+        this.tag('FailScreen.Message').text.text = Language$1.translate(args.msg);
       }
     }
     pageTransition() {
@@ -29551,7 +29748,7 @@ var APP_accelerator_home_ui = (function () {
               y: 25,
               mount: 0.5,
               text: {
-                text: Language.translate("OK"),
+                text: Language$1.translate("OK"),
                 fontFace: CONFIG.language.font,
                 fontSize: 22
               }
@@ -29601,7 +29798,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class to render items in main view.
    */
-  class UsbListItem extends lng$1.Component {
+  class UsbListItem extends t.Component {
     /**
      * Function to render various elements in the main view item.
      */
@@ -29731,7 +29928,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   var usbApi = new UsbApi();
-  class UsbAppsScreen extends lng$1.Component {
+  class UsbAppsScreen extends t.Component {
     _onChanged() {
       this.widgets.menu.updateTopPanelText('USB');
     }
@@ -29770,7 +29967,7 @@ var APP_accelerator_home_ui = (function () {
                 paddingLeft: 20,
                 wrap: false
               },
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 1745,
               h: 300,
               itemSize: 277,
@@ -29801,7 +29998,7 @@ var APP_accelerator_home_ui = (function () {
                 paddingLeft: 20,
                 wrap: false
               },
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 1745,
               h: 300,
               itemSize: 171,
@@ -29832,7 +30029,7 @@ var APP_accelerator_home_ui = (function () {
                 paddingLeft: 20,
                 wrap: false
               },
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 1745,
               h: 400,
               itemSize: 165,
@@ -29863,7 +30060,7 @@ var APP_accelerator_home_ui = (function () {
                 paddingLeft: 20,
                 wrap: false
               },
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 1745,
               h: 400,
               itemSize: 165,
@@ -29885,7 +30082,7 @@ var APP_accelerator_home_ui = (function () {
               y: 400,
               mount: 0.5,
               texture: {
-                type: lng$1.textures.ImageTexture,
+                type: t.textures.ImageTexture,
                 src: 'static/images/usb/Unsupported_file_640x360.jpg',
                 resizeMode: {
                   type: 'contain',
@@ -29909,7 +30106,7 @@ var APP_accelerator_home_ui = (function () {
             y: 560,
             mount: 0.5,
             texture: {
-              type: lng$1.textures.ImageTexture,
+              type: t.textures.ImageTexture,
               src: 'static/images/Media Player/Audio_Background_16k.jpg'
             }
           },
@@ -30352,7 +30549,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const defaultImage = 'static/images/usb/USB_Photo_Placeholder.jpg';
-  class ImageViewer extends lng$1.Component {
+  class ImageViewer extends t.Component {
     set params(args) {
       this.currentIndex = args.currentIndex;
       this.data = args.list;
@@ -30404,7 +30601,7 @@ var APP_accelerator_home_ui = (function () {
           y: 540,
           mount: 0.5,
           texture: {
-            type: lng$1.textures.ImageTexture,
+            type: t.textures.ImageTexture,
             src: defaultImage,
             resizeMode: {
               type: 'contain',
@@ -30424,7 +30621,7 @@ var APP_accelerator_home_ui = (function () {
             h: 75,
             mount: 0.5,
             texture: {
-              type: lng$1.textures.ImageTexture,
+              type: t.textures.ImageTexture,
               src: 'static/images/Media Player/Icon_Back_White_16k.png'
             }
           },
@@ -30434,7 +30631,7 @@ var APP_accelerator_home_ui = (function () {
             h: 75,
             mount: 0.5,
             texture: {
-              type: lng$1.textures.ImageTexture,
+              type: t.textures.ImageTexture,
               src: 'static/images/Media Player/Icon_Next_White_16k.png'
             }
           }
@@ -30461,7 +30658,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class LogoScreen extends lng$1.Component {
+  class LogoScreen extends t.Component {
     static _template() {
       return {
         rect: true,
@@ -30565,7 +30762,7 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   };
   const _thunder = thunderJS$1(config$8);
-  class BluetoothScreen$1 extends lng$1.Component {
+  class BluetoothScreen$1 extends t.Component {
     static _template() {
       return {
         w: 1920,
@@ -30937,7 +31134,7 @@ var APP_accelerator_home_ui = (function () {
    **/
   const appApi$b = new AppApi();
   const loader$1 = 'Loader';
-  class LanguageScreen$1 extends lng$1.Component {
+  class LanguageScreen$1 extends t.Component {
     static _template() {
       return {
         w: 1920,
@@ -30952,7 +31149,7 @@ var APP_accelerator_home_ui = (function () {
             y: 0,
             mountX: 0.5,
             text: {
-              text: Language.translate("Language"),
+              text: Language$1.translate("Language"),
               fontFace: CONFIG.language.font,
               fontSize: 40,
               textColor: CONFIG.theme.hex
@@ -30971,7 +31168,7 @@ var APP_accelerator_home_ui = (function () {
             y: 125,
             mountX: 0.5,
             text: {
-              text: Language.translate("Select a language"),
+              text: Language$1.translate("Select a language"),
               fontFace: CONFIG.language.font,
               fontSize: 25
             }
@@ -30984,7 +31181,7 @@ var APP_accelerator_home_ui = (function () {
                 margin: 0
               },
               List: {
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 w: 1920 - 300,
                 itemSize: 90,
                 horizontal: false,
@@ -31007,7 +31204,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 30,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Continue Setup"),
+                  text: Language$1.translate("Continue Setup"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000,
@@ -31135,7 +31332,7 @@ var APP_accelerator_home_ui = (function () {
   const wifi$3 = new Wifi();
   const network = new Network();
   var appApi$a = new AppApi();
-  class NetworkScreen extends lng$1.Component {
+  class NetworkScreen extends t.Component {
     static _template() {
       return {
         w: 1920,
@@ -31150,7 +31347,7 @@ var APP_accelerator_home_ui = (function () {
             y: 0,
             mountX: 0.5,
             text: {
-              text: Language.translate("Network Configuration"),
+              text: Language$1.translate("Network Configuration"),
               fontFace: CONFIG.language.font,
               fontSize: 40,
               textColor: CONFIG.theme.hex
@@ -31169,7 +31366,7 @@ var APP_accelerator_home_ui = (function () {
             y: 125,
             mountX: 0.5,
             text: {
-              text: Language.translate("Select a network interface"),
+              text: Language$1.translate("Select a network interface"),
               fontFace: CONFIG.language.font,
               fontSize: 25
             }
@@ -31185,7 +31382,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate('WiFi'),
+                  text: Language$1.translate('WiFi'),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -31200,7 +31397,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate('Ethernet'),
+                  text: Language$1.translate('Ethernet'),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -31220,7 +31417,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 30,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Skip"),
+                  text: Language$1.translate("Skip"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000,
@@ -31355,7 +31552,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Reboot Confirmation Screen.
    */
-  class NetworkPromptScreen extends lng$1.Component {
+  class NetworkPromptScreen extends t.Component {
     static _template() {
       return {
         w: 1920,
@@ -31370,7 +31567,7 @@ var APP_accelerator_home_ui = (function () {
             y: 0,
             mountX: 0.5,
             text: {
-              text: Language.translate("Note"),
+              text: Language$1.translate("Note"),
               fontFace: CONFIG.language.font,
               fontSize: 40,
               textColor: CONFIG.theme.hex
@@ -31392,7 +31589,7 @@ var APP_accelerator_home_ui = (function () {
               y: 0,
               mountX: 0.5,
               text: {
-                text: Language.translate("Ethernet cable is not connected"),
+                text: Language$1.translate("Ethernet cable is not connected"),
                 fontFace: CONFIG.language.font,
                 fontSize: 30
               }
@@ -31416,7 +31613,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Try Again"),
+                  text: Language$1.translate("Try Again"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -31505,7 +31702,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const wifi$2 = new Wifi();
-  class NetworkList extends lng$1.Component {
+  class NetworkList extends t.Component {
     static _template() {
       return {
         w: 1920,
@@ -31520,7 +31717,7 @@ var APP_accelerator_home_ui = (function () {
             y: 0,
             mountX: 0.5,
             text: {
-              text: Language.translate("Network Configuration"),
+              text: Language$1.translate("Network Configuration"),
               fontFace: CONFIG.language.font,
               fontSize: 40,
               textColor: CONFIG.theme.hex
@@ -31539,7 +31736,7 @@ var APP_accelerator_home_ui = (function () {
             y: 125,
             mountX: 0.5,
             text: {
-              text: Language.translate("Select a wifi network"),
+              text: Language$1.translate("Select a wifi network"),
               fontFace: CONFIG.language.font,
               fontSize: 25
             }
@@ -31566,7 +31763,7 @@ var APP_accelerator_home_ui = (function () {
                 margin: 0
               },
               List: {
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 w: 1920 - 300,
                 itemSize: 90,
                 horizontal: false,
@@ -31582,7 +31779,7 @@ var APP_accelerator_home_ui = (function () {
               },
               List: {
                 w: 1920 - 300,
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 itemSize: 90,
                 horizontal: false,
                 invertDirection: true,
@@ -31602,7 +31799,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Join Another Network'),
+                text: Language$1.translate('Join Another Network'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -31975,7 +32172,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for rendering items in UI list.
    */
-  class Item extends lng$1.Component {
+  class Item extends t.Component {
     static _template() {
       return {
         Item: {
@@ -31984,7 +32181,7 @@ var APP_accelerator_home_ui = (function () {
           rect: true,
           color: 0xFFDBEBFF,
           shader: {
-            type: lng$1.shaders.RoundedRectangle,
+            type: t.shaders.RoundedRectangle,
             radius: 10
           }
         },
@@ -32055,7 +32252,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const homeApi$2 = new HomeApi();
-  class UIList extends lng$1.Component {
+  class UIList extends t.Component {
     static _template() {
       return {
         w: 1920,
@@ -32103,758 +32300,7 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  /**
-   * Copyright 2020 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-
-  /**
-   * Grid
-   *
-   * Contains global grid style information to easily maintain consistency throughout components.
-   */
-
-  /**
-   * Sets up spacing configurations to correctly position Items and Rows.
-   */
-  const GRID = {
-    gutters: {
-      horizontal: 80,
-      // space between rows
-      vertical: 40 // space between columns (items)
-    },
-
-    margin: {
-      x: 80,
-      y: 112
-    },
-    spacingIncrement: 8,
-    // the grid is built on an 8-point system
-    columnWidth: 110
-  };
-
-  /**
-   * Establishes the screen size to be 1080p resolution (1920x1080).
-   */
-  const SCREEN = {
-    w: 1920,
-    h: 1080
-  };
-
-  /**
-   * Determines the width and height of an item based off the data passed into the item
-   * (either all necessary parameters to calculate the dimensions dynamically,
-   * OR all the necessary parameters to hard set the dimensions).
-   *
-   * @param { object } obj
-   * @param { object } fallback
-   *
-   * @return { { number, number } }
-   */
-  function getDimensions() {
-    let obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    let fallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    let {
-      w,
-      h,
-      ratioX,
-      ratioY,
-      upCount
-    } = obj;
-    let fallbackW = fallback.w || 0;
-    let fallbackH = fallback.h || 0;
-    let dimensions = {};
-
-    // hard set width and height values were passed in and should override other params
-    if (w && h) {
-      dimensions = {
-        w,
-        h: h
-      };
-    }
-    // hard set height and ratio values were passed in, meaning the row has items with mixed ratios,
-    // so the width needs to be calculated
-    else if (h && ratioX && ratioY) {
-      dimensions = {
-        w: Math.round(h * ratioX / ratioY),
-        h: h
-      };
-    }
-    // calculate dynamic width and height based off item ratios
-    else if (ratioX && ratioY && upCount) {
-      dimensions = getItemRatioDimensions(ratioX, ratioY, upCount);
-    }
-    // calculate dynamic width based off a row upcount and a given height
-    else if (h && upCount) {
-      dimensions = {
-        w: Math.round(calculateColumnWidth(upCount)),
-        h: h
-      };
-    } else if (h) {
-      dimensions = {
-        w: fallbackW,
-        h: h
-      };
-    } else if (w) {
-      dimensions = {
-        w: w,
-        h: fallbackH
-      };
-    }
-    // not enough information was provided to properly size the component
-    else {
-      dimensions = {
-        w: fallbackW,
-        h: fallbackH
-      };
-    }
-    dimensions = {
-      ...dimensions,
-      ratioX,
-      ratioY,
-      upCount
-    };
-    return dimensions;
-  }
-
-  /**
-   * Calculates the width and height of an item based off the given ratios
-   * and number of columns across the screen that should be visible before peaking
-   *
-   * @param { number } ratioX
-   * @param { number } ratioY
-   * @param { number } upCount
-   *
-   * @return { { number, number } }
-   */
-  function getItemRatioDimensions(ratioX, ratioY, upCount) {
-    let w, h;
-    if (ratioX && ratioY && upCount) {
-      w = Math.round(calculateColumnWidth(upCount));
-      h = Math.round(w / ratioX * ratioY);
-    } else {
-      w = 0;
-      h = 0;
-    }
-    return {
-      w,
-      h
-    };
-  }
-
-  /**
-   * Calculates the width of an item given how many columns are requested
-   *
-   * @param { number } upCount
-   *
-   * @return { number }
-   */
-  function calculateColumnWidth(upCount) {
-    // the screen width, minus the margin x on each side
-    let rowWidth = SCREEN.w - GRID.margin.x * 2;
-    if (upCount) {
-      // the total space of column gaps in between items
-      let columnGapTotal = (upCount - 1) * GRID.gutters.vertical;
-
-      // the remaining amount of space left for all items
-      let totalColumnsWidth = rowWidth - columnGapTotal;
-
-      // the width of each item in that remaining width
-      let itemWidth = totalColumnsWidth / upCount;
-      return itemWidth;
-    }
-    return rowWidth;
-  }
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-
-  /**
-   * Colors
-   *
-   * Contains global color style information to easily maintain consistency throughout components.
-   */
-
-  /**
-   * Combines rgb hex string and alpha into argb hexadecimal number
-   * @param {string} hex - 6 alphanumeric characters between 0-f
-   * @param {number} [alpha] - number between 0-100 (0 is invisible, 100 is opaque)
-   */
-  function getHexColor(hex) {
-    let alpha = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
-    if (!hex) {
-      return 0x00;
-    }
-    let hexAlpha = Math.round(alpha / 100 * 255).toString(16);
-    let str = "0x".concat(hexAlpha).concat(hex);
-    return parseInt(Number(str), 10);
-  }
-
-  /**
-   * Returns valid string of HEX color
-   *
-   * @param {string} color
-   * @param {boolean} fill
-   */
-  function getValidColor(color) {
-    if (/^0x[0-9a-fA-F]{8}/g.test(color)) {
-      // User enters a valid 0x00000000 hex code
-      return Number(color);
-    } else if (/^#[0-9a-fA-F]{6}/g.test(color)) {
-      // User enters valid #000000 hex code
-      return getHexColor(color.substr(1, 6));
-    } else if (typeof color === 'string' && /^[0-9]{8,10}/g.test(color)) {
-      return parseInt(color);
-    } else if (typeof color === 'number' && /^[0-9]{8,10}/g.test(color.toString())) {
-      return color;
-    } else if (typeof color === 'string' && color.indexOf('rgba') > -1) {
-      return rgba2argb(color);
-    } else if (typeof color === 'string' && color.indexOf('rgb') > -1) {
-      let rgba = [...color.replace(/rgb\(|\)/g, '').split(','), '255'];
-      return lng.StageUtils.getArgbNumber(rgba);
-    }
-    return null;
-  }
-
-  /**
-   * Copyright 2020 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-  /**
-   * Returns a styles object for use by components
-   * @param {Object|function} styles - Object or callback that takes theme as an argument, ultimately the returned value
-   * @param {Object} theme - theme to be provided to styles
-   */
-  var createStyles = ((styles, theme) => {
-    return typeof styles === 'function' ? styles(theme) : styles;
-  });
-
-  /**
-   * Copyright 2022 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-
-  /**
-   * Merges two objects together and returns the duplicate.
-   *
-   * @param {Object} target - object to be cloned
-   * @param {Object} [object] - secondary object to merge into clone
-   */
-  function clone(target, object) {
-    const _clone = {
-      ...target
-    };
-    if (!object || target === object) return _clone;
-    for (const key in object) {
-      const value = object[key];
-      if (target.hasOwnProperty(key)) {
-        _clone[key] = getMergeValue(key, target, object);
-      } else {
-        _clone[key] = value;
-      }
-    }
-    return _clone;
-  }
-  function getMergeValue(key, target, object) {
-    const targetVal = target[key];
-    const objectVal = object[key];
-    const targetValType = typeof targetVal;
-    const objectValType = typeof objectVal;
-    if (targetValType !== objectValType || objectValType === 'function' || Array.isArray(objectVal)) {
-      return objectVal;
-    }
-    if (objectVal && objectValType === 'object') {
-      return clone(targetVal, objectVal);
-    }
-    return objectVal;
-  }
-
-  /**
-   * Naively looks for dimensional prop (i.e. w, h, x, y, etc.), first searching for
-   * a transition target value then defaulting to the current set value
-   * @param {string} prop - property key
-   * @param {lng.Component} component - Lightning component to operate against
-   */
-  function getDimension(prop, component) {
-    if (!component) return 0;
-    const transition = component.transition(prop);
-    if (transition.isRunning()) return transition.targetValue;
-    return component[prop];
-  }
-  getDimension.bind(null, 'x');
-  getDimension.bind(null, 'y');
-  function stringifyCompare(objA, objB) {
-    return JSON.stringify(objA) === JSON.stringify(objB);
-  }
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-  function withStyles(Base, styles, theme) {
-    const _theme = theme || Base.theme;
-    const _styles = Base.styles ? clone(Base.styles, createStyles(styles, _theme)) : createStyles(styles, _theme);
-    return class extends Base {
-      static get name() {
-        return Base.name;
-      }
-      static get styles() {
-        return _styles;
-      }
-      get styles() {
-        return _styles;
-      }
-    };
-  }
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-
-  function getPropertyDescriptor$1(path) {
-    return {
-      get() {
-        return this.tag(path);
-      },
-      configurable: true,
-      enumerable: true
-    };
-  }
-  function withTags(Base) {
-    return class extends Base {
-      static get name() {
-        return Base.name;
-      }
-      _construct() {
-        const tags = this.constructor.tags || [];
-        let name, path;
-        tags.forEach(tag => {
-          if (typeof tag === 'object') {
-            ({
-              name,
-              path
-            } = tag);
-          } else {
-            name = tag;
-            path = tag;
-          }
-          const key = '_' + name;
-          const descriptor = getPropertyDescriptor$1(path);
-          Object.defineProperty(Object.getPrototypeOf(this), key, descriptor);
-        });
-        super._construct && super._construct();
-      }
-    };
-  }
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-  function capital(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-  function getPropertyDescriptor(name, key) {
-    return {
-      get() {
-        const customGetter = this["_get".concat(capital(name))];
-        if (customGetter && typeof customGetter === 'function') {
-          const value = customGetter.call(this, this[key]);
-          this[key] = value;
-        }
-        return this[key];
-      },
-      set(value) {
-        const oldValue = this[key];
-        if (value !== oldValue) {
-          const changeHandler = this["_set".concat(capital(name))];
-          if (changeHandler && typeof changeHandler === 'function') {
-            value = changeHandler.call(this, value);
-          }
-          this[key] = value;
-          this._requestUpdateDebounce();
-        }
-      },
-      configurable: true,
-      enumerable: true
-    };
-  }
-  function withUpdates(Base) {
-    return class extends Base {
-      static get name() {
-        return Base.name;
-      }
-      _construct() {
-        let props = this.constructor.properties || [];
-        props.forEach(name => {
-          const key = '_' + name;
-          const descriptor = getPropertyDescriptor(name, key);
-          if (descriptor !== undefined) {
-            Object.defineProperty(Object.getPrototypeOf(this), name, descriptor);
-          }
-        });
-        this._whenEnabled = new Promise(resolve => {
-          this._whenEnabledResolver = resolve;
-        });
-        this._requestUpdateDebounce = debounce_1.debounce(this._requestUpdate.bind(this), 0);
-        super._construct && super._construct();
-      }
-      _firstEnable() {
-        this._readyForUpdates = true;
-        this._whenEnabledResolver();
-        this._update();
-        super._firstEnable && super._firstEnable();
-      }
-      _detach() {
-        super._detach();
-        this._requestUpdateDebounce.clear();
-      }
-      _requestUpdate() {
-        if (this._readyForUpdates) {
-          this._update();
-        }
-      }
-    };
-  }
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-
-  function withHandleKey(Base) {
-    return class extends Base {
-      static get name() {
-        return Base.name;
-      }
-      _handleKey(keyEvent) {
-        return this._processEvent(keyEvent);
-      }
-      _handleKeyRelease(keyEvent) {
-        return this._processEvent(keyEvent, 'Release');
-      }
-      _processEvent(keyEvent) {
-        let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-        let {
-          key
-        } = keyEvent;
-        if (!key) {
-          const keyMap = this.stage.application.__keymap || {};
-          key = keyMap[keyEvent.keyCode];
-        }
-        if (key && typeof this["on".concat(key).concat(suffix)] === 'function') {
-          return this["on".concat(key).concat(suffix)].call(this, this, keyEvent) || false;
-        }
-        this.fireAncestors("$on".concat(key).concat(suffix), this, keyEvent);
-        return false;
-      }
-    };
-  }
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-  function withLayout(Base) {
-    return class extends Base {
-      get itemLayout() {
-        return this._itemLayout;
-      }
-      set itemLayout(itemLayout) {
-        if (!stringifyCompare(this._itemLayout, itemLayout)) {
-          this._itemLayout = itemLayout;
-          const {
-            w,
-            h
-          } = getDimensions(itemLayout);
-          // If there is not enough information passed in args to calculate item size
-          // Do not try to set h/w this will cause issues sizing the focus ring
-          if (h || w) {
-            const {
-              w: width,
-              h: height
-            } = SCREEN;
-            this.h = h || w * (height / width);
-            this.w = w || h * (width / height);
-            super._update && super._update();
-          }
-        }
-      }
-    };
-  }
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-  const baseStyles = () => ({
-    getUnfocusScale: () => 1
-    // getFocusScale: theme.getFocusScale
-  });
-
-  class Base extends lng$1.Component {
-    _construct() {
-      this._whenEnabled = new Promise(resolve => this._whenEnabledResolver = resolve);
-      this._getFocusScale = this.styles.getFocusScale || function () {};
-      this._getUnfocusScale = this.styles.getUnfocusScale || function () {};
-    }
-    _firstEnable() {
-      this._whenEnabledResolver();
-    }
-    _init() {
-      this._update();
-    }
-    _update() {}
-    _focus() {
-      if (this._smooth === undefined) this._smooth = true;
-      this._update();
-    }
-    _unfocus() {
-      this._update();
-    }
-  }
-  function withMixins(baseComponent) {
-    return withLayout(withUpdates(withTags(withHandleKey(baseComponent))));
-  }
-  var Base$1 = withMixins(withStyles(Base, baseStyles));
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-
-  var styles = {
-    h: 8,
-    w: 410,
-    radius: 4,
-    barColor: 0xffceceda,
-    progressColor: 4127195135
-  };
-
-  /**
-   * Copyright 2021 Comcast Cable Communications Management, LLC
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * SPDX-License-Identifier: Apache-2.0
-   */
-  class ProgressBar extends withStyles(Base$1, styles) {
-    static _template() {
-      return {
-        Bar: {
-          zIndex: 1
-        },
-        Progress: {
-          alpha: 0,
-          zIndex: 2
-        }
-      };
-    }
-    static get properties() {
-      return ['animationDuration', 'barColor', 'progress', 'progressColor', 'radius'];
-    }
-    static get tags() {
-      return ['Bar', 'Progress'];
-    }
-    _construct() {
-      super._construct();
-      this._w = this.styles.w;
-      this.h = this.styles.h;
-      this._progress = 0;
-      this._radius = this.styles.radius;
-      this._progressColor = this.styles.progressColor;
-      this._barColor = this.styles.barColor;
-      this._animationDuration = 0;
-    }
-    _init() {
-      this._update();
-    }
-    set w(w) {
-      if (this._w !== w) {
-        this._w = w;
-        this._update();
-      }
-    }
-    get w() {
-      return this._w;
-    }
-    _update() {
-      const p = this.w * this.progress;
-      const w = p <= 0 ? 0 : Math.min(p, this._w);
-      this._Bar.texture = lng$1.Tools.getRoundRect(
-      // getRoundRect adds 2 to the width
-      this.w - 2, this.h, this.radius, 0, 0, true, this.barColor);
-      this._Progress.texture = lng$1.Tools.getRoundRect(w + 1, this.h, this.radius, 0, 0, true, this.progressColor);
-      this._Progress.smooth = {
-        w: [w, {
-          duration: this._animationDuration
-        }],
-        alpha: Number(w > 0)
-      };
-    }
-    _setBarColor(barColor) {
-      return getValidColor(barColor);
-    }
-    _setProgressColor(progressColor) {
-      return getValidColor(progressColor);
-    }
-  }
+  function ownKeys(t,e){var n=Object.keys(t);if(Object.getOwnPropertySymbols){var i=Object.getOwnPropertySymbols(t);e&&(i=i.filter((function(e){return Object.getOwnPropertyDescriptor(t,e).enumerable}))),n.push.apply(n,i);}return n}function _objectSpread2(t){for(var e=1;e<arguments.length;e++){var n=null!=arguments[e]?arguments[e]:{};e%2?ownKeys(Object(n),!0).forEach((function(e){_defineProperty$1(t,e,n[e]);})):Object.getOwnPropertyDescriptors?Object.defineProperties(t,Object.getOwnPropertyDescriptors(n)):ownKeys(Object(n)).forEach((function(e){Object.defineProperty(t,e,Object.getOwnPropertyDescriptor(n,e));}));}return t}function _regeneratorRuntime(){_regeneratorRuntime=function(){return t};var t={},e=Object.prototype,n=e.hasOwnProperty,i=Object.defineProperty||function(t,e,n){t[e]=n.value;},o="function"==typeof Symbol?Symbol:{},r=o.iterator||"@@iterator",a=o.asyncIterator||"@@asyncIterator",s=o.toStringTag||"@@toStringTag";function define(t,e,n){return Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}),t[e]}try{define({},"");}catch(t){define=function(t,e,n){return t[e]=n};}function wrap(t,e,n,o){var r=e&&e.prototype instanceof Generator?e:Generator,a=Object.create(r.prototype),s=new Context(o||[]);return i(a,"_invoke",{value:makeInvokeMethod(t,n,s)}),a}function tryCatch(t,e,n){try{return {type:"normal",arg:t.call(e,n)}}catch(t){return {type:"throw",arg:t}}}t.wrap=wrap;var l={};function Generator(){}function GeneratorFunction(){}function GeneratorFunctionPrototype(){}var c={};define(c,r,(function(){return this}));var u=Object.getPrototypeOf,h=u&&u(u(values([])));h&&h!==e&&n.call(h,r)&&(c=h);var d=GeneratorFunctionPrototype.prototype=Generator.prototype=Object.create(c);function defineIteratorMethods(t){["next","throw","return"].forEach((function(e){define(t,e,(function(t){return this._invoke(e,t)}));}));}function AsyncIterator(t,e){function invoke(i,o,r,a){var s=tryCatch(t[i],t,o);if("throw"!==s.type){var l=s.arg,c=l.value;return c&&"object"==typeof c&&n.call(c,"__await")?e.resolve(c.__await).then((function(t){invoke("next",t,r,a);}),(function(t){invoke("throw",t,r,a);})):e.resolve(c).then((function(t){l.value=t,r(l);}),(function(t){return invoke("throw",t,r,a)}))}a(s.arg);}var o;i(this,"_invoke",{value:function(t,n){function callInvokeWithMethodAndArg(){return new e((function(e,i){invoke(t,n,e,i);}))}return o=o?o.then(callInvokeWithMethodAndArg,callInvokeWithMethodAndArg):callInvokeWithMethodAndArg()}});}function makeInvokeMethod(t,e,n){var i="suspendedStart";return function(o,r){if("executing"===i)throw new Error("Generator is already running");if("completed"===i){if("throw"===o)throw r;return doneResult()}for(n.method=o,n.arg=r;;){var a=n.delegate;if(a){var s=maybeInvokeDelegate(a,n);if(s){if(s===l)continue;return s}}if("next"===n.method)n.sent=n._sent=n.arg;else if("throw"===n.method){if("suspendedStart"===i)throw i="completed",n.arg;n.dispatchException(n.arg);}else "return"===n.method&&n.abrupt("return",n.arg);i="executing";var c=tryCatch(t,e,n);if("normal"===c.type){if(i=n.done?"completed":"suspendedYield",c.arg===l)continue;return {value:c.arg,done:n.done}}"throw"===c.type&&(i="completed",n.method="throw",n.arg=c.arg);}}}function maybeInvokeDelegate(t,e){var n=e.method,i=t.iterator[n];if(void 0===i)return e.delegate=null,"throw"===n&&t.iterator.return&&(e.method="return",e.arg=void 0,maybeInvokeDelegate(t,e),"throw"===e.method)||"return"!==n&&(e.method="throw",e.arg=new TypeError("The iterator does not provide a '"+n+"' method")),l;var o=tryCatch(i,t.iterator,e.arg);if("throw"===o.type)return e.method="throw",e.arg=o.arg,e.delegate=null,l;var r=o.arg;return r?r.done?(e[t.resultName]=r.value,e.next=t.nextLoc,"return"!==e.method&&(e.method="next",e.arg=void 0),e.delegate=null,l):r:(e.method="throw",e.arg=new TypeError("iterator result is not an object"),e.delegate=null,l)}function pushTryEntry(t){var e={tryLoc:t[0]};1 in t&&(e.catchLoc=t[1]),2 in t&&(e.finallyLoc=t[2],e.afterLoc=t[3]),this.tryEntries.push(e);}function resetTryEntry(t){var e=t.completion||{};e.type="normal",delete e.arg,t.completion=e;}function Context(t){this.tryEntries=[{tryLoc:"root"}],t.forEach(pushTryEntry,this),this.reset(!0);}function values(t){if(t){var e=t[r];if(e)return e.call(t);if("function"==typeof t.next)return t;if(!isNaN(t.length)){var i=-1,o=function next(){for(;++i<t.length;)if(n.call(t,i))return next.value=t[i],next.done=!1,next;return next.value=void 0,next.done=!0,next};return o.next=o}}return {next:doneResult}}function doneResult(){return {value:void 0,done:!0}}return GeneratorFunction.prototype=GeneratorFunctionPrototype,i(d,"constructor",{value:GeneratorFunctionPrototype,configurable:!0}),i(GeneratorFunctionPrototype,"constructor",{value:GeneratorFunction,configurable:!0}),GeneratorFunction.displayName=define(GeneratorFunctionPrototype,s,"GeneratorFunction"),t.isGeneratorFunction=function(t){var e="function"==typeof t&&t.constructor;return !!e&&(e===GeneratorFunction||"GeneratorFunction"===(e.displayName||e.name))},t.mark=function(t){return Object.setPrototypeOf?Object.setPrototypeOf(t,GeneratorFunctionPrototype):(t.__proto__=GeneratorFunctionPrototype,define(t,s,"GeneratorFunction")),t.prototype=Object.create(d),t},t.awrap=function(t){return {__await:t}},defineIteratorMethods(AsyncIterator.prototype),define(AsyncIterator.prototype,a,(function(){return this})),t.AsyncIterator=AsyncIterator,t.async=function(e,n,i,o,r){void 0===r&&(r=Promise);var a=new AsyncIterator(wrap(e,n,i,o),r);return t.isGeneratorFunction(n)?a:a.next().then((function(t){return t.done?t.value:a.next()}))},defineIteratorMethods(d),define(d,s,"Generator"),define(d,r,(function(){return this})),define(d,"toString",(function(){return "[object Generator]"})),t.keys=function(t){var e=Object(t),n=[];for(var i in e)n.push(i);return n.reverse(),function next(){for(;n.length;){var t=n.pop();if(t in e)return next.value=t,next.done=!1,next}return next.done=!0,next}},t.values=values,Context.prototype={constructor:Context,reset:function(t){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(resetTryEntry),!t)for(var e in this)"t"===e.charAt(0)&&n.call(this,e)&&!isNaN(+e.slice(1))&&(this[e]=void 0);},stop:function(){this.done=!0;var t=this.tryEntries[0].completion;if("throw"===t.type)throw t.arg;return this.rval},dispatchException:function(t){if(this.done)throw t;var e=this;function handle(n,i){return r.type="throw",r.arg=t,e.next=n,i&&(e.method="next",e.arg=void 0),!!i}for(var i=this.tryEntries.length-1;i>=0;--i){var o=this.tryEntries[i],r=o.completion;if("root"===o.tryLoc)return handle("end");if(o.tryLoc<=this.prev){var a=n.call(o,"catchLoc"),s=n.call(o,"finallyLoc");if(a&&s){if(this.prev<o.catchLoc)return handle(o.catchLoc,!0);if(this.prev<o.finallyLoc)return handle(o.finallyLoc)}else if(a){if(this.prev<o.catchLoc)return handle(o.catchLoc,!0)}else {if(!s)throw new Error("try statement without catch or finally");if(this.prev<o.finallyLoc)return handle(o.finallyLoc)}}}},abrupt:function(t,e){for(var i=this.tryEntries.length-1;i>=0;--i){var o=this.tryEntries[i];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var r=o;break}}r&&("break"===t||"continue"===t)&&r.tryLoc<=e&&e<=r.finallyLoc&&(r=null);var a=r?r.completion:{};return a.type=t,a.arg=e,r?(this.method="next",this.next=r.finallyLoc,l):this.complete(a)},complete:function(t,e){if("throw"===t.type)throw t.arg;return "break"===t.type||"continue"===t.type?this.next=t.arg:"return"===t.type?(this.rval=this.arg=t.arg,this.method="return",this.next="end"):"normal"===t.type&&e&&(this.next=e),l},finish:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var n=this.tryEntries[e];if(n.finallyLoc===t)return this.complete(n.completion,n.afterLoc),resetTryEntry(n),l}},catch:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var n=this.tryEntries[e];if(n.tryLoc===t){var i=n.completion;if("throw"===i.type){var o=i.arg;resetTryEntry(n);}return o}}throw new Error("illegal catch attempt")},delegateYield:function(t,e,n){return this.delegate={iterator:values(t),resultName:e,nextLoc:n},"next"===this.method&&(this.arg=void 0),l}},t}function _typeof(t){return _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},_typeof(t)}function asyncGeneratorStep(t,e,n,i,o,r,a){try{var s=t[r](a),l=s.value;}catch(t){return void n(t)}s.done?e(l):Promise.resolve(l).then(i,o);}function _asyncToGenerator(t){return function(){var e=this,n=arguments;return new Promise((function(i,o){var r=t.apply(e,n);function _next(t){asyncGeneratorStep(r,i,o,_next,_throw,"next",t);}function _throw(t){asyncGeneratorStep(r,i,o,_next,_throw,"throw",t);}_next(void 0);}))}}function _classCallCheck(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function _defineProperties(t,e){for(var n=0;n<e.length;n++){var i=e[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(t,_toPropertyKey$1(i.key),i);}}function _createClass(t,e,n){return e&&_defineProperties(t.prototype,e),n&&_defineProperties(t,n),Object.defineProperty(t,"prototype",{writable:!1}),t}function _defineProperty$1(t,e,n){return (e=_toPropertyKey$1(e))in t?Object.defineProperty(t,e,{value:n,enumerable:!0,configurable:!0,writable:!0}):t[e]=n,t}function _inherits(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function");t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,writable:!0,configurable:!0}}),Object.defineProperty(t,"prototype",{writable:!1}),e&&_setPrototypeOf(t,e);}function _getPrototypeOf(t){return _getPrototypeOf=Object.setPrototypeOf?Object.getPrototypeOf.bind():function _getPrototypeOf(t){return t.__proto__||Object.getPrototypeOf(t)},_getPrototypeOf(t)}function _setPrototypeOf(t,e){return _setPrototypeOf=Object.setPrototypeOf?Object.setPrototypeOf.bind():function _setPrototypeOf(t,e){return t.__proto__=e,t},_setPrototypeOf(t,e)}function _possibleConstructorReturn(t,e){if(e&&("object"==typeof e||"function"==typeof e))return e;if(void 0!==e)throw new TypeError("Derived constructors may only return object or undefined");return function _assertThisInitialized(t){if(void 0===t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return t}(t)}function _createSuper(t){var e=function _isNativeReflectConstruct(){if("undefined"==typeof Reflect||!Reflect.construct)return !1;if(Reflect.construct.sham)return !1;if("function"==typeof Proxy)return !0;try{return Boolean.prototype.valueOf.call(Reflect.construct(Boolean,[],(function(){}))),!0}catch(t){return !1}}();return function _createSuperInternal(){var n,i=_getPrototypeOf(t);if(e){var o=_getPrototypeOf(this).constructor;n=Reflect.construct(i,arguments,o);}else n=i.apply(this,arguments);return _possibleConstructorReturn(this,n)}}function _superPropBase(t,e){for(;!Object.prototype.hasOwnProperty.call(t,e)&&null!==(t=_getPrototypeOf(t)););return t}function _get(){return _get="undefined"!=typeof Reflect&&Reflect.get?Reflect.get.bind():function _get(t,e,n){var i=_superPropBase(t,e);if(i){var o=Object.getOwnPropertyDescriptor(i,e);return o.get?o.get.call(arguments.length<3?t:n):o.value}},_get.apply(this,arguments)}function set(t,e,n,i){return set="undefined"!=typeof Reflect&&Reflect.set?Reflect.set:function set(t,e,n,i){var o,r=_superPropBase(t,e);if(r){if((o=Object.getOwnPropertyDescriptor(r,e)).set)return o.set.call(i,n),!0;if(!o.writable)return !1}if(o=Object.getOwnPropertyDescriptor(i,e)){if(!o.writable)return !1;o.value=n,Object.defineProperty(i,e,o);}else _defineProperty$1(i,e,n);return !0},set(t,e,n,i)}function _set(t,e,n,i,o){if(!set(t,e,n,i||t)&&o)throw new TypeError("failed to set property");return n}function _slicedToArray(t,e){return function _arrayWithHoles(t){if(Array.isArray(t))return t}(t)||function _iterableToArrayLimit(t,e){var n=null==t?null:"undefined"!=typeof Symbol&&t[Symbol.iterator]||t["@@iterator"];if(null!=n){var i,o,r,a,s=[],l=!0,c=!1;try{if(r=(n=n.call(t)).next,0===e){if(Object(n)!==n)return;l=!1;}else for(;!(l=(i=r.call(n)).done)&&(s.push(i.value),s.length!==e);l=!0);}catch(t){c=!0,o=t;}finally{try{if(!l&&null!=n.return&&(a=n.return(),Object(a)!==a))return}finally{if(c)throw o}}return s}}(t,e)||_unsupportedIterableToArray(t,e)||function _nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function _toConsumableArray(t){return function _arrayWithoutHoles(t){if(Array.isArray(t))return _arrayLikeToArray(t)}(t)||function _iterableToArray(t){if("undefined"!=typeof Symbol&&null!=t[Symbol.iterator]||null!=t["@@iterator"])return Array.from(t)}(t)||_unsupportedIterableToArray(t)||function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function _unsupportedIterableToArray(t,e){if(t){if("string"==typeof t)return _arrayLikeToArray(t,e);var n=Object.prototype.toString.call(t).slice(8,-1);return "Object"===n&&t.constructor&&(n=t.constructor.name),"Map"===n||"Set"===n?Array.from(t):"Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)?_arrayLikeToArray(t,e):void 0}}function _arrayLikeToArray(t,e){(null==e||e>t.length)&&(e=t.length);for(var n=0,i=new Array(e);n<e;n++)i[n]=t[n];return i}function _toPropertyKey$1(t){var e=function _toPrimitive(t,e){if("object"!=typeof t||null===t)return t;var n=t[Symbol.toPrimitive];if(void 0!==n){var i=n.call(t,e||"default");if("object"!=typeof i)return i;throw new TypeError("@@toPrimitive must return a primitive value.")}return ("string"===e?String:Number)(t)}(t,"string");return "symbol"==typeof e?e:String(e)}var e=new(function(){function Logger(){_classCallCheck(this,Logger),this._logCallback=void 0,this._prefix="LightningUI",this._debug=!1;}return _createClass(Logger,[{key:"debug",get:function get(){return this._debug},set:function set(t){this._debug=Boolean(t);}},{key:"logCallback",get:function get(){return this._logCallback},set:function set(t){"function"==typeof t?this._logCallback=t:this.warn("logCallback value must be a function, instead received ".concat(_typeof(t)));}},{key:"log",value:function log(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];var i;(this._logCallback&&this._logCallback({level:"log",payload:e}),this.debug)&&(i=console).log.apply(i,[this._prefix].concat(e));}},{key:"info",value:function info(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];var i;(this._logCallback&&this._logCallback({level:"info",payload:e}),this.debug)&&(i=console).info.apply(i,[this._prefix].concat(e));}},{key:"warn",value:function warn(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];var i;(this._logCallback&&this._logCallback({level:"warn",payload:e}),this.debug)&&(i=console).warn.apply(i,[this._prefix].concat(e));}},{key:"error",value:function error(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];var i;(this._logCallback&&this._logCallback({level:"error",payload:e}),this.debug)&&(i=console).error.apply(i,[this._prefix].concat(e));}}]),Logger}());function getEuclideanDistance(t,e,n,i){var o=t-n,r=e-i;return Math.sqrt(Math.pow(o,2)+Math.sqrt(Math.pow(r,2)))}function isComponentOnScreen(t){if(!t)return !1;var e=t.w,n=t.h,i=t.core,o=void 0===i?{}:i,r=o.renderContext,a=r.px,s=r.py,l=o._scissor,c=void 0===l?[]:l,u=t.stage.h/t.stage.getRenderPrecision(),h=t.stage.w/t.stage.getRenderPrecision();if(!(a>=0&&a+e<=h)||!(s>=0&&s+n<=u))return !1;if(c&&c.length){var d=_slicedToArray(c,4),_=d[0],p=void 0===_?null:_,f=d[1],g=void 0===f?null:f,m=d[2],v=void 0===m?null:m,b=d[3],k=void 0===b?null:b,S=Math.round(a+e)>=Math.round(p),C=Math.round(a)<=Math.round(p+v),T=Math.round(s+n)>=Math.round(g),I=Math.round(s+n)<=Math.round(g+k);return S&&C&&T&&I}return !0}function getWidthByUpCount(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:1,n=t.layout.screenW,i=t.layout.columnCount,o=t.layout.marginX,r=t.layout.gutterX.xs;if(!(e<1||e>i))return (n-2*o-(e-1)*r)/e;console.error("Column expects a number between 1 & ".concat(i,". Received ").concat(e));}function getWidthByColumnSpan(t,e){var n=t.layout.columnCount,i=t.layout.gutterX.xs;return getWidthByUpCount(t,n)*e+i*(e-1)}function getDimensions(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},i=e.w,o=e.h,r=e.ratioX,a=e.ratioY,s=e.upCount,l=n.w||0,c=n.h||0,u={};return u=i&&o?{w:i,h:o}:o&&r&&a?{w:Math.round(o*r/a),h:o}:r&&a&&s?function getItemRatioDimensions(t,e,n,i){var o,r;e&&n&&i?(o=Math.round(getWidthByUpCount(t,i)),r=Math.round(o/e*n)):(o=0,r=0);return {w:o,h:r}}(t,r,a,s):o&&s?{w:Math.round(getWidthByUpCount(t,s)),h:o}:o?{w:l,h:o}:i?{w:i,h:c}:{w:l,h:c},u=_objectSpread2(_objectSpread2({},u),{},{ratioX:r,ratioY:a,upCount:s})}function getHexColor(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:1;if(!t)return 0;"number"==typeof t&&(t=t.toString(16).slice(2)),t=t.replace("#","");var n=Math.round(255*e).toString(16),i="0x".concat(n).concat(t);return Number(i)}function getValidColor(e){if(/^0x[0-9a-fA-F]{8}/g.test(e))return Number(e);if(/^#[0-9a-fA-F]{6}/g.test(e))return getHexColor(e.substr(1,6));if("string"==typeof e&&/^[0-9]{8,10}/g.test(e))return parseInt(e);if("number"==typeof e&&/^[0-9]{8,10}/g.test(e.toString()))return e;if("string"==typeof e&&e.indexOf("rgba")>-1)return rgba2argb(e);if("string"==typeof e&&e.indexOf("rgb")>-1){var n=[].concat(_toConsumableArray(e.replace(/rgb\(|\)/g,"").split(",")),["255"]);return t.StageUtils.getArgbNumber(n)}return null}function reduceFraction(t){return function simplifyFraction(t){for(var e=_slicedToArray(t,2),n=e[0],i=e[1],o=n;o>0;o--)if(!(n%o||i%o))return [n/o,i/o]}(t.split("/").map((function(t){return +t}))).join("/")}var n=function getValFromObjPath(t,e){return "string"==typeof e&&(e=e.split(".").filter((function(t){return t.length}))),e.reduce((function(t,e){return t&&t[e]}),t)};function rgba2argb(e){var n=e.replace(/rgba\(|\)/g,"").split(",");return n[3]=255*n[3],t.StageUtils.getArgbNumber(n)}function capitalizeFirstLetter(t){return t.charAt(0).toUpperCase()+t.slice(1)}var i={getWidth:function getWidth(t){var e=_objectSpread2({padding:0,paddingLeft:0,paddingRight:0,strokeWidth:0},arguments.length>1&&void 0!==arguments[1]?arguments[1]:{}),n=e.padding,i=e.paddingLeft,o=e.paddingRight,r=e.strokeWidth;return t?t-(i||n)-(o||n)-r:0},getHeight:function getHeight(t){var e=_objectSpread2({padding:0,paddingBottom:0,paddingTop:0,strokeWidth:0},arguments.length>1&&void 0!==arguments[1]?arguments[1]:{}),n=e.padding,i=e.paddingBottom,o=e.paddingTop,r=e.strokeWidth;return t?t-(i||n)-(o||n)-r:0}};function clone(t,e){var n=Object.create(Object.getPrototypeOf(t));if(Object.defineProperties(n,Object.getOwnPropertyDescriptors(t)),!e||t===e)return n;for(var i in e){var o=e[i];t.hasOwnProperty(i)?n[i]=getMergeValue(i,t,e):n[i]=o;}return n}function getMergeValue(t,e,n){var i=e[t],o=n[t],r=_typeof(i),a=_typeof(o);return r!==a||"function"===a||Array.isArray(o)?o:o&&"object"===a?clone(i,o):o}function getDimension(t,e){if(!e)return 0;var n=e.transition(t);return n.isRunning()?n.targetValue:e[t]}var o=getDimension.bind(null,"x"),r=getDimension.bind(null,"y");function flatten(t){return t.reduce((function(t,e){return t.concat(Array.isArray(e)?flatten(e):e)}),[])}function stringifyCompare(t,e){return JSON.stringify(t)===JSON.stringify(e)}function delayForAnimation(t){setTimeout(t,arguments.length>1&&void 0!==arguments[1]?arguments[1]:16);}var a=function degreesToRadians(t){return t*(Math.PI/180)},s=/({ICON.*?}|{BADGE:.*?}|{NEWLINE}|{TEXT:.*?})/g;function max(){if(arguments){var t=Array.from(arguments).filter((function(t){return !isNaN(t)&&null!=t}));if(t.length)return Math.max.apply(Math,_toConsumableArray(t))}}function watchForUpdates(t){var n,i=t.element,o=t.watchProps,r=void 0===o?[]:o,a=t.sideEffect,s=void 0===a?function(){}:a;null!=i&&i.isElement||e.error("watchForUpdates: Expected a Lightning Element passed to element parameter, received ".concat(_typeof(i)));var l=null===(n=i.__core)||void 0===n?void 0:n._onAfterUpdate;return i.onAfterUpdate=function(t){var e=!1;r.forEach((function(n){if(!t.transition(n)||!t.transition(n).isRunning()){var i="__watchPrev".concat(n),o=t[n];o!==t[i]&&(t[i]=o,e=!0);}})),e&&s(),l&&l(t);}.bind(this),i}var l={isMarkupString:function isMarkupString(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"";return "string"==typeof t&&s.test(t)},capitalizeFirstLetter:capitalizeFirstLetter,degreesToRadians:a,downloadFile:function downloadFile(t,e,n){["plain","json"].includes(n)||(n="plain");var i="data:text/".concat(n,";charset=utf-8,")+encodeURIComponent(JSON.stringify(t)),o=document.createElement("a");o.setAttribute("href",i),o.setAttribute("download",e),o.click();},delayForAnimation:delayForAnimation,stringifyCompare:stringifyCompare,objectPropertyOf:function objectPropertyOf(t,e){return e.reduce((function(t,e){return t&&"undefined"!==t[e]?t[e]:void 0}),t)},flatten:flatten,getDimension:getDimension,getFirstNumber:function getFirstNumber(){for(var t=arguments.length,e=new Array(t),n=0;n<t;n++)e[n]=arguments[n];return e.find(Number.isFinite)},measureTextWidth:function measureTextWidth(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},e=document.createElement("canvas").getContext("2d"),n=t.fontStyle,i=t.fontWeight,o=t.fontSize,r=t.fontFamily,a=void 0===r?t.fontFace||"sans-serif":r,s=[n,i,o?"".concat(o,"px"):"0","'".concat(a,"'")].filter(Boolean).join(" ");e.font=s;var l=e.measureText(t.text||"");return Math.round(l.width)},clone:clone,getMergeValue:getMergeValue,RoundRect:i,rgba2argb:rgba2argb,getValFromObjPath:n,reduceFraction:reduceFraction,getValidColor:getValidColor,getHexColor:getHexColor,getAspectRatioH:function getAspectRatioH(t){var e=arguments.length>2&&void 0!==arguments[2]?arguments[2]:":",n=_slicedToArray((arguments.length>1&&void 0!==arguments[1]?arguments[1]:"16:9").split(e),2);return t/(n[0]/n[1])},getAspectRatioW:function getAspectRatioW(t){var e=arguments.length>2&&void 0!==arguments[2]?arguments[2]:":",n=_slicedToArray((arguments.length>1&&void 0!==arguments[1]?arguments[1]:"16:9").split(e),2);return t*(n[0]/n[1])},getWidthByUpCount:getWidthByUpCount,getDimensions:getDimensions,getWidthByColumnSpan:getWidthByColumnSpan,createConditionalZContext:function createConditionalZContext(t,e){t.zIndex||void 0===e||0===e||(t.forceZIndexContext=!0,t.zIndex=0);},watchForUpdates:watchForUpdates,convertTextAlignToFlexJustify:function convertTextAlignToFlexJustify(t){switch(t){case"left":return "flex-start";case"center":return "center";case"right":return "flex-end";default:return console.warn('Expected "textAlign" values are "left," "center," and "right," but instead, '.concat(t,' was received and will fall back to "left."')),"flex-start"}}},c=new(function(){function Metrics(){_classCallCheck(this,Metrics),this._keyMetricsCallback=void 0;}return _createClass(Metrics,[{key:"keyMetricsCallback",get:function get(){return this._keyMetricsCallback},set:function set(t){-1<["undefined","function"].indexOf(_typeof(t))?this._keyMetricsCallback=t:e.warn("context keyMetricsCallback expected a function. Received ".concat(_typeof(t)));}}]),Metrics}()),u=new t.EventEmitter,h={name:"Base Lightning TV",alpha:{primary:1,secondary:.7,tertiary:.1,inactive:.5,full:1,none:0,alpha1:.1,alpha2:.3,alpha3:.5,alpha4:.7,alpha5:.9},animation:{duration:{none:0,xfast:.1,fast:.25,normal:.5,slow:.75,xslow:.9},delay:{none:0,xfast:.01,fast:.025,normal:.05,slow:.075,xslow:.09},expressive:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25},expressiveEntrance:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25},expressiveExit:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25},standard:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25},standardEntrance:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25},standardExit:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25},utility:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25},utilityEntrance:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25},utilityExit:{timingFunction:"cubic-bezier(0, 0, 1, 1)",delay:0,duration:.25}},asset:{arrowLeft:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAGKADAAQAAAABAAAAGAAAAADiNXWtAAAAi0lEQVRIDWNgGAWjIfD//38JID5Fk5AAGqwKxPeA+D/VLQCaaQLEr0CGgwBVLQCa5wbEn0EGwwDVLAAaGA3Ev2AGw2iqWAA0rBiI/8EMRaYptgBoWDeygehsci1gIlcjWfqArqZdEMFcBLSEdpGMZAntkimSJbTLaEiW0K6oQLKEdoUdzJJRemiHAAD4n+yzPWCs7QAAAABJRU5ErkJggg==",arrowRight:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAGKADAAQAAAABAAAAGAAAAADiNXWtAAAAg0lEQVRIDWNgGAWjIYArBP7//38KiCVwyVMsDjQcBO4BsSrFhmEzAGw8hHgFpEywqaFIDMkCEPMzELtRZCC6ZjQLQNxfQByNro5sPhYLQEL/gLiYbEORNeKwACbcDVPLBGMMOhrmVDSapkFE00imaTKlaUajaVFB28Ju0CXrUQfhDAEAEgHss6NhpLQAAAAASUVORK5CYII=",backspaceOutline:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQCAYAAADnRuK4AAAAAXNSR0IArs4c6QAACmpJREFUeF7tnVmoZUcVhv/feY4gBEVEH/KgCCZxCK2itNo4xQQH+kUN0TjEiDGKKBqnaExwBjUaR6KY+NQgiQkOMSYhYEScIopGJOqDE2hHjfP0y4p1Oqdv33v2qr32Prv2Paug6Ye7Vu2qv75TtWvtGohMqUBAAQZ80zUVQAKUEIQUSIBC8qVzApQMhBRIgELypXMClAyEFEiAQvKlcwKUDIQUSIBC8qVzApQMhBRIgELypXMClAyEFEiAQvKlcwKUDIQUSIBC8qVzApQMhBRIgELypXMClAyEFEiAQvKlcwKUDIQUSIBC8qVzApQMhBRIgELypXMClAyEFEiAQvKlcwKUDIQUSIBC8qVzApQMhBRIgELypfPsAJJ0NYC92XRHKPB3AAfLv18BuBLAFSR/NKZWswJI0vkA3jCmILsw75sAvIfkR8eo22wAknQSgMvGEGFD8vwxgFeQvGrI+s4CIEnHAPgugHsMWfkNzevDAM4i+Z8h6t88QJLuXOB5yBAVzjxuVeBaAM8ieXNUjzkAdAmA50Yrmv5HKPATACeQ/GNEm6YBkvRyANblZhpHAXsfekpkOGsWIEmPAHA9gDuOo13mWhS4gOSZfdVoEiBJ9wFwA4D7961Y+lUpsK/v7KxVgL4K4ElOCS4l+Uyn7a41k3Q0gMcC2ANgH4CHV1T2OyStx69OzQEk6TwAZztr8lMAx5P8s9N+Y8wk2cTjfQDu66z080h+zml7yKwpgCSdCOByZyX+BuBRJH/otN84M0kWN/s0gOc4Kv8Nko922B1m0gxAkh4I4AcVwcL9JA/UVnjT7CXdHYD9yEzfVUkAjib5uxqNmgCoBAu/CeBhzsJ/kORZTtuNN5Nk70bXAZ0Hy59G8qIawVoB6LMAnu8suE3tH0/y3077NAMg6esAuoaoC0la7M2dJgdI0ssAXOgs8W8BHEvS/s9UoYCkdwN4bYfL5STto7U7TQpQZbDQehzreawHylSpgKSTAVza4XYDyeNqsp4MoB7BwteQfH9N5dL2NgWK3l0vyAdJWhDXnSYBSNLtANh3GO/KwgMk97trlYbbKiDJPpzea5U8JKuYqDIeql0kvQPAG5352ZLMR5L8q9M+zXZQYFcAJOnJAL7sbGWLMFuk2SLOmYIKzB6gEiz8HoB7O7U4meQXnLZp1qGApD8BuOcsh7AewcL3kuyadg4OjSSbhRxH0j4BjJok2Ufga0j+YdQHlcznDlBNsPAa+xpP8r/rEHbxjAKPbRuyHvKFY0Ik6QUALOprPfIT1gHRbAGSdDoA77aSX5Zg4e8nhGfx6FEgWoJn8Zy1QCTplq5vjc3NwnoEC/eQ/HYD8IwC0TbwrA2i2QHUI1h4JskLGoJnUIhWwLMWiGYFkCSLMX2t5WDhlneeLm5Dw5kDntEhkmRhEVvesWNqZgiTdC6AN3W1Svn72oOFkuxF+WcVIQUrai+IKuA5BBHJ453auc1mA1AJFn7Jsf7EKj9ZsLBHw1ZDtI5neAmaBUBzCxaO2cBj5u2FZtlO0l8A3K3ZIaxHsPB8kt5vYn00c/mM0dBj5OmqzAqjOQDUfLBwJ32HbPAh84pCM5seSNJLAHzcWeFJgoVdZRui4YfIo6ucff8uyVY03LW5IawyWPgvW5u77mChV/QIABFfb/kidk0CVKbDth3Huw35dJLeniqiV2/fniDYx1f7vlWTeoUFah6wZQhrqwcqwUKbrtsaH0+6mOQpHsOpbXpCVFPstcJjBZNkmzHv0swQJultAN7iVO375TyafzjtJzcbEaK1w9McQJXBQlvvYmtsfjE5FZUFGAGiSeBpCqDKYKFtmX0qya9Utl0z5gNCNBk8BSA7CtiODNwxjf4trEew8BySNtTNOg0A0aTwtARQTbDQeh3rfawXmn0KQDQ5PC0B9EkAL3LSkAD9X6hWALIJzJ3mNoSdS9I7U3NyuX6zQO+zKOzkEEmaHqDSFdpZM97tOfkSfRvvk0LUDEAFIgseetf85DS+AYgk/bPr1NvRZ2HLg4ektwI4xzmgZCBxYohaBMjWPeenDOcvaIvZ2oez5gAqQ5mtLbb3oa4z+Bb6nTHW1UP92vFIr54vzJ8BcGplGdYKkSRbCXGHSWdh2z1ckp1taGccroxyFt9cznG4iGuDqFmASk9kZxxakNGTckHZBBA1DVCB6BMAXuwhyA4VmGL/+05l6zlsbdt7DJmXU0uXmSQ7JvD2zQ1hiwJJsotRvlVxXO87SU5+heUYDT5Gni5KVhg1D1DphWqCjOYy6RlAYzb0mHn3gWkWABWIaoKMubHwSBpGebGWZNdc2vmUO6a1BhJXFUSSff/yLuOYamvzzwEcVfFr7tWwPXqi6uN2PXWYG0C1Qca1n8RaDlewl3kPRL3gWXo/XBwo1dXWdk/a3jEOnJoVQGUoqw0yvpLkh7oUHvLvTohC8FRANBo8pT3sxLeVJ/M2M4QtiVYTZJzkNPoOiAaBxwHRqPDMFqBS8Jog4yT3YewA0aDwrIBodHhmDVApvG0mtO3PnjTJjTxbIBoFnm0gWgs8pQ06lxY3N4QtCWZBRgPDezdnHvPr+alV2EiaL0DlF2Dbn20bdB40XtHwQ5nOHqAC0SyCjEM1Wkv57AqACkRvBvB2p7hrDzI6yzU7s90EUPNBxtnR4SjwrgGo9EK1Qca8cM4ByU4mkuz++F93ZHELyZX3iW31n+S+sKWZWfNBxkCbNeUq6ekArugo1I0kH1xT8EkBKj1R80HGGkFbtZVkZ3bb2d2r0tUkn1hTh8kBKhB9DMBLnQWfJMjoLFuTZpJsO/ONAB7UUcBLSHqvX781q1YAqg0yfoDkq5psrQYLJeldAF7nKFr1x+wmACq9kAUZLazvvTV4P8kDDlE22kTSQ4uuK9dCF5HuR/I3NYI1A1CBaB+AK50VsAMj7TJeixNl2kYBSccCsB/ZMQ6Brif5GIfdYSZNAVQg8rzsLSphl/Hapby2LDZTUaBcq/56ALb1fOVxLkuinULy4loRmwOoQGQX7T7DWZnPk3y203bXmkl6AIA91isDOBGADV3e1HsJbasA1QYZvUKl3fYKPI2knXFQnZoEqPRCNUHG6oqnwyEFLiJ5Wl89mgWoQFQTZOyrwSb7WUztcSRtu0+v1DRABaKPADijV+3SaZUCNgE5geTNEZnmAFBtkDGix6b4Xld2BNvJcaHUPEClF6oNMoZE2eXOtm3q1ZFha1mfWQBUINoL4Kqurbm7vPEj1bOAqx3udW0kk62+swGoQHQ2gPOGFGAD8roJgF0t+qkx6jorgApElwE4aQwxZp6n3YNxsPyzA7yst/4iSdvEMFqaHUCjKZEZ91IgAeolWzotFEiAkoWQAglQSL50ToCSgZACCVBIvnROgJKBkAIJUEi+dE6AkoGQAglQSL50ToCSgZACCVBIvnROgJKBkAIJUEi+dE6AkoGQAglQSL50ToCSgZACCVBIvnROgJKBkAIJUEi+dE6AkoGQAglQSL50ToCSgZACCVBIvnROgJKBkAIJUEi+dE6AkoGQAglQSL50ToCSgZACCVBIvnT+H0jPT81J3xWWAAAAAElFTkSuQmCC",check:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAOCAYAAAAi2ky3AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACtSURBVHgBvdPdDcIgEAfwoy8Nb45QN3AGF2s36Ahu4gpuIDoBfSgfpdoTlCbEWEMh6T8hFzjyg5AAkBHOcQe5UWqspRx435sDpMYj6IYQwwVSEiJ2MKVUBWuzLSLl2HL+uxmNCGFO8yaL7RHxve6qRZoAuS4hxac8735elWVx7jrtMKL1o0Gcat9jhExHSukN/kUIFZ7MpDRtzE1isDRkAUtDvrA8ZI597FUf8gWH9P0b4gko9wAAAABJRU5ErkJggg=="},color:{white:["#ffffff",1],black:["#000000",1],grey:["#929096",1],red:["#e74c3c",1],orange:["#dc7633",1],yellow:["#f7dc6f",1],green:["#2Ecc71",1],blue:["#93a9fd",1],purple:["#663399",1],palette:{"grey-05":["#f8f7fa",1],"grey-40":["#929096",1],"grey-70":["#48474b",1],"grey-90":["#181819",1],"blue-20":["#becffe",1],"blue-40":["#93a9fd",1],"blue-90":["#000033",1]},material:["#181819",1],materialBrand:["#000033",1],overlay:["#181819",.7],textNeutral:["#f8f7fa",1],textNeutralSecondary:["#f8f7fa",.7],textNeutralTertiary:["#f8f7fa",.1],textNeutralDisabled:["#f8f7fa",.5],textInverse:["#181819",1],textInverseSecondary:["#181819",.7],textInverseTertiary:["#181819",.1],textInverseDisabled:["#181819",.5],textBrand:["#93a9fd",1],textBrandSecondary:["#93a9fd",.7],textBrandTertiary:["#93a9fd",.1],textBrandDisabled:["#93a9fd",.5],textPositive:["#2Ecc71",1],textNegative:["#e74c3c",1],textInfo:["#93a9fd",1],textCaution:["#dc7633",1],fillTransparent:["#ffffff",0],fillNeutral:["#f8f7fa",1],fillNeutralSecondary:["#f8f7fa",.7],fillNeutralTertiary:["#f8f7fa",.1],fillNeutralDisabled:["#f8f7fa",.5],fillInverse:["#181819",1],fillInverseSecondary:["#181819",.7],fillInverseTertiary:["#181819",.1],fillInverseDisabled:["#181819",.5],fillBrand:["#93a9fd",1],fillBrandSecondary:["#93a9fd",.7],fillBrandTertiary:["#93a9fd",.1],fillBrandDisabled:["#93a9fd",.5],fillPositive:["#2Ecc71",1],fillNegative:["#e74c3c",1],fillInfo:["#93a9fd",1],fillCaution:["#dc7633",1],strokeNeutral:["#f8f7fa",1],strokeNeutralSecondary:["#f8f7fa",.7],strokeNeutralTertiary:["#f8f7fa",.1],strokeNeutralDisabled:["#f8f7fa",.5],strokeInverse:["#181819",1],strokeInverseSecondary:["#181819",.7],strokeInverseTertiary:["#181819",.1],strokeInverseDisabled:["#181819",.5],strokeBrand:["#93a9fd",1],strokeBrandSecondary:["#93a9fd",.7],strokeBrandTertiary:["#93a9fd",.1],strokeBrandDisabled:["#93a9fd",.5],strokePositive:["#2Ecc71",1],strokeNegative:["#e74c3c",1],strokeInfo:["#93a9fd",1],strokeCaution:["#dc7633",1],interactiveNeutralFocus:["#ffffff",1],interactiveNeutralFocusSoft:["#ffffff",.1],interactiveInverseFocus:["#48474b",1],interactiveInverseFocusSoft:["#48474b",.1],interactiveBrandFocus:["#becffe",1],interactiveBrandFocusSoft:["#becffe",.1],shadowNeutralFocus:["#000000",.7],shadowNeutralFocusSoft:["#000000",.7],shadowInverseFocus:["#000000",.7],shadowInverseFocusSoft:["#000000",.7],shadowBrandFocus:["#000000",.7],shadowBrandFocusSoft:["#000000",.7]},componentConfig:{Keyboard:{style:{keyProps:{delete:{title:null,icon:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAACQCAYAAADnRuK4AAAAAXNSR0IArs4c6QAACmpJREFUeF7tnVmoZUcVhv/feY4gBEVEH/KgCCZxCK2itNo4xQQH+kUN0TjEiDGKKBqnaExwBjUaR6KY+NQgiQkOMSYhYEScIopGJOqDE2hHjfP0y4p1Oqdv33v2qr32Prv2Paug6Ye7Vu2qv75TtWvtGohMqUBAAQZ80zUVQAKUEIQUSIBC8qVzApQMhBRIgELypXMClAyEFEiAQvKlcwKUDIQUSIBC8qVzApQMhBRIgELypXMClAyEFEiAQvKlcwKUDIQUSIBC8qVzApQMhBRIgELypXMClAyEFEiAQvKlcwKUDIQUSIBC8qVzApQMhBRIgELypXMClAyEFEiAQvKlcwKUDIQUSIBC8qVzApQMhBRIgELypfPsAJJ0NYC92XRHKPB3AAfLv18BuBLAFSR/NKZWswJI0vkA3jCmILsw75sAvIfkR8eo22wAknQSgMvGEGFD8vwxgFeQvGrI+s4CIEnHAPgugHsMWfkNzevDAM4i+Z8h6t88QJLuXOB5yBAVzjxuVeBaAM8ieXNUjzkAdAmA50Yrmv5HKPATACeQ/GNEm6YBkvRyANblZhpHAXsfekpkOGsWIEmPAHA9gDuOo13mWhS4gOSZfdVoEiBJ9wFwA4D7961Y+lUpsK/v7KxVgL4K4ElOCS4l+Uyn7a41k3Q0gMcC2ANgH4CHV1T2OyStx69OzQEk6TwAZztr8lMAx5P8s9N+Y8wk2cTjfQDu66z080h+zml7yKwpgCSdCOByZyX+BuBRJH/otN84M0kWN/s0gOc4Kv8Nko922B1m0gxAkh4I4AcVwcL9JA/UVnjT7CXdHYD9yEzfVUkAjib5uxqNmgCoBAu/CeBhzsJ/kORZTtuNN5Nk70bXAZ0Hy59G8qIawVoB6LMAnu8suE3tH0/y3077NAMg6esAuoaoC0la7M2dJgdI0ssAXOgs8W8BHEvS/s9UoYCkdwN4bYfL5STto7U7TQpQZbDQehzreawHylSpgKSTAVza4XYDyeNqsp4MoB7BwteQfH9N5dL2NgWK3l0vyAdJWhDXnSYBSNLtANh3GO/KwgMk97trlYbbKiDJPpzea5U8JKuYqDIeql0kvQPAG5352ZLMR5L8q9M+zXZQYFcAJOnJAL7sbGWLMFuk2SLOmYIKzB6gEiz8HoB7O7U4meQXnLZp1qGApD8BuOcsh7AewcL3kuyadg4OjSSbhRxH0j4BjJok2Ufga0j+YdQHlcznDlBNsPAa+xpP8r/rEHbxjAKPbRuyHvKFY0Ik6QUALOprPfIT1gHRbAGSdDoA77aSX5Zg4e8nhGfx6FEgWoJn8Zy1QCTplq5vjc3NwnoEC/eQ/HYD8IwC0TbwrA2i2QHUI1h4JskLGoJnUIhWwLMWiGYFkCSLMX2t5WDhlneeLm5Dw5kDntEhkmRhEVvesWNqZgiTdC6AN3W1Svn72oOFkuxF+WcVIQUrai+IKuA5BBHJ453auc1mA1AJFn7Jsf7EKj9ZsLBHw1ZDtI5neAmaBUBzCxaO2cBj5u2FZtlO0l8A3K3ZIaxHsPB8kt5vYn00c/mM0dBj5OmqzAqjOQDUfLBwJ32HbPAh84pCM5seSNJLAHzcWeFJgoVdZRui4YfIo6ucff8uyVY03LW5IawyWPgvW5u77mChV/QIABFfb/kidk0CVKbDth3Huw35dJLeniqiV2/fniDYx1f7vlWTeoUFah6wZQhrqwcqwUKbrtsaH0+6mOQpHsOpbXpCVFPstcJjBZNkmzHv0swQJultAN7iVO375TyafzjtJzcbEaK1w9McQJXBQlvvYmtsfjE5FZUFGAGiSeBpCqDKYKFtmX0qya9Utl0z5gNCNBk8BSA7CtiODNwxjf4trEew8BySNtTNOg0A0aTwtARQTbDQeh3rfawXmn0KQDQ5PC0B9EkAL3LSkAD9X6hWALIJzJ3mNoSdS9I7U3NyuX6zQO+zKOzkEEmaHqDSFdpZM97tOfkSfRvvk0LUDEAFIgseetf85DS+AYgk/bPr1NvRZ2HLg4ektwI4xzmgZCBxYohaBMjWPeenDOcvaIvZ2oez5gAqQ5mtLbb3oa4z+Bb6nTHW1UP92vFIr54vzJ8BcGplGdYKkSRbCXGHSWdh2z1ckp1taGccroxyFt9cznG4iGuDqFmASk9kZxxakNGTckHZBBA1DVCB6BMAXuwhyA4VmGL/+05l6zlsbdt7DJmXU0uXmSQ7JvD2zQ1hiwJJsotRvlVxXO87SU5+heUYDT5Gni5KVhg1D1DphWqCjOYy6RlAYzb0mHn3gWkWABWIaoKMubHwSBpGebGWZNdc2vmUO6a1BhJXFUSSff/yLuOYamvzzwEcVfFr7tWwPXqi6uN2PXWYG0C1Qca1n8RaDlewl3kPRL3gWXo/XBwo1dXWdk/a3jEOnJoVQGUoqw0yvpLkh7oUHvLvTohC8FRANBo8pT3sxLeVJ/M2M4QtiVYTZJzkNPoOiAaBxwHRqPDMFqBS8Jog4yT3YewA0aDwrIBodHhmDVApvG0mtO3PnjTJjTxbIBoFnm0gWgs8pQ06lxY3N4QtCWZBRgPDezdnHvPr+alV2EiaL0DlF2Dbn20bdB40XtHwQ5nOHqAC0SyCjEM1Wkv57AqACkRvBvB2p7hrDzI6yzU7s90EUPNBxtnR4SjwrgGo9EK1Qca8cM4ByU4mkuz++F93ZHELyZX3iW31n+S+sKWZWfNBxkCbNeUq6ekArugo1I0kH1xT8EkBKj1R80HGGkFbtZVkZ3bb2d2r0tUkn1hTh8kBKhB9DMBLnQWfJMjoLFuTZpJsO/ONAB7UUcBLSHqvX781q1YAqg0yfoDkq5psrQYLJeldAF7nKFr1x+wmACq9kAUZLazvvTV4P8kDDlE22kTSQ4uuK9dCF5HuR/I3NYI1A1CBaB+AK50VsAMj7TJeixNl2kYBSccCsB/ZMQ6Brif5GIfdYSZNAVQg8rzsLSphl/Hapby2LDZTUaBcq/56ALb1fOVxLkuinULy4loRmwOoQGQX7T7DWZnPk3y203bXmkl6AIA91isDOBGADV3e1HsJbasA1QYZvUKl3fYKPI2knXFQnZoEqPRCNUHG6oqnwyEFLiJ5Wl89mgWoQFQTZOyrwSb7WUztcSRtu0+v1DRABaKPADijV+3SaZUCNgE5geTNEZnmAFBtkDGix6b4Xld2BNvJcaHUPEClF6oNMoZE2eXOtm3q1ZFha1mfWQBUINoL4Kqurbm7vPEj1bOAqx3udW0kk62+swGoQHQ2gPOGFGAD8roJgF0t+qkx6jorgApElwE4aQwxZp6n3YNxsPyzA7yst/4iSdvEMFqaHUCjKZEZ91IgAeolWzotFEiAkoWQAglQSL50ToCSgZACCVBIvnROgJKBkAIJUEi+dE6AkoGQAglQSL50ToCSgZACCVBIvnROgJKBkAIJUEi+dE6AkoGQAglQSL50ToCSgZACCVBIvnROgJKBkAIJUEi+dE6AkoGQAglQSL50ToCSgZACCVBIvnROgJKBkAIJUEi+dE6AkoGQAglQSL50ToCSgZACCVBIvnT+H0jPT81J3xWWAAAAAElFTkSuQmCC"}}}}},font:[],layout:{screenW:1920,screenH:1080,columnCount:10,marginX:150,marginY:150,safe:50,gutterX:{xs:20,sm:40,md:60,lg:80,xl:100},gutterY:{xs:20,sm:40,md:60,lg:80,xl:100},focusScale:1.2},radius:{none:0,xs:2,sm:4,md:8,lg:16,xl:24},spacer:{xxs:2,xs:4,sm:8,md:10,lg:20,xl:30,xxl:40,xxxl:50},stroke:{sm:2,md:4,lg:6,xl:8},typography:{display1:{fontFamily:"Arial",fontSize:75,lineHeight:85,fontStyle:"500",verticalAlign:"middle",textBaseline:"bottom"},display2:{fontFamily:"Arial",fontSize:50,lineHeight:60,fontStyle:"500",verticalAlign:"middle",textBaseline:"bottom"},headline1:{fontFamily:"Arial",fontSize:35,fontStyle:"500",lineHeight:48,verticalAlign:"middle",textBaseline:"bottom"},headline2:{fontFamily:"Arial",fontSize:30,fontStyle:"500",lineHeight:40,verticalAlign:"middle",textBaseline:"bottom"},headline3:{fontFamily:"Arial",fontSize:25,fontStyle:"500",lineHeight:36,verticalAlign:"middle",textBaseline:"bottom"},body1:{fontFamily:"Arial",fontSize:25,fontStyle:"300",lineHeight:40,verticalAlign:"middle",textBaseline:"bottom"},body2:{fontFamily:"Arial",fontSize:22,fontStyle:"300",lineHeight:32,verticalAlign:"middle",textBaseline:"bottom"},body3:{fontFamily:"Arial",fontSize:20,fontStyle:"300",lineHeight:32,verticalAlign:"middle",textBaseline:"bottom"},button1:{fontFamily:"Arial",fontSize:25,fontStyle:"500",letterSpacing:-.2,lineHeight:32,verticalAlign:"middle",textBaseline:"bottom"},button2:{fontFamily:"Arial",fontSize:20,fontStyle:"500",lineHeight:32,verticalAlign:"middle",textBaseline:"bottom"},callout1:{fontFamily:"Arial",fontSize:20,fontStyle:"500",letterSpacing:1,lineHeight:32,verticalAlign:"middle",textBaseline:"bottom"},caption1:{fontFamily:"Arial",fontSize:15,fontStyle:"500",lineHeight:24,verticalAlign:"middle",textBaseline:"bottom"}}},d=[],_=function fontLoader(t){for(var n=[],i=function _loop(){var i=t[o],r=i.family,a=i.src,s=i.descriptors,l=a&&Array.isArray(a)&&a.length?a.map((function(t){return "local"===t.substr(0,5)?t:"url(".concat(t,")")})).join(","):"url("+a+")",c=new FontFace(r,l,s||{});e.info("Loading font",r),document.fonts.add(c),n.push(new Promise((function(t){c.load().then((function(){d.push(c),t(r);})).catch((function(e){t(new Error("".concat(r,": ").concat(e.message)));}));})));},o=0;o<t.length;o++)i();return Promise.all(n).then((function(t){var n=t.filter((function(t){return !(t instanceof Error)})).join(", ");n&&e.log("Fonts loaded: ".concat(n));var i=t.filter((function(t){return t instanceof Error})).map((function(t){return t.message})).join(", ");i&&e.error("Unable to load fonts: ".concat(i));}))},p=function(){var t=_asyncToGenerator(_regeneratorRuntime().mark((function _callee(t){return _regeneratorRuntime().wrap((function _callee$(n){for(;;)switch(n.prev=n.next){case 0:if(!document.fonts||!("delete"in document.fonts)){n.next=6;break}if(d.length){n.next=3;break}return n.abrupt("return");case 3:d=d.filter((function(n){return t.find((function(t){return t.family===n.family}))?n:(e.info("Removing font",n.family),document.fonts.delete(n),!1)})),n.next=7;break;case 6:e.info("Unable to remove manually-added fonts");case 7:case"end":return n.stop()}}),_callee)})));return function cleanupFonts(e){return t.apply(this,arguments)}}(),f={fontFamily:"fontFace"},g=function all(t){for(var e={},n=0;n<t.length;n++)e=clone(e,t[n]);return e},m=[],v=function isSubTheme(t){return "subTheme"===t.slice(0,8)};var b=new(function(){function ThemeManager(){_classCallCheck(this,ThemeManager),this._cache=new Map,"undefined"!=typeof window&&(window.LUI||(window.LUI={}),window.LUI.themeManagerInstances?window.LUI.themeManagerInstances.push({themeManager:this,events:u}):window.LUI.themeManagerInstances=[{themeManager:this,events:u}]);}var t,i,o,r,a;return _createClass(ThemeManager,[{key:"_setCache",value:function _setCache(t,e){"undefined"!=typeof window&&window.LUI.themeManagerInstances.forEach((function(n){var i=n.themeManager;i&&i._cache.set(t,e);}));}},{key:"_deleteCache",value:function _deleteCache(t){"undefined"!=typeof window&&window.LUI.themeManagerInstances.forEach((function(e){var n=e.themeManager;n&&n._cache.delete(t);}));}},{key:"_emit",value:function _emit(t,e){"undefined"!=typeof window&&window.LUI.themeManagerInstances.forEach((function(n){n.events.emit(t,e);}));}},{key:"getTheme",value:function getTheme(){if(this._cache.has("theme"))return this._cache.get("theme");var t=this._processTheme.call(this);return this._setCache("theme",t),t}},{key:"setTheme",value:(a=_asyncToGenerator(_regeneratorRuntime().mark((function _callee(t){var n,i;return _regeneratorRuntime().wrap((function _callee$(o){for(;;)switch(o.prev=o.next){case 0:if("object"===_typeof(n=Array.isArray(t)?g(t):t)&&null!==n){o.next=4;break}return e.warn("context theme expected an object. Received ".concat(_typeof(n))),o.abrupt("return");case 4:return this._clearCache(),i=this._processTheme.call(this,[n],n.extensions),this._setCache("theme",i),o.next=9,p(i.font);case 9:if(!i.font||!i.font.length){o.next=12;break}return o.next=12,this._loadFonts(i.font);case 12:return this._refreshSubThemes(),this._emit("themeExtensionsUpdate"),this._emit("themeUpdate"),o.abrupt("return",i);case 16:case"end":return o.stop()}}),_callee,this)}))),function setTheme(t){return a.apply(this,arguments)})},{key:"getSubTheme",value:function getSubTheme(t){if(this._cache.has("subTheme".concat(t)))return this._cache.get("subTheme".concat(t)).result}},{key:"setSubTheme",value:(r=_asyncToGenerator(_regeneratorRuntime().mark((function _callee2(t,n){var i,o,r,a=arguments;return _regeneratorRuntime().wrap((function _callee2$(s){for(;;)switch(s.prev=s.next){case 0:if(i=!(a.length>2&&void 0!==a[2])||a[2],t){s.next=4;break}return e.warn("Sub theme name not specified"),s.abrupt("return");case 4:if("string"==typeof t){s.next=7;break}return e.warn("Sub theme name must be a string. Received an ".concat(_typeof(t))),s.abrupt("return");case 7:if("object"===_typeof(n)&&Object.keys(n).length){s.next=10;break}return e.warn("Could not set subTheme ".concat(t,", value should be an object with properties. Received an ").concat(_typeof(n))),s.abrupt("return");case 10:if(o=this.getTheme(),!(r=this._processTheme.call(this,[o,n])).font||!r.font.length){s.next=15;break}return s.next=15,this._loadFonts(r.font);case 15:return this._setCache("subTheme".concat(t),{original:n,result:r}),i&&this._emit("themeUpdate".concat(t)),s.abrupt("return",r);case 18:case"end":return s.stop()}}),_callee2,this)}))),function setSubTheme(t,e){return r.apply(this,arguments)})},{key:"_refreshSubThemes",value:function _refreshSubThemes(){var t=this;_toConsumableArray(this._cache.keys()).forEach((function(e){if("string"==typeof e&&v(e)){var n=t._cache.get(e);n.original&&t.updateSubTheme(e.replace(/^subTheme/,""),n.original);}}));}},{key:"_loadFonts",value:(o=_asyncToGenerator(_regeneratorRuntime().mark((function _callee3(t){return _regeneratorRuntime().wrap((function _callee3$(n){for(;;)switch(n.prev=n.next){case 0:return n.prev=0,n.next=3,_(t);case 3:n.next=8;break;case 5:n.prev=5,n.t0=n.catch(0),e.error("Unable to load font: ".concat(n.t0));case 8:case"end":return n.stop()}}),_callee3,null,[[0,5]])}))),function _loadFonts(t){return o.apply(this,arguments)})},{key:"updateTheme",value:(i=_asyncToGenerator(_regeneratorRuntime().mark((function _callee4(t){var e,n,i;return _regeneratorRuntime().wrap((function _callee4$(o){for(;;)switch(o.prev=o.next){case 0:if(e=Array.isArray(t)?g(t):t,n={},this._cache.has("theme")&&(n=this._cache.get("theme")),this._clearCache(),i=this._processTheme.call(this,[n,e],e.extensions||n.extensions),this._setCache("theme",i),!i.font||!i.font.length){o.next=9;break}return o.next=9,this._loadFonts(i.font);case 9:return this._refreshSubThemes(),e.extensions&&this._emit("themeExtensionsUpdate"),this._emit("themeUpdate"),o.abrupt("return",i);case 13:case"end":return o.stop()}}),_callee4,this)}))),function updateTheme(t){return i.apply(this,arguments)})},{key:"_clearCache",value:function _clearCache(){var t=this;m.filter((function(t){return window.URL&&"function"==typeof window.URL.revokeObjectURL&&URL.revokeObjectURL(t),!1})),this._cache.forEach((function(e,n){"string"==typeof n&&v(n)||t._deleteCache(n);})),this._cache.forEach((function(e,n){"string"==typeof n&&v(n)&&t.setSubTheme(n.replace("subTheme",""),e.original,!1);}));}},{key:"updateSubTheme",value:(t=_asyncToGenerator(_regeneratorRuntime().mark((function _callee5(t,n){var i,o,r,a,s=arguments;return _regeneratorRuntime().wrap((function _callee5$(l){for(;;)switch(l.prev=l.next){case 0:if(i=!(s.length>2&&void 0!==s[2])||s[2],t){l.next=4;break}return e.warn("Sub theme name not specified"),l.abrupt("return");case 4:if("object"===_typeof(n)&&Object.keys(n).length){l.next=7;break}return e.warn("Could not update subTheme ".concat(t," due to invalid value")),l.abrupt("return");case 7:if(o=this.getTheme(),r={},this._cache.has("subTheme".concat(t))&&(r=this._cache.get("subTheme".concat(t)).original),!(a=this._processTheme.call(this,[o,r,n])).font||!a.font.length){l.next=14;break}return l.next=14,this._loadFonts(a.font);case 14:return this._setCache("subTheme".concat(t),{original:clone(r,n),result:a}),i&&this._emit("themeUpdate".concat(t)),l.abrupt("return",a);case 17:case"end":return l.stop()}}),_callee5,this)}))),function updateSubTheme(e,n){return t.apply(this,arguments)})},{key:"removeSubTheme",value:function removeSubTheme(t){this._cache.has("subTheme".concat(t))&&this._deleteCache("subTheme".concat(t)),this._emit("themeUpdate".concat(t));}},{key:"_getComponentUUID",value:function _getComponentUUID(t){return "componentStyle".concat(t)}},{key:"_processTheme",value:function _processTheme(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[],i=arguments.length>1?arguments[1]:void 0;if(!Array.isArray(t))throw new Error("context processTheme expected an array. Received ".concat(_typeof(t)));var o=g([h].concat(_toConsumableArray(t))),r={},a=JSON.stringify(o,(function(t,i){var a=i;if(a&&"object"===_typeof(a)){var s=i;for(var l in a)Object.hasOwnProperty.call(a,l)&&f[l]&&(s[l&&f[l]]=a[l],delete s[l]);a=s;}var c=function checkBase64EncodedImage(t){var e=/^data:image\/(jpeg|jpg|png|gif);base64,/,n=e.test(t);return {isImage:n,mimeType:n?function getMimeTypeFromDataUri(t){var e=t.match(/^data:(.*?);base64,/);return e&&2===e.length?e[1]:null}(t.match(e)[0]):null}}(a),u=c.isImage,h=c.mimeType;if(window.URL&&"function"==typeof window.URL.createObjectURL&&u)try{var d=function base64ToBlobURL(t,n){var i=atob(t.substring(t.indexOf(",")+1)),o=[];try{for(var r=0;r<i.length;r+=512){for(var a=i.slice(r,r+512),s=new Array(a.length),l=0;l<a.length;l++)s[l]=a.charCodeAt(l);var c=new Uint8Array(s);o.push(c);}var u=new Blob(o,{type:n});return URL.createObjectURL(u)}catch(t){return e.info("Unable to convert base64 image to URL"),null}}(a,h);return m.push(d),d}catch(t){return a}if(Array.isArray(a)&&2===a.length&&!a[0].targetComponent&&a[0].length&&"#"===a[0].substr(0,1))return getHexColor(a[0],a[1]);if("extensions"!==t&&"function"!=typeof a&&("object"!==_typeof(a)||null===a||"Object"===a.constructor.name||Array.isArray(a))){if("string"==typeof a&&a.includes("theme.")){var _=n({theme:o},a);return _||a}var p=getValidColor(a);return p||a}r[t]=a;}));return _objectSpread2(_objectSpread2(_objectSpread2({},JSON.parse(a)),r),{},{extensions:i})}}]),ThemeManager}()),k$1=new(function(){function Context(){_classCallCheck(this,Context);}return _createClass(Context,[{key:"theme",get:function get(){return b.getTheme()},set:function set(t){e.warn("Context.theme must be set using context.setTheme or context.updateTheme");}},{key:"keyMetricsCallback",get:function get(){return c.keyMetricsCallback},set:function set(t){e.warn("Context.keyMetricsCallback must be set using context.setKeyMetricsCallback");}},{key:"debug",get:function get(){return e.debug},set:function set(t){e.debug=t;}},{key:"on",value:function on(){return u.on.apply(u,arguments)}},{key:"off",value:function off(){return u.off.apply(u,arguments)}},{key:"emit",value:function emit(){return u.emit.apply(u,arguments)}},{key:"log",value:function log(){e.log.apply(e,arguments);}},{key:"info",value:function info(){e.info.apply(e,arguments);}},{key:"warn",value:function warn(){e.warn.apply(e,arguments);}},{key:"error",value:function error(){for(var t=arguments.length,n=new Array(t),i=0;i<t;i++)n[i]=arguments[i];e.error(n);}},{key:"setTheme",value:function setTheme(t){return b.setTheme(t)}},{key:"updateTheme",value:function updateTheme(t){return b.updateTheme(t)}},{key:"getSubTheme",value:function getSubTheme(t){return b.getSubTheme(t)}},{key:"setSubThemes",value:function setSubThemes(t){if("object"===_typeof(t))for(var n in t)b.setSubTheme(n,t[n]);else e.warn("subThemes must be an object");}},{key:"setSubTheme",value:function setSubTheme(t,e){return b.setSubTheme(t,e)}},{key:"updateSubTheme",value:function updateSubTheme(t,e){return b.updateSubTheme(t,e)}},{key:"removeSubTheme",value:function removeSubTheme(t){b.removeSubTheme(t);}},{key:"setLogCallback",value:function setLogCallback(t){e.logCallback=t;}},{key:"setKeyMetricsCallback",value:function setKeyMetricsCallback(t){c.keyMetricsCallback=t;}},{key:"config",value:function config(){for(var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},e=Object.keys(t),n=0;n<e.length;n++){var i=this["set"+capitalizeFirstLetter(e[n])];i&&i(t[e[n]]);}return this}}]),Context}()),S=new(function(){function GlobalUpdateManager(){_classCallCheck(this,GlobalUpdateManager),this._updateThemeSet=new Set,this._requestUpdateSet=new Set,this._timeout=null,this._runUpdatesTimeoutHandler=this._runUpdatesTimeoutHandler.bind(this);}return _createClass(GlobalUpdateManager,[{key:"_runUpdatesTimeoutHandler",value:function _runUpdatesTimeoutHandler(){this._timeout=null,this._updateThemeSet.forEach((function(t){try{t._updateThemeComponent();}catch(t){k$1.error("Error updating component themes",t);}})),this._updateThemeSet.clear(),this._requestUpdateSet.forEach((function(t){try{t.requestUpdate();}catch(t){k$1.error("Error updating component",t);}})),this._requestUpdateSet.clear();}},{key:"flush",value:function flush(){this._timeout&&(clearTimeout(this._timeout),this._runUpdatesTimeoutHandler());}},{key:"addUpdateTheme",value:function addUpdateTheme(t){this._updateThemeSet.add(t),this._timeout||(this._timeout=setTimeout(this._runUpdatesTimeoutHandler,0));}},{key:"deleteUpdateTheme",value:function deleteUpdateTheme(t){this._updateThemeSet.delete(t);}},{key:"addRequestUpdate",value:function addRequestUpdate(t){this._requestUpdateSet.add(t),this._timeout||(this._timeout=setTimeout(this._runUpdatesTimeoutHandler,0));}},{key:"deleteRequestUpdate",value:function deleteRequestUpdate(t){this._requestUpdateSet.delete(t);}}]),GlobalUpdateManager}());var A=[{pattern:"TV-14",replacer:"Rated TV-14"},{pattern:"CC",replacer:"Closed Captions available"},{pattern:"HD",replacer:"High Definition available"},{pattern:/ENG(?!\+)/,replacer:"English Available"},{pattern:/ENG\+ES/,replacer:"Available in English and Spanish"},{pattern:"AD",replacer:"Audio Description available"},{pattern:"RT",replacer:"Rotten Tomatoes"},{pattern:/(S)+(\d+)+(E)+(\d+)+/,replacer:function replacer(t,e,n,i,o){return "Season ".concat(n," Episode ").concat(o)}}];generateAbbrevConfig(A);function wrapWithBoundary(t){return "\\b".concat(t,"\\b")}function generateAbbrevConfig(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:A,e=(arguments.length>1?arguments[1]:void 0)?[].concat(A,_toConsumableArray(t)):t,n={},i={},o="",r=0;return e.forEach((function(t,e){var a,s=t.pattern,l=t.replacer;s instanceof RegExp?(i[e+r]={pattern:s,replacer:l},a=wrapWithBoundary(s.source),r+=function getNumberOfCaptureGroups(t){return new RegExp(t.toString()+"|").exec("").length-1}(s)):(n[s]={replacer:l},a=wrapWithBoundary(s));o=""===o?"(".concat(a,")"):"".concat(o,"|(").concat(a,")");})),{abbreviationsPattern:o=new RegExp(o,"g"),stringPatternMap:n,regExpPatternMap:i}}function withHandleKey(t){return function(e){_inherits(_class,e);var n=_createSuper(_class);function _class(){return _classCallCheck(this,_class),n.apply(this,arguments)}return _createClass(_class,[{key:"_handleKey",value:function _handleKey(t){return this._processEvent(t)}},{key:"_handleKeyRelease",value:function _handleKeyRelease(t){return this._processEvent(t,"Release")}},{key:"_processEvent",value:function _processEvent(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"",n=(this.stage.application.__keymap||{})[t.keyCode];return n||(n=t.key),!(!n||"function"!=typeof this["on".concat(n).concat(e)])&&(this._invokeKeyPayloadCallback(n+e),this["on".concat(n).concat(e)].call(this,this,t))}},{key:"_invokeKeyPayloadCallback",value:function _invokeKeyPayloadCallback(t){this.metricsPayload&&"function"==typeof k$1.keyMetricsCallback&&k$1.keyMetricsCallback(t,this.metricsPayload);}}],[{key:"name",get:function get(){return t.name}}]),_class}(t)}function withLayout(t){return function(t){_inherits(_class,t);var e=_createSuper(_class);function _class(){return _classCallCheck(this,_class),e.apply(this,arguments)}return _createClass(_class,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(_class.prototype),"_construct",this)&&_get(_getPrototypeOf(_class.prototype),"_construct",this).call(this),this._previousDimensionData=null;}},{key:"itemLayout",get:function get(){return this._itemLayout},set:function set(t){var e,n=this.constructor._componentName||this.constructor.name;t&&(e=JSON.parse(JSON.stringify(t,(function(t,e){if(!("circle"!==t&&e<0))return "circle"===t?Boolean(e):e;k$1.error("itemLayout for ".concat(n," received an invalid value of ").concat(e," for ").concat(t));})))),stringifyCompare(this._itemLayout,e)||(e&&!e.upCount?(this._originalW=this.w,this._originalH=this.h,this._itemLayout=_objectSpread2({w:this._originalW,h:this._originalH},e)):this._itemLayout=e,this._updateItemLayout());}},{key:"_allowUpdate",value:function _allowUpdate(){var t=this._itemLayout||{},e=t.w,n=void 0===e?"":e,i=t.h,o=void 0===i?"":i,r=t.circle,a=void 0===r?"":r,s=t.ratioX,l=void 0===s?"":s,c=t.ratioY,u=void 0===c?"":c,h=t.upCount,d=void 0===h?"":h,_=Object.values(k$1.theme.layout).join("")+"".concat(n).concat(o).concat(a?1:0).concat(l).concat(u).concat(d);return _!==this._previousDimensionData&&(this._previousDimensionData=_,!0)}},{key:"_updateItemLayout",value:function _updateItemLayout(){if(this._allowUpdate()){var t=getDimensions(this.theme,this._itemLayout),e=t.w,n=t.h;if(n||e){var i=k$1.theme.layout.screenW,o=k$1.theme.layout.screenH,r=e||n*(i/o),a=n||e*(o/i);this.w=this._itemLayout&&this._itemLayout.circle?a:r,this.h=a,this._itemLayout&&this._itemLayout.circle&&this.style?-1<this._componentStyleSourceProps.indexOf("radius")&&(this._circleSet=!0,this._originalRadius=this.style.radius,this.style=_objectSpread2(_objectSpread2({},this.style),{},{radius:a/2})):this._circleSet&&(this.style=_objectSpread2(_objectSpread2({},this.style),{},{radius:this._originalRadius}),this._originalRadius=void 0,this._circleSet=!1),this.queueRequestUpdate&&this.queueRequestUpdate(),this.fireAncestors("$itemChanged");}}}}]),_class}(t)}function withMarqueeSync(t){return function(n){_inherits(_class,n);var i=_createSuper(_class);function _class(){return _classCallCheck(this,_class),i.apply(this,arguments)}return _createClass(_class,[{key:"_init",value:function _init(){_get(_getPrototypeOf(_class.prototype),"_init",this).call(this),this._shouldSync&&this._updateSignals();}},{key:"_update",value:function _update(){_get(_getPrototypeOf(_class.prototype),"_update",this).call(this),this._shouldSync?this._updateSignals():this._cleanupSyncValues();}},{key:"_cleanupSyncValues",value:function _cleanupSyncValues(){this.syncArray.map((function(t){t.marqueeOverrideLoopX=void 0,t.signals&&t.signals.willMarquee&&delete t.signals.willMarquee;}));}},{key:"_updateSignals",value:function _updateSignals(){this.syncArray&&this.syncArray.map((function(t){t.signals=_objectSpread2(_objectSpread2({},t.signals),{},{willMarquee:"_willMarquee"});}));}},{key:"_willMarquee",value:function _willMarquee(t){var e=this;this._shouldSync&&(this._longestMarqueeWidth=Math.max(t._textRenderedW||0,this._longestMarqueeWidth||0),this.syncArray.map((function(t){t.marqueeOverrideLoopX=e._longestMarqueeWidth;})));}},{key:"_shouldSync",get:function get(){return !1!==this.style.marqueeSync&&(this.syncArray?Array.isArray(this.syncArray)?!(this.syncArray.length<2)||(e.warn("warning: syncArray must contain at least two component references."),!1):(e.warn("warning: syncArray must be typeof array."),!1):(e.warn("warning: components using MarqueeSync must have a syncArray getter defined."),!1))}}],[{key:"name",get:function get(){return t.name}}]),_class}(t)}function withThemeStyles(t,e){return function(i){_inherits(_class,i);var o=_createSuper(_class);function _class(){return _classCallCheck(this,_class),o.apply(this,arguments)}return _createClass(_class,[{key:"_construct",value:function _construct(){this._withThemeStylesSetupComplete||(this._updateThemeBound=this._updateTheme.bind(this),this._setupListeners(),this._mode="unfocused",this._componentStyleCache={},this._componentLevelStyleSource={},this._withThemeStylesSetupComplete=!0,this._createThemeDefaults(),this._generateComponentStyleSource()),_get(_getPrototypeOf(_class.prototype),"_construct",this).call(this);}},{key:"_createThemeDefaults",value:function _createThemeDefaults(){var t,e=this;((null===(t=this.constructor)||void 0===t?void 0:t.properties)||[]).forEach((function(t){var n;null!==(n=e._componentConfig)&&void 0!==n&&n[t]&&!e["_".concat(t)]&&(e["_".concat(t)]=e._componentConfig[t]);}));}},{key:"_prototypeChain",get:function get(){if(this.__prototypeChain)return this.__prototypeChain;var t=new Set,e=this;do{if(null!==(e=Object.getPrototypeOf(e))&&"object"===_typeof(e))try{e.constructor.__componentName&&t.add(e.constructor.__componentName);}catch(t){}}while(e);return this.__prototypeChain=t,t}},{key:"_componentConfig",get:function get(){var t,e=this;return this._prototypeChain?Array.from(this._prototypeChain).reverse().reduce((function(t,n){var i;return clone(t,(null===(i=e.theme)||void 0===i||null===(i=i.componentConfig)||void 0===i?void 0:i[n])||{})}),{}):(null===(t=this.theme)||void 0===t||null===(t=t.componentConfig)||void 0===t?void 0:t[this.constructor.__componentName])||{}}},{key:"_styleOverrides",get:function get(){var t;return clone(this.styleConfig||{},null===(t=this._componentConfig)||void 0===t?void 0:t.styleConfig)}},{key:"_setup",value:function _setup(){_get(_getPrototypeOf(_class.prototype),"_setup",this)&&_get(_getPrototypeOf(_class.prototype),"_setup",this).call(this),this._targetSubTheme=this._getSubTheme(),this._targetSubTheme&&(this._clearComponentStyleCache(),this._generateComponentStyleSource(),this.queueThemeUpdate.call(this));}},{key:"_detach",value:function _detach(){_get(_getPrototypeOf(_class.prototype),"_detach",this).call(this),this._clearThemeStyleListeners();}},{key:"_getSubTheme",value:function _getSubTheme(){for(var t=this.p;t&&!t.subTheme;)t=t.parent;return t&&t.subTheme||void 0}},{key:"_modeStyle",get:function get(){var t;return this._replaceAliasValues((null===(t=this._componentStyleSource)||void 0===t||null===(t=t.mode)||void 0===t?void 0:t[this.mode])||{})}},{key:"_toneStyle",get:function get(){var t;return this._replaceAliasValues((null===(t=this._componentStyleSource)||void 0===t||null===(t=t.tone)||void 0===t?void 0:t[this.tone])||{})}},{key:"_themeLevelStyle",get:function get(){var t;return this._replaceAliasValues((null===(t=this._componentConfig)||void 0===t?void 0:t.style)||{})}},{key:"_componentLevelStyle",get:function get(){return this._replaceAliasValues(this._componentLevelStyleSource||{})}},{key:"_componentStyle",get:function get(){var t=this;if(this._componentStyleCache[this.mode])return this._componentStyleCache[this.mode];var e=this._componentStyleSource.base||{};this._modeStyle&&(e=clone(e,this._modeStyle)),this._toneStyle&&(e=clone(e,this._toneStyle)),this._themeLevelStyle&&(e=clone(e,this._themeLevelStyle)),this._componentLevelStyle&&(e=clone(e,this._componentLevelStyle));var i;!this._wSetByUser&&e.w&&this._w!==e.w&&(this._w=e.w),(i=!this._hSetByUser&&e.h&&this._h!==e.h)&&(this._h=e.h),i&&this._updateDimensions();var o=JSON.stringify(e,(function(e,i){return "string"==typeof i&&i.startsWith("theme.")?n(t,i):Array.isArray(i)&&2===i.length?getHexColor(i[0],i[1]):i}));return e=this._processModeOverrides(clone(e,JSON.parse(o))),this._componentStyleCache[this.mode]=e,this.emit("styleUpdated",e),e}},{key:"_processModeOverrides",value:function _processModeOverrides(t){var e=t.mode&&"object"===_typeof(t.mode)&&t.mode[this.mode];return t.mode&&delete t.mode,e?clone(t,e):t}},{key:"_setupListeners",value:function _setupListeners(){k$1.on("themeUpdate",this._updateThemeBound),this._targetSubTheme&&k$1.on("themeUpdate".concat(this._targetSubTheme),this._updateThemeBound);}},{key:"_clearThemeStyleListeners",value:function _clearThemeStyleListeners(){k$1.off("themeUpdate",this._updateThemeBound),this._targetSubTheme&&k$1.off("themeUpdate".concat(this._targetSubTheme),this._updateThemeBound);}},{key:"_updateTheme",value:function _updateTheme(){this._clearComponentStyleCache(),this._generateComponentStyleSource(),this.queueThemeUpdate();}},{key:"_clearComponentStyleCache",value:function _clearComponentStyleCache(){this._componentStyleCache={};}},{key:"_generateComponentStyleSource",value:function _generateComponentStyleSource(){var t=this,e={};if(this._themeStyleChain.forEach((function(n){var i=n.style;if("object"!==_typeof(i)||i.base||i.mode||i.tone||i.default){var o=i.base,r=i.mode,a=i.tone;o&&"function"==typeof o?e=clone(e,{base:o(t.theme)||{}}):o&&"object"===_typeof(o)&&(e=clone(e,{base:o})),r&&"function"==typeof r?e=clone(e,{mode:r(t.theme)||{}}):r&&"object"===_typeof(r)&&(e=clone(e,{mode:r})),a&&"function"==typeof a?e=clone(e,{tone:a(t.theme)||{}}):a&&"object"===_typeof(a)&&(e=clone(e,{tone:a}));}else e=clone(e,{base:i});})),this._styleOverrides)for(var n in this._styleOverrides){if("mode"===n&&e.mode&&(e=clone(e,{mode:this._styleOverrides.mode})),"mode"===n&&e.tone){var i=Object.keys(e.tone).reduce((function(n,i){return n[i]=clone(e.tone[i],{mode:t._styleOverrides.mode}),n}),{});e=clone(e,{tone:i});}"tone"===n&&(e=clone(e,{tone:this._styleOverrides.tone}));}this._componentStyleSource=e;var o=new Set(Object.keys(e.base||{}));e.mode&&"object"===_typeof(e.mode)&&Object.keys(e.mode).forEach((function(t){"object"===_typeof(e.mode[t])&&Object.keys(e.mode[t]).forEach((function(t){o.add(t);}));})),e.tone&&"object"===_typeof(e.tone)&&Object.keys(e.tone).forEach((function(t){"object"===_typeof(e.tone[t])&&Object.keys(e.tone[t]).forEach((function(t){o.add(t);}));}));var r=Object.keys(e.mode||{}).reduce((function(t,n){var i=new Set;return Object.keys(e.mode[n]).forEach((function(t){i.add(n+t.charAt(0).toUpperCase()+t.slice(1));})),[].concat(_toConsumableArray(t),_toConsumableArray(Array.from(i)))}),[]);this._componentStyleSourceProps=[].concat(_toConsumableArray(Array.from(o)),_toConsumableArray(r));}},{key:"theme",get:function get(){var t=this._targetSubTheme&&k$1.getSubTheme(this._targetSubTheme);return t||k$1.theme}},{key:"style",get:function get(){return this._componentStyle},set:function set(t){"object"===_typeof(t)&&(this._componentLevelStyleSource=t,this._clearComponentStyleCache(),this.queueThemeUpdate());}},{key:"_replaceAliasValues",value:function _replaceAliasValues(t){var e=clone(t,{});return [{prev:"height",curr:"h",skipWarn:!0},{prev:"width",curr:"w",skipWarn:!0}].concat(_toConsumableArray(this.constructor.aliasStyles||[])).forEach((function(t){t&&"string"==typeof t.prev&&"string"==typeof t.curr&&e[t.prev]&&(!t.skipWarn&&console.warn('The style property "'.concat(t.prev,'" is deprecated and will be removed in a future release. Please use "').concat(t.curr,'" instead.')),Object.defineProperty(e,t.curr,Object.getOwnPropertyDescriptor(e,t.prev)),delete e[t.prev]);})),e}},{key:"w",get:function get(){return this._wSetByUser&&this._w||this._componentStyle.w||0},set:function set(t){this._w!==t&&(_set(_getPrototypeOf(_class.prototype),"w",t,this,!0),this._wSetByUser=!0,this.queueThemeUpdate());}},{key:"h",get:function get(){return this._hSetByUser&&this._h||this._componentStyle.h||0},set:function set(t){this._h!==t&&(_set(_getPrototypeOf(_class.prototype),"h",t,this,!0),this._hSetByUser=!0,this.queueThemeUpdate());}},{key:"_themeStyleChain",get:function get(){var t,e=new Set;do{(t=t?Object.getPrototypeOf(t):this)&&t.constructor&&(t.constructor.__mixinStyle&&!e.has(t.constructor.__mixinStyle)&&("object"===_typeof(t.constructor.__mixinStyle)&&Object.keys(t.constructor.__mixinStyle).length||"function"==typeof t.constructor.__mixinStyle)&&e.add(t.constructor.__mixinStyle),t.constructor.__themeStyle&&!e.has(t.constructor.__themeStyle)&&("object"===_typeof(t.constructor.__themeStyle)&&Object.keys(t.constructor.__themeStyle).length||"function"==typeof t.constructor.__themeStyle)&&e.add(t.constructor.__themeStyle));}while(t);return Array.from(e).map((function(t){return {style:t}})).reverse()}},{key:"mode",get:function get(){return this._mode||this._componentConfig.mode},set:function set(t){this._mode!==t&&(this._mode=t,this.queueThemeUpdate());}},{key:"tone",get:function get(){var t=this._tone||this._componentConfig.tone;return t&&Object.keys(this._componentStyleSource.tone).includes(t)?t:"neutral"},set:function set(t){t!==this._tone&&(this._tone=t,this._clearComponentStyleCache(),this.queueThemeUpdate());}},{key:"queueThemeUpdate",value:function queueThemeUpdate(){S.addUpdateTheme(this);}},{key:"_updateThemeComponent",value:function _updateThemeComponent(){this.queueRequestUpdate?this.queueRequestUpdate():this._update&&this._update(),this._updateItemLayout&&this._updateItemLayout();}},{key:"_focus",value:function _focus(){this._isDisabledMode||(this.mode="focused"),_get(_getPrototypeOf(_class.prototype),"_focus",this).call(this);}},{key:"_unfocus",value:function _unfocus(){this._isFocusedMode&&(this.mode="unfocused"),_get(_getPrototypeOf(_class.prototype),"_unfocus",this).call(this);}},{key:"_inactive",value:function _inactive(){this._clearComponentStyleCache();}}],[{key:"name",get:function get(){return t.name}},{key:"__mixinStyle",get:function get(){return e}},{key:"__componentName",get:function get(){if(_get(_getPrototypeOf(_class),"__componentName",this))return _get(_getPrototypeOf(_class),"__componentName",this);throw new Error("A valid static __componentName property is required for theming to work properly. Please add this to the ".concat(this.constructor.name," class."))}}]),_class}(t)}function withTags(t){return function(e){_inherits(_class,e);var n=_createSuper(_class);function _class(){return _classCallCheck(this,_class),n.apply(this,arguments)}return _createClass(_class,[{key:"_construct",value:function _construct(){var t=this;(this.constructor.tags||[]).forEach((function(e){if("object"===_typeof(e))var n=e.name,i=e.path;else n=e,i=e;var o="_"+n,r=function getPropertyDescriptor$1(t){return {get:function get(){return this.tag(t)},configurable:!0,enumerable:!0}}(i);Object.defineProperty(Object.getPrototypeOf(t),o,r);})),_get(_getPrototypeOf(_class.prototype),"_construct",this)&&_get(_getPrototypeOf(_class.prototype),"_construct",this).call(this);}}],[{key:"name",get:function get(){return t.name}}]),_class}(t)}function capital(t){return t.charAt(0).toUpperCase()+t.slice(1)}function withUpdates(t){return function(e){_inherits(_class,e);var n=_createSuper(_class);function _class(){return _classCallCheck(this,_class),n.apply(this,arguments)}return _createClass(_class,[{key:"_construct",value:function _construct(){var t=this,e=Object.getPrototypeOf(this);e._withUpdatesInitialized||((this.constructor.properties||[]).forEach((function(t){var n=function getPropertyDescriptor(t,e){return {get:function get(){var n=this["_get".concat(capital(t))];if(n&&"function"==typeof n){var i=n.call(this,this[e]);this[e]=i;}return this[e]},set:function set(n){if(n!==this[e]){var i=this["_set".concat(capital(t))];i&&"function"==typeof i&&(n=i.call(this,n)),this[e]="style"===e?clone(this[e],n):n,this.queueRequestUpdate();}},configurable:!0,enumerable:!0}}(t,"_"+t);void 0!==n&&Object.defineProperty(e,t,n);})),(this.constructor.aliasProperties||[]).forEach((function(t){if(t&&"string"==typeof t.prev&&"string"==typeof t.curr){var n=function getAliasPropertyDescriptor(t,e){var n='The property "'.concat(t,'" is deprecated and will be removed in a future release. Please use "').concat(e,'" instead.');return {get:function get(){return console.warn(n),this[e]},set:function set(t){console.warn(n),this[e]=t;}}}(t.prev,t.curr);void 0!==n&&Object.defineProperty(e,t.prev,n);}})),e._withUpdatesInitialized=!0);this._whenEnabled=new Promise((function(e){t._whenEnabledResolver=e;})),_get(_getPrototypeOf(_class.prototype),"_construct",this)&&_get(_getPrototypeOf(_class.prototype),"_construct",this).call(this);}},{key:"queueRequestUpdate",value:function queueRequestUpdate(){S.addRequestUpdate(this);}},{key:"_firstEnable",value:function _firstEnable(){this._readyForUpdates=!0,this._whenEnabledResolver(),S.deleteRequestUpdate(this),this.requestUpdate(),_get(_getPrototypeOf(_class.prototype),"_firstEnable",this)&&_get(_getPrototypeOf(_class.prototype),"_firstEnable",this).call(this);}},{key:"_detach",value:function _detach(){_get(_getPrototypeOf(_class.prototype),"_detach",this).call(this),S.deleteRequestUpdate(this);}},{key:"requestUpdate",value:function requestUpdate(){var t=this,e=arguments.length>0&&void 0!==arguments[0]&&arguments[0];if(this._readyForUpdates||e){var n=this._update();"object"===_typeof(n)&&null!==n&&n.catch&&n.catch((function(e){k$1.error("asyncronous _update() error in '".concat(t.constructor.__componentName,"'"),t,e);}));}}},{key:"logPropTable",value:function logPropTable(){console.table(this._propTable);}},{key:"_propTable",get:function get(){var t=this;return this.constructor.properties.reduce((function(e,n){return e[n]=t[n],e}),{})}}],[{key:"name",get:function get(){return t.name}}]),_class}(t)}var O="__original";function withExtensions(t){return t.prototype.constructor._withExtensionsApplied?t:function(e){_inherits(_class,e);var n=_createSuper(_class);function _class(){return _classCallCheck(this,_class),n.apply(this,arguments)}return _createClass(_class,[{key:"_prototypeChain",get:function get(){if(this.__prototypeChain)return this.__prototypeChain;var t=new Set,e=this;do{if(null!==(e=Object.getPrototypeOf(e))&&"object"===_typeof(e))try{e.constructor.__componentName&&t.add(e.constructor.__componentName);}catch(t){}}while(e);return this.__prototypeChain=t,t}},{key:"_extensions",get:function get(){var t=k$1&&k$1.theme&&k$1.theme.extensions;return !t||!Array.isArray(t)||Array.isArray(t)&&!t.length?[]:t.filter((function(t){var e=t.targetComponent,n=t.extension;return ("string"==typeof e||Array.isArray(e))&&"function"==typeof n})).slice().reverse()||[]}},{key:"_componentExtensions",get:function get(){var t=this;return this._extensions.filter((function(e){var n=e.targetComponent;return "string"==typeof n?n===t.constructor.__componentName||t._prototypeChain.has(n):!!Array.isArray(n)&&n.find((function(e){if(e.startsWith("/")&&e.endsWith("/")){var n=new RegExp(e.slice(1,-1));return Array.from(t._prototypeChain).some((function(t){return n.test(t)}))}return t._prototypeChain.has(e)}))})).reduce((function(t,e){var n=e.extension;return t.push(n),t}),[])}},{key:"_extensionApplied",get:function get(){return this._currentComponentExtensionLength===this._appliedExtensionLength}},{key:"_construct",value:function _construct(){this._appliedExtensionLength=0,this._extendedList={},this._extensionInstance={},this._updateExtensionBound=this._updateExtension.bind(this),k$1.on("themeUpdate",this._updateExtensionBound),this._updateExtension(),_get(_getPrototypeOf(_class.prototype),"_construct",this).call(this);}},{key:"_detach",value:function _detach(){_get(_getPrototypeOf(_class.prototype),"_detach",this).call(this),this._clearExtensionListeners();}},{key:"_clearExtensionListeners",value:function _clearExtensionListeners(){k$1.off("themeUpdate",this._updateExtensionBound);}},{key:"_updateExtension",value:function _updateExtension(){this._currentComponentExtensionLength=this._calculateComponentExtensionLength(),this._createExtension();}},{key:"_resetComponent",value:function _resetComponent(){var t=this;this._extensionInstance._extensionCleanup&&this._extensionInstance._extensionCleanup.call(this),(Object.keys(this._extendedList)||[]).forEach((function(e){delete t[e],delete t[e+O];})),this._extensionInstance={},this._extendedList={};}},{key:"_calculateComponentExtensionLength",value:function _calculateComponentExtensionLength(){return this._componentExtensions.reduce((function(t,e){return t+=e.toString().length}),0)}},{key:"_createExtension",value:function _createExtension(){if(!this._extensionApplied){this._resetComponent();var t=new(this._createExtensionClass());this._extendedList=this._createExtensionAliases(t),this._extensionInstance=t,this._setComponentAliases(this._extendedList);}}},{key:"_createExtensionClass",value:function _createExtensionClass(){var t=this._componentExtensions.reduce((function(t,e){return e(t)}),(function ExtensionBase(){}));return this._appliedExtensionLength=this._calculateComponentExtensionLength(),t}},{key:"_createExtensionAliases",value:function _createExtensionAliases(t){for(var e=t,n=0;n<this._componentExtensions.length+1;n++)e=Object.getPrototypeOf(e);var i={},o=this._componentExtensions.reduce((function(t,e){var n=new new e(_createClass((function FakeClass(){_classCallCheck(this,FakeClass);}))),o=Object.getOwnPropertyDescriptors(Object.getPrototypeOf(n));return Object.keys(o).forEach((function(e){if(!["constructor"].includes(e)){if(o[e].get||o[e].set)return i[e]={type:"accessor"},void(t[e]={get:function get(){return this[e+O]},set:function set(t){this[e+O]=t;}});i[e]={type:"method"},t[e]={value:function value(){this[e+O]&&this[e+O]();}};}})),t}),{});return Object.defineProperties(e,o),Object.setPrototypeOf(e,this),i}},{key:"_setComponentAliases",value:function _setComponentAliases(t){var e=this;Object.keys(t).forEach((function(n){e[n+O]=e[n],"method"===t[n].type?e[n]=e._extensionInstance[n]:"accessor"===t[n].type&&Object.defineProperty(e,n,{configurable:!0,get:function get(){return this._extensionInstance[n]},set:function set(t){this._extensionInstance[n]=t;}});}));}}],[{key:"name",get:function get(){return t.name}},{key:"__componentName",get:function get(){if(_get(_getPrototypeOf(_class),"__componentName",this))return _get(_getPrototypeOf(_class),"__componentName",this);throw new Error("A valid static __componentName property is required for theming to work properly. Please add this to the ".concat(this.constructor.name," class."))}},{key:"_withExtensionsApplied",get:function get(){return !0}}]),_class}(t)}var W=function withMixins(t){return withExtensions(withLayout(withThemeStyles(withUpdates(withTags(withHandleKey(t))))))}(function(e){_inherits(Base,t.Component);var n=_createSuper(Base);function Base(){return _classCallCheck(this,Base),n.apply(this,arguments)}return _createClass(Base,[{key:"_construct",value:function _construct(){this.skipPlinko=!1,this.centerInParent=!1,this.loaded||(this.loaded=Promise.resolve());}},{key:"_init",value:function _init(){this.queueRequestUpdate();}},{key:"_resetLoadedPromise",value:function _resetLoadedPromise(){var t=this;this.loaded=new Promise((function(e,n){t._resolveLoadedPromise=e,t._rejectLoadedPromise=n;}));}},{key:"_update",value:function _update(){}},{key:"_focus",value:function _focus(){void 0===this.shouldSmooth&&(this.shouldSmooth=!0),this.queueRequestUpdate();}},{key:"_unfocus",value:function _unfocus(){this.queueRequestUpdate();}},{key:"applySmooth",value:function applySmooth(t,e,n){this.shouldSmooth?t.smooth=n||e:t.patch(e);}},{key:"announce",get:function get(){return this._announce},set:function set(t){this._announce=t;}},{key:"announceContext",get:function get(){return this._announceContext},set:function set(t){this._announceContext=t;}},{key:"shouldSmooth",get:function get(){return this._shouldSmooth},set:function set(t){this._shouldSmooth=t;}},{key:"_isDisabledMode",get:function get(){return "disabled"===this.mode}},{key:"_isUnfocusedMode",get:function get(){return "unfocused"===this.mode}},{key:"_isFocusedMode",get:function get(){return "focused"===this.mode}},{key:"isFullyOnScreen",value:function isFullyOnScreen(){return isComponentOnScreen(this)}},{key:"getFocusScale",value:function getFocusScale(){return k$1.theme.layout.focusScale}},{key:"getUnfocusScale",value:function getUnfocusScale(){return 1}}]),Base}()),j=Object.freeze({__proto__:null,base:function base(t){return {gradientTop:t.color.fillTransparent,radius:t.radius.none}},tone:function tone(t){return {neutral:{gradientColor:t.color.material},inverse:{gradientColor:t.color.fillNeutral},brand:{gradientColor:t.color.fillBrand}}}}),R=function(e){_inherits(Gradient,W);var n=_createSuper(Gradient);function Gradient(){return _classCallCheck(this,Gradient),n.apply(this,arguments)}return _createClass(Gradient,[{key:"_update",value:function _update(){this.patch({rect:!0,rtt:!0,colorTop:this.style.gradientTop,colorBottom:this.style.gradientColor,texture:t.Tools.getRoundRect(this.w,this.h,this.style.radius)});}}],[{key:"__componentName",get:function get(){return "Gradient"}},{key:"__themeStyle",get:function get(){return j}}]),Gradient}(),M=Object.freeze({__proto__:null,base:function base(t){return {animationBlurEntrance:t.animation.utilityEntrance,animationBlurExit:t.animation.utilityExit,animationComponentEntrance:t.animation.utilityEntrance,animationGradientEntrance:t.animation.utilityEntrance,animationGradientExit:t.animation.utilityExit,animationImageScaleEntrance:t.animation.standardEntrance,animationImageScaleExit:t.animation.standardEntrance,blur:4,centerImageRadius:t.radius.md,fallbackSrc:void 0,fillColor:t.color.overlay,gradientColor:t.color.material,imageScale:void 0,imageScalePivotX:.5,imageScalePivotY:.5,padding:t.spacer.md,radius:0,zIndexSet:{image:1,blur:2,centerImage:3,fill:4,gradient:5,foreground:6}}}});var N=function(e){_inherits(CustomImageTexture,t.Texture);var n=_createSuper(CustomImageTexture);function CustomImageTexture(t){var e;return _classCallCheck(this,CustomImageTexture),(e=n.call(this,t))._src=void 0,e._hasAlpha=!1,e}return _createClass(CustomImageTexture,[{key:"src",get:function get(){return this._src},set:function set(t){this._src!==t&&(this._src=t,this._changed());}},{key:"hasAlpha",get:function get(){return this._hasAlpha},set:function set(t){this._hasAlpha!==t&&(this._hasAlpha=t,this._changed());}},{key:"w",get:function get(){return this._w},set:function set(t){this._w=t,this._changed();}},{key:"h",get:function get(){return this._h},set:function set(t){this._h=t,this._changed();}},{key:"_getIsValid",value:function _getIsValid(){return !!this._src}},{key:"_getLookupId",value:function _getLookupId(){return this._src}},{key:"_getSourceLoader",value:function _getSourceLoader(){var e=this,n=this._w,i=this._h,o=this._src,r=this._hasAlpha;if(this.stage.getOption("srcBasePath")){var a=o.charCodeAt(0);-1===o.indexOf("//")&&(a>=65&&a<=90||a>=97&&a<=122||46==a)&&(o=this.stage.getOption("srcBasePath")+o);}return function(a){switch(function checkFileType(t){return t.startsWith("<svg")?"SVG":t.startsWith("blob:")?"Blob":/\.(jpeg|jpg|gif|png|svg)$/i.test(t)?"Image":"Unknown"}(o)){case"SVG":return function createSvg(e,n,i,o,r){var a=n.platform.getDrawingCanvas(),s=a.getContext("2d");s.imageSmoothingEnabled=!0;var l=new Image;l.onload=function(){a.width=o,a.height=r,s.drawImage(l,0,0,a.width,a.height),e(null,{source:a,w:o,h:r});},l.onerror=function(t){e(t);},t.Utils.isPS4||(l.crossOrigin="Anonymous"),l.src=i;}(a,e.stage,"data:image/svg+xml,".concat(encodeURIComponent(o)),n,i);case"Blob":return function imageLoader(e,n){var i=e.src,o=new Image;return "data:"==i.substr(0,5)||t.Utils.isPS4||(o.crossOrigin="Anonymous"),o.onerror=function(){if(o.src)return n("Image load error")},o.onload=function(){n(null,{source:o,renderInfo:{src:i,compressed:!1},hasAlpha:!0});},o.src=i,function(){o.onerror=null,o.onload=null,o.removeAttribute("src");}}({src:o},a);default:return e.stage.platform.loadSrcTexture({src:o,hasAlpha:r},a)}}}},{key:"getNonDefaults",value:function getNonDefaults(){var t=_get(_getPrototypeOf(CustomImageTexture.prototype),"getNonDefaults",this).call(this);return this._src&&(t.src=this._src),t}}]),CustomImageTexture}(),D=function(e){_inherits(Artwork,W);var n,i,o,r,a=_createSuper(Artwork);function Artwork(){return _classCallCheck(this,Artwork),a.apply(this,arguments)}return _createClass(Artwork,[{key:"_shouldBlur",get:function get(){var t=this._blur||this._hasCenterImage;return this._Image.rtt=t,t}},{key:"_hasCenterImage",get:function get(){return -1<["circle","square"].indexOf(this.format)||"contain"===this.format&&!this._aspectRatioEqual}},{key:"w",get:function get(){return _get(_getPrototypeOf(Artwork.prototype),"w",this)},set:function set(t){_set(_getPrototypeOf(Artwork.prototype),"w",t,this,!0),this._componentSrc=this._generatePromise();}},{key:"h",get:function get(){return _get(_getPrototypeOf(Artwork.prototype),"h",this)},set:function set(t){_set(_getPrototypeOf(Artwork.prototype),"h",t,this,!0),this._componentSrc=this._generatePromise();}},{key:"_actualAspectRatio",get:function get(){return this.w&&this.h?reduceFraction("".concat(this.w,"/").concat(this.h)).replace("/","x"):null}},{key:"_supportedAspectRatioHeights",get:function get(){var t=this;return this.srcCallbackAspectRatios.map((function(e){var n=_slicedToArray(e.split("x").map((function(t){return parseInt(t)})),2),i=n[0],o=n[1];return t.w/i*o}))}},{key:"_closestSupportedAspectRatio",get:function get(){var t=this,e=this._supportedAspectRatioHeights.reduce((function(e,n){return Math.abs(n-t.h)<Math.abs(e-t.h)?n:e}));return this.srcCallbackAspectRatios[this._supportedAspectRatioHeights.indexOf(e)]}},{key:"_processedImageSrc",get:function get(){var t=this.src||this.fallbackSrc;return t!==this.fallbackSrc&&this.srcCallback&&"function"==typeof this.srcCallback&&(t=this.srcCallback({closestAspectRatio:this._closestSupportedAspectRatio,aspectRatio:this._actualAspectRatio,src:this.src,w:this.w,h:this.h})),t&&t.then?t:Promise.resolve(t)}},{key:"_gradientPatch",get:function get(){return {alpha:!this._Gradient&&this.shouldSmooth?.001:1,style:{gradientColor:getValidColor(this.style.gradientColor)},h:this.h+4,type:R,w:this.w+4,x:-2,y:-2,zIndex:this.core.findZContext().zIndex+this.style.zIndexSet.gradient}}},{key:"_construct",value:function _construct(){_get(_getPrototypeOf(Artwork.prototype),"_construct",this).call(this),this._srcCallbackAspectRatios=["16x9","3x4","4x3","2x1","1x1"];}},{key:"_setSrc",value:function _setSrc(t){return this._componentSrc=this._generatePromise(),t}},{key:"_getFallbackSrc",value:function _getFallbackSrc(){return this._fallbackSrc||this.style&&this.style.fallbackSrc}},{key:"_generatePromise",value:function _generatePromise(){var t,e;return {complete:new Promise((function(n,i){t=n,e=i;})),resolve:t,reject:e}}},{key:"_setup",value:function _setup(){this.alpha=.001,this._componentSrc=this._generatePromise(),this._aspectRatioEqual=!1,this._Image.on("txLoaded",this._resolveLoading.bind(this)),this._Image.on("txError",this._rejectLoading.bind(this));}},{key:"_resolveLoading",value:function _resolveLoading(){this._aspectRatioEqual=!!this._Image.texture.source&&parseFloat(this.finalW/this.finalH).toFixed(2)===parseFloat(this._Image.texture.source.w/this._Image.texture.source.h).toFixed(2),this._componentSrc.resolve&&this._componentSrc.resolve(),this.signal("imageLoaded");}},{key:"_rejectLoading",value:function _rejectLoading(t){this._componentSrc.reject&&this._componentSrc.reject(t);}},{key:"_update",value:(r=_asyncToGenerator(_regeneratorRuntime().mark((function _callee(){return _regeneratorRuntime().wrap((function _callee$(t){for(;;)switch(t.prev=t.next){case 0:return this._updateRadius(),this._updateGradient(),t.next=4,this._updateImage();case 4:if(this._updateFillColor(),this._updateForegroundImage(),this.src){t.next=9;break}return this._showComponent(),t.abrupt("return");case 9:return t.prev=9,t.next=12,this._componentSrc.complete;case 12:return t.next=14,this._updateCenterImage();case 14:this._updateBlur(),this._showComponent(),this._updateScale(),t.next=22;break;case 19:t.prev=19,t.t0=t.catch(9),this._handleImageLoadError();case 22:void 0===this.shouldSmooth&&(this.shouldSmooth=!0);case 23:case"end":return t.stop()}}),_callee,this,[[9,19]])}))),function _update(){return r.apply(this,arguments)})},{key:"_updateScale",value:function _updateScale(){if(this.shouldScale){var t;switch(_typeof(this.style.imageScale)){case"function":t=this.style.imageScale(this.w);break;case"number":t=this.style.imageScale;break;default:t=1;}this._Image.smooth={pivotX:this.style.imageScalePivotX,pivotY:this.style.imageScalePivotY,scale:[t,this._Image.scale<t?this.style.animationImageScaleEntrance:this.style.animationImageScaleExit]};}else {this._Image.smooth={scale:[1,this.style.animationImageScaleExit]};}}},{key:"_handleImageLoadError",value:function _handleImageLoadError(){this.src!==this.fallbackSrc&&(k$1.error("Image ".concat(this._src," failed to load")),this.fallbackSrc&&this.fallbackSrc!==this.src&&(this.src=this.fallbackSrc));}},{key:"_showComponent",value:function _showComponent(){this.smooth={alpha:[1,this.style.animationComponentEntrance]};}},{key:"_updateForegroundImage",value:(o=_asyncToGenerator(_regeneratorRuntime().mark((function _callee2(){var t,e=this;return _regeneratorRuntime().wrap((function _callee2$(n){for(;;)switch(n.prev=n.next){case 0:if(this._foregroundSrc){n.next=3;break}return this._ForegroundImage&&this.patch({ForegroundImage:void 0}),n.abrupt("return");case 3:t={mount:.5,x:this.w/2,y:this.h/2,zIndex:this.core.findZContext().zIndex+this.style.zIndexSet.foreground,texture:{type:N,src:this._foregroundSrc,hasAlpha:!0}},this.foregroundW&&this.foregroundH?(t.h=this.foregroundH,t.w=this.foregroundW,this.patch({ForegroundImage:t})):(this.foregroundW||this.foregroundH)&&(this.patch({ForegroundImage:_objectSpread2(_objectSpread2({},t),{},{alpha:.001})}),this._ForegroundImage.once("txLoaded",(function(){var t=e._ForegroundImage.texture.getRenderWidth(),n=e._ForegroundImage.texture.getRenderHeight();e._ForegroundImage.patch({alpha:1,w:e.foregroundH?e.foregroundH*(t/n):e.foregroundW,h:e.foregroundW?e.foregroundW*(n/t):e.foregroundH});}))),this.patch({ForegroundImage:t});case 6:case"end":return n.stop()}}),_callee2,this)}))),function _updateForegroundImage(){return o.apply(this,arguments)})},{key:"_updateBlur",value:function _updateBlur(){var e=this;(!this._shouldBlur||this._Image&&this._Image.texture&&this._Image.texture.src===this.fallbackSrc)&&this._Blur?this.shouldSmooth?(this._Blur._getTransition("alpha").once("finish",(function(){e.patch({Blur:void 0});})),this._Blur.smooth={alpha:[0,this.style.animationBlurExit]}):this.patch({Blur:void 0}):!this._srcFailed&&this._shouldBlur&&(this.patch({Blur:{alpha:!this._Blur&&this.shouldSmooth?.001:1,amount:this.style.blur,zIndex:this.core.findZContext().zIndex+this.style.zIndexSet.blur,content:{Image:{h:this.h,texture:this._Image.getTexture(),w:this.w}},h:this.h,rtt:!0,type:t.components.FastBlurComponent,w:this.w}}),this._Blur.alpha<1&&(this._Blur.smooth={alpha:[1,this.style.animationBlurEntrance]}));}},{key:"_updateCenterImage",value:function _updateCenterImage(){"contain"===this.format?this._updateFormatContain():"circle"===this.format||"square"===this.format?this._updateFormatSquareCircle():this._CenterImage&&this.patch({CenterImage:void 0});}},{key:"_updateFormatContain",value:(i=_asyncToGenerator(_regeneratorRuntime().mark((function _callee3(){var t,e,n,i,o;return _regeneratorRuntime().wrap((function _callee3$(r){for(;;)switch(r.prev=r.next){case 0:if(!(this._CenterImage&&this._CenterImage.mode!==this.format||this.src===this.fallbackSrc||this._aspectRatioEqual)){r.next=5;break}if(this.patch({CenterImage:void 0}),this.src!==this.fallbackSrc&&!this._aspectRatioEqual){r.next=5;break}return this._Image.alpha=1,r.abrupt("return");case 5:return n=Math.abs(this._Image.texture.source.w/this._Image.texture.source.h),i=Math.abs(this._Image.texture.source.h/this._Image.texture.source.w),this._Image.texture.source.w<this._Image.texture.source.h?this.h*n<this.w?(t=this.h*n,e=this.h):(t=this.w,e=this.w*i):this._Image.texture.source.w>this._Image.texture.source.h?this.w*i<this.h?(t=this.w,e=this.w*i):(t=this.h*n,e=this.h):(t=Math.min(this.w,this.h),e=t),r.next=10,this._processedImageSrc;case 10:o=r.sent,this.patch({CenterImage:{format:this.format,mount:.5,w:t,h:e,x:this.w/2,y:this.h/2,zIndex:this.core.findZContext().zIndex+this.style.zIndexSet.centerImage,texture:{src:o,resizeMode:{h:e,type:"cover",w:t},type:N}}});case 12:case"end":return r.stop()}}),_callee3,this)}))),function _updateFormatContain(){return i.apply(this,arguments)})},{key:"_updateFormatSquareCircle",value:function _updateFormatSquareCircle(){if(!(this._CenterImage&&this._CenterImage.mode!==this.format||this.src===this.fallbackSrc)||(this.patch({CenterImage:void 0}),this.src!==this.fallbackSrc)){var e=Math.min(this.w,this.h)-2*this.style.padding;this.patch({CenterImage:{format:this.format,h:e,shader:{radius:"circle"===this.format?e/2:this.style.centerImageRadius,type:t.shaders.RoundedRectangle},w:e,zIndex:this.core.findZContext().zIndex+this.style.zIndexSet.centerImage,Image:{h:e,mount:.5,rtt:!0,w:e,x:this.w/2,y:this.h/2,texture:{src:this._Image.texture.src,resizeMode:{h:e,type:"cover",w:e},type:N}}}});}}},{key:"_updateGradient",value:function _updateGradient(){var t=this;this.gradient?this._createGradient():this._Gradient&&(this.shouldSmooth?(this._Gradient._getTransition("alpha").once("finish",(function(){var e=t._Gradient&&t._Gradient._getTransition("alpha");!t.gradient&&e&&1===e.p&&t.patch({Gradient:void 0});})),this._Gradient.patch(this._gradientPatch),this._Gradient.smooth={alpha:[0,this.style.animationGradientExit]}):this.patch({Gradient:void 0}));}},{key:"_createGradient",value:function _createGradient(){this.patch({Gradient:this._gradientPatch}),this.shouldSmooth&&this.applySmooth(this._Gradient,{alpha:[1,this.style.animationGradientEntrance]});}},{key:"_updateImage",value:(n=_asyncToGenerator(_regeneratorRuntime().mark((function _callee4(){var t;return _regeneratorRuntime().wrap((function _callee4$(e){for(;;)switch(e.prev=e.next){case 0:if(this._aspectRatioEqual=!1,this._processedImageSrc){e.next=4;break}return this._Image&&(this._Image.texture=void 0),e.abrupt("return");case 4:return e.next=6,this._processedImageSrc;case 6:t=e.sent,this._Image.patch({alpha:this.src!==this.fallbackSrc&&(this._blur||this._hasCenterImage)?.001:1,h:this.h,texture:{type:N,src:t,resizeMode:{type:"cover",w:this.w,h:this.h}},w:this.w,zIndex:this.core.findZContext().zIndex+this.style.zIndexSet.image});case 8:case"end":return e.stop()}}),_callee4,this)}))),function _updateImage(){return n.apply(this,arguments)})},{key:"_updateFillColor",value:function _updateFillColor(){this.fill?this.patch({FillColor:{rect:!0,w:this.w,h:this.h,color:this.style.fillColor,zIndex:5}}):this.patch({FillColor:void 0});}},{key:"_updateRadius",value:function _updateRadius(){this.patch(this.style.radius?{shader:{type:t.shaders.RoundedRectangle,radius:this.style.radius}}:{shader:void 0});}}],[{key:"__componentName",get:function get(){return "Artwork"}},{key:"__themeStyle",get:function get(){return M}},{key:"properties",get:function get(){return ["blur","fallbackSrc","foregroundH","foregroundSrc","foregroundW","gradient","format","src","fill","shouldScale","srcCallback","srcCallbackAspectRatios"]}},{key:"tags",get:function get(){return ["Blur","CenterImage","FillColor","ForegroundImage","Gradient","Image","Item"]}},{key:"_template",value:function _template(){return {rtt:!0,Image:{}}}}]),Artwork}(),z=Object.freeze({__proto__:null,tone:function tone(t){return {neutral:{color:t.color.fillNeutral},inverse:{color:t.color.fillInverse},brand:{color:t.color.fillBrand}}}}),E=function(e){_inherits(Icon,W);var n=_createSuper(Icon);function Icon(){return _classCallCheck(this,Icon),n.apply(this,arguments)}return _createClass(Icon,[{key:"_init",value:function _init(){var t=this;this.on("txLoaded",(function(){t.fixed||t._notify.bind(t)();})),this.on("txError",this._handleTxtError.bind(this));}},{key:"_getColor",value:function _getColor(){return this._color||this.style.color}},{key:"_notify",value:function _notify(){this.w=this.finalW,this.h=this.finalH,this.signal("itemChanged",this),this.fireAncestors("$itemChanged");}},{key:"_handleTxtError",value:function _handleTxtError(){k$1.error("Unable to load icon ".concat(this._icon)),this._icon=null,this.texture=null;}},{key:"_update",value:function _update(){this._icon?this.patch(this._iconPatch):this.texture=null;}},{key:"_iconPatch",get:function get(){var e,n=_slicedToArray([/^<svg.*<\/svg>$/,/\.svg$/].map((function(t){return RegExp.prototype.test.bind(t)})),2),i=n[0],o=n[1],r=i(this.icon),a=o(this.icon);e=r?t.Tools.getSvgTexture("data:image/svg+xml,".concat(encodeURIComponent(this.icon)),this.w,this.h):a?t.Tools.getSvgTexture(this.icon,this.w,this.h):{type:N,w:this.w,h:this.h,src:this.icon};var s=!Boolean(r||a),l=getValidColor(this._color||this.style.color);return !s&&l&&k$1.warn("icon does not allow colors to be applied to an SVG"),_objectSpread2({texture:e,shader:this.radius||this.style.radius?{radius:this.radius||this.style.radius,type:t.shaders.RoundedRectangle}:void 0,w:this.w,h:this.h},s&&l?{colorUl:l,colorUr:l,colorBl:l,colorBr:l}:{})}}],[{key:"__componentName",get:function get(){return "Icon"}},{key:"__themeStyle",get:function get(){return z}},{key:"properties",get:function get(){return ["icon","fixed","color"]}}]),Icon}(),F=Object.freeze({__proto__:null,base:function base(t){return {contentSpacing:t.spacer.sm,offsetY:1,paddingX:t.spacer.md+t.spacer.xxs,paddingY:t.spacer.xs,radius:t.radius.sm,strokeWidth:t.stroke.sm,textStyle:_objectSpread2(_objectSpread2({},t.typography.caption1),{},{textAlign:"center"})}},tone:function tone(t){return {neutral:{backgroundColor:t.color.fillInverseSecondary,iconColor:t.color.textNeutral,textStyle:{textColor:t.color.textNeutral},strokeColor:t.color.strokeNeutral},inverse:{backgroundColor:t.color.fillNeutralSecondary,iconColor:t.color.textInverse,textStyle:{textColor:t.color.textInverse},strokeColor:t.color.strokeInverse},brand:{backgroundColor:t.color.fillBrand,iconColor:t.color.textNeutral,textStyle:{textColor:t.color.textNeutral},strokeColor:t.color.strokeInverse}}}}),H=function(e){_inherits(Badge,W);var n=_createSuper(Badge);function Badge(){return _classCallCheck(this,Badge),n.apply(this,arguments)}return _createClass(Badge,[{key:"_init",value:function _init(){this._Text.on("txLoaded",this._updateLayout.bind(this)),_get(_getPrototypeOf(Badge.prototype),"_init",this).call(this);}},{key:"_update",value:function _update(){this._updateText(),this._updateIcon(),this._updateLayout(),this._updateVisibility();}},{key:"_updateVisibility",value:function _updateVisibility(){this.alpha=this.title||this.icon?1:0;}},{key:"_updateLayout",value:function _updateLayout(){this._updateWidth(),this._updateBackground(),this._updatePositions(),this.signal("loadedBadge",this);}},{key:"_updateBackground",value:function _updateBackground(){var e=Math.max(this._Text.renderHeight,this._Icon.h)+2*this.style.paddingY;this.patch({h:e,texture:t.Tools.getRoundRect(this.w,e,this.style.radius,this.style.strokeWidth,this.style.strokeColor,!0,this.style.backgroundColor)});}},{key:"_updateText",value:function _updateText(){this._Text&&this._Text.patch({text:_objectSpread2(_objectSpread2({},this.style.textStyle),{},{text:this.title||""})});}},{key:"_updateIcon",value:function _updateIcon(){this._Icon.patch({icon:this.icon,w:this.iconWidth,h:this.iconHeight,style:{color:getHexColor(this.style.iconColor)}});}},{key:"_updateWidth",value:function _updateWidth(){var t=0;this.title&&this.icon?t=this._Text.renderWidth+this._Icon.finalW+this.style.contentSpacing+2*this.style.paddingX:this.title?t=this._Text.renderWidth+2*this.style.paddingX:this.icon&&(t=this._Icon.finalW+2*this.style.paddingX),this.w=t;}},{key:"_updatePositions",value:function _updatePositions(){this._Icon.y=this.h/2,"left"===this.iconAlign&&this.title&&this.icon?(this._Icon.x=this.style.paddingX,this._Text.x=this._Icon.x+this._Icon.finalW+this.style.contentSpacing):"right"===this.iconAlign&&this.title&&this.icon?(this._Text.x=this.style.paddingX,this._Icon.x=this._Text.x+this._Text.renderWidth+this.style.contentSpacing):(this._Text.x=this.style.paddingX,this._Icon.x=this.style.paddingX),this._Text.y=this._h/2+this.style.offsetY;}},{key:"_getIconHeight",value:function _getIconHeight(){return this.icon?!this._Icon.finalH&&this._Text?this._Text.text.lineHeight:this._Icon.finalH:0}},{key:"announce",get:function get(){return this._announce||this.title},set:function set(t){_set(_getPrototypeOf(Badge.prototype),"announce",t,this,!0);}}],[{key:"_template",value:function _template(){return {Text:{mountY:.5},Icon:{type:E,mountY:.5,signals:{itemChanged:"_updateLayout"}}}}},{key:"__componentName",get:function get(){return "Badge"}},{key:"__themeStyle",get:function get(){return F}},{key:"properties",get:function get(){return ["title","icon","iconAlign","iconWidth","iconHeight"]}},{key:"tags",get:function get(){return ["Background","Text","Icon"]}}]),Badge}(),U=Object.freeze({__proto__:null,base:function base(t){return {h:10*t.spacer.md,w:0,justify:"center",minWidth:getWidthByColumnSpan(t,3),paddingX:t.spacer.xxxl,paddingXNoTitle:t.spacer.xl,titlePadding:t.spacer.md,itemSpacing:t.spacer.md,textStyle:_objectSpread2(_objectSpread2({},t.typography.button1),{},{maxLines:1,textColor:t.color.textNeutral}),contentColor:t.color.fillNeutral}},mode:function mode(t){return {focused:{textStyle:{textColor:t.color.textInverse},contentColor:t.color.fillInverse},disabled:{textStyle:{textColor:t.color.textNeutralDisabled},contentColor:t.color.fillNeutralDisabled}}},tone:function tone(t){return {neutral:{},inverse:{mode:{focused:{textStyle:{textColor:t.color.textNeutral},contentColor:t.color.fillNeutral}}},brand:{mode:{focused:{contentColor:t.color.fillNeutral}}}}}}),K=function(t){_inherits(FocusManager,W);var e=_createSuper(FocusManager);function FocusManager(){return _classCallCheck(this,FocusManager),e.apply(this,arguments)}return _createClass(FocusManager,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(FocusManager.prototype),"_construct",this).call(this),this._selectedIndex=0,this._itemPosX=0,this._itemPosY=0,this.direction=this.direction||"row";}},{key:"_init",value:function _init(){this._checkSkipFocus();}},{key:"Items",get:function get(){return this.tag("Items")||this.patch({Items:{}}),this._Items}},{key:"_setDirection",value:function _setDirection(t){var e={none:"None",column:"Column",row:"Row"}[t];return e&&this._setState(e),t}},{key:"_getItems",value:function _getItems(){return this._Items.children}},{key:"items",get:function get(){return this.Items.children},set:function set(t){this._resetItems(),this._selectedIndex=0,this.appendItems(t),this._checkSkipFocus();}},{key:"itemPosX",get:function get(){return this._itemPosX},set:function set(t){this.Items.x=this._itemPosX=t;}},{key:"itemPosY",get:function get(){return this._itemPosY},set:function set(t){this.Items.y=this._itemPosY=t;}},{key:"_resetItems",value:function _resetItems(){this.Items.childList.clear(),this.Items.patch({w:0,h:0,x:this.itemPosX,y:this.itemPosY});}},{key:"_appendLazyItem",value:function _appendLazyItem(t){this.appendItems([t]);}},{key:"appendItems",value:function appendItems(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];this.Items.childList.a(t),this._refocus();}},{key:"appendItemsAt",value:function appendItemsAt(){var t=this,e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[],n=arguments.length>1?arguments[1]:void 0,i=Number.isInteger(n)?n:this.Items.children.length;this.shouldSmooth=!1,this._lastAppendedIdx=i,e.forEach((function(e,n){t.Items.childList.addAt(_objectSpread2(_objectSpread2({},e),{},{parentFocus:t.hasFocus()}),i+n);})),this.selectedIndex>=this._lastAppendedIdx&&(this._selectedIndex+=e.length),this.requestUpdate(),this._refocus();}},{key:"prependItems",value:function prependItems(t){this.appendItemsAt(t,0);}},{key:"removeItemAt",value:function removeItemAt(t){this.shouldSmooth=!1,this.Items.childList.removeAt(t),(this.selectedIndex>t||this.selectedIndex===this.Items.children.length)&&this._selectedIndex--,this.requestUpdate(),this._refocus();}},{key:"_checkSkipFocus",value:function _checkSkipFocus(){var t=this.Items.children[this.selectedIndex];t&&t.skipFocus&&this.selectNext();}},{key:"selected",get:function get(){return this.Items.children[this.selectedIndex]}},{key:"selectedIndex",get:function get(){return this._selectedIndex},set:function set(t){this.prevSelected=this.selected,this.Items.children.length&&this.Items.children[t]&&this.Items.children[t].skipFocus||(t!==this._selectedIndex&&(this._selectedIndex=t),this.selected&&this._selectedChange(this.selected,this.prevSelected),this._refocus());}},{key:"_selectedChange",value:function _selectedChange(t,e){this._render(t,e),this.signal("selectedChange",t,e);}},{key:"_render",value:function _render(){}},{key:"_firstFocusableIndex",value:function _firstFocusableIndex(){return this.items.length?this.items.reduce((function(t,e,n){return e.skipFocus||t.push(_objectSpread2(_objectSpread2({},e),{},{originalIdx:n})),t}),[]).shift().originalIdx:0}},{key:"_lastFocusableIndex",value:function _lastFocusableIndex(){return this.items.length?this.items.reduce((function(t,e,n){return e.skipFocus||t.push(_objectSpread2(_objectSpread2({},e),{},{originalIdx:n})),t}),[]).pop().originalIdx:0}},{key:"selectPrevious",value:function selectPrevious(){this.shouldSmooth=!0;var t=!!(this.items||[]).filter((function(t){return !t.skipFocus})).length;if(0===this.selectedIndex&&!this.wrapSelected||!t)return !1;var e=this.items.map((function(t){return !!t.skipFocus})).lastIndexOf(!1,this._selectedIndex-1);return e>-1?(this.selectedIndex=e,!0):!!this.wrapSelected&&(this.selectedIndex=this._lastFocusableIndex(),!0)}},{key:"selectNext",value:function selectNext(){var t=this;this.shouldSmooth=!0,this._lazyItems&&this._lazyItems.length&&delayForAnimation((function(){t._appendLazyItem(t._lazyItems.splice(0,1)[0]);}));var e=!!(this.items||[]).filter((function(t){return !t.skipFocus})).length;if(this.selectedIndex===this.Items.children.length-1&&!this.wrapSelected||!e)return !1;var n=this.items.findIndex((function(e,n){return !e.skipFocus&&n>t._selectedIndex}));return n>-1?(this.selectedIndex=n,!0):!!this.wrapSelected&&(this.selectedIndex=this._firstFocusableIndex(),!0)}},{key:"_getIndexOfItemNear",value:function _getIndexOfItemNear(t,e){var n=e.selected;if(!(t&&t.items&&t.items.length&&n))return 0;var i=_slicedToArray(n.core.getAbsoluteCoords(0,0),2),o=i[0],r=i[1],a=[o+n.w/2,r+n.h/2],s=t.items.map((function(t,e){return {index:e,distance:t.skipFocus?null:(n=a,i=t,o=_slicedToArray(n,2),r=o[0],s=o[1],l=_slicedToArray(i.core?i.core.getAbsoluteCoords(0,0):[0,0],2),c=l[0],u=l[1],h=getEuclideanDistance(r,s,c,u),d=getEuclideanDistance(r,s,c+i.w/2,u+i.h/2),_=getEuclideanDistance(r,s,c+i.w,u+i.h),Math.min(h,d,_))};var n,i,o,r,s,l,c,u,h,d,_;})).filter((function(t){return null!==t.distance})).sort((function(t,e){return t.distance-e.distance}));return s[0].index}},{key:"_focus",value:function _focus(){this.items.forEach((function(t){return t.parentFocus=!0}));}},{key:"_unfocus",value:function _unfocus(){this.items.forEach((function(t){return t.parentFocus=!1}));}},{key:"_getFocused",value:function _getFocused(){var t=this.selected;if(t){if(t.focusRef)return t.tag(t.focusRef);if(t.cparent)return t}return this}},{key:"_updateTransitionTarget",value:function _updateTransitionTarget(t,e,n){t&&t.transition(e)&&!t.transition(e).isRunning()&&t.transition(e).targetValue!==n&&t.transition(e).updateTargetValue(n);}},{key:"onScreenItems",get:function get(){var t=this;return this.Items.children.filter((function(e){return t._isOnScreen(e)}))}},{key:"_isOnScreenCompletely",value:function _isOnScreenCompletely(t){return t.isFullyOnScreen?t.isFullyOnScreen():isComponentOnScreen(t)}},{key:"fullyOnScreenItems",get:function get(){var t=this;return this.Items.children.reduce((function(e,n){return n instanceof FocusManager?[].concat(_toConsumableArray(e),_toConsumableArray(n.Items.children.filter(t._isOnScreenCompletely))):t._isOnScreenCompletely(n)?[].concat(_toConsumableArray(e),[n]):e}),[])}},{key:"_isOnScreen",value:function _isOnScreen(){throw new Error("'_isOnScreen' must be implemented by 'row'/'column'")}},{key:"_isComponentHorizontallyVisible",value:function _isComponentHorizontallyVisible(t){var e=o(t);if(!Number.isFinite(e))return !1;var n=this.getTransitionXTargetValue(),i=this.core.renderContext.px+n+e,r=_slicedToArray(this.core._scissor||[],3),a=r[0],s=void 0===a?null:a,l=r[2],c=void 0===l?null:l,u=this.stage.w/this.stage.getRenderPrecision(),h=t.w;if(!(i>=0)||!(i+h<=u))return !1;var d=!0,_=!0;return Number.isFinite(s)&&(d=Math.round(i+h)>=Math.round(s),_=Math.round(i)<=Math.round(s+c)),d&&_}},{key:"_isComponentVerticallyVisible",value:function _isComponentVerticallyVisible(t){var e=r(t);if(!Number.isFinite(e))return !1;var n=this.getTransitionYTargetValue(),i=this.core.renderContext.py,o=_slicedToArray(this.core._scissor||[],4),a=o[1],s=void 0===a?null:a,l=o[3],c=void 0===l?null:l,u=t.h,h=i+n+e,d=this.stage.h/this.stage.getRenderPrecision();if(!(h+u>=0)||!(h<=d))return !1;var _=!0,p=!0;return Number.isFinite(s)&&(_=Math.round(h+u)>Math.round(s),p=Math.round(h)<Math.round(s+c)),_&&p}},{key:"getTransitionXTargetValue",value:function getTransitionXTargetValue(){return this.Items.transition("x").targetValue}},{key:"getTransitionYTargetValue",value:function getTransitionYTargetValue(){return this.Items.transition("y").targetValue}}],[{key:"__componentName",get:function get(){return "FocusManager"}},{key:"tags",get:function get(){return ["Items"]}},{key:"properties",get:function get(){return ["direction","wrapSelected"]}},{key:"_states",value:function _states(){return [function(t){_inherits(None,t);var e=_createSuper(None);function None(){return _classCallCheck(this,None),e.apply(this,arguments)}return _createClass(None)}(this),function(t){_inherits(Row,t);var e=_createSuper(Row);function Row(){return _classCallCheck(this,Row),e.apply(this,arguments)}return _createClass(Row,[{key:"_handleLeft",value:function _handleLeft(){return this.selectPrevious()}},{key:"_handleRight",value:function _handleRight(){return this.selectNext()}}]),Row}(this),function(t){_inherits(Column,t);var e=_createSuper(Column);function Column(){return _classCallCheck(this,Column),e.apply(this,arguments)}return _createClass(Column,[{key:"_handleUp",value:function _handleUp(){return this.selectPrevious()}},{key:"_handleDown",value:function _handleDown(){return this.selectNext()}}]),Column}(this)]}}]),FocusManager}(),V=Object.freeze({__proto__:null,base:function base(t){return {alwaysScroll:!1,itemSpacing:t.layout.gutterX.xs,itemTransition:t.animation.utility,neverScroll:!1,scrollIndex:0}}}),q={row:{axis:"x",crossAxis:"y",lengthDimension:"w",crossDimension:"h",innerLengthDimension:"innerW",innerCrossDimension:"innerH"},column:{axis:"y",crossAxis:"x",lengthDimension:"h",crossDimension:"w",innerLengthDimension:"innerH",innerCrossDimension:"innerW"}},X=function(t){_inherits(NavigationManager,K);var e=_createSuper(NavigationManager);function NavigationManager(){return _classCallCheck(this,NavigationManager),e.apply(this,arguments)}return _createClass(NavigationManager,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(NavigationManager.prototype),"_construct",this).call(this),this.shouldSmooth=!1,this._lazyUpCountBuffer=2;}},{key:"_init",value:function _init(){var t=this._directionPropNames,e=t.lengthDimension,n=t.axis;this[e]||this._initComponentSize(),this.Items.transition(n).on("finish",this._transitionListener.bind(this)),_get(_getPrototypeOf(NavigationManager.prototype),"_init",this).call(this);}},{key:"_initComponentSize",value:function _initComponentSize(){var t=this._directionPropNames.lengthDimension;if((null==this?void 0:this.parent.parent)instanceof NavigationManager&&null!=this&&this.parent.parent[t])this[t]=this.parent.parent[t];else {for(var e=this.parent;e&&!e[t];)e=e.parent;this[t]=e&&e[t]||this.stage.h/this.stage.getRenderPrecision();}}},{key:"_update",value:function _update(){this._updateLayout();}},{key:"_updateLayout",value:function _updateLayout(){for(var t,e=this._directionPropNames,n=e.lengthDimension,i=e.crossDimension,o=e.crossAxis,r=e.innerCrossDimension,a=0,s=0,l=0,c=[],u=0;u<this.Items.children.length;u++){var h=this.Items.children[u];if(s=max(s,this._calcCrossDimensionSize(h)),l=max(l,h[r]||0),this.updatePositionOnAxis(h,a),a+=h[n],u<this.Items.children.length-1){var d=h.extraItemSpacing||0;a+=this.style.itemSpacing+d;}if(h.centerInParent){var _=h.Items&&h.Items[i]||h[i];(_<this[i]||!this.Items[r])&&c.push({childIdx:u,childCrossDimensionSize:_});}else h[o]=0;}var p=this.Items[i]!==s||this.Items[n]!==a;this.Items.patch((_defineProperty$1(t={},i,s),_defineProperty$1(t,r,l||s),_defineProperty$1(t,n,a+(this._totalAddedWidth||0)),t)),this._autoResize(),this._centerItemsInParent(c),this._updateLastScrollIndex(),p&&(this._performRender(),this.fireAncestors("$itemChanged"));}},{key:"_centerItemsInParent",value:function _centerItemsInParent(t){var e=this,n=this._directionPropNames,i=n.crossDimension,o=n.crossAxis,r=n.innerCrossDimension;if(t.length){var a=[this.Items[i],this.Items[r]];1===this.children.length&&a.push(this[i]);var s=Math.max.apply(Math,a);t.forEach((function(t){var n=t.childIdx,i=t.childCrossDimensionSize;e.Items.children[n][o]=(s-i)/2;}));}}},{key:"_autoResize",value:function _autoResize(){this.autoResizeWidth&&(this.w=this.Items.w),this.autoResizeHeight&&(this.h=this.Items.h);}},{key:"_updateLastScrollIndex",value:function _updateLastScrollIndex(){var t=this._directionPropNames,e=t.axis,n=t.lengthDimension;if(this.alwaysScroll)this._lastScrollIndex=this.Items.children.length-1;else {var i=(this.Items.children[this.scrollIndex]||_defineProperty$1({},e,0))[e],o=this.Items.childList.last,r=o?this._calcAxisPosition(o)+o[n]:0;if(r>this[n]){for(var a,s=this.Items.children.length-1;s>=0;s--){if(!(this._calcAxisPosition(this.Items.children[s])+this[n]-i>r))break;a=s;}this._lastScrollIndex=a;}else this._lastScrollIndex>this.items.length&&(this._lastScrollIndex=this.items.length-1);}}},{key:"_calcCrossDimensionSize",value:function _calcCrossDimensionSize(t){return this._isRow?function getH(t){return getDimension("h",t)||t.renderHeight}(t):this._isColumn?function getW(t){return getDimension("w",t)||t.renderWidth}(t):void 0}},{key:"_calcAxisPosition",value:function _calcAxisPosition(t){return this._isRow?o(t):this._isColumn?r(t):void 0}},{key:"_transitionListener",value:function _transitionListener(){this.shouldSmooth=!1,this.transitionDone();}},{key:"_withAfterUpdate",value:function _withAfterUpdate(t){return watchForUpdates({element:t,watchProps:[this._directionPropNames.crossAxis,"w","h","innerW","innerH"],sideEffect:this.queueRequestUpdate.bind(this)})}},{key:"_performRender",value:function _performRender(){}},{key:"_appendItem",value:function _appendItem(t){var e=this._directionPropNames.crossDimension,n=this._isRow?this.renderHeight:this.renderWidth;this.shouldSmooth=!1,t.parentFocus=this.hasFocus(),(t=this.Items.childList.a(t))[e]=t[e]||n,t=this._withAfterUpdate(t);}},{key:"_appendLazyItem",value:function _appendLazyItem(t){this._appendItem(t),this.queueRequestUpdate(),this._refocus();}},{key:"$itemChanged",value:function $itemChanged(){this.queueRequestUpdate();}},{key:"appendItems",value:function appendItems(){var t,e=this,n=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];(this.shouldSmooth=!1,this._lazyItems)?(t=this._lazyItems).push.apply(t,_toConsumableArray(n)):(n.length>this.lazyUpCount+this.lazyUpCountBuffer&&(this._lazyItems=n.splice(this.lazyUpCount+this.lazyUpCountBuffer)),n.forEach((function(t){return e._appendItem(t)})),this.queueRequestUpdate(),this._refocus());}},{key:"appendItemsAt",value:function appendItemsAt(){var t=this,e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[],n=arguments.length>1?arguments[1]:void 0;if(this._lazyItems&&n>this.items.length-1){var i,o=n-this.items.length;(i=this._lazyItems).splice.apply(i,[o,0].concat(_toConsumableArray(e)));}else {var r=this._directionPropNames,a=r.crossDimension,s=r.lengthDimension,l=r.innerLengthDimension,c=Number.isInteger(n)?n:this.Items.children.length;this.shouldSmooth=!1,this._lastAppendedIdx=c,this._totalAddedLength=0,e.forEach((function(e,n){t.Items.childList.addAt(_objectSpread2(_objectSpread2({},t._withAfterUpdate(e)),{},_defineProperty$1({parentFocus:t.hasFocus()},a,e[a]||t.Items[a])),c+n);var i=e[s]||e[l]||0,o=e.extraItemSpacing||0;t._totalAddedLength+=i+t.style.itemSpacing+o;})),this.selectedIndex>=this._lastAppendedIdx&&(this._selectedPastAdded=!0,this._selectedIndex+=e.length),this.requestUpdate(),this._refocus();}}},{key:"updatePositionOnAxis",value:function updatePositionOnAxis(t,e){var n=this._directionPropNames.axis;this.applySmooth(t,_defineProperty$1({},n,e),_defineProperty$1({},n,[e,this.style.itemTransition])),this.shouldSmooth||this._updateTransitionTarget(t,n,e);}},{key:"scrollTo",value:function scrollTo(t){var e=this,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:100*this.style.itemTransition.duration;if(null!=t)if(0!==n)for(var i=0;i!==Math.abs(this.selectedIndex-t);i++)setTimeout((function(){e.selectedIndex>t?e.selectPrevious():e.selectNext();}),n*i);else this.selectedIndex=t;}},{key:"transitionDone",value:function transitionDone(){}},{key:"shouldScrollLeft",value:function shouldScrollLeft(){return this._isRow&&this._canScrollBack}},{key:"shouldScrollRight",value:function shouldScrollRight(){return this._isRow&&this._canScrollNext}},{key:"shouldScrollUp",value:function shouldScrollUp(){return this._isColumn&&this._canScrollBack}},{key:"shouldScrollDown",value:function shouldScrollDown(){return this._isColumn&&this._canScrollNext}},{key:"_directionPropNames",get:function get(){return q[this.direction]}},{key:"_canScrollBack",get:function get(){var t=!1;return this._lastScrollIndex?(t=this.selectedIndex<this._lastScrollIndex,void 0!==this._prevLastScrollIndex&&this._prevLastScrollIndex!==this._lastScrollIndex&&(t=!0)):t=this.selectedIndex>=this.scrollIndex,(this._isRow?this._itemsX:this._itemsY)<0&&t}},{key:"_canScrollNext",get:function get(){var t,e=this._directionPropNames,n=e.axis,i=e.lengthDimension,o=this.Items.childList.last;return this._isRow&&(t=Math.abs(this._itemsX-this.w)),this._isColumn&&(t=Math.abs(this.itemPosY-this.h)),this.selectedIndex>this.scrollIndex&&t<o[n]+o[i]}},{key:"_isColumn",get:function get(){return "column"===this.direction}},{key:"_isRow",get:function get(){return "row"===this.direction}},{key:"_itemsX",get:function get(){return o(this.Items)}},{key:"_getAlwaysScroll",value:function _getAlwaysScroll(){return void 0!==this._alwaysScroll?this._alwaysScroll:this.style.alwaysScroll}},{key:"_getNeverScroll",value:function _getNeverScroll(){return !this.alwaysScroll&&(void 0!==this._neverScroll?this._neverScroll:this.style.neverScroll)}},{key:"_setScrollIndex",value:function _setScrollIndex(t){return t>=0?t:0}},{key:"_getScrollIndex",value:function _getScrollIndex(){return void 0!==this._scrollIndex?this._scrollIndex:this.style.scrollIndex}}],[{key:"__componentName",get:function get(){return "NavigationManager"}},{key:"__themeStyle",get:function get(){return V}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(NavigationManager),"properties",this)),["alwaysScroll","neverScroll","scrollIndex","autoResizeWidth","autoResizeHeight","lazyUpCount","lazyUpCountBuffer"])}}]),NavigationManager}(),Y=Object.freeze({__proto__:null,base:function base(t){return {itemSpacing:t.layout.gutterX.xs,scrollIndex:0,alwaysScroll:!1,neverScroll:!1,itemTransition:_objectSpread2(_objectSpread2({},t.animation.standardEntrance),{},{duration:t.animation.duration.fast})}}}),G=function(t){_inherits(Row,X);var e=_createSuper(Row);function Row(){return _classCallCheck(this,Row),e.apply(this,arguments)}return _createClass(Row,[{key:"_isOnScreenForScrolling",value:function _isOnScreenForScrolling(t){if(!t)return !1;var e=o(t);if(!Number.isFinite(e))return !1;var n=this.getTransitionXTargetValue(),i=this.core.renderContext.px,r=i+n+e;return t.transition("x")&&(r-=t.x-t.transition("x").targetValue),r>=i&&r+t.w<=i+this.w}},{key:"_shouldScroll",value:function _shouldScroll(){if(this.lazyScroll&&(this.selectedIndex<=this.startLazyScrollIndex||this.selectedIndex>=this.stopLazyScrollIndex))return !0;var t=this.alwaysScroll||this._selectedPastAdded;if(!t&&!this.neverScroll){var e=this._isOnScreenForScrolling(this.selected);if(this.lazyScroll)t=!e;else t=this.Items.childList.last&&(this.shouldScrollLeft()||this.shouldScrollRight()||!e);}return t}},{key:"_getPrependedOffset",value:function _getPrependedOffset(){return this._selectedPastAdded=!1,this.Items.x-this._totalAddedWidth}},{key:"_getLazyScrollX",value:function _getLazyScrollX(t){var e=this.Items.childList.getIndex(this.prevSelected);if(this._selectedPastAdded)return this._getPrependedOffset();if(this.selectedIndex<=this.startLazyScrollIndex)return this._getScrollX();if(this.selectedIndex>=this.stopLazyScrollIndex&&this.selectedIndex<e)return (this.Items.transition("x")?this.Items.transition("x").targetValue:this.Items.x)+(this.prevSelected.w+this.style.itemSpacing+(this.selected.extraItemSpacing||0));if(t){var n,i=this.Items.childList.getIndex(t),o=this.selected.transition("x")?this.selected.transition("x").targetValue:this.selected.x;if(-1===i)return;return i>this.selectedIndex?n=-o:i<this.selectedIndex&&(n=this.w-o-this.selected.w),n}return this._getScrollX()}},{key:"_getScrollX",value:function _getScrollX(){if(this._selectedPastAdded)return this._getPrependedOffset();var t,e=this.selectedIndex-this.scrollIndex;return (e=e<0?0:e)===this._firstFocusableIndex()&&(e=0),this.Items.children[e]&&(t=this.Items.children[e].transition("x")?-this.Items.children[e].transition("x").targetValue:-this.Items.children[e].x),t}},{key:"_render",value:function _render(t,e){var n;this.plinko&&e&&e.selected&&(t.selectedIndex=this._getIndexOfItemNear(t,e)),this._prevLastScrollIndex=this._lastScrollIndex,this.Items.children.length?this._shouldScroll()&&(n=this.lazyScroll&&e?this._getLazyScrollX(e):this._getScrollX()):n=this.itemPosX,void 0!==n&&this.updatePositionOnAxis(this.Items,n),this.onScreenEffect(this.onScreenItems);}},{key:"_performRender",value:function _performRender(){this._render(this.selected,this.prevSelected);}},{key:"_isOnScreen",value:function _isOnScreen(t){return !!t&&this._isComponentHorizontallyVisible(t)}},{key:"onScreenEffect",value:function onScreenEffect(){}},{key:"_totalAddedWidth",get:function get(){return this._totalAddedLength}},{key:"_getLazyScroll",value:function _getLazyScroll(){return !this.alwaysScroll&&(void 0!==this._lazyScroll?this._lazyScroll:this.style.lazyScroll)}},{key:"_getNeverScroll",value:function _getNeverScroll(){return !this.alwaysScroll&&!this.lazyScroll&&(void 0!==this._neverScroll?this._neverScroll:this.style.neverScroll)}}],[{key:"__componentName",get:function get(){return "Row"}},{key:"__themeStyle",get:function get(){return Y}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(Row),"_template",this).call(this)),{},{direction:"row"})}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Row),"properties",this)),["lazyScroll","startLazyScrollIndex","stopLazyScrollIndex"])}}]),Row}(),Q=Object.freeze({__proto__:null,base:function base(t){return {backgroundColor:t.color.fillNeutralTertiary,radius:t.radius.md,animation:{}}},mode:function mode(t){return {focused:{backgroundColor:t.color.interactiveNeutralFocus},disabled:{backgroundColor:t.color.fillNeutralDisabled}}},tone:function tone(t){return {inverse:{mode:{focused:{backgroundColor:t.color.interactiveInverseFocus}}}}}}),J=function(e){_inherits(Surface,W);var n=_createSuper(Surface);function Surface(){return _classCallCheck(this,Surface),n.apply(this,arguments)}return _createClass(Surface,[{key:"innerH",get:function get(){return this.h}},{key:"innerW",get:function get(){return this.w}},{key:"_update",value:function _update(){this._updateLayout(),this._updateScale();}},{key:"_updateLayout",value:function _updateLayout(){this._Background.patch({texture:t.Tools.getRoundRect(this.innerW-2,this.innerH-2,this.style.radius,0,null,!0,this.style.backgroundColor)});}},{key:"_updateScale",value:function _updateScale(){var t=this._isFocusedMode?this.getFocusScale(this.w,this.h):this.getUnfocusScale(this.w,this.h);this.applySmooth(this,{scale:t},{scale:[t,this.style.animation]});}}],[{key:"_template",value:function _template(){return {Background:{}}}},{key:"__componentName",get:function get(){return "Surface"}},{key:"__themeStyle",get:function get(){return Q}},{key:"properties",get:function get(){return []}},{key:"tags",get:function get(){return ["Background"]}}]),Surface}(),Z=Object.freeze({__proto__:null,base:function base(t){return {offsetY:t.spacer.xxs,offsetX:0,textStyle:t.typography.body1}},tone:function tone(t){return {neutral:{textStyle:{textColor:t.color.fillNeutral}},inverse:{textStyle:{textColor:t.color.fillInverse}},brand:{textStyle:{textColor:t.color.fillBrand}}}}}),$=Object.freeze({__proto__:null,base:function base(t){return {textY:0,iconW:t.spacer.xxl+t.spacer.xs,iconH:t.spacer.xxl+t.spacer.xs,contentSpacing:t.spacer.md,marginBottom:t.typography.body1.lineHeight/-10,textStyle:_objectSpread2(_objectSpread2({},t.typography.body1),{},{verticalAlign:"bottom"}),maxLines:1,justify:"flex-start"}}}),tt=function isText(t){return "string"==typeof t||!!t.text},et=function isIcon(t){return !!t.icon},nt=function(t){_inherits(InlineContent,W);var e=_createSuper(InlineContent);function InlineContent(){return _classCallCheck(this,InlineContent),e.apply(this,arguments)}return _createClass(InlineContent,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(InlineContent.prototype),"_construct",this).call(this),this._maxLinesSuffix="..";}},{key:"_update",value:function _update(){this._updateContent(),this._waitForComponentLoad();}},{key:"_updateContent",value:function _updateContent(){var t=this;this.childList.clear(),this._shouldTruncate&&(this.alpha=.001),this._parsedContent&&this._parsedContent.length&&(this.patch({flex:{direction:"row",wrap:!!this.contentWrap,justifyContent:null!=this.justify?this.justify:this.style.justify}}),this._parsedContent.forEach((function(e,n){var i=n===t._parsedContent.length-1,o={flexItem:_objectSpread2(_objectSpread2({},t.contentProperties),{},{marginBottom:i?0:t._marginBottom,marginRight:i?0:t.contentProperties.marginRight||t.style.contentSpacing})};tt(e)?("string"==typeof t._parsedContent[n+1]&&(o.flexItem.marginRight=0),t.childList.a(t._createText(o,e))):et(e)?t.childList.a(t._createIcon(o,e)):!function isBadge(t){return !!t.badge}(e)?e.newline&&t.contentWrap&&t.childList.a({h:0,w:t.w}):t.childList.a(t._createBadge(o,e.badge));})));}},{key:"_waitForComponentLoad",value:function _waitForComponentLoad(){var t=this;this.children.length?Promise.all(this.children.map((function(e){return new Promise((function(n){0===e.h&&e.w===t.w?n():e.on("txLoaded",n);}))}))).finally((function(){return t._contentLoaded()})):(this.h=0,this._contentLoaded());}},{key:"_notifyAncestors",value:function _notifyAncestors(){this.fireAncestors("$loadedInlineContent",this),this.signal("loadedInlineContent",this.finalW,this.multiLineHeight);}},{key:"_contentLoaded",value:function _contentLoaded(){var t=this;this.children.length?setTimeout((function(){t.multiLineHeight=t.finalH,t.flex&&t.flex._layout&&t.flex._layout._lineLayouter&&t.flex._layout._lineLayouter._lines?(t.multiLineHeight=t.style.textStyle.lineHeight*t.flex._layout._lineLayouter._lines.length,t.h=t.multiLineHeight,t._shouldTruncate&&t._renderMaxLines(),t._notifyAncestors()):t._contentLoaded();}),10):this._notifyAncestors();}},{key:"_renderMaxLines",value:function _renderMaxLines(){var t=this,e=this._calcChildrenDimensions();this.childList.clear(),e.forEach((function(n,i){var o=e[i+1],r=!o||n.line===t.maxLines&&o.line>t.maxLines;n.line<=t.maxLines&&(r&&i!==e.length-1?t._addSuffix(n):t.childList.add(n.component));})),this.alpha=1;}},{key:"_calcChildrenDimensions",value:function _calcChildrenDimensions(){var t=this,e=0,n=1;return this.children.reduce((function(i,o){var r,a,s,l=o;if(o.w==t.w&&0===o.h)return n++,e=s,i;tt(o)?(r="text",a=o.text.text,s=o.texture.getRenderWidth()):et(o)?(r="icon",s=o.w):"Badge"===o.constructor.__componentName&&(r="badge",s=o.w),e+=s,e+=o.flexItem.marginRight,Math.ceil(e)>=t.w&&(n++,e=s);var c={type:r,component:l,content:a,line:n};return i.push(c),i}),[])}},{key:"_addSuffix",value:function _addSuffix(t){var e,n=t.type,i=t.component,o=t.content,r=-1*i.flexItem.marginRight;e="text"===n?this._createText({flexItem:this.contentProperties},"".concat(o.trim()).concat(this.maxLinesSuffix)):this._createText({flexItem:_objectSpread2(_objectSpread2({},this.contentProperties),{},{marginLeft:r})},this.maxLinesSuffix),this.childList.add(e);}},{key:"_createIcon",value:function _createIcon(t,e){var n=(this.textHeight>this.style.textStyle.lineHeight?this.textHeight:this.style.textStyle.lineHeight)-this.style.iconH;return _objectSpread2(_objectSpread2({},t),{},{type:E,y:n,w:this.style.iconW,h:this.style.iconH,signals:{itemChanged:"_updateIconPosition"}},e)}},{key:"_createText",value:function _createText(t,e){var n="string"==typeof e.style?this.customStyleMappings[e.style]:e.style;return _objectSpread2(_objectSpread2({},t),{},{y:void 0!==this.textY?this.textY:this.style.textY,h:this.textHeight,text:_objectSpread2(_objectSpread2(_objectSpread2({},this.style.textStyle),n),{},{text:e.text||e})})}},{key:"_createBadge",value:function _createBadge(t,e){return _objectSpread2(_objectSpread2(_objectSpread2({},t),{},{y:this.badgeY||0},this.badgeProperties),{},{type:H,title:e,signals:{loadedBadge:"_loadedBadge"}})}},{key:"_updateIconPosition",value:function _updateIconPosition(t){t.y=this.style.textStyle.lineHeight-t.h;}},{key:"_loadedBadge",value:function _loadedBadge(t){void 0===this.badgeY&&(t.y=this.style.textStyle.lineHeight-t.h);}},{key:"_formatSpaces",value:function _formatSpaces(t){var e=/(\s+)/;return flatten((t||[]).reduce((function(t,n){var i=n;if(tt(n)){if("object"===_typeof(n)){var o=n.text.split(e).map((function(t){return _objectSpread2(_objectSpread2({},n),{},{text:t.trim()})}));return t.push.apply(t,_toConsumableArray(o)),t}i=n.split(e);}return t.push(i),t}),[])).map((function(t,e,n){return " "!==t&&(" "===n[e+1]?t+" ":t)})).filter(Boolean)}},{key:"_setContent",value:function _setContent(t){if(t!==this._content){this._content=t;var e=this._content;t&&!Array.isArray(t)&&(e=function parseInlineContent(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"",e=[];if(t&&"string"==typeof t||t.text){var n="string"==typeof t?t:t.text,i=/^{ICON:(.*?)?\|(.*?)?}$/g,o=/^{BADGE:(.*?)}$/g,r=/^{NEWLINE}$/g,a=/^{TEXT:(.*?)?\|(.*?)?}$/g,l=n.split(s);l&&l.length&&l.forEach((function(t){var n=t,s=o.exec(t),l=i.exec(t),c=r.exec(t),u=a.exec(t);s&&s[1]?n={badge:s[1]}:l&&l[1]?n={title:l[1],icon:l[2]||l[1]}:c?n={newline:!0}:u&&u[1]&&(n={text:u[1],style:u[2]}),e.push(n);}));}return e}(t)),this._parsedContent=this._formatSpaces(e);}return t}},{key:"_setBadgeProperties",value:function _setBadgeProperties(t){if("object"===_typeof(t))return t}},{key:"_getBadgeProperties",value:function _getBadgeProperties(){return this._badgeProperties||{}}},{key:"_setContentProperties",value:function _setContentProperties(t){if("object"===_typeof(t))return t}},{key:"_getContentProperties",value:function _getContentProperties(){return this._contentProperties||{}}},{key:"_setCustomStyleMappings",value:function _setCustomStyleMappings(t){if("object"===_typeof(t))return t}},{key:"_getCustomStyleMappings",value:function _getCustomStyleMappings(){return this._customStyleMappings||{}}},{key:"textHeight",get:function get(){return this.style.textStyle.lineHeight||this.style.textStyle.fontSize}},{key:"_marginBottom",get:function get(){return void 0!==this.contentProperties.marginBottom?this.contentProperties.marginBottom:this.style.marginBottom?this.style.marginBottom:0}},{key:"_shouldTruncate",get:function get(){return this.contentWrap&&this.maxLines}},{key:"announce",get:function get(){if(this._announce)return this._announce;var t=this._parsedContent&&this._parsedContent.reduce((function(t,e){return "string"==typeof e?t+=e:e.announce?t+=e.announce:e.text?t+=e.text:e.title?t+=e.title:e.badge&&(t+=e.badge),t+" "}),"");return t?t.replace(/\s+(?=\s)|\s$/g,""):""},set:function set(t){_set(_getPrototypeOf(InlineContent.prototype),"announce",t,this,!0);}}],[{key:"properties",get:function get(){return ["content","contentProperties","badgeY","badgeProperties","justify","contentWrap","customStyleMappings","maxLines","maxLinesSuffix"]}},{key:"__componentName",get:function get(){return "InlineContent"}},{key:"__themeStyle",get:function get(){return $}}]),InlineContent}(),it=Object.freeze({__proto__:null,base:function base(t){return {fadeW:t.layout.gutterX.lg,offset:t.spacer.xxl,shouldSmooth:!1,textStyle:t.typography.body1}}}),ot=function(e){_inherits(FadeShader,t.shaders.WebGLDefaultShader);var n=_createSuper(FadeShader);function FadeShader(t){var e;return _classCallCheck(this,FadeShader),(e=n.call(this,t))._margin={left:0,right:0},e}return _createClass(FadeShader,[{key:"positionLeft",set:function set(t){this._positionLeft=t;}},{key:"positionRight",set:function set(t){this._positionRight=t;}},{key:"setupUniforms",value:function setupUniforms(t){_get(_getPrototypeOf(FadeShader.prototype),"setupUniforms",this).call(this,t);var e=t.shaderOwner;0===this._positionLeft&&(this._positionLeft=.001),0===this._positionRight&&(this._positionRight=.001);var n=this.ctx.stage.getRenderPrecision();this._setUniform("margin",[this._positionLeft*n,this._positionRight*n],this.gl.uniform1fv),this._setUniform("resolution",new Float32Array([e._w*n,e._h*n]),this.gl.uniform2fv);}}]),FadeShader}();ot.fragmentShaderSource="\n  #ifdef GL_ES\n  # ifdef GL_FRAGMENT_PRECISION_HIGH\n  precision highp float;\n  # else\n  precision lowp float;\n  # endif\n  #endif\n\n  #define PI 3.14159265359\n\n  varying vec2 vTextureCoord;\n  varying vec4 vColor;\n\n  uniform sampler2D uSampler;\n  uniform vec2 resolution;\n  uniform float margin[2];\n\n  void main() {\n      vec4 color = texture2D(uSampler, vTextureCoord) * vColor;\n      vec2 halfRes = 0.5 * resolution.xy;\n      vec2 point = vTextureCoord.xy * resolution;\n\n\n      vec2 pos1 = vec2(point.x, point.y);\n      vec2 pos2 = pos1;\n      pos2.x += margin[0];\n\n      vec2 d = pos2 - pos1;\n      float t = dot(pos1, d) / dot(d, d);\n      t = smoothstep(0.0, 1.0, clamp(t, 0.0, 1.0));\n\n      vec2 pos3 = vec2(vTextureCoord.x * resolution.x, vTextureCoord.y);\n      pos3.x -= resolution.x - margin[1];\n      vec2 pos4 = vec2(vTextureCoord.x + margin[1], vTextureCoord.y);\n\n      vec2 d2 = pos4 - pos3;\n      float t2 = dot(pos3, d2) / dot(d2, d2);\n      t2 = smoothstep(0.0, 1.0, clamp(t2, 0.0, 1.0));\n\n      color = mix(vec4(0.0), color, t);\n      color = mix(color, vec4(0.0), t2);\n\n      gl_FragColor = color;\n  }\n";var rt=function(t){_inherits(Marquee,W);var e=_createSuper(Marquee);function Marquee(){return _classCallCheck(this,Marquee),e.apply(this,arguments)}return _createClass(Marquee,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(Marquee.prototype),"_construct",this).call(this),this._scrolling=!1,this._autoStart=!1,this._centerAlign=!1;}},{key:"_init",value:function _init(){this._Content.on("txLoaded",this._updateContentTexture.bind(this)),_get(_getPrototypeOf(Marquee.prototype),"_init",this).call(this);}},{key:"_updateContentTexture",value:function _updateContentTexture(){var t=this._restartScrolling;this.stopScrolling(),this._currentTexture.h||(this._ContentClipper.h=this._currentTexture.text&&this._currentTexture.text.lineHeight?this._currentTexture.text.lineHeight:this._Content.finalH),this._shouldClip?this._updateShader():(this._ContentClipper.shader=null,this._positionTexture()),t&&this.startScrolling(),this.signal("marqueeContentLoaded");}},{key:"_update",value:function _update(){this._updateColor(),this._updateTexture(),this._updateShader(),this._restartScrolling&&this.startScrolling();}},{key:"_restartScrolling",get:function get(){return this.autoStart||this._scrolling||this._shouldTryScrolling}},{key:"_updateColor",value:function _updateColor(){this.color&&(this._Content.smooth={color:l.getValidColor(this.color)});}},{key:"_currentTexture",get:function get(){return this._Content.text||this._Content.texture||{}}},{key:"_updateTexture",value:function _updateTexture(){var t={rtt:!0};this.contentTexture?t.texture=this.contentTexture:this.title&&(t.text=_objectSpread2(_objectSpread2(_objectSpread2({},this.style.textStyle),this.title),{},{text:this.textContent})),this.patch({ContentClipper:{w:this.w+14,ContentBox:{Content:t,ContentLoopTexture:{}}}}),this.signal("marqueeContentLoaded");}},{key:"_updateShader",value:function _updateShader(){this._ContentClipper.patch({w:this.w>0?this.w+this.style.fadeW/2:0,shader:{type:ot,positionLeft:0,positionRight:this.style.fadeW},rtt:!0});}},{key:"_updateAnimation",value:function _updateAnimation(){this._scrollAnimation&&this._scrollAnimation.stopNow(),this._scrollAnimation=this.animation({duration:this._loopWidth/50,delay:isNaN(this.delay)?1.5:this.delay,repeat:isNaN(this.repeat)?-1:this.repeat,actions:[{t:"ContentBox",p:"x",v:{sm:0,0:{v:0},.5:{v:-(this._loopWidth+this.style.offset)}}},{t:"ContentClipper",p:"shader.positionLeft",v:{sm:0,0:{v:0},.1:{v:this.style.fadeW},.4:{v:this.style.fadeW},.5:{v:0}}}]});}},{key:"_positionTexture",value:function _positionTexture(){var t=this._shouldCenter()?(this.w-this._textRenderedW)/2:0;this.style.shouldSmooth?this._ContentBox.smooth={x:t}:this._ContentBox.x=t;}},{key:"startScrolling",value:function startScrolling(){this._Content.off("txLoaded",this.startScrolling.bind(this)),this._shouldTryScrolling=!0,0===this._textRenderedW&&this._Content.on("txLoaded",this.startScrolling.bind(this)),this._shouldClip?(this._scrolling=!0,this._ContentLoopTexture.x=this._loopWidth+this.style.offset,this._ContentLoopTexture.texture=this._Content.getTexture(),this._updateAnimation(),this._scrollAnimation.start()):this._scrolling=!1;}},{key:"stopScrolling",value:function stopScrolling(){this._shouldTryScrolling=!1,this._scrolling=!1,this._scrollAnimation&&(this._scrollAnimation.stopNow(),this._ContentLoopTexture.texture=null);}},{key:"_shouldClip",get:function get(){return this._textRenderedW>this.w-this.style.fadeW/4}},{key:"_shouldCenter",value:function _shouldCenter(){return this._centerAlign||this._Content.text&&"center"===this._Content.text.textAlign}},{key:"_setAutoStart",value:function _setAutoStart(t){return this.autoStart&&!t&&this._updateContentTexture(),t}},{key:"_setCenterAlign",value:function _setCenterAlign(t){return this._centerAlign=t,this._updateContentTexture(),t}},{key:"textContent",get:function get(){var t,e,n;return null!==(t=null!==(e=null===(n=this.title)||void 0===n?void 0:n.text)&&void 0!==e?e:this.title)&&void 0!==t?t:""}},{key:"_loopWidth",get:function get(){return this.overrideLoopX||this._textRenderedW}},{key:"_textRenderedW",get:function get(){return this._Content.renderWidth}},{key:"announce",get:function get(){return this._announce||this.title&&this.title.text},set:function set(t){_set(_getPrototypeOf(Marquee.prototype),"announce",t,this,!0);}}],[{key:"_template",value:function _template(){return {ContentClipper:{boundsMargin:[],ContentBox:{Content:{},ContentLoopTexture:{}}}}}},{key:"__componentName",get:function get(){return "Marquee"}},{key:"__themeStyle",get:function get(){return it}},{key:"tags",get:function get(){return ["ContentClipper",{name:"ContentBox",path:"ContentClipper.ContentBox"},{name:"Content",path:"ContentClipper.ContentBox.Content"},{name:"ContentLoopTexture",path:"ContentClipper.ContentBox.ContentLoopTexture"}]}},{key:"properties",get:function get(){return ["autoStart","title","contentTexture","color","centerAlign","delay","repeat","overrideLoopX"]}}]),Marquee}(),at=Object.entries(Object.getOwnPropertyDescriptors(t.textures.TextTexture.prototype)).reduce((function(e,n){var i=_slicedToArray(n,1)[0],o=t.textures.TextTexture.prototype[i];return i.startsWith("_")||["undefined","function"].includes(_typeof(o))?e:_objectSpread2(_defineProperty$1({},i,o),e)}),{}),st=function(t){_inherits(TextBox,W);var e=_createSuper(TextBox);function TextBox(){return _classCallCheck(this,TextBox),e.apply(this,arguments)}return _createClass(TextBox,[{key:"_setDimensions",value:function _setDimensions(t,e){var n=t,i=e;this._isInlineContent||(n=this._Text.texture.getRenderWidth(),i=this._Text.texture.getRenderHeight());var o=this.w!==n||this.h!==i;n&&i&&o&&(this.h=i,this.fixed||(this.w=n),this.alpha<1&&(this.alpha=1),this._notifyAncestors());}},{key:"_setContent",value:function _setContent(t){return this._isInlineContent=!1,(Array.isArray(t)||l.isMarkupString(t))&&(this._isInlineContent=!0),"string"==typeof t||this._isInlineContent?t:""}},{key:"title",get:function get(){return this._content}},{key:"_notifyAncestors",value:function _notifyAncestors(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:this.w,e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:this.h;this.fireAncestors("$itemChanged"),this.signal("textBoxChanged",{w:t,h:e});}},{key:"_construct",value:function _construct(){_get(_getPrototypeOf(TextBox.prototype),"_construct",this).call(this),this._marqueeContentListenerAttached=!1,this._marqueeOverrideLoopX=void 0,this._resetMarqueePromise();}},{key:"_update",value:function _update(){this.content?(this._isInlineContent?this._updateInlineContent():this._updateText(),this._updateMarquee()):(this._Text||this._InlineContent)&&(this.w=this.h=0,this._notifyAncestors(),this._updateMarquee(),this.patch({Text:void 0,InlineContent:void 0}));}},{key:"_updateInlineContent",value:function _updateInlineContent(){var t=this;this.patch({Text:void 0});var e=nt.properties.reduce((function(e,n){return null!=t[n]&&(e[n]=t[n]),e}),{});this._textStyleSet.wordWrapWidth&&(e.w=this._textStyleSet.wordWrapWidth,e.rtt=!0),this._textStyleSet.maxLines&&(e.maxLines=this._textStyleSet.maxLines),this._textStyleSet.maxLinesSuffix&&(e.maxLinesSuffix=this._textStyleSet.maxLinesSuffix),this._textStyleSet.textAlign&&(e.justify=l.convertTextAlignToFlexJustify(this._textStyleSet.textAlign)),this.patch({alpha:1,InlineContent:_objectSpread2(_objectSpread2({type:nt,w:this.w},e),{},{signals:{loadedInlineContent:"_setDimensions"}})});}},{key:"_updateText",value:function _updateText(){this.patch({InlineContent:void 0}),this._Text||(this.patch({Text:{}}),this._Text.on("txLoaded",this._setDimensions.bind(this)));var t=this._textStyleSet;this._Text&&this._Text.patch({y:this.style.offsetY,x:this.style.offsetX,text:_objectSpread2(_objectSpread2({},at),t)});}},{key:"marqueeOverrideLoopX",get:function get(){return this._marqueeOverrideLoopX},set:function set(t){this._marqueeOverrideLoopX=t,this._Marquee&&(this._Marquee.overrideLoopX=this._marqueeOverrideLoopX),this._resolveAwaitMarqueeOverrideX();}},{key:"_resetMarqueePromise",value:function _resetMarqueePromise(){var t=this;this._awaitMarqueeOverrideX=new Promise((function(e,n){t._resolveAwaitMarqueeOverrideX=e,t._rejectAwaitMarqueeOverrideX=n;}));}},{key:"_loadedMarqueeContent",value:function _loadedMarqueeContent(){this.signal("willMarquee",this._Marquee);}},{key:"_updateMarquee",value:function _updateMarquee(){var t=this,e=this._isInlineContent?this._InlineContent:this._Text;if(this._Marquee&&!this.marquee&&this._toggleMarquee(e),this.marquee){this._resetMarqueePromise();var n={w:this._textStyleSet.wordWrapWidth||this.w,h:this.h,y:this.style.offsetY,x:this.style.offsetX,signals:{marqueeContentLoaded:"_loadedMarqueeContent"}};this._Marquee||(n.type=rt),this._isInlineContent?(this._InlineContent.w=0,n.contentTexture=e.getTexture(),n.w=this._textStyleSet.wordWrapWidth||this.w):n.title=_objectSpread2(_objectSpread2({text:e.text.text},this._textStyleSet),{},{wordWrapWidth:0,maxLines:1}),this.patch({Marquee:n}),this._marqueeContentListenerAttached||(this._marqueeContentListenerAttached=!0),void 0!==this._marqueeOverrideLoopX?this._awaitMarqueeOverrideX.then((function(){t._toggleMarquee(e);})):this._toggleMarquee(e);}}},{key:"_textStyleSet",get:function get(){var t=this,e=_objectSpread2(_objectSpread2({},this.theme.typography[this.style.defaultTextStyle]||this.theme.typography.body1),null!==this.style.textStyle&&"object"===_typeof(this.style.textStyle)&&Object.keys(this.style.textStyle)?this.style.textStyle:this.theme.typography[this.style.textStyle]);return this.constructor.properties.forEach((function(n){"fontStyle"!==n&&void 0!==t["_".concat(n)]&&(e["content"===n?"text":n]=t["_".concat(n)]);})),this.w&&!this._isInlineContent&&!this.style.textStyle.wordWrapWidth&&this.fixed&&(e.wordWrapWidth=this.w),e}},{key:"_toggleMarquee",value:function _toggleMarquee(t){this.marquee?(t.alpha=.001,this._Marquee.alpha=1,this._Marquee.startScrolling()):(t.alpha=1,this._Marquee.alpha=.001,this._Marquee.stopScrolling());}},{key:"toggleMarquee",value:function toggleMarquee(){var t=this._isInlineContent?this._InlineContent:this._Text;this._toggleMarquee(t);}},{key:"announce",get:function get(){return this._announce||(this._isInlineContent&&this._InlineContent?this._InlineContent.announce:this.content)},set:function set(t){_set(_getPrototypeOf(TextBox.prototype),"announce",t,this,!0);}},{key:"smooth",set:function set(t){k$1.warn("warning: value smoothing is known to cause bugs with the TextBox - patch updated values instead."),_set(_getPrototypeOf(TextBox.prototype),"smooth",t,this,!0);}}],[{key:"_template",value:function _template(){return {alpha:.001}}},{key:"__componentName",get:function get(){return "TextBox"}},{key:"__themeStyle",get:function get(){return Z}},{key:"tags",get:function get(){return ["InlineContent","Marquee","Text"]}},{key:"properties",get:function get(){return ["content","fixed","marquee"].concat(_toConsumableArray(nt.properties))}}]),TextBox}(),lt=function(t){_inherits(Button,J);var e=_createSuper(Button);function Button(){return _classCallCheck(this,Button),e.apply(this,arguments)}return _createClass(Button,[{key:"_update",value:function _update(){this._updatePrefix(),this._updateTitle(),this._updateSuffix(),this._updateAllPositioning(),this._updateTruncation();}},{key:"_updateAllPositioning",value:function _updateAllPositioning(){this._updatePositions(),this._updateContentDimensions(),this._updateSurfaceDimensions(),this._updateContentPosition(),_get(_getPrototypeOf(Button.prototype),"_update",this).call(this);}},{key:"$itemChanged",value:function $itemChanged(){this._updateAllPositioning(),this._updateTruncation();}},{key:"_onTitleTextBoxChanged",value:function _onTitleTextBoxChanged(){this._updateAllPositioning();}},{key:"_updatePositions",value:function _updatePositions(){this._hasPrefix&&(this._Prefix.x=this._prefixX),this._hasTitle&&(this._TextWrapper.x=this._titleX),this._hasSuffix&&(this._Suffix.x=this._suffixX);}},{key:"_updatePrefix",value:function _updatePrefix(){if(this.prefix){var t={style:{itemSpacing:this.style.itemSpacing}};this._Prefix||(t=_objectSpread2(_objectSpread2({},this._rowProps),t)),this._Content.patch({Prefix:t}),this._Prefix.items=this._addButtonProps(this.prefix);}else this._Content.patch({Prefix:void 0});}},{key:"_updateTitle",value:function _updateTitle(){if(this._hasTitle){var t={content:this.title,style:{textStyle:this.style.textStyle}};this._Title||(t=_objectSpread2({type:st,mountY:.5,y:function y(t){return t/2},signals:{textBoxChanged:"_onTitleTextBoxChanged"}},t)),this._Content.patch({TextWrapper:{mountY:.5,Title:t}});}else this._Content.patch({TextWrapper:{Title:void 0}});}},{key:"_updateSuffix",value:function _updateSuffix(){if(this.suffix){var t={style:{itemSpacing:this.style.itemSpacing}};this._Suffix||(t=_objectSpread2(_objectSpread2({},this._rowProps),t)),this._Content.patch({Suffix:t}),this._Suffix.items=this._addButtonProps(this.suffix);}else this._Content.patch({Suffix:void 0});}},{key:"_updateTruncation",value:function _updateTruncation(){this._Title&&this._Title.patch({style:{textStyle:_objectSpread2(_objectSpread2({},this.style.textStyle),{},{wordWrap:this.fixed,wordWrapWidth:this.fixed?this._fixedWordWrapWidth:0})}});}},{key:"_updateContentDimensions",value:function _updateContentDimensions(){var t={},e=this.h/2;this._Content.transition("w").targetValue!==this._contentW&&(this._Content.w=this._contentW),this._Content.y!==e&&(t.y=e),Object.keys(t).length>0&&this.applySmooth(this._Content,t);}},{key:"_updateContentPosition",value:function _updateContentPosition(){this._Content.patch(this._contentProps);}},{key:"_updateSurfaceDimensions",value:function _updateSurfaceDimensions(){var t=this.w;(t=this.fixed?this._w:!this._hasTitle&&(this._hasPrefix||this._hasSuffix)||this._Title&&!this._Title.visible&&(this._hasPrefix||this._hasSuffix)?this._contentW+this._paddingX:Math.max(this._contentW+this._paddingX,this.style.minWidth))!==this.w&&(this.w=t),this.fireAncestors("$itemChanged");}},{key:"_addButtonProps",value:function _addButtonProps(t){var e=this;return (Array.isArray(t)?t:[t]).map((function(t){return _objectSpread2(_objectSpread2(_objectSpread2({},e._buttonProps),t),{},{style:_objectSpread2({color:e.style.contentColor},t.style)})}))}},{key:"_getJustify",value:function _getJustify(){return this._justify?this._justify:this.style.justify}},{key:"_contentProps",get:function get(){var t,e;switch(this.justify){case"left":t=0,e=this._paddingLeft;break;case"right":t=1,e=this.w-this._paddingRight;break;default:t=.5,e=this.w/2;}return {mountX:t,x:e}}},{key:"_buttonProps",get:function get(){return {centerInParent:!0,mode:this.mode}}},{key:"_hasPrefix",get:function get(){return !(!this.prefix||!Object.keys(this.prefix).length)}},{key:"_prefixW",get:function get(){return this._hasPrefix?this._Prefix.w:0}},{key:"_prefixX",get:function get(){return 0}},{key:"_hasTitle",get:function get(){return !!this.title}},{key:"_titleW",get:function get(){return this._hasTitle&&this._Title&&this._Title._Text&&this._Title.visible?this._Title.w:0}},{key:"_titleX",get:function get(){return this._hasPrefix?this._prefixW+this.style.titlePadding:0}},{key:"_hasSuffix",get:function get(){return !(!this.suffix||!Object.keys(this.suffix).length)}},{key:"_suffixW",get:function get(){return this._hasSuffix?this._Suffix.w:0}},{key:"_suffixX",get:function get(){return this._hasTitle?this._titleW+this._TextWrapper.x+this.style.titlePadding:this._hasPrefix?this._prefixW+this.style.itemSpacing:0}},{key:"_contentW",get:function get(){return this._hasSuffix?this._suffixX+this._suffixW:this._hasTitle&&this._Title&&this._Title.visible?this._titleX+this._titleW:this._hasPrefix?this._prefixX+this._prefixW:0}},{key:"_rowProps",get:function get(){return {type:G,mountY:.5,autoResizeHeight:!0,autoResizeWidth:!0}}},{key:"_totalTitlePaddingX",get:function get(){var t=0;return this._hasPrefix&&(t+=this.style.titlePadding),this._hasSuffix&&(t+=this.style.titlePadding),t}},{key:"_fixedWordWrapWidth",get:function get(){var t=this.w,e=this._paddingX+this._prefixW+this._suffixW+this._totalTitlePaddingX;return Math.max(1,t-e)}},{key:"announce",get:function get(){if(this._announce)return this._announce;var t=[];return this.title&&t.push(this.title),t.push(this._announceComponentName),this._hasPrefix&&this._Prefix.items.length&&t.push.apply(t,_toConsumableArray(this._Prefix.items.map((function(t){return t.announce})))),this._hasSuffix&&this._Suffix.items.length&&t.push.apply(t,_toConsumableArray(this._Suffix.items.map((function(t){return t.announce})))),t},set:function set(t){_set(_getPrototypeOf(Button.prototype),"announce",t,this,!0);}},{key:"_announceComponentName",get:function get(){return Button.__componentName}},{key:"_paddingX",get:function get(){return this._paddingLeft+this._paddingRight}},{key:"_paddingLeft",get:function get(){return this._hasTitle?this.style.paddingX:this.style.paddingXNoTitle}},{key:"_paddingRight",get:function get(){return this._hasTitle?this.style.paddingX:this.style.paddingXNoTitle}}],[{key:"__componentName",get:function get(){return "Button"}},{key:"__themeStyle",get:function get(){return U}},{key:"properties",get:function get(){return ["fixed","justify","prefix","suffix","title"]}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Button),"tags",this)),["Content",{name:"TextWrapper",path:"Content.TextWrapper"},{name:"Title",path:"Content.TextWrapper.Title"},{name:"Prefix",path:"Content.Prefix"},{name:"Suffix",path:"Content.Suffix"}])}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(Button),"_template",this).call(this)),{},{Content:{mount:.5,x:function x(t){return t/2},y:function y(t){return t/2},zIndex:2}})}}]),Button}(),ct=Object.freeze({__proto__:null,base:function base(t){return {h:8*t.spacer.md,minWidth:getWidthByColumnSpan(t,1),paddingX:t.spacer.xxl,prefixH:t.spacer.xl,suffixH:t.spacer.xl,textStyle:t.typography.button2}}}),ut=function(t){_inherits(ButtonSmall,lt);var e=_createSuper(ButtonSmall);function ButtonSmall(){return _classCallCheck(this,ButtonSmall),e.apply(this,arguments)}return _createClass(ButtonSmall,null,[{key:"__componentName",get:function get(){return "ButtonSmall"}},{key:"__themeStyle",get:function get(){return ct}}]),ButtonSmall}(),ht=Object.freeze({__proto__:null,base:function base(t){return {h:12*t.spacer.xxl,paddingHorizontal:t.spacer.xl,paddingVertical:t.spacer.xl,radius:t.radius.md,titleTextStyle:_objectSpread2(_objectSpread2({},t.typography.headline1),{},{wordWrap:!0,maxLines:2,textColor:t.color.textNeutral}),w:l.getWidthByUpCount(t,6)}},mode:function mode(t){return {disabled:{titleTextStyle:{textColor:t.color.textNeutralDisabled}}}},tone:function tone(t){return {neutral:{mode:{focused:{backgroundColor:t.color.interactiveNeutralFocusSoft}}},inverse:{mode:{focused:{backgroundColor:t.color.interactiveInverseFocusSoft}}},brand:{mode:{focused:{backgroundColor:t.color.interactiveBrandFocusSoft}}}}}}),dt=function(t){_inherits(Card,J);var e=_createSuper(Card);function Card(){return _classCallCheck(this,Card),e.apply(this,arguments)}return _createClass(Card,[{key:"_update",value:function _update(){_get(_getPrototypeOf(Card.prototype),"_update",this).call(this),this._updateTitle(),this._updatePositions();}},{key:"_updatePositions",value:function _updatePositions(){this._updateTitlePosition();}},{key:"_updateTitle",value:function _updateTitle(){this._Title.patch({content:this.title,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.titleTextStyle),{},{wordWrapWidth:this._calculateTextWidth()})}});}},{key:"_calculateTextWidth",value:function _calculateTextWidth(){return this.w-2*this.style.paddingHorizontal}},{key:"_updateTitlePosition",value:function _updateTitlePosition(){this._Title.x=this.style.paddingHorizontal,this._Title.y=this.style.paddingVertical;}},{key:"announce",get:function get(){return this._announce||this._Title&&this._Title.announce},set:function set(t){_set(_getPrototypeOf(Card.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Card"}},{key:"__themeStyle",get:function get(){return ht}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Card),"properties",this)),["title"])}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Card),"tags",this)),["Title"])}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(Card),"_template",this).call(this)),{},{Title:{type:st,signals:{textBoxChanged:"_updatePositions"}}})}}]),Card}(),_t=Object.freeze({__proto__:null,base:function base(t){return {descriptionTextStyle:_objectSpread2(_objectSpread2({},t.typography.body2),{},{textColor:t.color.textNeutralSecondary,wordWrap:!0,maxLines:3}),detailsTextStyle:_objectSpread2(_objectSpread2({},t.typography.body3),{},{textColor:t.color.textNeutral,wordWrap:!0,maxLines:1})}},mode:function mode(t){return {disabled:{descriptionTextStyle:{textColor:t.color.textNeutralDisabled},detailsTextStyle:{textColor:t.color.textNeutralDisabled}}}}}),pt=function(t){_inherits(CardTitle,dt);var e=_createSuper(CardTitle);function CardTitle(){return _classCallCheck(this,CardTitle),e.apply(this,arguments)}return _createClass(CardTitle,[{key:"_update",value:function _update(){_get(_getPrototypeOf(CardTitle.prototype),"_update",this).call(this),this._updateDescription(),this._updateDetails(),this._updatePositions();}},{key:"_updatePositions",value:function _updatePositions(){_get(_getPrototypeOf(CardTitle.prototype),"_updatePositions",this).call(this),this._updateDescriptionPosition(),this._updateDetailsPosition();}},{key:"_updateDescription",value:function _updateDescription(){this._Description.patch({content:this.description,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.descriptionTextStyle),{},{wordWrapWidth:this._calculateTextWidth()})}});}},{key:"_updateDescriptionPosition",value:function _updateDescriptionPosition(){this._Description.x=this.style.paddingHorizontal,this._Description.y=this.style.paddingVertical+this._Title.h;}},{key:"_updateDetails",value:function _updateDetails(){this._Details.patch({content:this.details,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.detailsTextStyle),{},{wordWrapWidth:this._calculateTextWidth()})}});}},{key:"_updateDetailsPosition",value:function _updateDetailsPosition(){this._Details.x=this.style.paddingHorizontal,this._Details.y=this.h-this.style.paddingVertical;}},{key:"announce",get:function get(){return this._announce||[this._Title&&this._Title.announce,this._Description&&this._Description.announce,this._Details&&this._Details.announce]},set:function set(t){_set(_getPrototypeOf(CardTitle.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "CardTitle"}},{key:"__themeStyle",get:function get(){return _t}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(CardTitle),"tags",this)),["Description","Details"])}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(CardTitle),"properties",this)),["description","details"])}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(CardTitle),"_template",this).call(this)),{},{Description:{type:st,signals:{textBoxChanged:"_updatePositions"}},Details:{type:st,mountY:1}})}}]),CardTitle}(),yt=Object.freeze({__proto__:null,base:function base(t){return {descriptionTextStyle:_objectSpread2(_objectSpread2({},t.typography.body2),{},{textColor:t.color.textNeutralSecondary,wordWrap:!0,maxLines:8}),h:15*t.spacer.xxxl,subtitleTextStyle:_objectSpread2(_objectSpread2({},t.typography.body3),{},{maxLines:2,textColor:t.color.textNeutral,wordWrap:!0}),w:l.getWidthByColumnSpan(t,4)}},mode:function mode(t){return {disabled:{descriptionTextStyle:{textColor:t.color.textNeutralDisabled},subtitleTextStyle:{textColor:t.color.textNeutralDisabled}}}}}),ft=Object.freeze({__proto__:null,base:function base(t){var e=t.spacer.xxl;return {alpha:t.alpha.primary,w:e,h:e,knobHeight:e/2,knobWidth:e/2,radius:e/2,strokeWidth:t.stroke.sm}},mode:function mode(t){return {disabled:{alpha:t.alpha.inactive}}},tone:function tone(t){return {neutral:{backgroundColor:t.color.fillNeutralDisabled,backgroundColorChecked:t.color.fillNeutral,knobColor:t.color.fillInverse,strokeColor:t.color.strokeInverse},inverse:{backgroundColor:t.color.fillInverseDisabled,backgroundColorChecked:t.color.fillInverse,knobColor:t.color.fillNeutral,strokeColor:t.color.strokeNeutral},brand:{backgroundColor:t.color.fillInverseDisabled,backgroundColorChecked:t.color.fillBrand,knobColor:t.color.fillNeutral,strokeColor:t.color.strokeNeutral}}}}),gt=function(e){_inherits(Radio,W);var n=_createSuper(Radio);function Radio(){return _classCallCheck(this,Radio),n.apply(this,arguments)}return _createClass(Radio,[{key:"_update",value:function _update(){this._updateBody(),this._updateStroke(),this._updateKnob(),this._checkedChanged&&(this.fireAncestors("$announce",this.announce),this._checkedChanged=!1),this._updateOpacity();}},{key:"_updateBody",value:function _updateBody(){var e=this.checked?this.style.backgroundColorChecked:this.style.backgroundColor,n=this.style.radius>=this.w/2?(this.w-this.style.strokeWidth)/2:0;this._Body.patch({texture:t.Tools.getRoundRect(this.w-this.style.strokeWidth,this.h-this.style.strokeWidth,n,null,null,!0,e)});}},{key:"_updateStroke",value:function _updateStroke(){this._Stroke.patch({texture:t.Tools.getRoundRect(this.w,this.h,this.style.radius,this.style.strokeWidth,this.style.strokeColor,!1)});}},{key:"_updateKnob",value:function _updateKnob(){this._Knob.patch({texture:t.Tools.getRoundRect(this.style.knobWidth,this.style.knobHeight,this.style.knobWidth/2,null,null,!0,this.style.knobColor)}),this.applySmooth(this._Knob,{alpha:this.checked?1:0});}},{key:"_updateOpacity",value:function _updateOpacity(){this.applySmooth(this,{alpha:this.style.alpha});}},{key:"_setChecked",value:function _setChecked(t){return this._checkedChanged=t!==this._checked,t}},{key:"toggle",value:function toggle(){return this._isDisabledMode||(this.checked=!this.checked),this}},{key:"_handleEnter",value:function _handleEnter(){return "function"==typeof this.onEnter?this.onEnter(this):(this.toggle(),!1)}},{key:"announce",get:function get(){return this._announce||(this.checked?"Checked":"Unchecked")},set:function set(t){_set(_getPrototypeOf(Radio.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Radio"}},{key:"__themeStyle",get:function get(){return ft}},{key:"_template",value:function _template(){var t={mount:.5,x:function x(t){return t/2},y:function y(t){return t/2}};return {Body:_objectSpread2(_objectSpread2({rtt:!0},t),{},{Knob:_objectSpread2(_objectSpread2({},t),{},{alpha:0})}),Stroke:t}}},{key:"tags",get:function get(){return ["Knob","Body","Stroke"]}},{key:"properties",get:function get(){return ["checked"]}}]),Radio}(),mt=Object.freeze({__proto__:null,base:function base(t){var e=t.spacer.xl;return {w:e,h:e,knobHeight:e/2,knobWidth:e/2,radius:e/2}}});(function(t){_inherits(RadioSmall,gt);var e=_createSuper(RadioSmall);function RadioSmall(){return _classCallCheck(this,RadioSmall),e.apply(this,arguments)}return _createClass(RadioSmall,null,[{key:"__componentName",get:function get(){return "RadioSmall"}},{key:"__themeStyle",get:function get(){return mt}}]),RadioSmall})();(function(t){_inherits(CardRadio,pt);var e=_createSuper(CardRadio);function CardRadio(){return _classCallCheck(this,CardRadio),e.apply(this,arguments)}return _createClass(CardRadio,[{key:"_update",value:function _update(){_get(_getPrototypeOf(CardRadio.prototype),"_update",this).call(this),this._updateRadio(),this._updateSubtitle(),this._updatePositions();}},{key:"_updatePositions",value:function _updatePositions(){_get(_getPrototypeOf(CardRadio.prototype),"_updatePositions",this).call(this),this._updateSubtitlePosition();}},{key:"_updateSubtitle",value:function _updateSubtitle(){this._Subtitle.patch({content:this.subtitle,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.subtitleTextStyle),{},{wordWrapWidth:this._calculateTextWidth()})}});}},{key:"_updateRadio",value:function _updateRadio(){var t=_objectSpread2(_objectSpread2({},this.radio),{},{mode:this.mode,mountX:1,x:this.w-this.style.paddingHorizontal,y:this.style.paddingVertical});this._Radio||(t.type=gt),this.patch({Radio:t});}},{key:"_updateSubtitlePosition",value:function _updateSubtitlePosition(){this._Subtitle.x=this.style.paddingHorizontal,this._Subtitle.y=this.style.paddingVertical+this._Title.h;}},{key:"_updateDescriptionPosition",value:function _updateDescriptionPosition(){this._Description.x=this.style.paddingHorizontal,this._Description.y=2*this.style.paddingVertical+this._Title.h+this._Subtitle.h;}},{key:"announce",get:function get(){return this._announce||[this._Title&&this._Title.announce,this._Subtitle&&this._Subtitle.announce,this._Description&&this._Description.announce,this._Details&&this._Details.announce]},set:function set(t){_set(_getPrototypeOf(CardRadio.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "CardRadio"}},{key:"__themeStyle",get:function get(){return yt}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(CardRadio),"properties",this)),["radio","subtitle"])}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(CardRadio),"tags",this)),["Radio","Subtitle"])}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(CardRadio),"_template",this).call(this)),{},{Subtitle:{type:st,signals:{textBoxChanged:"_updatePositions"}}})}}]),CardRadio})();var bt=Object.freeze({__proto__:null,base:function base(t){return {h:5*t.spacer.xxl,iconWidth:t.spacer.xxl,iconHeight:t.spacer.xxl,w:l.getWidthByColumnSpan(t,3)}}});(function(t){_inherits(CardSection,dt);var e=_createSuper(CardSection);function CardSection(){return _classCallCheck(this,CardSection),e.apply(this,arguments)}return _createClass(CardSection,[{key:"_update",value:function _update(){_get(_getPrototypeOf(CardSection.prototype),"_update",this).call(this),this._updateIcon();}},{key:"_updateIcon",value:function _updateIcon(){var t=this.style,e=t.iconWidth,n=t.iconHeight,i={w:e,h:n,icon:this.iconSrc,x:this.w-e-this.style.paddingHorizontal,y:(this._Title.style.textStyle.lineHeight-n)/2+this.style.paddingVertical};this._Icon||(i.type=E),this.patch({Icon:i});}},{key:"_calculateTextWidth",value:function _calculateTextWidth(){var t=this.w-2*this.style.paddingHorizontal;return this.iconSrc?t-this.iconWidth:t}}],[{key:"__componentName",get:function get(){return "CardSection"}},{key:"__themeStyle",get:function get(){return bt}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(CardSection),"tags",this)),["Icon"])}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(CardSection),"properties",this)),["iconWidth","iconHeight","iconSrc"])}}]),CardSection})();var St=Object.freeze({__proto__:null,base:function base(t){var e=t.stroke.sm,n=t.spacer.xxl-2*e;return {alpha:t.alpha.primary,w:n,h:n,checkW:t.spacer.lg,checkH:t.spacer.md+t.spacer.xs,checkSrc:t.asset.check,radius:n/2,strokeWidth:e}},mode:function mode(t){return {disabled:{alpha:t.alpha.inactive}}},tone:function tone(t){return {neutral:{strokeColor:t.color.strokeInverse,checkColor:t.color.textInverse,backgroundColor:t.color.fillNeutralDisabled,backgroundColorChecked:t.color.fillNeutral},inverse:{strokeColor:t.color.strokeNeutral,checkColor:t.color.textNeutral,backgroundColor:t.color.fillInverseDisabled,backgroundColorChecked:t.color.fillInverse},brand:{strokeColor:t.color.strokeNeutral,checkColor:t.color.textNeutral,backgroundColor:t.color.fillInverseDisabled,backgroundColorChecked:t.color.fillBrand}}}}),Ct=function(e){_inherits(Checkbox,W);var n=_createSuper(Checkbox);function Checkbox(){return _classCallCheck(this,Checkbox),n.apply(this,arguments)}return _createClass(Checkbox,[{key:"_update",value:function _update(){this._updateBody(),this._updateStroke(),this._updateCheck(),this._checkedChanged&&(this.fireAncestors("$announce",this.announce),this._checkedChanged=!1),this._updateOpacity();}},{key:"_updateCheck",value:function _updateCheck(){this._Check.patch({w:this.style.checkW,h:this.style.checkH,icon:this.style.checkSrc,style:{color:this.style.checkColor}});var t={alpha:this.checked?1:0};this.applySmooth(this._Check,t);}},{key:"_updateBody",value:function _updateBody(){var e=this.checked?this.style.backgroundColorChecked:this.style.backgroundColor,n=this.style.radius>=this.w/2?(this.w-this.style.strokeWidth)/2:0;this._Body.patch({texture:t.Tools.getRoundRect(this.w-this.style.strokeWidth,this.h-this.style.strokeWidth,n,0,null,!0,e)});}},{key:"_updateStroke",value:function _updateStroke(){this._Stroke.patch({texture:t.Tools.getRoundRect(this.w,this.h,this.style.radius,this.style.strokeWidth,this.style.strokeColor,!1)});}},{key:"_updateOpacity",value:function _updateOpacity(){this.applySmooth(this,{alpha:this.style.alpha});}},{key:"_setChecked",value:function _setChecked(t){return this._checkedChanged=t!==this._checked,t}},{key:"toggle",value:function toggle(){return this._isDisabledMode||(this.checked=!this.checked),this}},{key:"_handleEnter",value:function _handleEnter(){return "function"==typeof this.onEnter?this.onEnter(this):(this.toggle(),!1)}},{key:"announce",get:function get(){return this._announce||(this.checked?"Checked":"Unchecked")},set:function set(t){_set(_getPrototypeOf(Checkbox.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Checkbox"}},{key:"__themeStyle",get:function get(){return St}},{key:"_template",value:function _template(){var t={mount:.5,x:function x(t){return t/2},y:function y(t){return t/2}};return {Body:_objectSpread2(_objectSpread2({rtt:!0},t),{},{Check:_objectSpread2(_objectSpread2({type:E},t),{},{alpha:0})}),Stroke:t}}},{key:"tags",get:function get(){return ["Check","Body","Stroke"]}},{key:"properties",get:function get(){return ["checked"]}}]),Checkbox}(),wt=Object.freeze({__proto__:null,base:function base(t){return {radius:[t.radius.md,t.radius.md,t.radius.md,t.radius.none],paddingX:t.spacer.lg,paddingY:t.spacer.md,offsetY:t.spacer.xxs,textStyle:t.typography.caption1}},tone:function tone(t){return {neutral:{textStyle:{textColor:t.color.textInverse},backgroundColor:t.color.fillNeutral},inverse:{textStyle:{textColor:t.color.textNeutral},backgroundColor:t.color.fillInverse},brand:{textStyle:{textColor:t.color.textNeutral},backgroundColor:t.color.fillBrand}}}}),Tt=function(e){_inherits(Label,W);var n=_createSuper(Label);function Label(){return _classCallCheck(this,Label),n.apply(this,arguments)}return _createClass(Label,[{key:"_init",value:function _init(){this._Text.on("txLoaded",this._updateBackground.bind(this)),_get(_getPrototypeOf(Label.prototype),"_init",this).call(this);}},{key:"_update",value:function _update(){this._updateBackground(),this._updateText();}},{key:"_updateText",value:function _updateText(){this._Text&&this._Text.patch({text:_objectSpread2(_objectSpread2({},this.style.textStyle),{},{text:this.title})});}},{key:"_updateBackground",value:function _updateBackground(){this._Text.x=this.w/2,this._Text.y=this.h/2+this.style.offsetY,this.h=this.title?this._Text.renderHeight+2*this.style.paddingY:0,this.w=this.title?this._Text.renderWidth+2*this.style.paddingX:0,this._Background.patch({texture:t.Tools.getRoundRect(this.w-2,this.h-2,this.style.radius,0,null,!0,this.style.backgroundColor)}),this.signal("loadedLabel",this);}},{key:"announce",get:function get(){return this._announce||this._Text&&this._Text.text.text},set:function set(t){_set(_getPrototypeOf(Label.prototype),"announce",t,this,!0);}}],[{key:"_template",value:function _template(){return {Background:{},Text:{mountY:.5,mountX:.5,text:{}}}}},{key:"__componentName",get:function get(){return "Label"}},{key:"__themeStyle",get:function get(){return wt}},{key:"properties",get:function get(){return ["title"]}},{key:"tags",get:function get(){return ["Background","Text"]}}]),Label}(),It=Object.freeze({__proto__:null,base:function base(t){return {descriptionTextStyle:_objectSpread2(_objectSpread2({},t.typography.body2),{},{maxLines:1}),fadeWidth:t.layout.gutterX.lg,logoWidth:t.typography.body3.lineHeight,logoHeight:t.typography.body3.lineHeight,logoPadding:t.spacer.lg,subtitleTextStyle:t.typography.body3,titleTextStyle:_objectSpread2(_objectSpread2({},t.typography.headline1),{},{maxLines:1}),marqueeSync:!0,alpha:t.alpha.primary}},mode:function mode(t){return {disabled:{subtitleTextStyle:{textColor:t.color.textNeutralDisabled},alpha:t.alpha.inactive}}},tone:function tone(t){return {neutral:{titleTextStyle:{textColor:t.color.textNeutral},subtitleTextStyle:{textColor:t.color.textNeutral},descriptionTextStyle:{textColor:t.color.textNeutralSecondary},mode:{disabled:{titleTextStyle:{textColor:t.color.textNeutralDisabled},subtitleTextStyle:{textColor:t.color.textNeutralDisabled},descriptionTextStyle:{textColor:t.color.textNeutralDisabled}}}},inverse:{titleTextStyle:{textColor:t.color.textInverse},subtitleTextStyle:{textColor:t.color.textInverse},descriptionTextStyle:{textColor:t.color.textInverseSecondary},mode:{disabled:{titleTextStyle:{textColor:t.color.textNeutralDisabled},subtitleTextStyle:{textColor:t.color.textNeutralDisabled},descriptionTextStyle:{textColor:t.color.textNeutralDisabled}}}},brand:{titleTextStyle:{textColor:t.color.textNeutral},subtitleTextStyle:{textColor:t.color.textNeutral},descriptionTextStyle:{textColor:t.color.textNeutralSecondary},mode:{disabled:{titleTextStyle:{textColor:t.color.textNeutralDisabled},subtitleTextStyle:{textColor:t.color.textNeutralDisabled},descriptionTextStyle:{textColor:t.color.textNeutralDisabled}}}}}}}),At=withMarqueeSync(function(t){_inherits(MetadataBase,W);var e=_createSuper(MetadataBase);function MetadataBase(){return _classCallCheck(this,MetadataBase),e.apply(this,arguments)}return _createClass(MetadataBase,[{key:"_init",value:function _init(){this.requestUpdate(!0);}},{key:"_titleLoaded",value:function _titleLoaded(){this._updateLayout();}},{key:"_subtitleLoaded",value:function _subtitleLoaded(t){var e=t.w,n=t.h;this._updateSubtitleLayout({w:e,h:n}),this._updateLayout();}},{key:"_descriptionLoaded",value:function _descriptionLoaded(){this._updateLayout();}},{key:"_updateSubtitleLayout",value:function _updateSubtitleLayout(t){var e=t.w,n=t.h;this._SubtitleWrapper.alpha=this.style.alpha,this._SubtitleWrapper.w=e,this._SubtitleWrapper.h=n;}},{key:"_update",value:function _update(){this._updateLines(),this._updateLayout();}},{key:"_updateLines",value:function _updateLines(){this._Text.w=this._textW(),this._updateTitle(),this._updateSubtitle(),this._updateDescription();}},{key:"_updateLayout",value:function _updateLayout(){this._updatePositions(),this._updateMetadataHeight(),this._updateLogo();}},{key:"_updatePositions",value:function _updatePositions(){this._Text.h=this._textH(),this._Text.x=this.logo&&"left"===this.logoPosition?this.logoWidth+this.style.logoPadding:0,this._Text.y=(this.h-this._Text.h)/2;}},{key:"_updateMetadataHeight",value:function _updateMetadataHeight(){var t=Math.max(this.logoHeight,this._Text.h);this.h!==t&&(this.h=t,this.signal("updateComponentDimensions"));}},{key:"_updateTitle",value:function _updateTitle(){this._Title.patch({content:this.title,marquee:this.marquee,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.titleTextStyle),{},{maxLines:1,wordWrap:!0,wordWrapWidth:this._Text.w})}});}},{key:"resetMarquee",value:function resetMarquee(){this.marquee&&(this.title&&this._Title.toggleMarquee(),this.description&&this._Description.toggleMarquee());}},{key:"_updateSubtitle",value:function _updateSubtitle(){this._Subtitle.patch({content:this.subtitle,style:{textStyle:this.style.subtitleTextStyle}}),this._Subtitle.finalW>this._textW()?this._SubtitleWrapper.patch({w:this._textW()+this.style.fadeWidth/2,shader:{type:ot,positionLeft:0,positionRight:this.style.fadeWidth},rtt:!0}):this._SubtitleWrapper.shader=void 0,this._SubtitleWrapper.visible=!!this.subtitle,this._SubtitleWrapper.alpha=this.style.alpha;}},{key:"_updateDescription",value:function _updateDescription(){this._Description.patch({content:this.description,marquee:this.marquee,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.descriptionTextStyle),{},{maxLines:1,wordWrap:!0,wordWrapWidth:this._Text.w})}});}},{key:"_updateLogo",value:function _updateLogo(){this.logoPosition=this.logoPosition||"right",this._Logo.patch({type:E,w:this.logoWidth,h:this.logoHeight,icon:this.logo,alpha:this.style.alpha}),this._Logo.x="left"===this.logoPosition?0:this.w-this._Logo.w,this._Logo.y=(this.h-this.logoHeight)/2;}},{key:"_textW",value:function _textW(){return this.w-(this.logo?this.logoWidth+this.style.logoPadding:0)}},{key:"_textH",value:function _textH(){return (this.title&&this._Title&&this._Title.h||0)+(this.subtitle&&this._SubtitleWrapper&&this._SubtitleWrapper.h||0)+(this.description&&this._Description&&this._Description.h||0)}},{key:"_getLogoWidth",value:function _getLogoWidth(){return void 0!==this._logoWidth?this._logoWidth:this.style.logoWidth}},{key:"_setLogoWidth",value:function _setLogoWidth(t){return void 0!==t?t:this.logoWidth}},{key:"_getLogoHeight",value:function _getLogoHeight(){return void 0!==this._logoHeight?this._logoHeight:this.style.logoHeight}},{key:"_setLogoHeight",value:function _setLogoHeight(t){return void 0!==t?t:this.logoHeight}},{key:"syncArray",get:function get(){return [].concat(_toConsumableArray(this.title?[this._Title]:[]),_toConsumableArray(this.description?[this._Description]:[]),_toConsumableArray(this.subtitle?[this._Subtitle]:[]))}},{key:"announce",get:function get(){return this._announce||[this._Title&&this._Title.announce,this._Subtitle&&this._Subtitle.announce,this._Description&&this._Description.announce,this.logoTitle]},set:function set(t){_set(_getPrototypeOf(MetadataBase.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "MetadataBase"}},{key:"__themeStyle",get:function get(){return It}},{key:"_template",value:function _template(){return {Text:{flex:{direction:"column",justifyContent:"flex-start"},Title:{type:st,signals:{textBoxChanged:"_titleLoaded"}},SubtitleWrapper:{Subtitle:{type:st,signals:{textBoxChanged:"_subtitleLoaded"}}},Description:{type:st,signals:{textBoxChanged:"_descriptionLoaded"}}},Logo:{flexItem:!1,type:E}}}},{key:"properties",get:function get(){return ["description","logo","logoHeight","logoPosition","logoTitle","logoWidth","subtitle","title","marquee"]}},{key:"tags",get:function get(){return ["Text",{name:"Title",path:"Text.Title"},{name:"SubtitleWrapper",path:"Text.SubtitleWrapper"},{name:"Subtitle",path:"Text.SubtitleWrapper.Subtitle"},{name:"Description",path:"Text.Description"},"Logo"]}}]),MetadataBase}()),Pt=Object.freeze({__proto__:null,base:function base(t){return {titleTextStyle:t.typography.headline3,descriptionTextStyle:t.typography.body3}},tone:function tone(t){return {neutral:{subtitleTextStyle:{textColor:t.color.textNeutralSecondary},descriptionTextStyle:{textColor:t.color.textNeutral},mode:{disabled:{subtitleTextStyle:{textColor:t.color.textNeutralDisabled},descriptionTextStyle:{textColor:t.color.textNeutralDisabled}}}},inverse:{subtitleTextStyle:{textColor:t.color.textInverseSecondary},descriptionTextStyle:{textColor:t.color.textInverse},mode:{disabled:{subtitleTextStyle:{textColor:t.color.textNeutralDisabled},descriptionTextStyle:{textColor:t.color.textNeutralDisabled}}}},brand:{subtitleTextStyle:{textColor:t.color.textNeutralSecondary},descriptionTextStyle:{textColor:t.color.textNeutral},mode:{disabled:{subtitleTextStyle:{textColor:t.color.textNeutralDisabled},descriptionTextStyle:{textColor:t.color.textNeutralDisabled}}}}}}}),Lt=function(t){_inherits(MetadataTile,At);var e=_createSuper(MetadataTile);function MetadataTile(){return _classCallCheck(this,MetadataTile),e.apply(this,arguments)}return _createClass(MetadataTile,[{key:"_updateSubtitle",value:function _updateSubtitle(){this.description?(this._Subtitle.patch({content:""}),this._Subtitle.alpha=0,this._Subtitle.visible=!1):(this._Subtitle.alpha=1,this._Subtitle.visible=!0,_get(_getPrototypeOf(MetadataTile.prototype),"_updateSubtitle",this).call(this));}},{key:"_updateSubtitleLayout",value:function _updateSubtitleLayout(t){var e=t.h;this.subtitle&&!this.description?(this._SubtitleWrapper.h=e,this._SubtitleWrapper.alpha=this.style.alpha):this._SubtitleWrapper.h=0;}},{key:"announce",get:function get(){return this._announce||[this._Title&&this._Title.announce,this._Subtitle&&this._Subtitle.announce||this._Description&&this._Description.announce,this.logoTitle]},set:function set(t){_set(_getPrototypeOf(MetadataTile.prototype),"announce",t,this,!0);}},{key:"_textH",value:function _textH(){return (this.title&&this._Title&&this._Title.h||0)+(this.subtitle&&this._Subtitle&&this._Subtitle.visible&&this._SubtitleWrapper.h||0)+(this.description&&this._Description&&this._Description.h||0)}}],[{key:"__componentName",get:function get(){return "MetadataTile"}},{key:"__themeStyle",get:function get(){return Pt}}]),MetadataTile}(),Bt=Object.freeze({__proto__:null,base:function base(t){return {h:t.spacer.md,animation:t.animation.utility,radius:t.radius.xs}},tone:function tone(t){return {neutral:{barColor:t.color.fillNeutralTertiary,progressColor:t.color.fillNeutral},inverse:{barColor:t.color.fillInverseTertiary,progressColor:t.color.fillInverse},brand:{barColor:t.color.fillNeutralTertiary,progressColor:t.color.fillBrand}}}}),Ot=function(e){_inherits(ProgressBar,W);var n=_createSuper(ProgressBar);function ProgressBar(){return _classCallCheck(this,ProgressBar),n.apply(this,arguments)}return _createClass(ProgressBar,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(ProgressBar.prototype),"_construct",this)&&_get(_getPrototypeOf(ProgressBar.prototype),"_construct",this).call(this),this._progress=0;}},{key:"_update",value:function _update(){this._updateTextures(),this._updateProgress(),this._progressChanged&&(this.fireAncestors("$announce",this.announce),this._progressChanged=!1);}},{key:"_updateTextures",value:function _updateTextures(){this._Bar.texture=t.Tools.getRoundRect(this.w-2,this.h,this.style.radius,0,0,!0,this.style.barColor),this._Progress.texture=t.Tools.getRoundRect(this.w+1,this.h,this.style.radius,0,0,!0,this.style.progressColor);}},{key:"_updateProgress",value:function _updateProgress(){var t=this.w*this._progress,e=t<=0?0:Math.min(t,this.w);this._Progress.smooth={w:[e,this.style.animation],alpha:Number(e>0)};}},{key:"_setProgress",value:function _setProgress(t){return this._progressChanged=t!==this._progress,t}},{key:"announce",get:function get(){if(void 0!==this._announce&&null!==this._announce)return this._announce;var t=this.progress;return t>1?t=1:t<0&&(t=0),"".concat(Math.round(100*t),"%")},set:function set(t){_set(_getPrototypeOf(ProgressBar.prototype),"announce",t,this,!0);}}],[{key:"_template",value:function _template(){return {Bar:{zIndex:1},Progress:{alpha:0,zIndex:2}}}},{key:"__themeStyle",get:function get(){return Bt}},{key:"__componentName",get:function get(){return "ProgressBar"}},{key:"properties",get:function get(){return ["progress"]}},{key:"tags",get:function get(){return ["Bar","Progress"]}}]),ProgressBar}(),Wt=Object.freeze({__proto__:null,base:function base(t){return {animationEntrance:t.animation.standardEntrance,animationExit:t.animation.standardExit,metadataLocation:"standard",paddingX:t.spacer.xl,paddingY:t.spacer.lg,paddingYProgress:t.spacer.xl,paddingYBetweenContent:t.spacer.md,radius:t.radius.md,alpha:t.alpha.primary}},mode:function mode(t){return {disabled:{alpha:t.alpha.inactive}}},tone:function tone(t){return {neutral:{mode:{focused:{backgroundColor:t.color.interactiveNeutralFocusSoft}}},inverse:{mode:{focused:{backgroundColor:t.color.interactiveInverseFocusSoft}}},brand:{mode:{focused:{backgroundColor:t.color.interactiveBrandFocusSoft}}}}}}),jt=function(t){_inherits(Tile,J);var e=_createSuper(Tile);function Tile(){return _classCallCheck(this,Tile),e.apply(this,arguments)}return _createClass(Tile,[{key:"announce",get:function get(){return this._announce||[this._Metadata&&this._Metadata.announce,this._Badge&&this._Badge.announce,this._Label&&this._Label.announce,this._ProgressBar&&this._ProgressBar.announce]},set:function set(t){_set(_getPrototypeOf(Tile.prototype),"announce",t,this,!0);}},{key:"_update",value:function _update(){_get(_getPrototypeOf(Tile.prototype),"_update",this).call(this),this._updateTileColor(),this._updateContent(),this._updateArtwork(),this._updateBadge(),this._updateLabel(),this._updateCheckbox(),this._updateProgressBar(),this._updateMetadata();}},{key:"h",get:function get(){return this._isInsetMetadata?_get(_getPrototypeOf(Tile.prototype),"h",this):_get(_getPrototypeOf(Tile.prototype),"h",this)+(this._Metadata&&this._Metadata.h||0)},set:function set(t){_set(_getPrototypeOf(Tile.prototype),"h",t,this,!0);}},{key:"innerH",get:function get(){return this._h}},{key:"_gradient",get:function get(){return !this._isCircleLayout&&Boolean(this._isInsetMetadata&&this._hasMetadata&&this._shouldShowMetadata)}},{key:"_isCircleLayout",get:function get(){return Boolean(this._itemLayout&&this._itemLayout.circle)}},{key:"_foregroundDefaultWidth",get:function get(){return parseFloat(this._w/this._h).toFixed(2)===parseFloat(16/9).toFixed(2)?.5*this.innerW:.75*this.innerW}},{key:"_updateTileColor",value:function _updateTileColor(){this._Tile.alpha=this.style.alpha;}},{key:"_updateContent",value:function _updateContent(){var t=this,e={h:this._h,w:this._w,x:this._w/2,y:this._h/2};this.applySmooth(this._Content,e,Object.keys(e).reduce((function(n,i){return n[i]=[e[i],t._isFocusedMode?t.style.animationEntrance:t.style.animationExit],n}),{}));}},{key:"_updateArtwork",value:function _updateArtwork(){var t,e;this._Artwork.patch(_objectSpread2(_objectSpread2({mode:this.mode,h:this._h,w:this._w,x:this._w/2,y:this._h/2,src:this.src},this.artwork||{}),{},{style:_objectSpread2({radius:null===(t=this.style)||void 0===t?void 0:t.radius},null===(e=this.artwork)||void 0===e?void 0:e.style),gradient:this._gradient,shouldScale:this._isFocusedMode}));}},{key:"_getSrc",value:function _getSrc(){return this.artwork&&this.artwork.src||this._src}},{key:"_imageLoaded",value:function _imageLoaded(){this._Background.alpha=0;}},{key:"_updateBadge",value:function _updateBadge(){var t;if(null!==(t=this.badge)&&void 0!==t&&t.title&&!this._isCircleLayout){var e=_objectSpread2(_objectSpread2({},this.badge),{},{mode:this.mode,x:this.style.paddingX,y:this.style.paddingY,alpha:this._shouldShowBadgeLabel?1:.001});this._Badge?(this._Badge.patch(e),this.applySmooth(this._Badge,e,_objectSpread2(_objectSpread2({},e),this._badgeLabelTransitions))):this._Content.patch({Badge:_objectSpread2(_objectSpread2({type:H},e),{},{signals:{loadedBadge:"_updateBadge"}})});}else this._Badge&&this._Content.patch({Badge:void 0});}},{key:"_updateLabel",value:function _updateLabel(){var t;if(null!==(t=this.label)&&void 0!==t&&t.title&&!this._isCircleLayout){var e=_objectSpread2(_objectSpread2({},this.label),{},{mode:this.mode,x:this._w-this.style.paddingX,y:this.style.paddingY,alpha:this._shouldShowBadgeLabel?1:.001});this._Label?(this._Label.patch(e),this.applySmooth(this._Label,e,_objectSpread2(_objectSpread2({},e),{},{x:[e.x,this._shouldShowBadgeLabel?this.style.animationEntrance:this.style.animationExit]},this._badgeLabelTransitions))):this._Content.patch({Label:_objectSpread2(_objectSpread2({type:Tt,mountX:1},e),{},{signals:{loadedLabel:"_updateLabel"}})});}else this._Label&&this._Content.patch({Label:void 0});}},{key:"_shouldShowBadgeLabel",get:function get(){return this.persistentMetadata||this._isFocusedMode&&!this._isCircleLayout}},{key:"_badgeLabelTransitions",get:function get(){return {y:[this._shouldShowBadgeLabel?this.style.paddingY:0,this._shouldShowBadgeLabel?this.style.animationEntrance:this.style.animationExit],alpha:[this._shouldShowBadgeLabel?1:.001,this._shouldShowBadgeLabel?this.style.animationEntrance:this.style.animationExit]}}},{key:"_updateCheckbox",value:function _updateCheckbox(){var t;if("boolean"==typeof(null===(t=this.checkbox)||void 0===t?void 0:t.checked)&&this.checkbox.checked&&!this._isCircleLayout){var e=_objectSpread2(_objectSpread2({},this.checkbox),{},{mode:this.mode,x:this._w-this.style.paddingX,y:this._h-this.style.paddingY});this._Checkbox?this.applySmooth(this._Checkbox,e):this._Content.patch({Checkbox:_objectSpread2(_objectSpread2({},e),{},{type:Ct,mount:1})});}else this._Checkbox&&this._Content.patch({Checkbox:void 0});}},{key:"_progressBarY",get:function get(){return (this._ProgressBar&&0!==this._ProgressBar._getTransition("alpha")._targetValue?this._ProgressBar._getTransition("y")._targetValue||this._ProgressBar.y:0)||0}},{key:"_updateProgressBar",value:function _updateProgressBar(){var t,e=this;if("number"==typeof(null===(t=this.progressBar)||void 0===t?void 0:t.progress)&&this.progressBar.progress&&!this._isCircleLayout){if(this.progressBar.progress>0){var n=_objectSpread2(_objectSpread2({},this.progressBar),{},{mode:this.mode,w:this._w-2*this.style.paddingX,x:this._w/2,y:this._h-this.style.paddingYProgress});if(!this._ProgressBar)return this._Content.patch({ProgressBar:_objectSpread2(_objectSpread2({},n),{},{type:Ot,mountX:.5,mountY:1,alpha:this._hasMetadata&&this.shouldSmooth?.001:1})}),void(this.shouldSmooth&&(this._ProgressBar.smooth={alpha:[1,{delay:this.style.animationEntrance.duration}]}));this.applySmooth(this._ProgressBar,n,Object.keys(n).reduce((function(t,i){return t[i]=[n[i],e._isFocusedMode?e.style.animationEntrance:e.style.animationExit],t}),{}));}}else this._ProgressBar&&(this.shouldSmooth?(this._ProgressBar._getTransition("alpha").once("finish",(function(){e._removeProgressBar();})),this._ProgressBar.smooth={alpha:0}):this._removeProgressBar());}},{key:"_removeProgressBar",value:function _removeProgressBar(){this._Content.patch({ProgressBar:void 0}),this._updateMetadata();}},{key:"_shouldShowMetadata",get:function get(){return this._hasMetadata&&(this.persistentMetadata&&!this._isInsetMetadata||this._isFocusedMode&&!this._isInsetMetadata||(this.persistentMetadata||this._isFocusedMode)&&this._isInsetMetadata&&!this._isCircleLayout)}},{key:"_isInsetMetadata",get:function get(){return "inset"===this.metadataLocation}},{key:"_metadataTransitions",get:function get(){return {y:[this._shouldShowMetadata?this._metadataY:this._h+this.style.paddingY,this._shouldShowMetadata?this.style.animationEntrance:this.style.animationExit],alpha:[this._metadataAlpha,this._shouldShowMetadata?this.style.animationEntrance:this.style.animationExit]}}},{key:"_hasMetadata",get:function get(){var t=this;return Lt.properties.some((function(e){return t.metadata&&t.metadata[e]}))}},{key:"_metadataY",get:function get(){return this._isInsetMetadata?this._progressBarY?this._progressBarY-this.style.paddingYBetweenContent:this._h-this.style.paddingY:this._h+this.style.paddingY}},{key:"_metadataAlpha",get:function get(){return this._shouldShowMetadata?1:.001}},{key:"_metadataPatch",get:function get(){return _objectSpread2({mode:this.mode,alpha:this._metadataAlpha,mountX:.5,mountY:this._isInsetMetadata?1:0,marquee:this._isFocusedMode,w:this._w-2*this.style.paddingX,x:this._w/2,y:!this.persistentMetadata&&this._isInsetMetadata&&this._isFocusedMode?this._h+this.style.paddingY:this._metadataY},this.metadata||{})}},{key:"_getMetadataLocation",value:function _getMetadataLocation(){var t;return null!==(t=this.style.metadataLocation)&&void 0!==t?t:this._metadataLocation}},{key:"_setMetadataLocation",value:function _setMetadataLocation(t){return t&&(this.style={metadataLocation:t}),t}},{key:"_updateMetadata",value:function _updateMetadata(){this._hasMetadata?this._Metadata||!this._hasMetadata?(this._Metadata.patch(this._metadataPatch),this._animateMetadata()):this._Content.patch({Metadata:_objectSpread2({type:Lt,signals:{updateComponentDimensions:"_metadataLoaded"}},this._metadataPatch)}):this._Content.patch({Metadata:void 0});}},{key:"_animateMetadata",value:function _animateMetadata(){this._Metadata&&(this.applySmooth(this._Metadata,this._metadataPatch,this._metadataTransitions),this._isFocusedMode||this._resetMarqueeAnimation());}},{key:"_metadataLoaded",value:function _metadataLoaded(){this._animateMetadata(),this._isInsetMetadata||this.fireAncestors("$itemChanged");}},{key:"_resetMarqueeAnimation",value:function _resetMarqueeAnimation(){var t=this,e=this._Metadata._getTransition("alpha");e?e.on("finish",(function(){t._Metadata&&t._Metadata.resetMarquee();})):this._Metadata.resetMarquee();}}],[{key:"__componentName",get:function get(){return "Tile"}},{key:"__themeStyle",get:function get(){return Wt}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(Tile),"_template",this).call(this)),{},{Tile:{Artwork:{type:D,signals:{imageLoaded:"_imageLoaded"},mount:.5},Content:{mount:.5}}})}},{key:"properties",get:function get(){return ["artwork","circle","badge","checkbox","metadata","metadataLocation","persistentMetadata","progressBar","label","src"]}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Tile),"tags",this)),["Artwork","Content","Tile",{name:"Badge",path:"Content.Badge"},{name:"Checkbox",path:"Content.Checkbox"},{name:"Metadata",path:"Content.Metadata"},{name:"ProgressBar",path:"Content.ProgressBar"},{name:"Label",path:"Content.Label"}])}}]),Tile}();var Rt=Object.freeze({__proto__:null,base:function base$u(t){return {counterTextStyle:t.typography.headline3,itemSize:t.layout.gutterX.sm,itemSpacing:t.spacer.md,radius:t.radius.sm,alpha:t.alpha.primary}},mode:function mode(t){return {disabled:{alpha:t.alpha.inactive}}},tone:function tone(t){return {neutral:{counterBackgroundColor:t.color.fillInverseSecondary},inverse:{counterBackgroundColor:t.color.fillNeutralSecondary},brand:{counterBackgroundColor:t.color.fillInverseSecondary}}}}),Mt=function(e){_inherits(Provider,W);var n=_createSuper(Provider);function Provider(){return _classCallCheck(this,Provider),n.apply(this,arguments)}return _createClass(Provider,[{key:"providersHidden",get:function get(){return this.providers.length-this._visibleCount}},{key:"_construct",value:function _construct(){this._providers=[],_get(_getPrototypeOf(Provider.prototype),"_construct",this).call(this);}},{key:"_update",value:function _update(){this._updateProviders(),this._updateCounter();}},{key:"_updateProviders",value:function _updateProviders(){var t=this,e=[];this.providers.slice(0,this.visibleCount).forEach((function(n){var i={centerInParent:!0,radius:t.disableRadius?0:t.style.radius,alpha:t.style.alpha,style:n.style};if(n.type===E&&n.icon&&n.w&&n.h){var o=n.w/n.h;i=_objectSpread2(_objectSpread2({type:E,icon:n.icon},n),{},{w:t.style.itemSize*o,h:t.style.itemSize},i);}else i=_objectSpread2({type:E,w:t.style.itemSize,h:t.style.itemSize},i),"object"===_typeof(n)?i=_objectSpread2(_objectSpread2({},i),n):i.icon=n;e.push(i);})),this._Row.patch({style:{itemSpacing:this.style.itemSpacing},items:e,h:this.style.itemSize});}},{key:"_updateCounter",value:function _updateCounter(){if(this.providers.length>this.visibleCount){var e=this.providersHidden,n={announce:"+".concat(e),alpha:this.style.alpha,w:this.style.itemSize,h:this.style.itemSize,centerInParent:!0,Background:{w:this.style.itemSize,h:this.style.itemSize,texture:t.Tools.getRoundRect(this.style.itemSize,this.style.itemSize,this.style.radius,0,null,!0,this.style.counterBackgroundColor)},Text:{type:st,mountX:.5,mountY:.5,x:this.style.itemSize/2,y:this.style.itemSize/2,content:this.counterText||"+".concat(e),style:{textStyle:this.style.counterTextStyle}}};this._Row.appendItems([n]);}}},{key:"$itemChanged",value:function $itemChanged(){this.signal("providerChanged");}},{key:"_getVisibleCount",value:function _getVisibleCount(){var t=this.providers.length,e=Math.min(Math.max(1,this._visibleCount),t);return this._visibleCount<1&&console.warn("Warning: The specified visible count (".concat(this._visibleCount,") is less than the minimum value (").concat(1,"). Setting it to ").concat(1,".")),this._visibleCount>t&&console.warn("Warning: The specified visible count (".concat(this._visibleCount,") is greater than the maximum value (").concat(t,"). Setting it to ").concat(t,".")),e}},{key:"w",get:function get(){return this._Row.w}},{key:"announce",get:function get(){return this._announce||this._Row.items&&this._Row.items.length&&this._Row.items.map((function(t){return t.announce}))},set:function set(t){_set(_getPrototypeOf(Provider.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Provider"}},{key:"__themeStyle",get:function get(){return Rt}},{key:"_template",value:function _template(){return {Row:{type:G,autoResizeWidth:!0}}}},{key:"properties",get:function get(){return ["disableRadius","counterText","providers","visibleCount"]}},{key:"tags",get:function get(){return ["Row"]}}]),Provider}(),Nt=Object.freeze({__proto__:null,base:function base(t){return {detailsTextStyle:t.typography.body3,descriptionTextStyle:{maxLines:3},provider:{fadeWidth:t.spacer.md*t.spacer.md,itemSize:t.spacer.xxxl+t.spacer.md}}},tone:function tone(t){return {neutral:{detailsTextStyle:{textColor:t.color.textNeutral},mode:{disabled:{detailsTextStyle:{textColor:t.color.textNeutralDisabled}}}},inverse:{detailsTextStyle:{textColor:t.color.textInverse},mode:{disabled:{detailsTextStyle:{textColor:t.color.textNeutralDisabled}}}},brand:{detailsTextStyle:{textColor:t.color.textNeutral},mode:{disabled:{detailsTextStyle:{textColor:t.color.textNeutralDisabled}}}}}}}),Dt=function(t){_inherits(MetadataCardContent,At);var e,n=_createSuper(MetadataCardContent);function MetadataCardContent(){return _classCallCheck(this,MetadataCardContent),n.apply(this,arguments)}return _createClass(MetadataCardContent,[{key:"_setDetails",value:function _setDetails(t){var e=this;return this._detailsPromise=t?new Promise((function(t){e._detailsPromiseResolver=t;})):void 0,t}},{key:"_setProvider",value:function _setProvider(t){var e=this;return this._providerPromise=t?new Promise((function(t){e._providerPromiseResolver=t;})):void 0,t}},{key:"_update",value:(e=_asyncToGenerator(_regeneratorRuntime().mark((function _callee(){return _regeneratorRuntime().wrap((function _callee$(t){for(;;)switch(t.prev=t.next){case 0:return this._updateLines(),this._updateProvider(),t.next=4,Promise.all([this._detailsPromise,this._providerPromise].filter(Boolean));case 4:this._updatePositions();case 5:case"end":return t.stop()}}),_callee,this)}))),function _update(){return e.apply(this,arguments)})},{key:"_updateLines",value:function _updateLines(){this._Text.w=this.w,this._updateTitle(),this._updateDescription(),this._updateDetails();}},{key:"_updateDescription",value:function _updateDescription(){this._Description.patch({content:this.description,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.descriptionTextStyle),{},{wordWrap:!0,wordWrapWidth:this._Text.w})}});}},{key:"_updateDetails",value:function _updateDetails(){var t=this._detailsMaxW;this._Details.patch({content:this.details,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.detailsTextStyle),{},{wordWrap:!0,maxLines:1,wordWrapWidth:t+this.style.fadeWidth/2})}}),this._Details.finalW>t?this._DetailsFader.patch({w:t+this.style.fadeWidth/2,shader:{type:ot,positionLeft:0,positionRight:this.style.fadeWidth}}):this._DetailsFader.shader=void 0;}},{key:"_resolveDetails",value:function _resolveDetails(){this._detailsPromiseResolver&&this._detailsPromiseResolver(),this._updatePositions();}},{key:"_updateProvider",value:function _updateProvider(){this.provider&&this._Provider.patch(_objectSpread2(_objectSpread2({mode:this.mode},this.provider),{},{style:this.style.provider}));}},{key:"_resolveProvider",value:function _resolveProvider(){this._providerPromiseResolver&&this._providerPromiseResolver(),this._updatePositions();}},{key:"_updatePositions",value:function _updatePositions(){this._Text.h=this._textH,this._Text.w=this._textW,this._DetailsWrapper.w=this._textW,this._DetailsWrapper.h=Math.max(this._providerH,this._Details.h),this._DetailsWrapper.y=this.h-this._DetailsWrapper.h,this._Details.y=this._DetailsWrapper.h/2,this._Provider.x=this._DetailsWrapper.w-this._providerW,this._Provider.y=this._DetailsWrapper.h-this._providerH;}},{key:"_textW",get:function get(){return this.w}},{key:"_textH",get:function get(){return this.h-this._providerH}},{key:"_providerW",get:function get(){return this._Provider.w}},{key:"_providerH",get:function get(){return this._Provider._Row._Items.h}},{key:"_detailsMaxW",get:function get(){return this.w-this._providerW-this.style.fadeWidth/2}},{key:"announce",get:function get(){return this._announce||[this._Title&&this._Title.announce,this._Description&&this._Description.announce,this._Details&&this._Details.announce,this._Provider&&this._Provider.announce]},set:function set(t){_set(_getPrototypeOf(MetadataCardContent.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "MetadataCardContent"}},{key:"__themeStyle",get:function get(){return Nt}},{key:"_template",value:function _template(){return {Text:{flex:{direction:"column",justifyContent:"flex-start"},Title:{type:st},Description:{type:st}},DetailsWrapper:{DetailsFader:{Details:{mountY:.5,type:st,signals:{textBoxChanged:"_resolveDetails"}}},Provider:{mount:1,type:Mt,signals:{providerChanged:"_resolveProvider"}}}}}},{key:"properties",get:function get(){return ["description","details","provider","title"]}},{key:"tags",get:function get(){return ["Text",{name:"Title",path:"Text.Title"},{name:"Description",path:"Text.Description"},"DetailsWrapper",{name:"DetailsFader",path:"DetailsWrapper.DetailsFader"},{name:"Details",path:"DetailsWrapper.DetailsFader.Details"},{name:"Provider",path:"DetailsWrapper.Provider"}]}}]),MetadataCardContent}(),zt=Object.freeze({__proto__:null,base:function base(t){return {paddingVertical:1.5*t.spacer.md,radius:t.radius.md,expandedW:l.getWidthByUpCount(t,2),expandedH:l.getDimensions(t,{ratioX:16,ratioY:9,upCount:4}).h,imageSize:{w:l.getDimensions(t,{ratioX:16,ratioY:9,upCount:4}).w,h:l.getDimensions(t,{ratioX:16,ratioY:9,upCount:4}).h},metadata:{descriptionTextStyle:{maxLines:2}}}}}),Et=function(t){_inherits(CardContent,dt);var e=_createSuper(CardContent);function CardContent(){return _classCallCheck(this,CardContent),e.apply(this,arguments)}return _createClass(CardContent,[{key:"_update",value:function _update(){this._updateSize(),this._updateTile(),this._updateRadius(),this._updateMetadata(),_get(_getPrototypeOf(CardContent.prototype),"_update",this).call(this);}},{key:"_updateTitle",value:function _updateTitle(){}},{key:"_updateTitlePosition",value:function _updateTitlePosition(){}},{key:"_updateTile",value:function _updateTile(){var t=this.style.imageSize.w,e=this.style.expandedH;"horizontal"!==this._orientation&&(t=this.style.expandedW,e=this.style.imageSize.h);var n=this.tile;this.src&&(n=l.clone({src:this.src},this.tile)),this._Tile.patch(_objectSpread2(_objectSpread2({w:t,h:e},n),{},{persistentMetadata:!0,alpha:this._shouldShowTile?1:0}));}},{key:"_updateMetadata",value:function _updateMetadata(){var t=_objectSpread2(_objectSpread2(_objectSpread2(_objectSpread2({},this.metadata),this._metadataPosition),this._metadataDimensions),{},{mode:this.mode,alpha:this._shouldShowMetadata?1:0,style:this.style.metadata});this._Metadata||(t.type=Dt),this.patch({Metadata:t});}},{key:"_updateSize",value:function _updateSize(){var t=this.style.expandedW,e=this.style.expandedH;this._collapse&&("horizontal"===this._orientation?t=this._collapseW:e=this._collapseH),this.w=t,this.h=e;}},{key:"_updateRadius",value:function _updateRadius(){var t=Array.isArray(this.style.radius)&&4===this.style.radius.length?this.style.radius:Array(4).fill(this.style.radius),e=t;this._collapse||(e="horizontal"===this._orientation?[t[0],0,0,t[3]]:[t[0],t[1],0,0]),this._Tile.patch({style:{radius:e}});}},{key:"_getSrc",value:function _getSrc(){return this.tile&&(this.tile.artwork&&this.tile.artwork.src||this.tile.src)||this._src}},{key:"_metadataDimensions",get:function get(){var t=2*this.style.paddingHorizontal,e=2*this.style.paddingVertical,n=this.style.expandedW-this.style.imageSize.w-t,i=this.style.expandedH-e;return "horizontal"!==this.orientation&&(n=this.style.expandedW-t,i=this.style.expandedH-this.style.imageSize.h-e),{w:n,h:i}}},{key:"_metadataPosition",get:function get(){var t=this.style.paddingHorizontal,e=this.style.paddingVertical,n=t+(this._collapse?0:this.style.imageSize.w),i=e;return "horizontal"!==this.orientation&&(n=t,i=e+(this._collapse?0:this.style.imageSize.h)),{x:n,y:i}}},{key:"_shouldShowMetadata",get:function get(){return !this._collapse||this.collapseToMetadata}},{key:"_shouldShowTile",get:function get(){return !this._collapse||this._collapse&&!this.collapseToMetadata}},{key:"_collapse",get:function get(){return this.shouldCollapse&&!this._isFocusedMode}},{key:"_collapseW",get:function get(){return this.collapseToMetadata?this.style.expandedW-this.style.imageSize.w:this.style.imageSize.w}},{key:"_collapseH",get:function get(){return this.collapseToMetadata?this.style.expandedH-this.style.imageSize.h:this.style.imageSize.h}},{key:"announce",get:function get(){return this._announce||[this._Metadata&&this._Metadata.announce,this._Tile&&this._Tile.announce]},set:function set(t){_set(_getPrototypeOf(CardContent.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "CardContent"}},{key:"__themeStyle",get:function get(){return zt}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(CardContent),"_template",this).call(this)),{},{Tile:{type:jt}})}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(CardContent),"properties",this)),["tile","metadata","orientation","collapseToMetadata","shouldCollapse","src"])}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(CardContent),"tags",this)),["Metadata","Tile"])}}]),CardContent}(),Ft=function(t){_inherits(CardContentHorizontal,Et);var e=_createSuper(CardContentHorizontal);function CardContentHorizontal(){return _classCallCheck(this,CardContentHorizontal),e.apply(this,arguments)}return _createClass(CardContentHorizontal,[{key:"_init",value:function _init(){this._orientation="horizontal",_get(_getPrototypeOf(CardContentHorizontal.prototype),"_init",this).call(this);}}],[{key:"__componentName",get:function get(){return "CardContentHorizontal"}},{key:"__themeStyle",get:function get(){return zt}}]),CardContentHorizontal}(),Ht=Object.freeze({__proto__:null,base:function base(t){var e=l.getDimensions(t,{ratioX:16,ratioY:9,upCount:3}),n=e.w,i=e.h;return {expandedW:l.getWidthByColumnSpan(t,8),expandedH:i,imageSize:{w:n,h:i},metadata:{descriptionTextStyle:{maxLines:3}}}}});(function(t){_inherits(CardContentHorizontalLarge,Ft);var e=_createSuper(CardContentHorizontalLarge);function CardContentHorizontalLarge(){return _classCallCheck(this,CardContentHorizontalLarge),e.apply(this,arguments)}return _createClass(CardContentHorizontalLarge,null,[{key:"__componentName",get:function get(){return "CardContentHorizontalLarge"}},{key:"__themeStyle",get:function get(){return Ht}}]),CardContentHorizontalLarge})();var Kt=Object.freeze({__proto__:null,base:function base(t){return {expandedW:l.getWidthByUpCount(t,4),expandedH:l.getDimensions(t,{ratioX:16,ratioY:9,upCount:4}).h+7*t.spacer.xxxl+t.spacer.lg+t.spacer.xxs,metadata:{descriptionTextStyle:{maxLines:3}}}}}),Vt=function(t){_inherits(CardContentVertical,Et);var e=_createSuper(CardContentVertical);function CardContentVertical(){return _classCallCheck(this,CardContentVertical),e.apply(this,arguments)}return _createClass(CardContentVertical,[{key:"_init",value:function _init(){this._orientation="vertical",_get(_getPrototypeOf(CardContentVertical.prototype),"_init",this).call(this);}}],[{key:"__componentName",get:function get(){return "CardContentVertical"}},{key:"__themeStyle",get:function get(){return Kt}}]),CardContentVertical}(),qt=Object.freeze({__proto__:null,base:function base(t){return {expandedW:l.getWidthByUpCount(t,4),expandedH:l.getDimensions(t,{ratioX:16,ratioY:9,upCount:4}).h+14*t.spacer.md,metadata:{descriptionTextStyle:{maxLines:1}}}}});(function(t){_inherits(CardContentVerticalSmall,Vt);var e=_createSuper(CardContentVerticalSmall);function CardContentVerticalSmall(){return _classCallCheck(this,CardContentVerticalSmall),e.apply(this,arguments)}return _createClass(CardContentVerticalSmall,[{key:"_setMetadata",value:function _setMetadata(t){return _objectSpread2(_objectSpread2({},t),{},{details:void 0,provider:void 0})}}],[{key:"__componentName",get:function get(){return "CardContentVerticalSmall"}},{key:"__themeStyle",get:function get(){return qt}}]),CardContentVerticalSmall})();var Yt=Object.freeze({__proto__:null,base:function base(t){var e=t.stroke.sm,n=t.spacer.xl-2*e;return {w:n,h:n,checkW:t.spacer.md,checkH:t.spacer.md+t.spacer.xxs,radius:n/2,strokeWidth:e}}});(function(t){_inherits(CheckboxSmall,Ct);var e=_createSuper(CheckboxSmall);function CheckboxSmall(){return _classCallCheck(this,CheckboxSmall),e.apply(this,arguments)}return _createClass(CheckboxSmall,null,[{key:"__themeStyle",get:function get(){return Yt}}]),CheckboxSmall})();var Qt=Object.freeze({__proto__:null,base:function base(t){return {itemSpacing:t.layout.gutterY.xs,scrollIndex:0,itemTransition:_objectSpread2(_objectSpread2({},t.animation.standardEntrance),{},{duration:t.animation.duration.fast})}}}),Jt=function(t){_inherits(Column,X);var e=_createSuper(Column);function Column(){return _classCallCheck(this,Column),e.apply(this,arguments)}return _createClass(Column,[{key:"_shouldScroll",value:function _shouldScroll(){var t=this.alwaysScroll;t||this.neverScroll||(t=this.Items.childList.last&&(this.shouldScrollUp()||this.shouldScrollDown()));return t}},{key:"_render",value:function _render(t,e){if(this._prevLastScrollIndex=this._lastScrollIndex,this.plinko&&e&&e.selected&&(0!==this.items.indexOf(e)||!e.skipPlinko)){var n=this.checkSkipPlinko(e,t);t.selectedIndex=this._getIndexOfItemNear(t,n||e);}else t&&!t.selectedIndex&&(t.selectedIndex=0);if(this.Items.children.length){if(this._shouldScroll()){var i=this.selectedIndex>this._lastScrollIndex?this.Items.children[this._lastScrollIndex-this.scrollIndex]:this.selected;this.Items.children[this._firstFocusableIndex()]===i&&(i=this.Items.children[0]);var o=(this.Items.children[this.scrollIndex]||{y:0}).y,r=[-(i||this.Items.childList.first).transition("y").targetValue+(i===this.selected?o:0),this.style.itemTransition],a=-i.y+(i===this.selected?o:0);this.applySmooth(this.Items,{y:a},{y:r}),this.shouldSmooth||this._updateTransitionTarget(this.Items,"y",a);}}else this.applySmooth(this.Items,{y:this.itemPosY}),this.shouldSmooth||this._updateTransitionTarget(this.Items,"y",this.itemPosY);this.onScreenEffect(this.onScreenItems);}},{key:"_performRender",value:function _performRender(){this._render(this.selected,this.prevSelected);}},{key:"checkSkipPlinko",value:function checkSkipPlinko(t,e){var n=this;if(!t||!t.skipPlinko||[0,this.items.length-1].includes(this.items.indexOf(t)))return null;var i=this.items.indexOf(t),o=i-this.items.indexOf(e),r=(o>0?this.items.slice(i).map((function(t){return {skipPlinko:t.skipPlinko,index:n.items.indexOf(t)}})):this.items.slice(0,i+1).map((function(t){return {skipPlinko:t.skipPlinko,index:n.items.indexOf(t)}})).reverse()).find((function(t){return t.skipPlinko&&!n.items[t.index+o].skipPlinko})),a=r?r.index+o:i+o;return this.items[a]}},{key:"_itemsY",get:function get(){return r(this.Items)}},{key:"$removeItem",value:function $removeItem(t){if(t){var e=t===this.selected;this.Items.childList.remove(t),this.queueRequestUpdate(),(e||this.selectedIndex>=this.items.length)&&(this.selectedIndex=this._selectedIndex),this.items.length||this.fireAncestors("$columnEmpty");}}},{key:"$columnChanged",value:function $columnChanged(){this.queueRequestUpdate();}},{key:"_isOnScreen",value:function _isOnScreen(t){return !!t&&this._isComponentVerticallyVisible(t)}},{key:"onScreenEffect",value:function onScreenEffect(){}}],[{key:"__componentName",get:function get(){return "Column"}},{key:"__themeStyle",get:function get(){return Qt}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(Column),"_template",this).call(this)),{},{direction:"column"})}}]),Column}(),Zt=function base(t){var e=t.spacer.lg,n=t.radius.xl,i=Math.max(n-e/2,0);return {h:8*t.spacer.md,iconStyle:{},logoStyle:{radius:i,w:7*t.spacer.md,h:6*t.spacer.md},minWidth:9*t.spacer.md,paddingX:e,paddingXNoTitle:t.spacer.md,prefixH:6*t.spacer.md,prefixPadding:t.spacer.md,radius:n,titlePadding:t.spacer.md}},$t=Object.freeze({__proto__:null,base:Zt}),te=function(t){_inherits(Control,ut);var e=_createSuper(Control);function Control(){return _classCallCheck(this,Control),e.apply(this,arguments)}return _createClass(Control,[{key:"_update",value:function _update(){this._updatePrefixStyle(),_get(_getPrototypeOf(Control.prototype),"_update",this).call(this),this._updateCollapseStatus();}},{key:"_updateCollapseStatus",value:function _updateCollapseStatus(){this._Title&&(this._Title.visible=!this._collapse);}},{key:"_updatePrefixStyle",value:function _updatePrefixStyle(){this._prefix&&(this.logo?this._updatePrefixObj(this.logo,{style:_objectSpread2({color:void 0},this.style.logoStyle)}):this.icon&&this._updatePrefixObj(this.icon,{style:this.style.iconStyle}));}},{key:"_patchTitle",value:function _patchTitle(t,e){this._Title.patch({x:t,mountX:e});}},{key:"_updateContentPosition",value:function _updateContentPosition(){if(this._prefix&&this._Title)switch(this._Content.patch({mountX:0,x:this._paddingLeft}),this._justify){case"left":this._patchTitle(0,0);break;case"right":if(this.w<this._Prefix.w+this._Title.w)this._patchTitle(0,0);else {var t=this.w-(this._paddingLeft+this._paddingRight+this._Prefix.w+this.style.titlePadding);this._patchTitle(t,1);}break;default:if(this.fixed)if(this.w<this._Prefix.w+this._Title.w)this._patchTitle(0,0);else {var e=(this.w-(this._paddingLeft+this._Prefix.w+this._paddingRight))/2;this._patchTitle(e,.5);}else {var n=(this.w-(this._paddingLeft+this._Prefix.w+this.style.titlePadding+this._paddingRight))/2;this._patchTitle(n,.5);}}else _get(_getPrototypeOf(Control.prototype),"_updateContentPosition",this).call(this),this._Title&&this._patchTitle(0,0);}},{key:"_setPrefix",value:function _setPrefix(){}},{key:"_setSuffix",value:function _setSuffix(){}},{key:"_updatePrefixObj",value:function _updatePrefixObj(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};this._prefix=_objectSpread2({type:E,icon:t},e);}},{key:"_setIcon",value:function _setIcon(t){return this.logo||(t?this._updatePrefixObj(t,{style:this.style.iconStyle}):this._prefix=t),t}},{key:"_setLogo",value:function _setLogo(t){return t?this._updatePrefixObj(t,{style:_objectSpread2({color:void 0},this.style.logoStyle)}):this.icon?this._updatePrefixObj(this.icon):this._prefix=t,t}},{key:"_paddingLeft",get:function get(){return this.logo?this.style.paddingXNoTitle:this.style.paddingX}},{key:"_paddingRight",get:function get(){return !this.logo||this._hasTitle&&!this._collapse?this.style.paddingX:this.style.paddingXNoTitle}},{key:"_collapse",get:function get(){return this.shouldCollapse&&!this._isFocusedMode}},{key:"_announceComponentName",get:function get(){return Control.__componentName}}],[{key:"__componentName",get:function get(){return "Control"}},{key:"__themeStyle",get:function get(){return $t}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Control),"properties",this)),["icon","logo","shouldCollapse"])}}]),Control}(),ee=Object.freeze({__proto__:null,base:function base(t){var e=Zt(t),n=7*t.spacer.md,i=(e.h-n)/2,o=Math.max(e.radius-i,0);return {h:n,logoStyle:{radius:Math.max(o-e.paddingX/2,0),h:5*t.spacer.md,w:6*t.spacer.md},prefixH:5*t.spacer.md,radius:o,textStyle:t.typography.button2,minWidth:8*t.spacer.md}}});(function(t){_inherits(ControlSmall,te);var e=_createSuper(ControlSmall);function ControlSmall(){return _classCallCheck(this,ControlSmall),e.apply(this,arguments)}return _createClass(ControlSmall,null,[{key:"__componentName",get:function get(){return "ControlSmall"}},{key:"__themeStyle",get:function get(){return ee}}]),ControlSmall})();var ie=Object.freeze({__proto__:null,base:function base(t){return {w:getWidthByUpCount(t,1),titleMarginLeft:t.layout.gutterX.xs,titleTextStyle:_objectSpread2(_objectSpread2({},t.typography.headline1),{},{textColor:t.color.textNeutral}),rowMarginTop:t.layout.gutterY.xs}},tone:function tone(t){return {neutral:{titleTextStyle:{textColor:t.color.textNeutral}},inverse:{titleTextStyle:{textColor:t.color.textInverse}},brand:{titleTextStyle:{textColor:t.color.textNeutral}}}}}),oe=function(t){_inherits(TitleRow,G);var e=_createSuper(TitleRow);function TitleRow(){return _classCallCheck(this,TitleRow),e.apply(this,arguments)}return _createClass(TitleRow,[{key:"_titleLoaded",value:function _titleLoaded(){this._updateRow();}},{key:"_update",value:function _update(){_get(_getPrototypeOf(TitleRow.prototype),"_update",this).call(this),this._updateTitle(),this._updateRow();}},{key:"_updateTitle",value:function _updateTitle(){this.title?this._Title.patch({x:this.style.titleMarginLeft,content:this.title,style:{textStyle:this.style.titleTextStyle}}):this._Title&&this._Title.patch({h:0,content:""});}},{key:"_updateRow",value:function _updateRow(){this.Items.patch({y:this._Title.finalH+this.style.rowMarginTop}),this.patch({w:this.w||this.style.w,h:this.Items.y+this.Items.h});}},{key:"announce",get:function get(){return this._announce||this._Title&&this._Title.announce},set:function set(t){_set(_getPrototypeOf(TitleRow.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "TitleRow"}},{key:"__themeStyle",get:function get(){return ie}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({Title:{type:st,signals:{textBoxChanged:"_titleLoaded"}}},_get(_getPrototypeOf(TitleRow),"_template",this).call(this)),{},{autoResizeHeight:!1})}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(TitleRow),"properties",this)),["title"])}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(TitleRow),"tags",this)),["Title"])}}]),TitleRow}(),re=Object.freeze({__proto__:null,base:function base(t){return {extraItemSpacing:t.spacer.lg}}});(function(t){_inherits(ControlRow,oe);var e=_createSuper(ControlRow);function ControlRow(){return _classCallCheck(this,ControlRow),e.apply(this,arguments)}return _createClass(ControlRow,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(ControlRow.prototype),"_construct",this).call(this),this._leftControls=[],this._contentItems=[],this._rightControls=[],this._lastLeftControlIndex=-1,this._lastItemIndex=-1,this._lazyLoadBuffer=0;}},{key:"_updateContent",value:function _updateContent(){var t=[];this.leftControls.length&&t.push.apply(t,_toConsumableArray(this._withExtraSpacing(this.leftControls,!0))),this.contentItems.length&&t.push.apply(t,_toConsumableArray(this._withExtraSpacing(this.contentItems))),this.rightControls.length&&t.push.apply(t,_toConsumableArray(this.rightControls)),t.length&&this.patch({alpha:1,items:t,selectedIndex:this.leftControls.length,startLazyScrollIndex:this.leftControls.length,stopLazyScrollIndex:this.leftControls.length+this.contentItems.length-1});}},{key:"_withExtraSpacing",value:function _withExtraSpacing(t){var e=arguments.length>1&&void 0!==arguments[1]&&arguments[1],n=_toConsumableArray(t),i=e?this._prevLeftControls:this._prevItems;return i&&i.length&&n[i.length-1]&&(n[i.length-1].extraItemSpacing=0),n[n.length-1].extraItemSpacing=null==this.extraItemSpacing?this.style.extraItemSpacing:this.extraItemSpacing,e?this._prevLeftControls=n:this._prevItems=n,n}},{key:"_getMoreItems",value:function _getMoreItems(){if(this.lazyLoadBuffer){var t=this.contentItems.length-1-this.lazyLoadBuffer;this.selectedIndex-this.leftControls.length>=t&&this.selectedIndex<this.leftControls.length+this.contentItems.length&&this.loadMoreItems();}}},{key:"loadMoreItems",value:function loadMoreItems(){this.signal("loadMoreItems");}},{key:"_selectedChange",value:function _selectedChange(t,e){_get(_getPrototypeOf(ControlRow.prototype),"_selectedChange",this).call(this,t,e),this._getMoreItems();}},{key:"_appendItemsAt",value:function _appendItemsAt(t,e,n){var i=_toConsumableArray(t);null!=n&&(this.items[n].extraItemSpacing=void 0,i[i.length-1].extraItemSpacing=null==this.extraItemSpacing?this.style.extraItemSpacing:this.extraItemSpacing),this.appendItemsAt(i,e);}},{key:"addContentItems",value:function addContentItems(t){var e=this._createContentItems(t),n=this._lastItemIndex+1;this._appendItemsAt(e,n,this._lastItemIndex),this._lastItemIndex+=e.length,this._contentItems&&(this._contentItems=[].concat(_toConsumableArray(this.contentItems),_toConsumableArray(e))),this.patch({stopLazyScrollIndex:n+e.length-1});}},{key:"addContentItemsAt",value:function addContentItemsAt(t,e){var n=this._createContentItems(t),i=this._lastLeftControlIndex+1+e;if(i===this._lastItemIndex+1)this.addContentItems(n);else {var o;if(this._appendItemsAt(n,i),this._contentItems)(o=this._contentItems).splice.apply(o,[i,0].concat(_toConsumableArray(n))),this._lastItemIndex=this.contentItems.length-1;this.patch({stopLazyScrollIndex:this._lastItemIndex+n.length});}}},{key:"removeContentItemAt",value:function removeContentItemAt(t){var e=this._lastLeftControlIndex+1+t;this.removeItemAt(e),this._lastItemIndex--,this._contentItems&&this._contentItems.splice(t,1),this.patch({stopLazyScrollIndex:this.leftControls.length+this.contentItems.length-1});}},{key:"addLeftControls",value:function addLeftControls(t){var e=this._createControls(t),n=this._lastLeftControlIndex+1;this._appendItemsAt(e,n,this._lastLeftControlIndex),this._leftControls&&(this._leftControls=[].concat(_toConsumableArray(this._leftControls),_toConsumableArray(t)),this._lastLeftControlIndex=this._leftControls.length-1,this._lastItemIndex+=t.length),this.patch({startLazyScrollIndex:n+e.length});}},{key:"addLeftControlsAt",value:function addLeftControlsAt(t,e){var n=this._createControls(t);if(e===this._lastLeftControlIndex+1)this.addLeftControls(t);else {var i;if(this._appendItemsAt(n,e),this.leftControls)(i=this._leftControls).splice.apply(i,[e,0].concat(_toConsumableArray(t))),this._lastLeftControlIndex=this._leftControls.length-1,this._lastItemIndex+=t.length;this.patch({startLazyScrollIndex:this._lastLeftControlIndex?this._lastLeftControlIndex+1:t.length});}}},{key:"removeLeftControlAt",value:function removeLeftControlAt(t){this.removeItemAt(t),this._lastLeftControlIndex--,this._lastItemIndex--,this.leftControls&&this._leftControls.splice(t,1),this.stopLazyScrollIndex=this.leftControls.length+this.contentItems.length-1;}},{key:"addRightControls",value:function addRightControls(t){var e;(e=this._rightControls).push.apply(e,_toConsumableArray(t)),this._appendItemsAt(this._createControls(t),this.items.length);}},{key:"addRightControlsAt",value:function addRightControlsAt(t,e){var n,i=this._leftControls.length+this._contentItems.length+e;(n=this._rightControls).splice.apply(n,[e,0].concat(_toConsumableArray(t))),this._appendItemsAt(this._createControls(t),i);}},{key:"removeRightControlAt",value:function removeRightControlAt(t){var e=this.leftControls.length+this.contentItems.length+t;this.removeItemAt(e),this.rightControls&&this._rightControls.splice(t,1);}},{key:"_createControls",value:function _createControls(t){return t.map((function(t){return _objectSpread2({backgroundType:"fill",centerInParent:!0},t)}))}},{key:"_createContentItems",value:function _createContentItems(t){return t.map((function(t){return _objectSpread2(_objectSpread2({},t),{},{centerInParent:!0})}))}},{key:"_setLeftControls",value:function _setLeftControls(t){this._leftControls=this._createControls(t),this._lastLeftControlIndex=t.length-1,this._updateContent();}},{key:"_getLeftControls",value:function _getLeftControls(){return this._leftControls}},{key:"_setRightControls",value:function _setRightControls(t){this._rightControls=this._createControls(t),this._updateContent();}},{key:"_getRightControls",value:function _getRightControls(){return this._rightControls}},{key:"_getContentItems",value:function _getContentItems(){return this._contentItems}},{key:"_setContentItems",value:function _setContentItems(t){this._contentItems=this._createContentItems(t),this._lastItemIndex=this._lastLeftControlIndex+t.length,this._updateContent();}},{key:"_getLeftControlItems",value:function _getLeftControlItems(){return this.leftControls.length?this.items.slice(0,this._lastLeftControlIndex+1):[]}},{key:"_getContentItemItems",value:function _getContentItemItems(){return this.contentItems.length?this.items.slice(this._lastLeftControlIndex+1,this._lastItemIndex+1):[]}},{key:"_getRightControlItems",value:function _getRightControlItems(){if(this.rightControls.length){var t=this._lastItemIndex||this._lastLeftControlIndex;return t?this.items.slice(t+1):this.items}return []}},{key:"leftControls",get:function get(){return this._getLeftControls()},set:function set(t){this._setLeftControls(t);}},{key:"rightControls",get:function get(){return this._getRightControls()},set:function set(t){this._setRightControls(t);}},{key:"contentItems",get:function get(){return this._getContentItems()},set:function set(t){this._setContentItems(t);}},{key:"lazyLoadBuffer",get:function get(){return this._lazyLoadBuffer},set:function set(t){this._lazyLoadBuffer=t,this._getMoreItems();}}],[{key:"__componentName",get:function get(){return "ControlRow"}},{key:"__themeStyles",get:function get(){return re}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(ControlRow),"_template",this).call(this)),{},{alpha:0,lazyScroll:!0,signals:{selectedChange:"_getMoreItems"}})}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(ControlRow),"properties",this)),["extraItemSpacing"])}}]),ControlRow})();var se=Object.freeze({__proto__:null,base:function base(t){return {propertyTextStyle:_objectSpread2(_objectSpread2({},t.typography.headline1),{},{textColor:t.color.textNeutral}),valueTextStyle:_objectSpread2(_objectSpread2({},t.typography.body1),{},{textColor:t.color.textNeutral})}}}),le=function(t){_inherits(Spacer,W);var e=_createSuper(Spacer);function Spacer(){return _classCallCheck(this,Spacer),e.apply(this,arguments)}return _createClass(Spacer,[{key:"_update",value:function _update(){this._Line.w=this.w,this._TickRight.x=this._Line.w,this.lineColor&&(this._Line.color=this._TickLeft.color=this._TickRight.color=this.lineColor),this.rotation=this.vertical?Math.PI/2:0,this.signal("spacerLoaded");}}],[{key:"__componentName",get:function get(){return "Spacer"}},{key:"_template",value:function _template(){return {Line:{h:Spacer._lineThickness,rect:!0,mountY:.5,TickLeft:_objectSpread2(_objectSpread2({},Spacer._tick),{},{x:-1*Spacer._lineThickness}),TickRight:Spacer._tick}}}},{key:"properties",get:function get(){return ["lineColor"]}},{key:"tags",get:function get(){return ["Line","TickLeft","TickRight"]}},{key:"_lineThickness",get:function get(){return 3}},{key:"_tickLength",get:function get(){return 25}},{key:"_tick",get:function get(){return {rect:!0,mountY:.5,w:Spacer._lineThickness,h:Spacer._tickLength,y:Spacer._lineThickness/2}}}]),Spacer}();(function(t){_inherits(GridOverlay,W);var e=_createSuper(GridOverlay);function GridOverlay(){return _classCallCheck(this,GridOverlay),e.apply(this,arguments)}return _createClass(GridOverlay,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(GridOverlay.prototype),"_construct",this).call(this),this._showColumns=this._showMargins=this._showSafe=this._showGutters=this._showText=!0;}},{key:"_update",value:function _update(){this._updateGlobalThemeProps(),this._updateMargins(),this._updateSafe(),this._updateColumns(),this._updateGutters(),this._updateText(),this._updateVisibility();}},{key:"_updateVisibility",value:function _updateVisibility(){this._Columns.smooth={alpha:Number(this.showColumns)},this._Margins.smooth={alpha:Number(this.showMargins)},this._Safe.smooth={alpha:Number(this.showSafe)},this._Gutters.smooth={alpha:Number(this.showGutters)},this._TextPanel.smooth={alpha:Number(this.showText)};}},{key:"_updateGlobalThemeProps",value:function _updateGlobalThemeProps(){var t=k$1.theme,e=t.layout,n=t.color,i=e.screenW,o=e.screenH,r=e.columnCount,a=e.marginX,s=e.marginY,l=e.gutterX,c=e.gutterY,u=e.safe;this._screenW=i,this._screenH=o,this._columnCount=r,this._marginX=a,this._marginY=s,this._safe=u,this._gutterX=l.xs,this._gutterY=c.xs,this._columnColor=n.interactiveNeutralFocusSoft,this._marginColor=n.green,this._safeColor=n.red,this._gutterColor=n.blue;}},{key:"_updateMargins",value:function _updateMargins(){var t={lineColor:this._marginColor},e=_objectSpread2(_objectSpread2({},t),{},{w:this._marginX});this._MarginHorizontal.y=this._screenH/2,this._MarginLeft.patch(e),this._MarginRight.patch(e),this._MarginRight.x=this._screenW-this._marginX;var n=_objectSpread2(_objectSpread2({},t),{},{w:this._marginY});this._MarginVertical.x=this._marginX-n.w/2,this._MarginTop.patch(n),this._MarginTop.patch(n),this._MarginTop.y=n.w/2;}},{key:"_updateSafe",value:function _updateSafe(){var t={lineColor:this._safeColor,w:this._safe};this._SafeHorizontal.y=this._screenH/4,this._SafeLeft.patch(t),this._SafeRight.patch(t),this._SafeRight.x=this._screenW-this._safe,this._SafeVertical.x=(this._screenW-t.w)/2,this._SafeVertical.y=t.w/2,this._SafeTop.patch(t),this._SafeBottom.patch(t),this._SafeBottom.y=this._screenH-this._safe;}},{key:"_updateColumns",value:function _updateColumns(){this._Columns.patch({w:this._screenW,h:this._screenH,x:this._marginX,style:{itemSpacing:this._gutterX},items:this._columnRects});}},{key:"_columnRects",get:function get(){var t=this;return Array.apply(null,{length:this._columnCount}).map((function(){return {rect:!0,w:getWidthByColumnSpan(t.theme,1),h:t._screenH,color:t._columnColor}}))}},{key:"_updateGutters",value:function _updateGutters(){var t={lineColor:this._gutterColor,w:this._gutterY};this._GutterHorizontal.patch(_objectSpread2(_objectSpread2({},t),{},{x:(this._screenW-t.w)/2,y:this._screenH/4}));}},{key:"_updatePropertyTextStyle",value:function _updatePropertyTextStyle(t,e){var n={textStyle:_objectSpread2({},this.style.propertyTextStyle)};e&&(n.textStyle.textColor=e),t.Items.tag("Property").style=n;}},{key:"_updateValueTextStyle",value:function _updateValueTextStyle(t){t.Items.tag("Value").style={textStyle:this.style.valueTextStyle};}},{key:"_updateText",value:function _updateText(){var t="Property",e="Value";this._TextPanel.x=this._screenW-this._marginX-getWidthByColumnSpan(this.theme,3),this._TextPanel.y=this._safe,this._TextScreenW.Items.tag(t).content="Screen Width",this._TextScreenW.Items.tag(e).content="".concat(this._screenW,"px"),this._updatePropertyTextStyle(this._TextScreenW),this._updateValueTextStyle(this._TextScreenW),this._TextScreenH.Items.tag(t).content="Screen Height",this._TextScreenH.Items.tag(e).content="".concat(this._screenH,"px"),this._updatePropertyTextStyle(this._TextScreenH),this._updateValueTextStyle(this._TextScreenH),this._TextColumnCount.Items.tag(t).content="Columns",this._TextColumnCount.Items.tag(e).content="".concat(this._columnCount,", ").concat(Math.round(getWidthByColumnSpan(this.theme,1)),"px each"),this._updatePropertyTextStyle(this._TextColumnCount),this._updateValueTextStyle(this._TextColumnCount),this._TextMarginX.Items.tag(t).content="Margin-X",this._TextMarginX.Items.tag(e).content="".concat(this._marginX,"px"),this._updatePropertyTextStyle(this._TextMarginX,this._marginColor),this._updateValueTextStyle(this._TextMarginX),this._TextMarginY.Items.tag(t).content="Margin-Y",this._TextMarginY.Items.tag(e).content="".concat(this._marginY,"px"),this._updatePropertyTextStyle(this._TextMarginY,this._marginColor),this._updateValueTextStyle(this._TextMarginY),this._TextGutterY.Items.tag(t).content="Gutter-Y",this._TextGutterY.Items.tag(e).content="XSmall, ".concat(this._gutterY,"px"),this._updatePropertyTextStyle(this._TextGutterY,this._gutterColor),this._updateValueTextStyle(this._TextGutterY),this._TextSafe.Items.tag(t).content="Safe",this._TextSafe.Items.tag(e).content="".concat(this._safe,"px"),this._updatePropertyTextStyle(this._TextSafe,this._safeColor),this._updateValueTextStyle(this._TextSafe);}}],[{key:"__componentName",get:function get(){return "GridOverlay"}},{key:"__themeStyle",get:function get(){return se}},{key:"_template",value:function _template(){var t={type:G,autoResizeHeight:!0,Items:{Property:{type:st,signals:{textBoxChanged:"_update"}},Value:{type:st,signals:{textBoxChanged:"_update"},centerInParent:!0}}};return {Columns:{alpha:.001,type:G},Margins:{alpha:.001,Horizontal:{Left:{type:le,signals:{spacerLoaded:"_update"}},Right:{type:le,signals:{spacerLoaded:"_update"}}},Vertical:{Top:{type:le,vertical:!0}}},Safe:{alpha:.001,Horizontal:{Left:{type:le,signals:{spacerLoaded:"_update"}},Right:{type:le,signals:{spacerLoaded:"_update"}}},Vertical:{Top:{type:le,vertical:!0},Bottom:{type:le,vertical:!0}}},Gutters:{alpha:.001,Horizontal:{type:le,signals:{spacerLoaded:"_update"}}},TextPanel:{alpha:.001,type:Jt,autoResizeHeight:!0,Items:{ScreenW:t,ScreenH:t,ColumnCount:t,MarginX:t,MarginY:t,GutterY:t,Safe:t}}}}},{key:"properties",get:function get(){return ["showColumns","showMargins","showSafe","showGutters","showText"]}},{key:"tags",get:function get(){return ["Columns","Margins",{name:"MarginHorizontal",path:"Margins.Horizontal"},{name:"MarginLeft",path:"Margins.Horizontal.Left"},{name:"MarginRight",path:"Margins.Horizontal.Right"},{name:"MarginVertical",path:"Margins.Vertical"},{name:"MarginTop",path:"Margins.Vertical.Top"},"Safe",{name:"SafeHorizontal",path:"Safe.Horizontal"},{name:"SafeLeft",path:"Safe.Horizontal.Left"},{name:"SafeRight",path:"Safe.Horizontal.Right"},{name:"SafeVertical",path:"Safe.Vertical"},{name:"SafeTop",path:"Safe.Vertical.Top"},{name:"SafeBottom",path:"Safe.Vertical.Bottom"},"Gutters",{name:"GutterHorizontal",path:"Gutters.Horizontal"},"TextPanel",{name:"TextScreenW",path:"TextPanel.Items.ScreenW"},{name:"TextScreenH",path:"TextPanel.Items.ScreenH"},{name:"TextColumnCount",path:"TextPanel.Items.ColumnCount"},{name:"TextMarginX",path:"TextPanel.Items.MarginX"},{name:"TextMarginY",path:"TextPanel.Items.MarginY"},{name:"TextGutterY",path:"TextPanel.Items.GutterY"},{name:"TextSafe",path:"TextPanel.Items.Safe"}]}}]),GridOverlay})();var ue=Object.freeze({__proto__:null,base:function base(t){return {cursorStyle:{textColor:t.color.textNeutral,blink:!0,w:t.spacer.xs,h:t.spacer.xxl},eyebrowTextStyle:_objectSpread2(_objectSpread2({},t.typography.caption1),{},{maxLines:1,textColor:t.color.textNeutral}),helpTextStyle:_objectSpread2(_objectSpread2({},t.typography.caption1),{},{maxLines:1,textColor:t.color.textNeutralSecondary}),minWidth:getWidthByUpCount(t,4),paddingX:t.spacer.xl,paddingY:t.spacer.xl}},mode:function mode(t){return {disabled:{eyebrowTextStyle:{textColor:t.color.textNeutralDisabled},helpTextStyle:{textColor:t.color.textNeutralDisabled}},focused:{cursorStyle:{textColor:t.color.textInverse},eyebrowTextStyle:{textColor:t.color.textNeutral},helpTextStyle:{textColor:t.color.textNeutralSecondary}}}},tone:function tone(t){return {inverse:{mode:{focused:{eyebrowTextStyle:{textColor:t.color.textNeutral},helpTextStyle:{textColor:t.color.textNeutral}}}}}}}),he=function(t){_inherits(Input,lt);var e=_createSuper(Input);function Input(){return _classCallCheck(this,Input),e.apply(this,arguments)}return _createClass(Input,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(Input.prototype),"_construct",this).call(this),this._title="",this.actualTitle="",this.position=this.title?this.title.length:0,this._justify="left",this._fixed=!0,this.w=this.style.minWidth;}},{key:"$itemChanged",value:function $itemChanged(){_get(_getPrototypeOf(Input.prototype),"$itemChanged",this).call(this),this._updateTextWrapper(),this._updateHiddenContent(),this._updateCursorPosition(),this._updateTitleScrollPosition();}},{key:"_onTitleTextBoxChanged",value:function _onTitleTextBoxChanged(){this._updateHiddenContent();}},{key:"_onHiddenTextBoxChanged",value:function _onHiddenTextBoxChanged(){this._updateCursorPosition();}},{key:"_update",value:function _update(){this._updatePassword(),_get(_getPrototypeOf(Input.prototype),"_update",this).call(this),this._updateEyebrow(),this._updateHelpText(),this._updateTextWrapper(),this._updateHiddenContent(),this._updateCursor(),this._updateCursorListening(),this._updateCursorBlink(),this._updateCursorPosition(),this._updateTitleScrollPosition();}},{key:"_updatePassword",value:function _updatePassword(){this.title=this.password?this.mask.repeat(this.actualTitle.length):this.actualTitle;}},{key:"_updateTruncation",value:function _updateTruncation(){this._Title&&this._Title.patch({style:{textStyle:_objectSpread2(_objectSpread2({},this.style.textStyle),{},{wordWrap:!1})}});}},{key:"_updateEyebrow",value:function _updateEyebrow(){this._Eyebrow.patch({content:this.eyebrow,style:{textStyle:this.style.eyebrowTextStyle},mountY:1,x:this.style.paddingX,y:this.y-this.style.paddingY});}},{key:"_updateHelpText",value:function _updateHelpText(){this._HelpText.patch({content:this.helpText,style:{textStyle:this.style.helpTextStyle},x:this.style.paddingX,y:this.y+this.innerH+this.style.paddingY});}},{key:"_updateTextWrapper",value:function _updateTextWrapper(){this._TextWrapper.clipping=!0,this._TextWrapper.w=this._visibleContentWidth,this._Title&&(this._TextWrapper.h=this._Title.h);}},{key:"_updateHiddenContent",value:function _updateHiddenContent(){this._HiddenContent||this._Content.patch({HiddenContent:{type:st,mountY:.5,y:function y(t){return t/2},signals:{textBoxChanged:"_onHiddenTextBoxChanged"}}});var t=this.title,e=void 0===t?"":t,n=this.position,i=this.password,o=this.mask,r=i?o.repeat(e.length).substring(0,n):e.substring(0,n);this._HiddenContent.patch({style:{textStyle:this.style.textStyle},content:r}),this._HiddenContent._Text&&this._HiddenContent._Text.patch({alpha:.001});}},{key:"_updateCursor",value:function _updateCursor(){this.style.cursorStyle&&this.style.cursorStyle.blink&&(this._Cursor||(this._Content.patch({Cursor:{rect:!0,mountY:.5}}),this.cursorBlink=this._Cursor.animation({duration:1.5,repeat:-1,actions:[{p:"alpha",v:{0:0,.5:1,1:0}}]})),this._Cursor.patch(this.style.cursorStyle));}},{key:"_updateCursorListening",value:function _updateCursorListening(){this._isDisabledMode?this.cursorBlink&&(this.isCursorActive?this.cursorBlink.start():this.cursorBlink.stop()):this.cursorBlink&&!this.cursorBlink.isPlaying()&&this.cursorBlink.start(),this._Cursor.smooth={color:this.style.cursorStyle.textColor};}},{key:"_updateCursorBlink",value:function _updateCursorBlink(){this.cursorBlink&&(this.isCursorActive?this.cursorBlink.start():(this.cursorBlink.stop(),this._Cursor.patch({alpha:.001})));}},{key:"_updateCursorPosition",value:function _updateCursorPosition(){this._Cursor.x=this._titleX+(this._isOverflow?this._TextWrapper.w:this._HiddenContent.w);}},{key:"_updateTitleScrollPosition",value:function _updateTitleScrollPosition(){this._Title&&(this._Title.x=this._isOverflow?this._visibleContentWidth-this._HiddenContent.w:0,this._HiddenContent&&this._TextWrapper&&(this._HiddenContent.x=this._TextWrapper.x+this._Title.x));}},{key:"_suffixX",get:function get(){var t=this._hasPrefix?this.w-this._paddingLeft-this._paddingRight-this._prefixW:this.w-this._paddingLeft-this._paddingRight-this.style.paddingX;return t>0?t:0}},{key:"isCursorActive",get:function get(){return this.listening&&(this._isFocusedMode||this._isUnfocusedMode)}},{key:"_isOverflow",get:function get(){return this._HiddenContent.w>this._visibleContentWidth}},{key:"_visibleContentWidth",get:function get(){return this._fixedWordWrapWidth}},{key:"value",get:function get(){return this.actualTitle},set:function set(t){this.title=this.actualTitle=t,this.position=0,this._updatePassword();}},{key:"clear",value:function clear(){this.isCursorActive&&(this.title=this.actualTitle="",this.position=0);}},{key:"insert",value:function insert(t){this.isCursorActive&&(this.actualTitle=this.actualTitle.slice(0,this.position)+t+this.actualTitle.slice(this.position),this._updatePassword(),this.position+=t.length);}},{key:"backspace",value:function backspace(){this.isCursorActive&&this.position>0&&(this.actualTitle=this.actualTitle.slice(0,this.position-1)+this.actualTitle.slice(this.position),this._updatePassword(),this.position--);}},{key:"_handleLeft",value:function _handleLeft(){return !this._isDisabledMode&&(this.moveLeft(),"function"!=typeof this.onLeft||this.onLeft(this))}},{key:"_handleRight",value:function _handleRight(){return !this._isDisabledMode&&(this.moveRight(),"function"!=typeof this.onRight||this.onRight(this))}},{key:"moveLeft",value:function moveLeft(){return this.position>=0&&(this.position--,!0)}},{key:"moveRight",value:function moveRight(){return this.position<this.title.length&&(this.position++,!0)}},{key:"announce",get:function get(){return this._announce?this._announce:this.password?[this.eyebrow,this.helpText]:[this.eyebrow,"Input: "+this.title,this.helpText]},set:function set(t){_set(_getPrototypeOf(Input.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Input"}},{key:"__themeStyle",get:function get(){return ue}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(Input),"_template",this).call(this)),{},{Eyebrow:{type:st},HelpText:{type:st}})}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Input),"properties",this)),["actualTitle","cursor","eyebrow","helpText","listening","mask","password","position"])}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Input),"tags",this)),["Eyebrow","HelpText",{name:"Cursor",path:"Content.Cursor"},{name:"HiddenContent",path:"Content.HiddenContent"}])}}]),Input}(),de=Object.freeze({__proto__:null,base:function base(t){var e=t.typography.headline2;return {h:9*t.spacer.md,minWidth:7*t.spacer.md,paddingX:t.spacer.md,textStyle:e,sizes:{sm:7*t.spacer.md,md:15*t.spacer.md,lg:23*t.spacer.md,xl:47*t.spacer.md,xxl:95*t.spacer.md},iconW:e.lineHeight,iconH:e.lineHeight}}}),_e={a:"alpha",b:"bravo",c:"charlie",d:"delta",e:"echo",f:"foxtrot",g:"golf",h:"hotel",i:"india",j:"juliett",k:"kilo",l:"lima",m:"mike",n:"november",o:"oscar",p:"papa",q:"quebec",r:"romeo",s:"sierra",t:"tango",u:"uniform",v:"victor",w:"whiskey",x:"x-ray",y:"yankee",z:"zulu"};function getNato(t){return function isAlphaChar(t){return /^[A-Za-z]$/.test(t)}(t)?"".concat(t,", ").concat(_e[t.toLowerCase()]):t}var pe=function(t){_inherits(Key,lt);var e=_createSuper(Key);function Key(){return _classCallCheck(this,Key),e.apply(this,arguments)}return _createClass(Key,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(Key.prototype),"_construct",this).call(this),this._size="sm",this._fixed=!0;}},{key:"_update",value:function _update(){this.w=this.style.sizes[this.size]||this.style.sizes.sm,this._updatePrefixStyle(),_get(_getPrototypeOf(Key.prototype),"_update",this).call(this);}},{key:"_updatePrefixStyle",value:function _updatePrefixStyle(){this._prefix&&this.icon&&this._updatePrefixObj(this.icon,{style:this.style.iconStyle});}},{key:"_updatePrefixObj",value:function _updatePrefixObj(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};this._prefix=_objectSpread2({type:E,icon:t,w:this.style.iconW,h:this.style.iconH},e);}},{key:"_setIcon",value:function _setIcon(t){return t?this._updatePrefixObj(t,{style:this.style.iconStyle}):this._prefix=t,t}},{key:"announce",get:function get(){return this._announce?this._announce:function isUpperCase(t){return /^[A-Z]$/.test(t)}(this.title)?"Capital ".concat(getNato(this.title),", button"):getNato(this.title)+", button"},set:function set(t){_set(_getPrototypeOf(Key.prototype),"announce",t,this,!0);}},{key:"_handleEnter",value:function _handleEnter(){return "function"==typeof this.onEnter?this.onEnter(this):(this.toggle&&this.fireAncestors("$toggleKeyboard",this.toggle),this.fireAncestors("$onSoftKey",{key:this.keyId||this.title,toggle:this.toggle}),!1)}}],[{key:"__componentName",get:function get(){return "Key"}},{key:"__themeStyle",get:function get(){return de}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Key),"properties",this)),["icon","size","toggle"])}}]),Key}(),ye=Object.freeze({__proto__:null,base:function base(t){return {keySpacing:t.spacer.md,screenW:t.layout.screenW,marginX:t.layout.marginX,inputSpacing:10*t.spacer.md+t.spacer.md,inputStyle:{radius:t.radius.md}}}}),fe=function capitalize(t){return t.charAt(0).toUpperCase()+t.slice(1)},ge=function(t){_inherits(Keyboard,W);var e=_createSuper(Keyboard);function Keyboard(){return _classCallCheck(this,Keyboard),e.apply(this,arguments)}return _createClass(Keyboard,[{key:"_init",value:function _init(){k$1.on("themeUpdate",this._setShouldUpdateTheme.bind(this)),_get(_getPrototypeOf(Keyboard.prototype),"_init",this).call(this);}},{key:"_setShouldUpdateTheme",value:function _setShouldUpdateTheme(){this.shouldUpdateTheme=!0;}},{key:"_detach",value:function _detach(){k$1.off("themeUpdate",this._setShouldUpdateTheme.bind(this));}},{key:"_focus",value:function _focus(){_get(_getPrototypeOf(Keyboard.prototype),"_focus",this).call(this),this.fireAncestors("$keyboardFocused",!0);}},{key:"_getFocused",value:function _getFocused(){return this._currentKeyboard||this}},{key:"_update",value:function _update(){this._currentFormat||(this._currentFormat=this.defaultFormat),this.centerKeyboard?this.x=(this.style.screenW-this.w)/2-this.style.marginX:this.x=0,this._formatsChanged||this.shouldUpdateTheme?(this._createFormat(this._currentFormat),this._refocus(),this._formatsChanged=!1,this.shouldUpdateTheme=!1):this._formatKeys();}},{key:"_createFormat",value:function _createFormat(t){var e=this.formats[t];if(e){var n=this._formatKeyboardData(e);this._createKeyboard(t,this._createRows(n,t));}}},{key:"_createKeyboard",value:function _createKeyboard(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:[];t=fe(t),1===e.length?this.patch(_defineProperty$1({},t,e[0])):this.patch(_defineProperty$1({},t,{type:Jt,plinko:!0,items:e,style:{itemSpacing:this.style.keySpacing},autoResizeWidth:!0,autoResizeHeight:!0,neverScroll:!0}));}},{key:"_createRows",value:function _createRows(){var t=this,e=arguments.length>1?arguments[1]:void 0;return (arguments.length>0&&void 0!==arguments[0]?arguments[0]:[]).map((function(n){return {type:G,autoResizeHeight:!0,autoResizeWidth:!0,centerInParent:t.centerKeyboard,neverScroll:!0,wrapSelected:void 0===t.rowWrap||t.rowWrap,style:{itemSpacing:t.style.keySpacing},items:t._createKeys(n,e)}}))}},{key:"_createKeys",value:function _createKeys(){var t=this,e=arguments.length>1?arguments[1]:void 0;return (arguments.length>0&&void 0!==arguments[0]?arguments[0]:[]).map((function(n){if(!n)return {skipFocus:!0};var i={type:t.keyComponent||pe};if("object"===_typeof(n)){var o,r,a,s=n.keyId||n.title,l=(null===(o=t.style.keyProps)||void 0===o||null===(o=o[e])||void 0===o?void 0:o[s])||(null===(r=t.style.keyProps)||void 0===r?void 0:r[s]);return l&&l.icon?_objectSpread2(_objectSpread2(_objectSpread2({type:t.keyComponent||pe},n),null===(a=t.style.keyProps)||void 0===a?void 0:a[s]),{},{style:{iconStyle:_objectSpread2({},l.iconStyle)},size:l.size||n.size}):_objectSpread2(_objectSpread2({},i),n)}return _objectSpread2(_objectSpread2({},i),{},{title:n})}))}},{key:"_formatKeyboardData",value:function _formatKeyboardData(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[];if(Array.isArray(t)&&t.length){if(!Array.isArray(t[0])&&!this.inline){var e,n,i=[];for(e=0,n=-1;e<t.length;e++)e%this.columnCount==0&&(i[++n]=[]),i[n].push(t[e]);return i}return this.inline?[t]:t}}},{key:"_formatKeys",value:function _formatKeys(){var t=this;Object.keys(this.formats).forEach((function(e){var n=t.tag(fe(e));n&&(n.patch({style:{itemSpacing:t.style.keySpacing}}),n.items.forEach((function(e){e.patch({style:{itemSpacing:t.style.keySpacing},centerInParent:t.centerKeys,wrapSelected:void 0===t.rowWrap||t.rowWrap});})),n.queueRequestUpdate());}));}},{key:"$toggleKeyboard",value:function $toggleKeyboard(t){var e=fe(t);if(t!==this._currentFormat){this._createFormat(t);var n=this.tag(e);this.selectKeyOn(n),this._currentKeyboard.alpha=0,n.alpha=1,this._currentFormat=t;}}},{key:"selectKeyOn",value:function selectKeyOn(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:this.getSelectedKey(),n=e.row,i=e.column;t&&t.constructor&&("Row"===t.constructor.name?t.selectedIndex=i:(t.selectedIndex=n,t.selected.selectedIndex=i));}},{key:"getSelectedKey",value:function getSelectedKey(){var t,e,n=this._currentKeyboard;return "Row"===n.constructor.name?(t=0,e=n.selectedIndex):(t=n.selectedIndex,e=n.selected.selectedIndex),{row:t,column:e}}},{key:"$itemChanged",value:function $itemChanged(){this.w=this._currentKeyboard.w,this.fireAncestors("$itemChanged"),this.signal("keyboardWidthChanged");}},{key:"_setFormats",value:function _setFormats(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return this._formatsChanged=!0,t}},{key:"defaultFormat",get:function get(){return this._defaultFormat||Object.keys(this.formats)[0]},set:function set(t){this._defaultFormat=t;}},{key:"_currentKeyboard",get:function get(){return this.tag(fe(this._currentFormat))}},{key:"columnCount",get:function get(){return this._columnCount?this._columnCount:this.rowCount?this.formats[this.defaultFormat.toLowerCase()].length/this.rowCount:this.inline?this.formats[this.defaultFormat.toLowerCase()].length:11},set:function set(t){this._columnCount=t;}},{key:"announce",get:function get(){return this._announce?this._announce:"Keyboard"+(this.title?", ".concat(this.title):"")},set:function set(t){_set(_getPrototypeOf(Keyboard.prototype),"announce",t,this,!0);}},{key:"announceContext",get:function get(){return this._announceContext||["PAUSE-2","Use arrow keys to choose characters, press center to select"]},set:function set(t){_set(_getPrototypeOf(Keyboard.prototype),"announceContext",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Keyboard"}},{key:"__themeStyle",get:function get(){return ye}},{key:"properties",get:function get(){return ["formats","centerKeyboard","rowWrap","centerKeys","keyComponent"]}}]),Keyboard}();(function(t){_inherits(KeyboardEmail,ge);var e=_createSuper(KeyboardEmail);function KeyboardEmail(){return _classCallCheck(this,KeyboardEmail),e.apply(this,arguments)}return _createClass(KeyboardEmail,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(KeyboardEmail.prototype),"_construct",this).call(this),this.formats=this.emailFormat;}},{key:"emailFormat",get:function get(){return {uppercase:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],["Q","W","E","R","T","Y","U","I","O","P",{title:"#@!",size:"md",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"}],["A","S","D","F","G","H","J","K","L","@",{title:"áöû",size:"md",toggle:"accents",announce:"accents, button",keyId:"accents"}],["Z","X","C","V","B","N","M",{title:".",announce:"period, button"},{title:"-",announce:"dash, button"},{title:"_",announce:"underscore, button"},{title:"shift",size:"md",toggle:"lowercase",announce:"shift off, button",keyId:"shift"}],[{title:".com",announce:"dot, com",size:"md"},{title:".net",announce:"dot, net",size:"md"},{title:".edu",announce:"dot, edu",size:"md"},{title:".org",announce:"dot, org",size:"md"},{title:".co",announce:"dot, co",size:"md"},{title:".uk",announce:"dot, uk",size:"md"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]],lowercase:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],["q","w","e","r","t","y","u","i","o","p",{title:"#@!",size:"md",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"}],["a","s","d","f","g","h","j","k","l","@",{title:"áöû",size:"md",toggle:"accents",announce:"accents, button",keyId:"accents"}],["z","x","c","v","b","n","m",{title:"_",announce:"underscore, button"},{title:".",announce:"period, button"},{title:"-",announce:"dash, button"},{title:"shift",size:"md",toggle:"uppercase",announce:"shift on, button",keyId:"shift"}],[{title:".com",announce:"dot, com",size:"md"},{title:".net",announce:"dot, net",size:"md"},{title:".edu",announce:"dot, edu",size:"md"},{title:".org",announce:"dot, org",size:"md"},{title:".co",announce:"dot, co",size:"md"},{title:".uk",announce:"dot, uk",size:"md"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]],accents:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],["ä","ë","ï","ö","ü","ÿ","à","è","ì","ò",{title:"#@!",size:"md",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"}],["ù","á","é","í","ó","ú","ý","â","ê","@",{title:"abc",size:"md",toggle:"lowercase",announce:"alpha mode, button"}],["î","ô","û","ã","ñ","","","","","","","","","","","","","","","","",{title:"_",announce:"underscore, button"},{title:".",announce:"period, button"},{title:"-",announce:"dash, button"},{title:"shift",size:"md",toggle:"accentsUpper",announce:"shift off, button",keyId:"shift"}],[{title:".com",announce:"dot, com",size:"md"},{title:".net",announce:"dot, net",size:"md"},{title:".edu",announce:"dot, edu",size:"md"},{title:".org",announce:"dot, org",size:"md"},{title:".co",announce:"dot, co",size:"md"},{title:".uk",announce:"dot, uk",size:"md"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]],accentsUpper:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],["Ä","Ë","Ï","Ö","Ü","Ÿ","À","È","Ì","Ò",{title:"#@!",size:"md",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"}],["Ù","Á","É","Í","Ó","Ú","Ý","Â","Ê","@",{title:"abc",size:"md",toggle:"lowercase",announce:"alpha mode, button"}],["Î","Ô","Û","Ã","Ñ","","","","","","","","","","","","","","","","",{title:"_",announce:"underscore, button"},{title:".",announce:"period, button"},{title:"-",announce:"dash, button"},{title:"shift",size:"md",toggle:"accents",announce:"shift off, button",keyId:"shift"}],[{title:".com",announce:"dot, com",size:"md"},{title:".net",announce:"dot, net",size:"md"},{title:".edu",announce:"dot, edu",size:"md"},{title:".org",announce:"dot, org",size:"md"},{title:".co",announce:"dot, co",size:"md"},{title:".uk",announce:"dot, uk",size:"md"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]],symbols:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],[{title:"!",announce:"exclamation, button"},"@","#","$","%",{title:"^",announce:"caret circumflex, button"},"&","*",{title:"(",announce:"open parenthesis, button"},{title:")",announce:"close parenthesis, button"},{title:"abc",size:"md",toggle:"lowercase",announce:"alpha mode, button"}],[{title:"{",announce:"open brace, button"},{title:"}",announce:"close brace, button"},{title:"[",announce:"open bracket, button"},{title:"]",announce:"close bracket, button"},{title:";",announce:"semicolon, button"},{title:'"',announce:"doublequote, button"},{title:",",announce:"comma, button"},{title:"|",announce:"vertical bar, button"},{title:"\\",announce:"backslash, button"},{title:"/",announce:"forwardslash, button"},{title:"áöû",size:"md",toggle:"accents",announce:"accents, button",keyId:"accents"}],[{title:"<",announce:"less than, button"},{title:">",announce:"greater than, button"},{title:"?",announce:"question mark, button"},{title:"=",announce:"equal sign, button"},{title:"`",announce:"grave accent, button"},{title:"~",announce:"tilde, button"},{title:"_",announce:"underscore, button"},{title:":",announce:"colon, button"},{title:"-",announce:"dash, button"},{title:"+",announce:"plus sign, button"}],[{title:".com",announce:"dot, com",size:"md"},{title:".net",announce:"dot, net",size:"md"},{title:".edu",announce:"dot, edu",size:"md"},{title:".org",announce:"dot, org",size:"md"},{title:".co",announce:"dot, co",size:"md"},{title:".uk",announce:"dot, uk",size:"md"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]]}}}],[{key:"__componentName",get:function get(){return "KeyboardEmail"}},{key:"__themeStyle",get:function get(){return ye}}]),KeyboardEmail})();(function(t){_inherits(KeyboardFullScreen,ge);var e=_createSuper(KeyboardFullScreen);function KeyboardFullScreen(){return _classCallCheck(this,KeyboardFullScreen),e.apply(this,arguments)}return _createClass(KeyboardFullScreen,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(KeyboardFullScreen.prototype),"_construct",this).call(this),this.formats=this.fullscreenFormat;}},{key:"fullscreenFormat",get:function get(){return {letters:[["","","","","","","","","",{title:"#@!",size:"lg",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"},{title:"Space",size:"lg",keyId:"space",announce:"space, button"},{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"},"","","","","","","","",""],["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]],symbols:[["","","","","","","","","",{title:"ABC",size:"lg",toggle:"letters",announce:"caps on, button"},{title:"Space",size:"lg",keyId:"space",announce:"space, button"},{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"},"","","","","","","","",""],["1","2","3","4","5","6","7","8","9","0",{title:"!",announce:"exclamation, button"},"@","#","$","%",{title:"^",announce:"caret circumflex, button"},"&","*",{title:"(",announce:"open parenthesis, button"},{title:")",announce:"close parenthesis, button"},{title:"`",announce:"grave accent, button"},"~","_",".","-","+"]]}}}],[{key:"__componentName",get:function get(){return "KeyboardFullScreen"}},{key:"__themeStyle",get:function get(){return ye}}]),KeyboardFullScreen})();(function(t){_inherits(KeyboardNumbers,ge);var e=_createSuper(KeyboardNumbers);function KeyboardNumbers(){return _classCallCheck(this,KeyboardNumbers),e.apply(this,arguments)}return _createClass(KeyboardNumbers,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(KeyboardNumbers.prototype),"_construct",this).call(this),this.formats=this.numbersFormat;}},{key:"numbersFormat",get:function get(){return {numbers:["1","2","3","4","5","6","7","8","9","0"],dialpad:[["1","2","3"],["4","5","6"],["7","8","9"],["0"]],dialpadExtended:[["1","2","3"],["4","5","6"],["7","8","9"],["0"],[{title:"Delete",size:"lg",keyId:"delete",announce:"delete, button"}]]}}}],[{key:"__componentName",get:function get(){return "KeyboardNumbers"}},{key:"__themeStyle",get:function get(){return ye}}]),KeyboardNumbers})();(function(t){_inherits(KeyboardQwerty,ge);var e=_createSuper(KeyboardQwerty);function KeyboardQwerty(){return _classCallCheck(this,KeyboardQwerty),e.apply(this,arguments)}return _createClass(KeyboardQwerty,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(KeyboardQwerty.prototype),"_construct",this).call(this),this.formats=this.qwertyFormat;}},{key:"qwertyFormat",get:function get(){return {uppercase:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],["Q","W","E","R","T","Y","U","I","O","P",{title:"#@!",size:"md",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"}],["A","S","D","F","G","H","J","K","L","@",{title:"áöû",size:"md",toggle:"accents",announce:"accents, button",keyId:"accents"}],["Z","X","C","V","B","N","M",{title:"_",announce:"underscore, button"},{title:".",announce:"period, button"},{title:"-",announce:"dash, button"},{title:"shift",size:"md",toggle:"lowercase",announce:"shift off, button",keyId:"shift"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]],lowercase:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],["q","w","e","r","t","y","u","i","o","p",{title:"#@!",size:"md",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"}],["a","s","d","f","g","h","j","k","l","@",{title:"áöû",size:"md",toggle:"accents",announce:"accents, button",keyId:"accents"}],["z","x","c","v","b","n","m",{title:"_",announce:"underscore, button"},{title:".",announce:"period, button"},{title:"-",announce:"dash, button"},{title:"shift",size:"md",toggle:"uppercase",announce:"shift on, button",keyId:"shift"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]],accents:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],["ä","ë","ï","ö","ü","ÿ","à","è","ì","ò",{title:"#@!",size:"md",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"}],["ù","á","é","í","ó","ú","ý","â","ê","@",{title:"abc",size:"md",toggle:"lowercase",announce:"alpha mode, button"}],["î","ô","û","ã","ñ","","","","","","","","","","","","","","","","",{title:"_",announce:"underscore, button"},{title:".",announce:"period, button"},{title:"-",announce:"dash, button"},{title:"shift",size:"md",toggle:"accentsUpper",announce:"shift off, button",keyId:"shift"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]],accentsUpper:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],["Ä","Ë","Ï","Ö","Ü","Ÿ","À","È","Ì","Ò",{title:"#@!",size:"md",toggle:"symbols",announce:"symbol mode, button",keyId:"symbols"}],["Ù","Á","É","Í","Ó","Ú","Ý","Â","Ê","@",{title:"abc",size:"md",toggle:"lowercase",announce:"alpha mode, button"}],["Î","Ô","Û","Ã","Ñ","","","","","","","","","","","","","","","","",{title:".",announce:"period, button"},{title:"-",announce:"dash, button"},{title:"_",announce:"underscore, button"},{title:"shift",size:"md",toggle:"accents",announce:"shift off, button",keyId:"shift"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]],symbols:[["1","2","3","4","5","6","7","8","9","0",{title:"Delete",size:"md",keyId:"delete",announce:"delete, button"}],[{title:"!",announce:"exclamation, button"},"@","#","$","%",{title:"^",announce:"caret circumflex, button"},"&","*",{title:"(",announce:"open parenthesis, button"},{title:")",announce:"close parenthesis, button"},{title:"abc",size:"md",toggle:"lowercase",announce:"alpha mode, button"}],[{title:"{",announce:"open brace, button"},{title:"}",announce:"close brace, button"},{title:"[",announce:"open bracket, button"},{title:"]",announce:"close bracket, button"},{title:";",announce:"semicolon, button"},{title:'"',announce:"doublequote, button"},{title:",",announce:"comma, button"},{title:"|",announce:"vertical bar, button"},{title:"\\",announce:"backslash, button"},{title:"/",announce:"forwardslash, button"},{title:"áöû",size:"md",toggle:"accents",announce:"accents, button",keyId:"accents"}],[{title:"<",announce:"less than, button"},{title:">",announce:"greater than, button"},{title:"?",announce:"question mark, button"},{title:"=",announce:"equal sign, button"},{title:"`",announce:"grave accent, button"},{title:"~",announce:"tilde, button"},{title:"_",announce:"underscore, button"},{title:":",announce:"colon, button"},{title:"-",announce:"dash, button"},{title:"+",announce:"plus sign, button"}],[{title:"Clear",size:"lg",keyId:"clear",announce:"clear, button"},{title:"Space",size:"xl",keyId:"space",announce:"space, button"},{title:"Done",size:"lg",keyId:"done",announce:"done, button"}]]}}}],[{key:"__componentName",get:function get(){return "KeyboardQwerty"}},{key:"__themeStyle",get:function get(){return ye}}]),KeyboardQwerty})();(function(t){_inherits(KeyboardInput,W);var e=_createSuper(KeyboardInput);function KeyboardInput(){return _classCallCheck(this,KeyboardInput),e.apply(this,arguments)}return _createClass(KeyboardInput,[{key:"_update",value:function _update(){this._Wrapper.style.itemSpacing=this.style.inputSpacing,this._updateKeyboardType(),this._updateInput(),this._updateKeyboard(),this._updateCenterKeyboard();}},{key:"_updateKeyboardType",value:function _updateKeyboardType(){this._Keyboard.constructor!==this.keyboardType&&(this._Wrapper._resetItems(),this._Wrapper.items=[{type:he,ref:"Input"},{type:this.keyboardType,ref:"Keyboard",passSignals:{keyboardWidthChanged:!0}}]);}},{key:"_updateInput",value:function _updateInput(){this._Input.patch(_objectSpread2(_objectSpread2({},this.input),{},{centerInParent:this.centerKeyboard,w:this._Keyboard.w,style:_objectSpread2({},this.style.inputStyle),listening:this._isFocusedMode}));}},{key:"_updateKeyboard",value:function _updateKeyboard(){this._Keyboard.patch({defaultFormat:this.defaultFormat||"lowercase",centerKeyboard:this.centerKeyboard});}},{key:"_updateWidth",value:function _updateWidth(){this._Input.w=this.w=this._Keyboard.w,this.fireAncestors("$itemChanged");}},{key:"_updateCenterKeyboard",value:function _updateCenterKeyboard(){this.centerKeyboard?this.x=(this.style.screenW-this.w)/2-this.style.marginX:this.x=0;}},{key:"$onSoftKey",value:function $onSoftKey(t){var e=t.key,n=void 0===e?"":e;if(!t.toggle)switch(n.toLowerCase()){case"delete":this._Input.backspace();break;case"done":break;case"space":this._Input.insert(" ");break;case"clear":this._Input.clear();break;default:this._Input.insert(n);}}},{key:"$keyboardFocused",value:function $keyboardFocused(t){this._Input.listening=!!t;}},{key:"_getFocused",value:function _getFocused(){return this._Wrapper||this}}],[{key:"__componentName",get:function get(){return "KeyboardInput"}},{key:"properties",get:function get(){return ["centerKeyboard","defaultFormat","input","keyboardType"]}},{key:"__themeStyle",get:function get(){return ye}},{key:"_template",value:function _template(){return {Wrapper:{type:Jt,neverScroll:!0,w:this.w,items:[{type:he,ref:"Input"},{type:ge,ref:"Keyboard",passSignals:{keyboardWidthChanged:!0}}],selectedIndex:1,signals:{keyboardWidthChanged:"_updateWidth"}}}}},{key:"tags",get:function get(){return ["Wrapper",{name:"Input",path:"Wrapper.Input"},{name:"Keyboard",path:"Wrapper.Keyboard"}]}}]),KeyboardInput})();var Se=Object.freeze({__proto__:null,base:function base(t){var e=t.spacer.lg;return {w:e,h:e,radius:e/2}},tone:function tone(t){return {neutral:{circleColor:t.color.interactiveNeutralFocus,mode:{disabled:{circleColor:t.color.fillNeutralDisabled}}},inverse:{circleColor:t.color.interactiveInverseFocus,mode:{disabled:{circleColor:t.color.fillInverseDisabled}}},brand:{circleColor:t.color.interactiveBrandFocus,mode:{disabled:{circleColor:t.color.fillInverseDisabled}}}}}}),Ce=function(e){_inherits(Knob,W);var n=_createSuper(Knob);function Knob(){return _classCallCheck(this,Knob),n.apply(this,arguments)}return _createClass(Knob,[{key:"_update",value:function _update(){this._updateCircleLayout();}},{key:"_updateCircleLayout",value:function _updateCircleLayout(){this.patch({texture:t.Tools.getRoundRect(this.w,this.h,this.style.radius,null,null,!0,this.style.circleColor)});}}],[{key:"__componentName",get:function get(){return "Knob"}},{key:"__themeStyle",get:function get(){return Se}},{key:"_template",value:function _template(){return {mount:.5}}}]),Knob}(),we=Object.freeze({__proto__:null,base:function base(t){return {alpha:t.alpha.primary,descriptionTextStyle:_objectSpread2(_objectSpread2({},t.typography.body3),{},{maxLines:1,textColor:t.color.textNeutralSecondary}),h:3*t.spacer.xxl,logoStyle:{w:2*t.spacer.xxl,h:2*t.spacer.xxl,radius:t.radius.sm},paddingX:t.spacer.xl,prefixH:t.spacer.xxxl+t.spacer.xl,suffixH:t.spacer.xxxl+t.spacer.xl,titlePadding:t.spacer.lg,titleTextStyle:_objectSpread2(_objectSpread2({},t.typography.headline3),{},{maxLines:1,textColor:t.color.textNeutral}),w:l.getWidthByColumnSpan(t,3)}},mode:function mode(t){return {disabled:{alpha:t.alpha.inactive,descriptionTextStyle:{textColor:t.color.textNeutralDisabled},titleTextStyle:{textColor:t.color.textNeutralDisabled}},focused:{descriptionTextStyle:{textColor:t.color.textInverseSecondary},titleTextStyle:{textColor:t.color.textInverse}}}},tone:function tone(t){return {inverse:{mode:{focused:{descriptionTextStyle:{textColor:t.color.textNeutral},titleTextStyle:{textColor:t.color.textNeutral}}}}}}}),Te=function(t){_inherits(ListItem,lt);var e=_createSuper(ListItem);function ListItem(){return _classCallCheck(this,ListItem),e.apply(this,arguments)}return _createClass(ListItem,[{key:"_onTextBoxChanged",value:function _onTextBoxChanged(){this._updateTitle(),this._updateTruncation();}},{key:"_update",value:function _update(){this._updatePrefixLogo(),this._updateSuffixLogo(),_get(_getPrototypeOf(ListItem.prototype),"_update",this).call(this),this._updateDescription();}},{key:"_updateTitle",value:function _updateTitle(){this._TextWrapper.patch({Title:{content:this.title,style:{textStyle:this.style.titleTextStyle}}});}},{key:"_updateDescription",value:function _updateDescription(){if(this._hasDescription){var t={content:this.description,style:{textStyle:this.style.descriptionTextStyle},visible:!this._collapse};this._Description||(t=_objectSpread2({type:st,signals:{textBoxChanged:"_onTextBoxChanged"}},t)),this._TextWrapper.patch({Description:t});}else this._TextWrapper.patch({Description:void 0});}},{key:"_updateTruncation",value:function _updateTruncation(){this._Title&&this._Title.patch({style:{textStyle:_objectSpread2(_objectSpread2({},this.style.titleTextStyle),{},{wordWrap:this.fixed,wordWrapWidth:this.fixed?this._fixedWordWrapWidth:0})}}),this._Description&&this._Description.patch({style:{textStyle:_objectSpread2(_objectSpread2({},this.style.descriptionTextStyle),{},{wordWrap:!0,wordWrapWidth:this._fixedWordWrapWidth})}});}},{key:"_updatePrefixLogo",value:function _updatePrefixLogo(){this._hasPrefixLogo&&(this._prefix=this._addLogoProps(this._prefixLogo));}},{key:"_updateSuffixLogo",value:function _updateSuffixLogo(){this._hasSuffixLogo&&(this._suffix=this._addLogoProps(this._suffixLogo));}},{key:"_addLogoProps",value:function _addLogoProps(t){return {type:E,icon:t,style:_objectSpread2({color:void 0},this.style.logoStyle)}}},{key:"_hasPrefixLogo",get:function get(){return this.prefixLogo}},{key:"_hasSuffixLogo",get:function get(){return this.suffixLogo}},{key:"_rowProps",get:function get(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(ListItem.prototype),"_rowProps",this)),{},{autoResizeHeight:!0})}},{key:"_buttonProps",get:function get(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(ListItem.prototype),"_buttonProps",this)),{},{alpha:this.style.alpha})}},{key:"_hasDescription",get:function get(){return !!this.description}},{key:"_suffixX",get:function get(){return this.w-this._paddingRight-this._suffixW-this.style.paddingX}},{key:"_collapse",get:function get(){return this.shouldCollapse&&!this._isFocusedMode}},{key:"announce",get:function get(){return this._announce?this._announce:this.title+this.description+", List Item"},set:function set(t){_set(_getPrototypeOf(ListItem.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "ListItem"}},{key:"__themeStyle",get:function get(){return we}},{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(ListItem),"_template",this).call(this)),{},{justify:"left",fixed:!0,Content:_objectSpread2(_objectSpread2({},_get(_getPrototypeOf(ListItem),"_template",this).call(this).Content),{},{TextWrapper:{mountY:.5,flex:{direction:"column"},Title:{type:st,signals:{textBoxChanged:"_onTextBoxChanged"}}}})})}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(ListItem),"properties",this)),["description","prefixLogo","suffixLogo","shouldCollapse"])}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(ListItem),"tags",this)),[{name:"Description",path:"Content.TextWrapper.Description"}])}}]),ListItem}(),Ie=Object.freeze({__proto__:null,base:function base(){return {showArrows:!1,showKnob:!1}},mode:function mode(){return {focused:{showArrows:!0}}},tone:function tone(t){return {neutral:{mode:{focused:{arrowColor:t.color.fillInverse,progressBar:{barColor:t.color.fillInverseTertiary,progressColor:t.color.fillInverse}}}},inverse:{mode:{focused:{arrowColor:t.color.fillNeutral,progressBar:{barColor:t.color.fillNeutralTertiary,progressColor:t.color.fillNeutral}}}},brand:{mode:{focused:{arrowColor:t.color.fillInverse,progressBar:{barColor:t.color.fillBrandTertiary,progressColor:t.color.fillBrand}}}}}}}),Ae=Object.freeze({__proto__:null,base:function base(t){var e=t.spacer.lg;return {arrowAlphaValue:t.alpha.primary,arrowAlphaValueLimit:t.alpha.secondary,arrowHeight:t.spacer.xxl,arrowSpacing:t.spacer.md,arrowWidth:t.spacer.xxl,arrowColor:t.color.fillNeutral,containerHeight:t.spacer.lg+t.spacer.xs,iconLeftSrc:t.asset.arrowLeft,iconRightSrc:t.asset.arrowRight,minWidth:getWidthByColumnSpan(t,2),progressBar:{},w:e,h:e,radius:e/2,showArrows:!0,showKnob:!0,circleAnimation:{}}},mode:function mode(){return {disabled:{arrowAlphaValue:0}}},tone:function tone(t){return {neutral:{arrowColor:t.color.fillNeutral,circleColor:t.color.interactiveNeutralFocus},inverse:{arrowColor:t.color.fillInverse,circleColor:t.color.interactiveInverseFocus},brand:{arrowColor:t.color.fillNeutral,circleColor:t.color.interactiveNeutralFocus}}}}),Pe=function(t){_inherits(Slider,W);var e=_createSuper(Slider);function Slider(){return _classCallCheck(this,Slider),e.apply(this,arguments)}return _createClass(Slider,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(Slider.prototype),"_construct",this).call(this),this._min=0,this._max=100,this._step=1,this._value=0,this._vertical=!1;}},{key:"_update",value:function _update(){this._updateDirection(),this._updateSliderLayout(),this._updatePositions(),this._updateArrowAlpha(),this._updateArrows(),this.signal("onChange",this.value,this),this._valueChanged&&(this.fireAncestors("$announce",this.announce),this._valueChanged=!1);}},{key:"_handleLeft",value:function _handleLeft(){return !this._isDisabledMode&&(this._decrementValue(),"function"!=typeof this.onLeft||this.onLeft(this))}},{key:"_handleRight",value:function _handleRight(){return !this._isDisabledMode&&(this._incrementValue(),"function"!=typeof this.onRight||this.onRight(this))}},{key:"_updateDirection",value:function _updateDirection(){this.patch({pivotX:0,rotation:this.vertical?a(90):0,mountY:this.vertical?.5:0});}},{key:"_updateSliderLayout",value:function _updateSliderLayout(){var t=this.w||this.style.minWidth;this._Container.patch({h:this.style.containerHeight,w:t,Bar:{x:this._calculatedSliderX,SliderBar:{y:this.style.containerHeight/2,w:this._calculatedSliderWidth,style:_objectSpread2({duration:0},this.style.progressBar)}}}),this.h=Math.max(this.style.containerHeight,this.style.arrowHeight);}},{key:"_updatePositions",value:function _updatePositions(){this._updateSliderProgress(),this._updateCirclePosition();}},{key:"_updateSliderProgress",value:function _updateSliderProgress(){var t=this.value<this.min?this.min/this.max:this.value/this.max;this.value>this.max||this.value-this.step>this.max?t=this._calculatedSliderWidth:(this.min<0||this.max<0)&&(t=(this.value-this.min)/(this.max-this.min)),this._SliderBar.progress=t;}},{key:"_updateCirclePosition",value:function _updateCirclePosition(){var t;t=this.value<this.min||this.value+this.step<this.min?this.min/this.max*this._calculatedSliderWidth:this.value>this.max||this.value-this.step>this.max?this._calculatedSliderWidth:this.min<0||this.max<0?(this.value-this.min)/(this.max-this.min)*this._calculatedSliderWidth:this.value/this.max*this._calculatedSliderWidth,this._Circle&&(this._Circle.patch({mode:this.mode,style:{radius:this.style.radius,w:this.style.w,h:this.style.h,circleColor:this.style.circleColor},y:this._SliderBar.y+1,alpha:this._isFocusedMode&&this.style.showKnob?1:0}),Object.keys(this.style.circleAnimation).length?this._Circle.smooth={x:[t,this.style.circleAnimation]}:this._Circle.x=t);}},{key:"_updateArrowAlpha",value:function _updateArrowAlpha(){var t,e,n=this.style.showArrows?this.style.arrowAlphaValue:.001,i=this.style.showArrows?this.style.arrowAlphaValueLimit:.001;t=e=n,!this._isDisabledMode&&this.value<=this.min?(t=i,e=n):!this._isDisabledMode&&this.value>=this.max&&(t=n,e=i),this._LeftArrow.smooth={alpha:t},this._RightArrow.smooth={alpha:e};}},{key:"_updateArrows",value:function _updateArrows(){var t={w:this.style.arrowWidth,h:this.style.arrowHeight,style:{color:this.style.arrowColor}};this._LeftArrow.patch(_objectSpread2(_objectSpread2({},t),{},{icon:this.style.iconLeftSrc})),this._RightArrow.patch(_objectSpread2(_objectSpread2({},t),{},{icon:this.style.iconRightSrc})),this._RightArrow.smooth={x:this.style.arrowSpacing+this._calculatedSliderWidth+this._Bar.x};}},{key:"_decrementValue",value:function _decrementValue(){var t=this.value-this.step;this.value=t>=this.min?t:this.min,this._updatePositions();}},{key:"_incrementValue",value:function _incrementValue(){var t=this.value+this.step;this.value=t<=this.max?t:this.max,this._updatePositions();}},{key:"_handleUp",value:function _handleUp(){return !1}},{key:"_handleDown",value:function _handleDown(){return !1}},{key:"_calculatedSliderX",get:function get(){return this.style.showArrows?this.style.arrowSpacing+this.style.arrowWidth:0}},{key:"_calculatedSliderWidth",get:function get(){var t=this.style.showArrows?2*this.style.arrowSpacing+2*this.style.arrowWidth:0;return this.w<t+this._circleW?this.style.minWidth-t:this.w-t}},{key:"_circleW",get:function get(){return this._Circle?this._Circle.w:0}},{key:"_setVertical",value:function _setVertical(t){return this._setState(t?"VerticalSlider":""),t}},{key:"_setValue",value:function _setValue(t){return this._valueChanged=t!==this._value,t}},{key:"announce",get:function get(){return void 0!==this._announce&&null!==this._announce?this._announce:this.value.toString()},set:function set(t){_set(_getPrototypeOf(Slider.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Slider"}},{key:"__themeStyle",get:function get(){return Ae}},{key:"_template",value:function _template(){return {Container:{mountY:.5,y:function y(t){return t/2},Bar:{mountY:.5,SliderBar:{type:Ot,progress:.5,mountY:.5,announce:""},Circle:{type:Ce,zIndex:5}},LeftArrow:{type:E,mountY:.5,y:function y(t){return t/2}},RightArrow:{type:E,mountY:.5,y:function y(t){return t/2}}}}}},{key:"properties",get:function get(){return ["max","min","step","value","vertical"]}},{key:"tags",get:function get(){return ["Container",{name:"Bar",path:"Container.Bar"},{name:"SliderBar",path:"Container.Bar.SliderBar"},{name:"Circle",path:"Container.Bar.Circle"},{name:"LeftArrow",path:"Container.LeftArrow"},{name:"RightArrow",path:"Container.RightArrow"}]}},{key:"_states",value:function _states(){return [function(t){_inherits(VerticalSlider,t);var e=_createSuper(VerticalSlider);function VerticalSlider(){return _classCallCheck(this,VerticalSlider),e.apply(this,arguments)}return _createClass(VerticalSlider,[{key:"_handleLeft",value:function _handleLeft(){return !1}},{key:"_handleRight",value:function _handleRight(){return !1}},{key:"_handleUp",value:function _handleUp(){return !this._isDisabledMode&&(this._decrementValue(),"function"!=typeof this.onUp||this.onUp(this))}},{key:"_handleDown",value:function _handleDown(){return !this._isDisabledMode&&(this._incrementValue(),"function"!=typeof this.onDown||this.onDown(this))}}]),VerticalSlider}(this)]}}]),Slider}(),Le=function(t){_inherits(NestedSlider,Pe);var e=_createSuper(NestedSlider);function NestedSlider(){return _classCallCheck(this,NestedSlider),e.apply(this,arguments)}return _createClass(NestedSlider,null,[{key:"__componentName",get:function get(){return "NestedSlider"}},{key:"__themeStyle",get:function get(){return Ie}}]),NestedSlider}(),Be=Object.freeze({__proto__:null,base:function base(t){return {paddingY:t.spacer.md+t.spacer.xs,valueTextStyle:_objectSpread2(_objectSpread2({},t.typography.headline3),{},{maxLines:1,textColor:t.color.textNeutralSecondary})}},mode:function mode(t){return {disabled:{valueTextStyle:{textColor:t.color.textNeutralDisabled}},focused:{valueTextStyle:{textColor:t.color.textInverseSecondary}}}},tone:function tone(t){return {neutral:{mode:{focused:{valueTextStyle:{textColor:t.color.textInverseSecondary}}}},inverse:{mode:{focused:{valueTextStyle:{textColor:t.color.textNeutralSecondary}}}},brand:{mode:{focused:{valueTextStyle:{textColor:t.color.textInverseSecondary}}}}}}});(function(t){_inherits(ListItemSlider,Te);var e=_createSuper(ListItemSlider);function ListItemSlider(){return _classCallCheck(this,ListItemSlider),e.apply(this,arguments)}return _createClass(ListItemSlider,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(ListItemSlider.prototype),"_construct",this).call(this),this.value=50;}},{key:"_update",value:function _update(){_get(_getPrototypeOf(ListItemSlider.prototype),"_update",this).call(this),this._updateSliderPosition(),this._updateValue();}},{key:"_onTextBoxChanged",value:function _onTextBoxChanged(){_get(_getPrototypeOf(ListItemSlider.prototype),"_onTextBoxChanged",this).call(this),this._TextWrapper.h=Math.max(this._Title?this._Title.h:0,this._Value?this._Value.h:0);}},{key:"_updateValue",value:function _updateValue(){if(this._hasValue){var t={content:this.value.toString(),style:{textStyle:_objectSpread2({},this.style.valueTextStyle)},mountX:1,x:this.w-this._paddingX};this._Value||(t=_objectSpread2({type:st,signals:{textBoxChanged:"_onTextBoxChanged"}},t)),this._TextWrapper.patch({Value:t});}else this._TextWrapper.patch({Value:void 0});}},{key:"_updateSliderPosition",value:function _updateSliderPosition(){var t=this.w-this._paddingLeft-this._paddingRight,e=_objectSpread2(_objectSpread2({mode:this.mode,tone:this.tone,w:t,x:t/2,visible:!this._collapse,alpha:this.style.alpha},this.slider),{},{value:this.value});this._Slider.patch(e);}},{key:"_hasValue",get:function get(){return null!=this.value||null!=this.value}},{key:"_fixedWordWrapWidth",get:function get(){return this.w-this._paddingLeft-this._paddingRight-this._paddingX}},{key:"_onSliderChanged",value:function _onSliderChanged(t,e){t>=e.max?this.value=e.max:t<=e.min?this.value=e.min:this.value=e.value;}},{key:"_handleLeft",value:function _handleLeft(){return "function"==typeof this.onLeft?this.onLeft(this):!(!this._Slider||this._isDisabledMode)&&this._Slider._handleLeft()}},{key:"_handleRight",value:function _handleRight(){return "function"==typeof this.onRight?this.onRight(this):!(!this._Slider||this._isDisabledMode)&&this._Slider._handleRight()}},{key:"announce",get:function get(){return this._announce?this._announce:this.title+this.value+", List Item Slider"},set:function set(t){_set(_getPrototypeOf(ListItemSlider.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "ListItemSlider"}},{key:"__themeStyle",get:function get(){return Be}},{key:"_template",value:function _template(){var t=_get(_getPrototypeOf(ListItemSlider),"_template",this);return _objectSpread2(_objectSpread2({},t()),{},{Content:_objectSpread2(_objectSpread2({},t().Content),{},{flex:{direction:"column"},TextWrapper:_objectSpread2(_objectSpread2({},t().Content.TextWrapper),{},{mountY:0,flex:void 0}),Slider:{type:Le,mountX:.5,signals:{onChange:"_onSliderChanged"}}})})}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(ListItemSlider),"properties",this)),["slider","value"])}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(ListItemSlider),"tags",this)),[{name:"Slider",path:"Content.Slider"},{name:"Value",path:"Content.TextWrapper.Value"}])}}]),ListItemSlider})();var We=Object.freeze({__proto__:null,base:function base(t){return {arrowAlphaValue:t.alpha.primary,arrowAlphaValueLimit:t.alpha.secondary,arrowWidth:t.spacer.xxl,arrowHeight:t.spacer.xxl,iconLeftSrc:t.asset.arrowLeft,iconRightSrc:t.asset.arrowRight}},tone:function tone(t){return {neutral:{mode:{focused:{arrowColor:t.color.fillInverse}}},inverse:{mode:{focused:{arrowColor:t.color.fillNeutral}}},brand:{mode:{focused:{arrowColor:t.color.fillInverse}}}}}});(function(t){_inherits(ListItemPicker,Te);var e=_createSuper(ListItemPicker);function ListItemPicker(){return _classCallCheck(this,ListItemPicker),e.apply(this,arguments)}return _createClass(ListItemPicker,[{key:"_onTextBoxChanged",value:function _onTextBoxChanged(){_get(_getPrototypeOf(ListItemPicker.prototype),"_onTextBoxChanged",this).call(this),this._alignPicker();}},{key:"_construct",value:function _construct(){_get(_getPrototypeOf(ListItemPicker.prototype),"_construct",this).call(this),this._options=[],this._selectedIndex=0;}},{key:"_update",value:function _update(){_get(_getPrototypeOf(ListItemPicker.prototype),"_update",this).call(this),this._updatePicker(),this._updateArrows(),this._updateArrowsAlpha(),this._updateAlignment();}},{key:"_updateAlignment",value:function _updateAlignment(){this._isFocusedMode?this.patch({justify:"center"}):this.patch({justify:"left"});}},{key:"_updateArrows",value:function _updateArrows(){if(!this._isFocusedMode){return this._LeftArrow&&(this._LeftArrow.alpha=.001),void(this._RightArrow&&(this._RightArrow.alpha=.001))}var t={w:this.style.arrowWidth,h:this.style.arrowHeight,style:{color:this.style.arrowColor},alpha:this.style.arrowAlphaValue};this._LeftArrow||this.patch({LeftArrow:{type:E,mountY:.5,y:function y(t){return t/2}}}),this._LeftArrow.patch(_objectSpread2(_objectSpread2({},t),{},{icon:this.style.iconLeftSrc})),this._LeftArrow.smooth={x:this.style.paddingX},this._RightArrow||this.patch({RightArrow:{type:E,mountY:.5,mountX:1,y:function y(t){return t/2}}}),this._RightArrow.patch(_objectSpread2(_objectSpread2({},t),{},{icon:this.style.iconRightSrc})),this._RightArrow.smooth={x:this.w-this.style.paddingX};}},{key:"_updatePicker",value:function _updatePicker(){var t=this,e=this.w-this._paddingX-2*this.style.arrowWidth;this._Picker||this._TextWrapper.patch({Picker:{type:G,clipping:!0,alwaysScroll:!0,signals:{selectedChange:"_updateArrowsAlpha"}}}),this._Picker.patch({visible:!this._collapse,h:this.style.descriptionTextStyle.lineHeight,w:e,items:this.options.map((function(n){return {type:rt,h:t.style.descriptionTextStyle.lineHeight,w:e,centerAlign:t._isFocusedMode,title:_objectSpread2(_objectSpread2({},t.style.descriptionTextStyle),{},{text:n})}})),selectedIndex:this.selectedIndex}),this._alignPicker();}},{key:"_alignPicker",value:function _alignPicker(){this._Picker.patch({mountX:this._isFocusedMode?.5:0,x:this._isFocusedMode?this._Title.w/2:0});}},{key:"_updateArrowsAlpha",value:function _updateArrowsAlpha(){this._Picker&&(this._selectedIndex=this._Picker.selectedIndex);var t=this._isFocusedMode?this.style.arrowAlphaValue:0;this._RightArrow&&(this._RightArrow.alpha=this.selectedIndex===this.options.length-1&&this._isFocusedMode?this.style.arrowAlphaValueLimit:t),this._LeftArrow&&(this._LeftArrow.alpha=0===this.selectedIndex&&this._isFocusedMode?this.style.arrowAlphaValueLimit:t),this.fireAncestors("$announce",this.announce);}},{key:"_fixedWordWrapWidth",get:function get(){var t=this.w-this._paddingX-2*this.style.arrowWidth-2*this.style.titlePadding,e=this.w-this._paddingLeft-this._paddingRight;return this._isFocusedMode?t:e}},{key:"_collapse",get:function get(){return this.shouldCollapse&&!this._isFocusedMode}},{key:"selectedOption",get:function get(){return this._Picker.selected}},{key:"_handleLeft",value:function _handleLeft(){return "function"==typeof this.onLeft?this.onLeft(this):(this._Picker.selectPrevious(),!0)}},{key:"_handleRight",value:function _handleRight(){return "function"==typeof this.onRight?this.onRight(this):(this._Picker.selectNext(),!0)}},{key:"announce",get:function get(){return this._announce?this._announce:this.title+this.options[this.selectedIndex]+", List Item"},set:function set(t){_set(_getPrototypeOf(ListItemPicker.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "ListItemPicker"}},{key:"__themeStyle",get:function get(){return We}},{key:"properties",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(ListItemPicker),"properties",this)),["options","selectedIndex"])}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(ListItemPicker),"tags",this)),["LeftArrow","RightArrow",{name:"Picker",path:"Content.TextWrapper.Picker"}])}}]),ListItemPicker})();(function(t){_inherits(MetadataCard,At);var e=_createSuper(MetadataCard);function MetadataCard(){return _classCallCheck(this,MetadataCard),e.apply(this,arguments)}return _createClass(MetadataCard,null,[{key:"__componentName",get:function get(){return "MetadataCard"}}]),MetadataCard})();var Me=function base(t){return {textStyle:t.typography.body2,fadeHeight:100,scroll:{timingFunction:"linear",duration:t.animation.duration.xfast},contentMarginTop:t.spacer.md,contentMarginLeft:t.spacer.xl,sliderMarginLeft:t.spacer.lg+t.spacer.xxs}},Ne=Object.freeze({__proto__:null,base:Me}),De=Object.freeze({__proto__:null,base:function base(t){var e=Me(t).scroll;return {progressBar:{animation:e},circleAnimation:e}}}),ze=function(t){_inherits(ScrollSlider,Pe);var e=_createSuper(ScrollSlider);function ScrollSlider(){return _classCallCheck(this,ScrollSlider),e.apply(this,arguments)}return _createClass(ScrollSlider,null,[{key:"__componentName",get:function get(){return "ScrollSlider"}},{key:"__themeStyle",get:function get(){return De}}]),ScrollSlider}();(function(e){_inherits(ScrollWrapper,W);var n=_createSuper(ScrollWrapper);function ScrollWrapper(){return _classCallCheck(this,ScrollWrapper),n.apply(this,arguments)}return _createClass(ScrollWrapper,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(ScrollWrapper.prototype),"_construct",this).call(this),this._scrollStep=10,this._shouldWrap=!1,this._flexDirection="column",this._fadeContent=!0,this._sliderWidth=0;}},{key:"_afterTextBoxUpdate",value:function _afterTextBoxUpdate(t){this._prevW===t.finalW&&this._prevH===t.finalH||(this._prevW=t.finalW,this._prevH=t.finalH,this._updateScrollWrapperLayout(),this._updateAlpha());}},{key:"_resetFlexContainer",value:function _resetFlexContainer(){this._FadeContainer.patch({ScrollContainer:void 0}),this._FadeContainer.patch({ScrollContainer:{w:function w(t){return t},wordWrap:!0}});}},{key:"_update",value:function _update(){this._contentChanged&&(this._resetFlexContainer(),this._updateAutoScroll()),this._updateScrollContainer(),this._updateScrollWrapperLayout(),this._updateAlpha();}},{key:"_updateAutoScroll",value:function _updateAutoScroll(){this.resetScroll(),this._setupAutoScroll(),this._contentChanged=!1;}},{key:"_updateScrollWrapperLayout",value:function _updateScrollWrapperLayout(){this._ScrollContainer.patch({w:this._contentWidth}),this._updateFadeContainer(),this._updateSlider();}},{key:"_updateAlpha",value:function _updateAlpha(){this._Slider.smooth={alpha:this.showScrollBar&&this._isFocusedMode?1:0};}},{key:"_updateFadeContainer",value:function _updateFadeContainer(){var e=this._ScrollContainer.finalH>this.h,n=this.fadeContent&&e&&!this._isEndContentVisible;this._FadeContainer.patch({h:this.h,w:this._contentWidth,y:this.style.contentMarginTop,x:this.style.contentMarginLeft,rtt:!0,shader:n?{type:t.shaders.FadeOut,bottom:this.style.fadeHeight}:void 0});}},{key:"_scrollContainerLoaded",value:function _scrollContainerLoaded(t){var e=t.h;this._ScrollContainer.h=e,this._updateScrollWrapperLayout();}},{key:"_updateScrollContainer",value:function _updateScrollContainer(){var t=this;if(this.content)if("string"==typeof this.content)this._ScrollContainer.patch({flex:{direction:"column"},ScrollableText:{h:0,w:this._contentWidth,type:st,content:this.content,style:{textStyle:_objectSpread2(_objectSpread2({},this.style.textStyle),{},{wordWrap:!0,wordWrapWidth:this._contentWidth})},signals:{textBoxChanged:"_scrollContainerLoaded"},onAfterUpdate:this._afterTextBoxUpdate.bind(this)}});else if(Array.isArray(this.content)){var e={};this.content.forEach((function(n,i){var o="ScrollText".concat(i);e[o]=_objectSpread2({w:t._contentWidth},n),n.text&&(e[o]={type:st,content:n.text,style:{textStyle:_objectSpread2(_objectSpread2(_objectSpread2({},t.style.textStyle),n.style),{},{wordWrap:!0,wordWrapWidth:t._contentWidth})},onAfterUpdate:t._afterTextBoxUpdate.bind(t)});})),this._ScrollContainer.patch(_objectSpread2({flex:{direction:this.flexDirection,wrap:this.shouldWrap}},e));}}},{key:"_scrollDown",value:function _scrollDown(){if(this._scrollContainerY+this._ScrollContainer.finalH>this.renderHeight){var t=this._scrollContainerY-this.scrollStep,e=t+this._ScrollContainer.finalH>this.renderHeight,n=this.renderHeight-this._ScrollContainer.finalH-this.style.contentMarginTop;this._ScrollContainer.patch({smooth:{y:[e?t:n,this._scrollAnimation]}}),this._scrollContainerY+this._ScrollContainer.finalH<=this.h&&(this._isEndContentVisible=!0,this._autoScrollComplete=!0,this.fireAncestors("$scrollChanged","endDown",this),this._updateFadeContainer());}}},{key:"_scrollUp",value:function _scrollUp(){if(this._scrollContainerY<0){var t=this._scrollContainerY+this.scrollStep,e=t<0;this._ScrollContainer.patch({smooth:{y:[e?t:0,this._scrollAnimation]}}),this._scrollContainerY+this._ScrollContainer.finalH>this.renderHeight&&(this._autoScrollComplete=!1),this._scrollContainerY>=0&&this.fireAncestors("$scrollChanged","endUp",this),this._isEndContentVisible&&(this._isEndContentVisible=!1,this._updateFadeContainer());}}},{key:"resetScroll",value:function resetScroll(){this._ScrollContainer.y=0,this._Slider.value=0,this._ScrollContainer.transition("y").finish(),delete this._ScrollContainer._transitions,this._autoScrollComplete=!1;}},{key:"_setAutoScroll",value:function _setAutoScroll(t){return this._autoScroll!==t&&(this._autoScroll=t),this._setupAutoScroll(),t}},{key:"_setupAutoScroll",value:function _setupAutoScroll(){var t=this;clearTimeout(this._startAutoScroll),clearTimeout(this._performAutoScrollTimer),this.autoScroll&&(this._startAutoScroll=setTimeout((function(){return t._performAutoScroll()}),isNaN(this.autoScrollDelay)?2e3:this.autoScrollDelay));}},{key:"_performAutoScroll",value:function _performAutoScroll(){var t=this;this.autoScroll&&!this._autoScrollComplete&&(this._Slider._handleDown(),this._performAutoScrollTimer=setTimeout((function(){return t._performAutoScroll()}),isNaN(this.autoScrollSpeed)?200:this.autoScrollSpeed));}},{key:"_setContent",value:function _setContent(t){return t!==this._content&&this.enabled&&(this._contentChanged=!0),t}},{key:"_updateScrollContainerSize",value:function _updateScrollContainerSize(t,e){this._sliderWidth!==e._Container.h&&(this._sliderWidth=e._Container.h,this._updateScrollContainer());}},{key:"_updateSlider",value:function _updateSlider(){var t=this._ScrollContainer.finalH-this.renderHeight,e=Math.ceil(t/this.scrollStep),n=this.renderHeight,i=n/e;this._Slider.patch({x:this.w-this._sliderWidth,w:n,min:0,max:n,step:i,onUp:this._scrollUp.bind(this),onDown:this._scrollDown.bind(this)});}},{key:"_contentWidth",get:function get(){return this.w-this.style.contentMarginLeft-this.style.sliderMarginLeft-this._sliderWidth}},{key:"_scrollContainerY",get:function get(){return this._ScrollContainer.transition("y").targetValue}},{key:"_scrollAnimation",get:function get(){var t=isNaN(this.scrollDuration)?this.style.scroll.duration:this.scrollDuration;return _objectSpread2(_objectSpread2({},this.style.scroll),{},{duration:t})}},{key:"_getFocused",value:function _getFocused(){return this._Slider}},{key:"announce",get:function get(){return this._announce?this._announce:Array.isArray(this.content)?this._ScrollContainer&&this._ScrollContainer.children&&this._ScrollContainer.children.length?this._ScrollContainer.children.map((function(t){return t.announce})):this.content.map((function(t){return t.announce||t.text})):this.content},set:function set(t){_set(_getPrototypeOf(ScrollWrapper.prototype),"announce",t,this,!0);}}],[{key:"__themeStyle",get:function get(){return Ne}},{key:"_template",value:function _template(){return {clipping:!0,FadeContainer:{ScrollContainer:{w:function w(t){return t},wordWrap:!0}},Slider:{type:ze,vertical:!0,signals:{onChange:"_updateScrollContainerSize"},announce:" "}}}},{key:"__componentName",get:function get(){return "ScrollWrapper"}},{key:"properties",get:function get(){return ["autoScroll","autoScrollDelay","autoScrollSpeed","content","fadeContent","scrollDuration","scrollStep","showScrollBar","shouldWrap","flexDirection"]}},{key:"tags",get:function get(){return ["FadeContainer","Slider",{name:"ScrollContainer",path:"FadeContainer.ScrollContainer"},{name:"ScrollableText",path:"ScrollContainer.ScrollableText"}]}}]),ScrollWrapper})();var Fe=Object.freeze({__proto__:null,base:function base(t){return {alpha:t.alpha.none,animation:t.animation.standardEntrance,blur:t.spacer.xxl,color:t.color.shadowNeutralFocus,offsetX:0,offsetY:t.spacer.lg,radius:t.radius.md,spread:-1*t.spacer.md,maxOffsetY:t.spacer.xxl,maxOffsetX:0}},mode:function mode(t){return {focused:{alpha:t.alpha.secondary,offsetY:t.spacer.xxl}}},tone:function tone(t){return {neutral:{color:t.color.shadowNeutralFocus},inverse:{color:t.color.shadowInverseFocus},brand:{color:t.color.shadowBrandFocus}}}});(function(e){_inherits(Shadow,W);var n=_createSuper(Shadow);function Shadow(){return _classCallCheck(this,Shadow),n.apply(this,arguments)}return _createClass(Shadow,[{key:"mode",get:function get(){return _get(_getPrototypeOf(Shadow.prototype),"mode",this)},set:function set(t){var e=t!==this.mode;_set(_getPrototypeOf(Shadow.prototype),"mode",t,this,!0),e&&this._updateFocusStyle();}},{key:"_updateFocusStyle",value:function _updateFocusStyle(){this._Shadow&&this.applySmooth(this._Shadow,{alpha:this.style.alpha,y:this.style.offsetY,x:this.style.offsetX},{alpha:[this.style.alpha,this.style.animation],y:[this.style.offsetY,this.style.animation],x:[this.style.offsetX,this.style.animation]});}},{key:"_update",value:function _update(){var e=this.style.spread+2*this.style.blur,n=this.style.maxOffsetY,i=this.style.maxOffsetX;this.patch({Frame:{w:this.w+2*e+i,h:this.h+2*e+n,x:(this.w+i)/2,y:(this.h+n)/2,mount:.5,rtt:this.maskShadow,shader:this.maskShadow?{type:t.shaders.Hole,w:this.w-4,h:this.h-4,x:e+2,y:e+2,radius:this.style.radius}:void 0,Shadow:{color:this.style.color,texture:t.Tools.getShadowRect(this.w+2*this.style.spread,this.h+2*this.style.spread,this.style.radius,this.style.blur)}}}),void 0===this.shouldSmooth&&(this._updateFocusStyle(),this.shouldSmooth=!0);}}],[{key:"__componentName",get:function get(){return "Shadow"}},{key:"__themeStyle",get:function get(){return Fe}},{key:"properties",get:function get(){return ["maskShadow"]}},{key:"tags",get:function get(){return ["Frame",{name:"Shadow",path:"Frame.Shadow"}]}}]),Shadow})();var Ue=Object.freeze({__proto__:null,base:function base(t){var e=t.spacer.xxl;return {w:e,h:e,radius:e/2}}});(function(t){_inherits(SliderLarge,Pe);var e=_createSuper(SliderLarge);function SliderLarge(){return _classCallCheck(this,SliderLarge),e.apply(this,arguments)}return _createClass(SliderLarge,null,[{key:"__componentName",get:function get(){return "SliderLarge"}},{key:"__themeStyle",get:function get(){return Ue}}]),SliderLarge})();var Ve=function(t){_inherits(ContentSwitcher,W);var e=_createSuper(ContentSwitcher);function ContentSwitcher(){return _classCallCheck(this,ContentSwitcher),e.apply(this,arguments)}return _createClass(ContentSwitcher,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(ContentSwitcher.prototype),"_construct",this).call(this),this._selectedIndex=0,this._contentItems=[];}},{key:"_update",value:function _update(){_get(_getPrototypeOf(ContentSwitcher.prototype),"_update",this).call(this),this._updateSelected();}},{key:"_updateSelected",value:function _updateSelected(){var t=this;if(this._preveSelectedIndex!==this.selectedIndex){if(void 0!==this._preveSelectedIndex){var e=this.tag("Content".concat(this._preveSelectedIndex));e.smooth={alpha:0},this._hasContent?e._getTransition("alpha").once("finish",(function(){t._fadeInContent();})):void 0!==this.selectedIndex&&this._fadeInContent();}else this._hasContent&&this._fadeInContent();this._preveSelectedIndex=this.selectedIndex;}}},{key:"_fadeInContent",value:function _fadeInContent(){var t=this;this._selectedContent.smooth={alpha:1},this._selectedContent._getTransition("alpha").once("finish",(function(){t.h=t._selectedContent.h,t.signal("contentHeightChange",t.h);}));}},{key:"_updateContent",value:function _updateContent(){var t=this,e=this.contentItems.reduce((function(e,n,i){var o,r="Content".concat(i);if("function"==typeof n){var a=n();a.then?t._loadAsyncComponent(a,i):o=a;}else o=n;return o&&(e[r]=_objectSpread2(_objectSpread2({},o),{},{alpha:0})),e}),{});this.patch(e);}},{key:"_loadAsyncComponent",value:function _loadAsyncComponent(t,e){var n=this;t.then((function(t){var i="Content".concat(e);n.patch(_defineProperty$1({},i,_objectSpread2(_objectSpread2({},t),{},{alpha:0})));}));}},{key:"contentItems",get:function get(){return this._contentItems},set:function set(t){stringifyCompare(t,this._contentItems)||(this._contentItems=t,this._updateContent());}},{key:"_hasContent",get:function get(){return this._selectedContent&&this._selectedContent.children.length>0}},{key:"_selectedContent",get:function get(){return this.tag("Content".concat(this.selectedIndex))}},{key:"_getFocused",value:function _getFocused(){if(this._hasContent)return this._selectedContent}}],[{key:"__componentName",get:function get(){return "ContentSwitcher"}},{key:"properties",get:function get(){return ["selectedIndex"]}}]),ContentSwitcher}(),qe=Object.freeze({__proto__:null,base:function base(t){return {tabSpacing:t.spacer.lg,tabsMarginBottom:t.spacer.xxl}}});(function(t){_inherits(TabBar,W);var e=_createSuper(TabBar);function TabBar(){return _classCallCheck(this,TabBar),e.apply(this,arguments)}return _createClass(TabBar,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(TabBar.prototype),"_construct",this).call(this),this._tabContent=[],this._isTabsFocused=!0;}},{key:"_selectedTabChange",value:function _selectedTabChange(){return "object"===_typeof(this._tabContent)&&"function"==typeof this._tabContent.then?this._tabContent.then(this.queueRequestUpdate):this.queueRequestUpdate()}},{key:"_update",value:function _update(){this._updateTabsLayout(),this._updateTabs(),this._updateTabContent(),this._updateTabBarHeight();}},{key:"_updateTabsLayout",value:function _updateTabsLayout(){var t=this,e={style:{itemSpacing:this.style.tabSpacing}},n=G.properties.reduce((function(e,n){return null!=t[n]&&(e[n]=t[n]),e}),e);this._Tabs.patch(n);}},{key:"_updateTabs",value:function _updateTabs(){var t=this;this._Tabs.wrapSelected=this.wrapSelected,this._Tabs.items.forEach((function(e){var n=e===t._Tabs.selected;t._isUnfocusedMode?e.mode="unfocused":t._isFocusedMode&&(t._isTabsFocused?e.mode=n?"focused":"unfocused":e.mode=n?"selected":"unfocused");})),this.alphaSelectedTab&&this._updateTabAlphas();}},{key:"_updateTabAlphas",value:function _updateTabAlphas(){var t=this;this._isTabsFocused?this._Tabs.items.forEach((function(t){t.patch({alpha:1});})):this._Tabs.items.forEach((function(e){e.patch({alpha:e===t._Tabs.selected?1:.3});}));}},{key:"_updateTabContent",value:function _updateTabContent(){var t=this.style.tabsMarginBottom;this._TabContent.patch({y:this._Tabs.h+t,contentItems:this._tabContent,selectedIndex:this._isFocusedMode?this._Tabs.selectedIndex:void 0});}},{key:"_updateTabBarHeight",value:function _updateTabBarHeight(){var t;t=this.collapse?this._isFocusedMode&&this._tabContent.filter((function(t){return Object.keys(t).length})).length?this._expandedHeight:this._collapsedHeight:this._expandedHeight,this._TabContent.smooth={alpha:!this.collapse||this._isFocusedMode?1:.001},this.h!==t&&(this.h=t,this.fireAncestors("$itemChanged"));}},{key:"selectTabs",value:function selectTabs(){this._isTabsFocused||(this._isTabsFocused=!0,this._updateTabs(),this._updateTabBarHeight());}},{key:"resetTabs",value:function resetTabs(){this._Tabs.selectedIndex=0;}},{key:"_handleDown",value:function _handleDown(){this._isTabsFocused&&this._TabContent._hasContent&&(this._isTabsFocused=!1,this._updateTabs(),this._updateTabBarHeight());}},{key:"_handleUp",value:function _handleUp(){this.selectTabs();}},{key:"_setTabs",value:function _setTabs(t){return this._tabContent=[],this._tabContent=t.map((function(t){return t.tabContent||{}})),this._Tabs.items=t,t}},{key:"_collapsedHeight",get:function get(){return this._Tabs.h}},{key:"_expandedHeight",get:function get(){return this._Tabs.h+this.style.tabsMarginBottom+this._TabContent.h}},{key:"_getFocused",value:function _getFocused(){return this._isTabsFocused?this._Tabs:this._TabContent}},{key:"_unfocus",value:function _unfocus(){_get(_getPrototypeOf(TabBar.prototype),"_unfocus",this).call(this),this.reset&&this.resetTabs();}}],[{key:"_template",value:function _template(){return {Tabs:{type:G,autoResizeHeight:!0,signals:{selectedChange:"_selectedTabChange"}},TabContent:{type:Ve,signals:{contentHeightChange:"_updateTabBarHeight"}}}}},{key:"__themeStyle",get:function get(){return qe}},{key:"__componentName",get:function get(){return "TabBar"}},{key:"properties",get:function get(){return ["alphaSelectedTab","collapse","reset","tabs","wrapSelected"].concat(_toConsumableArray(G.properties))}},{key:"tags",get:function get(){return ["Tabs","TabContent"]}}]),TabBar})();var Ye=Object.freeze({__proto__:null,base:function base(t){return {radius:t.radius.xl,paddingX:t.spacer.xxxl+t.spacer.xxs,paddingY:t.spacer.md+t.spacer.xs,noTitlePaddingX:t.spacer.xl,iconSize:t.spacer.xxxl,iconMarginRight:t.spacer.md,textStyle:_objectSpread2(_objectSpread2({},t.typography.headline3),{},{textColor:t.color.textNeutral}),backgroundColor:t.color.fillTransparent,contentColor:t.color.fillNeutral}},mode:function mode(t){return {focused:{backgroundColor:t.color.interactiveNeutralFocus,contentColor:t.color.fillInverse,textStyle:{textColor:t.color.textInverse}},selected:{backgroundColor:t.color.interactiveNeutralFocusSoft,contentColor:t.color.fillNeutral,textStyle:{textColor:t.color.textNeutral}},disabled:{backgroundColor:t.color.fillTransparent,contentColor:t.color.fillNeutralDisabled,textStyle:{textColor:t.color.textNeutralDisabled}}}},tone:function tone(t){return {neutral:{},inverse:{mode:{focused:{contentColor:t.color.fillNeutral,textStyle:{textColor:t.color.textNeutral}}}},brand:{mode:{focused:{contentColor:t.color.fillNeutral,textStyle:{textColor:t.color.textNeutral}}}}}}});(function(t){_inherits(Tab,J);var e=_createSuper(Tab);function Tab(){return _classCallCheck(this,Tab),e.apply(this,arguments)}return _createClass(Tab,[{key:"_onTextBoxChanged",value:function _onTextBoxChanged(){this._updateContent(),this._updateTabSize();}},{key:"_update",value:function _update(){_get(_getPrototypeOf(Tab.prototype),"_update",this).call(this),this._updateIcon(),this._updateText(),this._updateContent(),this._updateTabSize();}},{key:"_updateIcon",value:function _updateIcon(){if(this.icon){var t={icon:this.icon,w:this.style.iconSize,h:this.style.iconSize,y:this._Content.h/2,style:{color:this.style.contentColor}};this.title?(t.x=0,t.mountX=0):(t.x=this._Content.w/2,t.mountX=.5),this._Icon?this._Icon.patch(t):this._Content.patch({Icon:_objectSpread2({type:E,mountY:.5},t)});}else this._Content.patch({Icon:void 0});}},{key:"_updateText",value:function _updateText(){var t={content:this.title,style:{textStyle:this.style.textStyle},y:this._Content.h/2};this.icon?(t.x=this._iconW+this.style.iconMarginRight,t.mountX=0):(t.x=this._Content.w/2,t.mountX=.5),this._Text.patch(t);}},{key:"_updateContent",value:function _updateContent(){this._Content.patch({w:this._iconW+(this.title?this.style.iconMarginRight:0)+this._textW,h:Math.max(this._iconH,this._Text.h)});}},{key:"_updateTabSize",value:function _updateTabSize(){this.title||this.icon?this.patch({w:2*this._paddingX+this._Content.w,h:2*this.style.paddingY+this._Content.h}):this.patch({w:0,h:0});}},{key:"_textW",get:function get(){return this.title?this._Text.w:0}},{key:"_iconW",get:function get(){return this.icon?this._Icon.w:0}},{key:"_iconH",get:function get(){return this.icon?this._Icon.h:0}},{key:"_paddingX",get:function get(){return this.title?this.style.paddingX:this.style.noTitlePaddingX}},{key:"announce",get:function get(){return this._announce||this._Text&&this._Text.announce},set:function set(t){_set(_getPrototypeOf(Tab.prototype),"announce",t,this,!0);}}],[{key:"_template",value:function _template(){return _objectSpread2(_objectSpread2({},_get(_getPrototypeOf(Tab),"_template",this).call(this)),{},{Content:{mount:.5,x:function x(t){return t/2},y:function y(t){return t/2},Text:{type:st,mountY:.5,signals:{textBoxChanged:"_onTextBoxChanged"}}}})}},{key:"__themeStyle",get:function get(){return Ye}},{key:"__componentName",get:function get(){return "Tab"}},{key:"properties",get:function get(){return ["icon","title"]}},{key:"tags",get:function get(){return [].concat(_toConsumableArray(_get(_getPrototypeOf(Tab),"tags",this)),["Content",{name:"Icon",path:"Content.Icon"},{name:"Text",path:"Content.Text"}])}}]),Tab})();var Qe=Object.freeze({__proto__:null,base:function base(t){return {h:t.spacer.xxl,knobWidth:t.spacer.xl,knobHeight:t.spacer.xl,knobRadius:t.radius.sm+t.radius.xs,knobPadding:t.spacer.xxs,knobX:t.spacer.xs,knobXChecked:t.spacer.xxl+t.spacer.xs,strokeRadius:t.radius.md,strokeWeight:t.stroke.sm,w:2*t.spacer.xxl}},tone:function tone(t){return {neutral:{strokeColor:t.color.fillInverse,backgroundColor:t.color.fillNeutralDisabled,backgroundColorChecked:t.color.fillNeutral,knobColor:t.color.fillInverse,knobColorChecked:t.color.fillInverse,mode:{disabled:{strokeColor:t.color.fillInverseDisabled,backgroundColor:t.color.fillNeutralDisabled,backgroundColorChecked:t.color.fillNeutralDisabled,knobColor:t.color.fillInverseDisabled,knobColorChecked:t.color.fillInverseDisabled}}},inverse:{strokeColor:t.color.fillNeutral,backgroundColor:t.color.fillInverseDisabled,backgroundColorChecked:t.color.fillInverse,knobColor:t.color.fillNeutral,knobColorChecked:t.color.fillNeutral,mode:{disabled:{strokeColor:t.color.fillInverseDisabled,backgroundColor:t.color.fillNeutralDisabled,backgroundColorChecked:t.color.fillNeutralDisabled,knobColor:t.color.fillInverseDisabled,knobColorChecked:t.color.fillInverseDisabled}}},brand:{strokeColor:t.color.fillNeutral,backgroundColor:t.color.fillInverseDisabled,backgroundColorChecked:t.color.fillBrand,knobColor:t.color.fillNeutral,knobColorChecked:t.color.fillNeutral,mode:{disabled:{strokeColor:t.color.fillNeutralDisabled,backgroundColor:t.color.fillInverseDisabled,backgroundColorChecked:t.color.fillInverseDisabled,knobColor:t.color.fillNeutralDisabled,knobColorChecked:t.color.fillNeutralDisabled}}}}}}),Je=function(e){_inherits(Toggle,W);var n=_createSuper(Toggle);function Toggle(){return _classCallCheck(this,Toggle),n.apply(this,arguments)}return _createClass(Toggle,[{key:"_construct",value:function _construct(){_get(_getPrototypeOf(Toggle.prototype),"_construct",this)&&_get(_getPrototypeOf(Toggle.prototype),"_construct",this).call(this),this._checked=!1;}},{key:"_update",value:function _update(){this._updateKnobPosition(),this._updateColors(),this._updateContainer(),this._updateStroke(),this._updateKnob(),this._updateTotalHeight(),this._checkedChanged&&(this.fireAncestors("$announce",this.announce),this._checkedChanged=!1);}},{key:"_updateKnobPosition",value:function _updateKnobPosition(){var t=this.style,e=t.knobXChecked,n=t.knobX,i=t.knobPadding,o=t.knobWidth,r=t.strokeWeight;this._knobX=n||r+i,this._knobXChecked=e||this.w-r-i-o;var a=this.checked?this._knobXChecked:this._knobX;this.applySmooth(this._Knob,{x:a});}},{key:"_updateColors",value:function _updateColors(){var t=this.style,e=t.backgroundColor,n=t.backgroundColorChecked,i=t.knobColor,o=t.knobColorChecked,r=this.checked?o:i,a=this.checked?n:e;this.applySmooth(this._Knob,{color:r}),this.applySmooth(this._Container,{color:a});}},{key:"_updateContainer",value:function _updateContainer(){var e,n=this.style,i=n.knobRadius,o=n.knobPadding,r=n.strokeRadius,a=n.strokeWeight;e=void 0!==r?0===r?0:Math.max(0,r-a):Math.max(0,i+o+a),this._Container.patch({w:this.w,h:this.h,texture:t.Tools.getRoundRect(this.w-2*a,this.h-2*a,e,a,0,!0,!1)});}},{key:"_updateTotalHeight",value:function _updateTotalHeight(){this.h=this._Container.h,this.fireAncestors("$itemChanged");}},{key:"_updateStroke",value:function _updateStroke(){var e=this.style,n=e.knobRadius,i=e.knobPadding,o=e.strokeColor,r=e.strokeRadius,a=e.strokeWeight;this._Stroke.patch({w:this.w,h:this.h,texture:t.Tools.getRoundRect(this.w,this.h,void 0!==r?r:n+i+a,a,o,!1,!1)});}},{key:"_updateKnob",value:function _updateKnob(){var e=this.style,n=e.knobHeight,i=e.knobWidth,o=e.knobRadius;this._Knob.patch({zIndex:2,y:(this.h-n)/2,texture:t.Tools.getRoundRect(i-2,n-2,o,0,0,!0,!1)});}},{key:"_setChecked",value:function _setChecked(t){return this._checkedChanged=t!==this._checked,t}},{key:"toggle",value:function toggle(){return this._isDisabledMode||(this.checked=!this.checked),this}},{key:"_handleEnter",value:function _handleEnter(){return "function"==typeof this.onEnter?this.onEnter(this):(this.toggle(),!1)}},{key:"announce",get:function get(){return this._announce||(this.checked?"Checked":"Unchecked")},set:function set(t){_set(_getPrototypeOf(Toggle.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Toggle"}},{key:"__themeStyle",get:function get(){return Qe}},{key:"_template",value:function _template(){return {Container:{Stroke:{},Knob:{}}}}},{key:"tags",get:function get(){return ["Container",{name:"Knob",path:"Container.Knob"},{name:"Stroke",path:"Container.Stroke"}]}},{key:"properties",get:function get(){return ["checked"]}}]),Toggle}(),Ze=Object.freeze({__proto__:null,base:function base(t){return {h:3*t.spacer.md,strokeRadius:.75*t.radius.md,strokeWeight:t.stroke.sm,knobWidth:t.spacer.lg,knobHeight:t.spacer.lg,knobRadius:t.radius.sm,knobPadding:t.spacer.xs,knobXChecked:t.spacer.xl+t.spacer.xs,w:6*t.spacer.md}}});(function(t){_inherits(ToggleSmall,Je);var e=_createSuper(ToggleSmall);function ToggleSmall(){return _classCallCheck(this,ToggleSmall),e.apply(this,arguments)}return _createClass(ToggleSmall,null,[{key:"__componentName",get:function get(){return "ToggleSmall"}},{key:"__themeStyle",get:function get(){return Ze}}]),ToggleSmall})();(function(e){_inherits(Circle,t.Texture);var n=_createSuper(Circle);function Circle(t){var e;return _classCallCheck(this,Circle),(e=n.call(this,t))._color="rgb(0,0,0)",e._fill=!0,e._radius=100,e._stroke=!1,e._strokeColor="rgb(0,0,0)",e._strokeWidth=1,e}return _createClass(Circle,[{key:"fill",get:function get(){return this._fill},set:function set(t){this._fill=t,this._changed();}},{key:"radius",get:function get(){return this._radius},set:function set(t){this._radius=t,this._changed();}},{key:"color",get:function get(){return this._color},set:function set(t){this._color=t,this._changed();}},{key:"stroke",get:function get(){return this._stroke},set:function set(t){this._stroke=t,this._changed();}},{key:"strokeWidth",get:function get(){return this._strokeWidth},set:function set(t){this._strokeWidth=t,this._changed();}},{key:"strokeColor",get:function get(){return this._strokeColor},set:function set(t){this._strokeColor=t,this._changed();}},{key:"_getLookupId",value:function _getLookupId(){return "__circle_".concat(this._radius)}},{key:"_getSourceLoader",value:function _getSourceLoader(){var t=this._color,e=this._fill,n=this._radius,i=this._stroke,o=this._strokeColor,r=this._strokeWidth,a=this.stage.platform.getDrawingCanvas(),s=n;return i&&(s=n+2*r),a.width=2*s,a.height=2*s,function(l){var c=a.getContext("2d");c.lineWidth=r,c.strokeStyle=o,c.fillStyle=t,c.beginPath(),c.arc(s,s,n,0,2*Math.PI),e&&c.fill(),i&&c.stroke(),l(null,{source:a,radius:n});}}}]),Circle})();(function(e){_inherits(Arrow,t.Texture);var n=_createSuper(Arrow);function Arrow(t){var e;return _classCallCheck(this,Arrow),(e=n.call(this,t))._color="rgb(13, 13, 15)",e._w=0,e._h=0,e._direction="right",e}return _createClass(Arrow,[{key:"w",get:function get(){return this._w},set:function set(t){this._w=t,this._changed();}},{key:"h",get:function get(){return this._h},set:function set(t){this._h=t,this._changed();}},{key:"direction",get:function get(){return this._direction},set:function set(t){this._direction=t,this._changed();}},{key:"color",get:function get(){return this._color},set:function set(t){this._color=t,this._changed();}},{key:"_getLookupId",value:function _getLookupId(){return "__triangle_".concat(this._direction,"_").concat(this._w,"x").concat(this._h)}},{key:"_getSourceLoader",value:function _getSourceLoader(){var t=this._color,e=this._w,n=this._h,i=this._direction,o=this.stage.platform.getDrawingCanvas();return function(r){var a=o.getContext("2d");o.width=e,o.height=n,a.fillStyle=t,a.strokeStyle=a.fillStyle,a.lineWidth=2,a.lineCap="round",a.lineJoin="round";var s=a.lineWidth/2;a.beginPath(),"right"===i?(a.moveTo(s,s),a.lineTo(s,n-s),a.lineTo(e-s,n/2)):"down"===i?(a.moveTo(s,s),a.lineTo(e-s,s),a.lineTo(e/2,n-s)):(a.moveTo(s,n/2),a.lineTo(e-s,s),a.lineTo(e-s,n-s)),a.closePath(),a.stroke(),a.fill(),r(null,{source:o,w:e,h:n,direction:i});}}}]),Arrow})();(function(e){_inherits(Line,t.Texture);var n=_createSuper(Line);function Line(t){var e;return _classCallCheck(this,Line),(e=n.call(this,t))._w=0,e._h=0,e._rounded=!1,e}return _createClass(Line,[{key:"w",get:function get(){return this._w},set:function set(t){this._w=t,this._changed();}},{key:"h",get:function get(){return this._h},set:function set(t){this._h=t,this._changed();}},{key:"rounded",get:function get(){return this._rounded},set:function set(t){this._rounded=t,this._changed();}},{key:"_getLookupId",value:function _getLookupId(){return "__line_".concat(this._w,"x").concat(this._h).concat(this._rounded?"_rounded":"")}},{key:"_getSourceLoader",value:function _getSourceLoader(){var t=this._w,e=this._h,n=this._rounded,i=this.stage.platform.getDrawingCanvas();return function(o){var r=i.getContext("2d");i.width=t,i.height=e,r.lineWidth=e,n&&(r.lineCap="round"),r.strokeStyle="white",r.beginPath(),r.moveTo(n?2:0,e/2),r.lineTo(n?t-2:t,e/2),r.stroke(),o(null,{source:i,w:t,h:e,rounded:n});}}}]),Line})();var rn=function(e){_inherits(Bubble,t.Texture);var n=_createSuper(Bubble);function Bubble(t){var e;return _classCallCheck(this,Bubble),(e=n.call(this,t))._w=0,e._h=0,e._radius=0,e._pointerW=0,e._pointerH=0,e._strokeWidth=0,e._color="white",e}return _createClass(Bubble,[{key:"w",get:function get(){return this._w},set:function set(t){this._w=t,this._changed();}},{key:"h",get:function get(){return this._h},set:function set(t){this._h=t,this._changed();}},{key:"radius",get:function get(){return this._radius},set:function set(t){Array.isArray(t)?this._radius=new Array(4).fill().map((function(e,n){return t[n]||0})):this._radius=t,this._changed();}},{key:"pointerW",get:function get(){return this._pointerW},set:function set(t){this._pointerW=t,this._changed();}},{key:"pointerH",get:function get(){return this._pointerH},set:function set(t){this._pointerH=t,this._changed();}},{key:"strokeWidth",get:function get(){return this._strokeWidth},set:function set(t){this._strokeWidth=t,this._changed();}},{key:"color",get:function get(){return this._color},set:function set(e){this._color=t.StageUtils.getRgbaString(e),this._changed();}},{key:"createBubble",value:function createBubble(t){var e=t.stage,n=t.w,i=void 0===n?0:n,o=t.h,r=void 0===o?0:o,a=t.radius,s=void 0===a?0:a,l=t.pointerW,c=void 0===l?0:l,u=t.pointerH,h=void 0===u?0:u,d=t.strokeWidth,_=void 0===d?1:d,p=t.color,f=void 0===p?"white":p,g=e.platform.getDrawingCanvas(),m=g.getContext("2d");g.width=i+_+4,g.height=r+_+4,m.imageSmoothingEnabled=!0,m.fillStyle=f,m.strokeStyle=f,m.lineWidth=_,m.lineCap="round",m.lineJoin="round";var v=.5*_+1,b=v,k=b+i,S=v,C=S+r,T=C-h,I=Array.isArray(s);return m.beginPath(),m.moveTo(b+(I?s[0]:s),S),m.lineTo(k-(I?s[0]:s),S),m.arcTo(k,S,k,S+(I?s[1]:s),I?s[1]:s),m.lineTo(k,T-(I?s[2]:s)),m.arcTo(k,T,k-(I?s[2]:s),T,I?s[2]:s),m.lineTo(i/2+c/2,T),m.arcTo(i/2,C,i/2-c/2,T,2),m.lineTo(i/2-c/2,T),m.lineTo(b+(I?s[3]:s),T),m.arcTo(b,T,b,T-(I?s[3]:s),I?s[3]:s),m.lineTo(b,S+(I?s[0]:s)),m.arcTo(b,S,b+(I?s[0]:s),S,I?s[0]:s),m.stroke(),m.fill(),g}},{key:"_getLookupId",value:function _getLookupId(){var t=this.w,e=this.h,n=this.radius,i=this.pointerW,o=this.pointerH,r=this.color;return "__bubble_".concat(t,"x").concat(e,"_radius-").concat(n,"_pointer-").concat(i,"x").concat(o,"_fill-").concat(r)}},{key:"_getSourceLoader",value:function _getSourceLoader(){var t=this;return function(e){e(null,{source:t.createBubble(t)});}}}]),Bubble}(),an=Object.freeze({__proto__:null,base:function base(t){return {marginBottom:t.spacer.xxxl,paddingX:t.spacer.lg,paddingY:t.spacer.md,pointerW:t.spacer.xl,pointerH:t.spacer.md+t.spacer.xs,radius:t.radius.md,textStyle:_objectSpread2(_objectSpread2({},t.typography.caption1),{},{textColor:t.color.textInverse}),transition:t.animation.utility}},tone:function tone(t){return {neutral:{backgroundColor:t.color.fillNeutral,textStyle:{textColor:t.color.textInverse}},inverse:{backgroundColor:t.color.fillInverse,textStyle:{textColor:t.color.textNeutral}},brand:{backgroundColor:t.color.fillBrand,textStyle:{textColor:t.color.textNeutral}}}}});(function(t){_inherits(Tooltip,W);var e=_createSuper(Tooltip);function Tooltip(){return _classCallCheck(this,Tooltip),e.apply(this,arguments)}return _createClass(Tooltip,[{key:"_update",value:function _update(){this._updateText();}},{key:"_updateText",value:function _updateText(){this._Text&&this._Text.patch({content:this.title,style:{textStyle:this.style.textStyle}});}},{key:"_textLoaded",value:function _textLoaded(){this._updateBackground(),this._updateTextPosition();}},{key:"_updateBackground",value:function _updateBackground(){var t=this._Text.finalH+2*this.style.paddingY+this.style.pointerH,e=this._Text.finalW+2*this.style.paddingX;this.patch({w:e,h:t,mountY:1,y:-this.style.marginBottom,Background:{w:e,h:t,texture:{type:rn,w:e,h:t,radius:this.style.radius,pointerW:this.style.pointerW,pointerH:this.style.pointerH,color:this.style.backgroundColor}}});}},{key:"_updateTextPosition",value:function _updateTextPosition(){this._Text&&this._Text.patch({mount:.5,x:this._Background.w/2,y:(this._Background.h-this.style.pointerH)/2});}},{key:"_clearTimers",value:function _clearTimers(){clearTimeout(this._hideTimer),clearTimeout(this._showTimer);}},{key:"_transitionIn",value:function _transitionIn(){var t=this,e={smooth:{alpha:[1,this.style.transition],scale:[1,this.style.transition]}};this.delayVisible?this._showTimer=setTimeout((function(){t.patch({smooth:e});}),this.delayVisible):(this._showTimer=void 0,this.patch({smooth:e})),this._hideTimer=this.timeVisible?setTimeout((function(){t._unfocus();}),this.timeVisible+(this.delayVisible||0)):void 0;}},{key:"_transitionOut",value:function _transitionOut(){this.patch({smooth:{alpha:[0,this.style.transition],scale:[.5,this.style.transition]}});}},{key:"_focus",value:function _focus(){this._clearTimers(),this._transitionIn();}},{key:"_unfocus",value:function _unfocus(){this._clearTimers(),this._transitionOut();}},{key:"announce",get:function get(){return this._announce||this._Text&&this._Text.announce},set:function set(t){_set(_getPrototypeOf(Tooltip.prototype),"announce",t,this,!0);}}],[{key:"__componentName",get:function get(){return "Tooltip"}},{key:"__themeStyle",get:function get(){return an}},{key:"_template",value:function _template(){return {alpha:0,scale:.5,mountX:.5,x:function x(t){return t/2},Background:{Text:{type:st,signals:{textBoxChanged:"_textLoaded"}}}}}},{key:"properties",get:function get(){return ["title","delayVisible","timeVisible"]}},{key:"tags",get:function get(){return ["Background",{name:"Text",path:"Background.Text"}]}}]),Tooltip})();
 
   /**
    * If not stated otherwise in this file or this component's LICENSE
@@ -33143,7 +32589,7 @@ var APP_accelerator_home_ui = (function () {
     return appListArray == null ? undefined : appListArray;
   };
 
-  class AppStoreItem extends lng$1.Component {
+  class AppStoreItem extends t.Component {
     static _template() {
       return {
         Shadow: {
@@ -33170,14 +32616,14 @@ var APP_accelerator_home_ui = (function () {
             x: this.width / 2,
             y: this.height / 2,
             text: {
-              text: Language.translate('Installing'),
+              text: Language$1.translate('Installing'),
               fontFace: CONFIG.language.font,
               fontSize: 20
             },
             ProgressBar: {
               y: 30,
               x: -50,
-              type: ProgressBar,
+              type: Ot,
               w: 200,
               progress: 1,
               barColor: 4284637804,
@@ -33247,7 +32693,7 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  class OptionsItem extends lng$1.Component {
+  class OptionsItem extends t.Component {
     static _template() {
       return {
         Wrapper: {
@@ -33264,17 +32710,17 @@ var APP_accelerator_home_ui = (function () {
           },
           Bar: {
             y: 50,
-            texture: lng$1.Tools.getRoundRect(0, 5, 0, 0, CONFIG.theme.hex, true, CONFIG.theme.hex)
+            texture: t.Tools.getRoundRect(0, 5, 0, 0, CONFIG.theme.hex, true, CONFIG.theme.hex)
           }
         }
       };
     }
     _focus() {
-      this.tag('Bar').texture = lng$1.Tools.getRoundRect(this.tag('Text').finalW, 5, 0, 0, CONFIG.theme.hex, true, CONFIG.theme.hex);
+      this.tag('Bar').texture = t.Tools.getRoundRect(this.tag('Text').finalW, 5, 0, 0, CONFIG.theme.hex, true, CONFIG.theme.hex);
       this.tag('Text').text.fontStyle = 'bold';
     }
     _unfocus() {
-      this.tag('Bar').texture = lng$1.Tools.getRoundRect(0, 5, 0, 0, CONFIG.theme.hex, true, CONFIG.theme.hex);
+      this.tag('Bar').texture = t.Tools.getRoundRect(0, 5, 0, 0, CONFIG.theme.hex, true, CONFIG.theme.hex);
       this.tag('Text').text.fontStyle = '';
     }
     static get width() {
@@ -33288,7 +32734,7 @@ var APP_accelerator_home_ui = (function () {
       this._handleEnter();
     }
     set element(item) {
-      this.tag('Text').text.text = Language.translate(item);
+      this.tag('Text').text.text = Language$1.translate(item);
       if (this.tag('Text').text.text.length > 11) {
         this.tag('Text').text.fontSize = 25;
       }
@@ -33426,7 +32872,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class AppCatalogItem extends lng$1.Component {
+  class AppCatalogItem extends t.Component {
     static _template() {
       return {
         Shadow: {
@@ -33591,7 +33037,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class ManageAppItem extends lng$1.Component {
+  class ManageAppItem extends t.Component {
     static _template() {
       return {
         Shadow: {
@@ -33719,9 +33165,9 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  class AppStore extends lng$1.Component {
+  class AppStore extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Apps'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Apps'));
     }
     static _template() {
       return {
@@ -33925,7 +33371,7 @@ var APP_accelerator_home_ui = (function () {
    * Class to render items in Subscription in details screen .
    */
   let index$1 = 0;
-  class SubscriptionItem extends lng$1.Component {
+  class SubscriptionItem extends t.Component {
     static _template() {
       return {
         SubscriptionItem: {
@@ -34104,7 +33550,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   var homeApi$1 = new HomeApi();
-  class DetailsScreen extends lng$1.Component {
+  class DetailsScreen extends t.Component {
     _onChanged() {
       this.widgets.menu.updateTopPanelText(this.name);
     }
@@ -34158,7 +33604,7 @@ var APP_accelerator_home_ui = (function () {
             visible: false,
             clipping: true,
             List: {
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 670,
               h: 390,
               y: 5,
@@ -34327,7 +33773,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class to render items with tick Icon.
    */
-  class TickMarkItem extends lng$1.Component {
+  class TickMarkItem extends t.Component {
     /**
      * Function to render Tick mark Icon elements in the settings.
      */
@@ -34436,7 +33882,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class Satellite extends lng$1.Component {
+  class Satellite extends t.Component {
     static _template() {
       return {
         Contents: {
@@ -34446,7 +33892,7 @@ var APP_accelerator_home_ui = (function () {
           h: 730,
           clipping: true,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1620,
             h: 730,
             y: 5,
@@ -34511,7 +33957,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class Polarity extends lng$1.Component {
+  class Polarity extends t.Component {
     static _template() {
       return {
         Contents: {
@@ -34521,7 +33967,7 @@ var APP_accelerator_home_ui = (function () {
           h: 730,
           clipping: true,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1620,
             h: 730,
             y: 5,
@@ -34554,8 +34000,8 @@ var APP_accelerator_home_ui = (function () {
           type: TickMarkItem,
           isTicked: selected === item,
           //boolean
-          itemName: item.charAt(0).toUpperCase() + item.slice(1),
-          //pass the formated item name
+          itemName: Language.translate(item.charAt(0).toUpperCase() + item.slice(1)),
+          //pass the formated item name          
           uniqID: item,
           //pass a uniq id that is to be returned when handle enter is pressed
           onHandleEnter: this.refreshItems.bind(this) //pass this function to refresh the tickmarks
@@ -34586,7 +34032,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class FEC extends lng$1.Component {
+  class FEC extends t.Component {
     static _template() {
       return {
         Contents: {
@@ -34596,7 +34042,7 @@ var APP_accelerator_home_ui = (function () {
           h: 730,
           clipping: true,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1620,
             h: 730,
             y: 5,
@@ -34661,7 +34107,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class Modulation extends lng$1.Component {
+  class Modulation extends t.Component {
     static _template() {
       return {
         Contents: {
@@ -34671,7 +34117,7 @@ var APP_accelerator_home_ui = (function () {
           h: 730,
           clipping: true,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1620,
             h: 730,
             y: 5,
@@ -34736,7 +34182,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class SearchType extends lng$1.Component {
+  class SearchType extends t.Component {
     static _template() {
       return {
         Contents: {
@@ -34746,7 +34192,7 @@ var APP_accelerator_home_ui = (function () {
           h: 730,
           clipping: true,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1620,
             h: 730,
             y: 5,
@@ -34936,14 +34382,14 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class IntegerInput extends lng$1.Component {
+  class IntegerInput extends t.Component {
     static _template() {
       return {
         x: 200,
         y: 275,
         InputBox: {
           Border: {
-            texture: lng$1.Tools.getRoundRect(1600, 90, 0, 3, 0xffffffff, false)
+            texture: t.Tools.getRoundRect(1600, 90, 0, 3, 0xffffffff, false)
           },
           Arrows: {
             y: 50,
@@ -34973,7 +34419,7 @@ var APP_accelerator_home_ui = (function () {
             y: 50,
             mountY: 0.5,
             text: {
-              text: Language.translate("Enter the value and click Done"),
+              text: Language$1.translate("Enter the value and click Done"),
               textColor: COLORS.titleColor,
               fontFace: CONFIG.language.font,
               fontSize: 25,
@@ -35000,7 +34446,7 @@ var APP_accelerator_home_ui = (function () {
 
     _focus() {
       this._setState("InputBox");
-      this.tag("Content").text.text = this.prevVal === "" ? Language.translate("Enter the value and click Done") : this.prevVal;
+      this.tag("Content").text.text = this.prevVal === "" ? Language$1.translate("Enter the value and click Done") : this.prevVal;
       this.inputValue = this.prevVal;
       console.log("presetValues: ", this.presetValues);
       this.presetValuesLength = 0;
@@ -35030,12 +34476,12 @@ var APP_accelerator_home_ui = (function () {
     static _states() {
       return [class InputBox extends this {
         $enter() {
-          this.tag("InputBox.Border").texture = lng$1.Tools.getRoundRect(1600, 90, 0, 3, CONFIG.theme.hex, false);
+          this.tag("InputBox.Border").texture = t.Tools.getRoundRect(1600, 90, 0, 3, CONFIG.theme.hex, false);
           this.tag("RightArrow").color = CONFIG.theme.hex;
           this.tag("LeftArrow").color = CONFIG.theme.hex;
         }
         $exit() {
-          this.tag("InputBox.Border").texture = lng$1.Tools.getRoundRect(1600, 90, 0, 3, 0xffffffff, false);
+          this.tag("InputBox.Border").texture = t.Tools.getRoundRect(1600, 90, 0, 3, 0xffffffff, false);
           this.tag("RightArrow").color = 0xffffffff;
           this.tag("LeftArrow").color = 0xffffffff;
         }
@@ -35132,10 +34578,10 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for DVB Scan screen.
    */
-  class DvbSScan$1 extends lng$1.Component {
+  class DvbSScan$1 extends t.Component {
     _onChanged() {
       this.tag("Scroller").y = 2; //to reset the position when this route is hit
-      this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan"));
+      this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"));
     }
     pageTransition() {
       return "left";
@@ -35163,7 +34609,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Satellite"),
+                    text: Language$1.translate("Satellite"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35187,7 +34633,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Frequency"),
+                    text: Language$1.translate("Frequency"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35211,7 +34657,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Polarity"),
+                    text: Language$1.translate("Polarity"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35235,7 +34681,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Symbol Rate"),
+                    text: Language$1.translate("Symbol Rate"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35259,7 +34705,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("FEC"),
+                    text: Language$1.translate("FEC"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35283,7 +34729,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("DVB-S2"),
+                    text: Language$1.translate("DVB-S2"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35307,7 +34753,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Modulation"),
+                    text: Language$1.translate("Modulation"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35331,7 +34777,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Search Mode"),
+                    text: Language$1.translate("Search Mode"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35355,7 +34801,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Clear existing service list"),
+                    text: Language$1.translate("Clear existing service list"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -35386,7 +34832,7 @@ var APP_accelerator_home_ui = (function () {
               y: 27,
               mount: 0.5,
               text: {
-                text: Language.translate("Start Scan"),
+                text: Language$1.translate("Start Scan"),
                 textColor: 0xff000000,
                 fontFace: CONFIG.language.font,
                 fontSize: 24
@@ -35403,7 +34849,7 @@ var APP_accelerator_home_ui = (function () {
               y: 25,
               mountY: 0.5,
               text: {
-                text: Language.translate("Error!"),
+                text: Language$1.translate("Error!"),
                 textColor: CONFIG.theme.hex,
                 fontFace: CONFIG.language.font,
                 fontSize: 21
@@ -35421,7 +34867,7 @@ var APP_accelerator_home_ui = (function () {
               y: 25,
               mountY: 0.5,
               text: {
-                text: Language.translate("Please wait scan in progress") + "...",
+                text: Language$1.translate("Please wait scan in progress") + "...",
                 textColor: CONFIG.theme.hex,
                 fontFace: CONFIG.language.font,
                 fontSize: 21
@@ -35501,10 +34947,10 @@ var APP_accelerator_home_ui = (function () {
         actions: [{
           p: "text.text",
           v: {
-            0: Language.translate("Please wait scan in progress"),
-            0.3: Language.translate("Please wait scan in progress") + ".",
-            0.6: Language.translate("Please wait scan in progress") + "..",
-            0.9: Language.translate("Please wait scan in progress") + "..."
+            0: Language$1.translate("Please wait scan in progress"),
+            0.3: Language$1.translate("Please wait scan in progress") + ".",
+            0.6: Language$1.translate("Please wait scan in progress") + "..",
+            0.9: Language$1.translate("Please wait scan in progress") + "..."
           }
         }]
       });
@@ -35553,7 +34999,7 @@ var APP_accelerator_home_ui = (function () {
           console.log("notification.finished: ", notification.finished);
           this.setScanFinished();
           dtvApi$4.noOfServices().then(res => {
-            this.tag("ErrorNotification.Content").text.text = Language.translate("Found ") + res + Language.translate(" services.");
+            this.tag("ErrorNotification.Content").text.text = Language$1.translate("Found ") + res + Language$1.translate(" services.");
             this.tag("ErrorNotification").visible = true;
           });
         }
@@ -35663,32 +35109,32 @@ var APP_accelerator_home_ui = (function () {
     setFrequency(frequency) {
       this._setState("Frequency");
       this.selectedFrequency = frequency;
-      this.tag("Frequency.Title").text.text = Language.translate("Frequency") + ": " + (this.selectedFrequency !== "" ? this.selectedFrequency : Language.translate("Select a") + " " + Language.translate("Frequency"));
+      this.tag("Frequency.Title").text.text = Language$1.translate("Frequency") + ": " + (this.selectedFrequency !== "" ? this.selectedFrequency : Language$1.translate("Select a") + " " + Language$1.translate("Frequency"));
     }
     setSymbolRate(symbolrate) {
       this._setState("SymbolRate");
       this.selectedSymbolRate = symbolrate;
-      this.tag("SymbolRate.Title").text.text = Language.translate("Symbol Rate") + ": " + (this.selectedSymbolRate !== "" ? this.selectedSymbolRate : Language.translate("Select a") + " " + Language.translate("Symbol Rate"));
+      this.tag("SymbolRate.Title").text.text = Language$1.translate("Symbol Rate") + ": " + (this.selectedSymbolRate !== "" ? this.selectedSymbolRate : Language$1.translate("Select a") + " " + Language$1.translate("Symbol Rate"));
     }
     resetForm() {
       this.setScanFinished();
       //reset the form variables to initial state on exit from this form
       this.selectedSatellite = {};
-      this.tag("Satellite.Title").text.text = Language.translate("Satellite");
+      this.tag("Satellite.Title").text.text = Language$1.translate("Satellite");
       this.selectedFrequency = "";
-      this.tag("Frequency.Title").text.text = Language.translate("Frequency");
+      this.tag("Frequency.Title").text.text = Language$1.translate("Frequency");
       this.selectedPolarity = "";
-      this.tag("Polarity.Title").text.text = Language.translate("Polarity");
+      this.tag("Polarity.Title").text.text = Language$1.translate("Polarity");
       this.selectedSymbolRate = "";
-      this.tag("SymbolRate.Title").text.text = Language.translate("Symbol Rate");
+      this.tag("SymbolRate.Title").text.text = Language$1.translate("Symbol Rate");
       this.selectedFEC = "";
-      this.tag("FEC.Title").text.text = Language.translate("FEC");
+      this.tag("FEC.Title").text.text = Language$1.translate("FEC");
       this.selectedDVBS2 = false;
       this.tag("DVBS2.Button").src = Utils.asset("images/settings/ToggleOffWhite.png");
       this.selectedModulation = "";
-      this.tag("Modulation.Title").text.text = Language.translate("Modulation");
+      this.tag("Modulation.Title").text.text = Language$1.translate("Modulation");
       this.selectedSearchType = "";
-      this.tag("SearchType.Title").text.text = Language.translate("Search Mode");
+      this.tag("SearchType.Title").text.text = Language$1.translate("Search Mode");
       this.selectedRetune = false;
       this.tag("Retune.Button").src = Utils.asset("images/settings/ToggleOffWhite.png");
       this.tag("ErrorNotification").visible = false;
@@ -35696,25 +35142,25 @@ var APP_accelerator_home_ui = (function () {
     verifyInputs() {
       let errorString = "";
       if (Object.keys(this.selectedSatellite).length === 0) {
-        errorString += "| " + Language.translate("Satellite") + " ";
+        errorString += "| " + Language$1.translate("Satellite") + " ";
       }
       if (this.selectedFrequency === "") {
-        errorString += "| " + Language.translate("Frequency") + " ";
+        errorString += "| " + Language$1.translate("Frequency") + " ";
       }
       if (this.selectedPolarity === "") {
-        errorString += "| " + Language.translate("Polarity") + " ";
+        errorString += "| " + Language$1.translate("Polarity") + " ";
       }
       if (this.selectedSymbolRate === "") {
-        errorString += "| " + Language.translate("Symbol Rate") + " ";
+        errorString += "| " + Language$1.translate("Symbol Rate") + " ";
       }
       if (this.selectedFEC === "") {
-        errorString += "| " + Language.translate("FEC") + " ";
+        errorString += "| " + Language$1.translate("FEC") + " ";
       }
       if (this.selectedModulation === "") {
-        errorString += "| " + Language.translate("Modulation") + " ";
+        errorString += "| " + Language$1.translate("Modulation") + " ";
       }
       if (this.selectedSearchType === "") {
-        errorString += "| " + Language.translate("Search Mode") + " ";
+        errorString += "| " + Language$1.translate("Search Mode") + " ";
       }
       return errorString;
     }
@@ -35743,13 +35189,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectSatellite").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Satellite"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Satellite"));
             }
             $exit() {
               this.tag("SelectSatellite").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan"));
-              this.tag("Satellite.Title").text.text = Language.translate("Satellite") + ": " + (Object.keys(this.selectedSatellite).length !== 0 ? this.selectedSatellite.name : Language.translate("Select a") + " " + Language.translate("Satellite"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"));
+              this.tag("Satellite.Title").text.text = Language$1.translate("Satellite") + ": " + (Object.keys(this.selectedSatellite).length !== 0 ? this.selectedSatellite.name : Language$1.translate("Select a") + " " + Language$1.translate("Satellite"));
             }
             _getFocused() {
               return this.tag("SelectSatellite");
@@ -35786,12 +35232,12 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectFrequency").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Frequency"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Frequency"));
             }
             $exit() {
               this.tag("SelectFrequency").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"));
             }
             _getFocused() {
               return this.tag("SelectFrequency");
@@ -35822,13 +35268,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectPolarity").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Polarity"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Polarity"));
             }
             $exit() {
               this.tag("SelectPolarity").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan"));
-              this.tag("Polarity.Title").text.text = Language.translate("Polarity") + ": " + (this.selectedPolarity !== "" ? this.selectedPolarity.charAt(0).toUpperCase() + this.selectedPolarity.slice(1) : Language.translate("Select a") + " " + Language.translate("Polarity"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"));
+              this.tag("Polarity.Title").text.text = Language$1.translate("Polarity") + ": " + (this.selectedPolarity !== "" ? this.selectedPolarity.charAt(0).toUpperCase() + this.selectedPolarity.slice(1) : Language$1.translate("Select a") + " " + Language$1.translate("Polarity"));
             }
             _getFocused() {
               return this.tag("SelectPolarity");
@@ -35867,12 +35313,12 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectSymbolRate").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Symbol Rate"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Symbol Rate"));
             }
             $exit() {
               this.tag("SelectSymbolRate").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"));
             }
             _getFocused() {
               return this.tag("SelectSymbolRate");
@@ -35903,13 +35349,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectFEC").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("FEC"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("FEC"));
             }
             $exit() {
               this.tag("SelectFEC").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan"));
-              this.tag("FEC.Title").text.text = Language.translate("FEC") + ": " + (this.selectedFEC !== "" ? this.selectedFEC.replace("fec", "").replace("_", "/").toUpperCase() : Language.translate("Select a") + " " + Language.translate("FEC"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"));
+              this.tag("FEC.Title").text.text = Language$1.translate("FEC") + ": " + (this.selectedFEC !== "" ? this.selectedFEC.replace("fec", "").replace("_", "/").toUpperCase() : Language$1.translate("Select a") + " " + Language$1.translate("FEC"));
             }
             _getFocused() {
               return this.tag("SelectFEC");
@@ -35963,13 +35409,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectModulation").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Modulation"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Modulation"));
             }
             $exit() {
               this.tag("SelectModulation").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan"));
-              this.tag("Modulation.Title").text.text = Language.translate("Modulation") + ": " + (this.selectedModulation !== "" ? this.selectedModulation.toUpperCase() : Language.translate("Select a") + " " + Language.translate("Modulation"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"));
+              this.tag("Modulation.Title").text.text = Language$1.translate("Modulation") + ": " + (this.selectedModulation !== "" ? this.selectedModulation.toUpperCase() : Language$1.translate("Select a") + " " + Language$1.translate("Modulation"));
             }
             _getFocused() {
               return this.tag("SelectModulation");
@@ -36002,13 +35448,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectSearchType").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Search Mode"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Search Mode"));
             }
             $exit() {
               this.tag("SelectSearchType").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV / Scan / DVB-S Scan"));
-              this.tag("SearchType.Title").text.text = Language.translate("Search Mode") + ": " + (this.selectedSearchType !== "" ? this.selectedSearchType.charAt(0).toUpperCase() + this.selectedSearchType.slice(1) : Language.translate("Select a") + " " + Language.translate("Search Mode"));
+              this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"));
+              this.tag("SearchType.Title").text.text = Language$1.translate("Search Mode") + ": " + (this.selectedSearchType !== "" ? this.selectedSearchType.charAt(0).toUpperCase() + this.selectedSearchType.slice(1) : Language$1.translate("Select a") + " " + Language$1.translate("Search Mode"));
             }
             _getFocused() {
               return this.tag("SelectSearchType");
@@ -36079,13 +35525,13 @@ var APP_accelerator_home_ui = (function () {
               setTimeout(() => {
                 this.setScanFinished(); //to give back controls after 30 sec in case searchstatus event fails
                 dtvApi$4.noOfServices().then(res => {
-                  this.tag("ErrorNotification.Content").text.text = Language.translate("Found ") + res + Language.translate(" services.");
+                  this.tag("ErrorNotification.Content").text.text = Language$1.translate("Found ") + res + Language$1.translate(" services.");
                   this.tag("ErrorNotification").visible = true;
                 });
               }, 30000);
             });
           } else {
-            this.tag("ErrorNotification.Content").text.text = Language.translate("Please enter the values for the following ") + errorString;
+            this.tag("ErrorNotification.Content").text.text = Language$1.translate("Please enter the values for the following ") + errorString;
             this.tag("ErrorNotification").visible = true;
           }
         }
@@ -36115,9 +35561,9 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Live TV Scan screen.
    */
-  class LiveTVScan$1 extends lng$1.Component {
+  class LiveTVScan$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Settings / Live TV / Scan'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Settings / Live TV / Scan'));
     }
     pageTransition() {
       return 'left';
@@ -36139,7 +35585,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('DVB-T Scan'),
+                text: Language$1.translate('DVB-T Scan'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -36164,7 +35610,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('DVB-C Scan'),
+                text: Language$1.translate('DVB-C Scan'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -36188,7 +35634,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('DVB-S Scan'),
+                text: Language$1.translate('DVB-S Scan'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -36286,9 +35732,9 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Live TV settings screen.
    */
-  class LiveTVSettings$1 extends lng$1.Component {
+  class LiveTVSettings$1 extends t.Component {
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate("Settings / Live TV"));
+      this.widgets.menu.updateTopPanelText(Language$1.translate("Settings / Live TV"));
     }
     pageTransition() {
       return "left";
@@ -36309,7 +35755,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate("Activate / Deactivate"),
+                text: Language$1.translate("Activate / Deactivate"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -36333,7 +35779,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate("Scan"),
+                text: Language$1.translate("Scan"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -36792,7 +36238,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class TvOverlaySettingsItem extends lng$1.Component {
+  class TvOverlaySettingsItem extends t.Component {
     _construct() {
       this.pictureApi = new PictureSettingsApi();
     }
@@ -36887,7 +36333,7 @@ var APP_accelerator_home_ui = (function () {
       }
     }
     updateValue(value) {
-      this.tag("Title").text.text = "".concat(Language.translate(this._item.name), ": ").concat(value);
+      this.tag("Title").text.text = "".concat(Language$1.translate(this._item.name), ": ").concat(value);
     }
     formatItemName(name) {
       return name.charAt(0).toUpperCase() + name.slice(1);
@@ -37013,7 +36459,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class TvOverlaySettingsScreen extends lng$1.Component {
+  class TvOverlaySettingsScreen extends t.Component {
     static _template() {
       return {
         Contents: {
@@ -37032,7 +36478,7 @@ var APP_accelerator_home_ui = (function () {
             clipping: true,
             y: 80,
             List: {
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 500,
               h: 910,
               y: 5,
@@ -37159,7 +36605,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class TvOverlayInputItem extends lng$1.Component {
+  class TvOverlayInputItem extends t.Component {
     _construct() {
       this.Tick = Utils.asset("/images/settings/Tick.png");
     }
@@ -37376,7 +36822,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class TvOverlayInputScreen extends lng$1.Component {
+  class TvOverlayInputScreen extends t.Component {
     static _template() {
       return {
         Contents: {
@@ -37395,7 +36841,7 @@ var APP_accelerator_home_ui = (function () {
             y: 70,
             x: 100,
             text: {
-              text: Language.translate("Video Input"),
+              text: Language$1.translate("Video Input"),
               fontFace: CONFIG.language.font,
               textColor: CONFIG.theme.hex,
               fontSize: 40,
@@ -37415,7 +36861,7 @@ var APP_accelerator_home_ui = (function () {
             // rect: true, //
             // color: 0xffff0000, //
             List: {
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 1720,
               h: 370,
               y: 5,
@@ -37538,7 +36984,7 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   };
   var thunder$9 = thunderJS$1(config$6);
-  class TvOverlayScreen extends lng$1.Component {
+  class TvOverlayScreen extends t.Component {
     set params(args) {
       this._type = args.type;
       console.log("setting to idlestate");
@@ -37715,7 +37161,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class ChannelItem extends lng$1.Component {
+  class ChannelItem extends t.Component {
     static _template() {
       return {
         w: 236,
@@ -37782,7 +37228,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class Shows extends lng$1.Component {
+  class Shows extends t.Component {
     static _template() {
       return {
         y: 200
@@ -37808,7 +37254,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class Cell extends lng$1.Component {
+  class Cell extends t.Component {
     static _template() {
       return {
         zIndex: 2
@@ -37824,7 +37270,7 @@ var APP_accelerator_home_ui = (function () {
             y: 45,
             mountY: 0.5,
             text: {
-              text: ins ? ins : "No Shows are being aired at the moment",
+              text: ins ? ins : Language$1.translate("No Shows are being aired at the moment"),
               fontFace: CONFIG.language.font,
               fontStyle: 'normal',
               fontSize: 21,
@@ -37835,7 +37281,7 @@ var APP_accelerator_home_ui = (function () {
           }
         }
       });
-      this.insText = ins ? ins : "No Shows are being aired at the moment";
+      this.insText = ins ? ins : Language$1.translate("No Shows are being aired at the moment");
     }
     get txt() {
       return this.insText;
@@ -37893,7 +37339,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class CellCursor extends lng$1.Component {
+  class CellCursor extends t.Component {
     static _template() {
       return {
         zIndex: 5,
@@ -37956,7 +37402,7 @@ var APP_accelerator_home_ui = (function () {
   let k = 5;
   const homeApi = new HomeApi();
   const dtvApi$3 = new DTVApi();
-  class Epg extends lng$1.Component {
+  class Epg extends t.Component {
     static _template() {
       return {
         Background: {
@@ -38453,7 +37899,7 @@ var APP_accelerator_home_ui = (function () {
               if (channel.dvburi === "OTT") {
                 traversedChannels++;
                 channels[i].shows = [{
-                  name: Language.translate("click to launch") + " ".concat(channel.shortname),
+                  name: Language$1.translate("click to launch") + " ".concat(channel.shortname),
                   starttime: 0,
                   duration: e,
                   eventid: 0,
@@ -38560,7 +38006,7 @@ var APP_accelerator_home_ui = (function () {
       this.setBoldText();
     }
     _onChanged() {
-      this.widgets.menu.updateTopPanelText(Language.translate('Guide'));
+      this.widgets.menu.updateTopPanelText(Language$1.translate('Guide'));
     }
     pageTransition() {
       return 'up';
@@ -38768,7 +38214,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class DTVPlayer extends lng$1.Component {
+  class DTVPlayer extends t.Component {
     static _template() {
       return {
         Player: {
@@ -38814,7 +38260,7 @@ var APP_accelerator_home_ui = (function () {
    **/
 
   //applauncher screen "will" be responsible for handling all overlays as widget and splash screens for apps(if required) | currently only handles settings overlay widget
-  class AppLauncherScreen extends lng$1.Component {
+  class AppLauncherScreen extends t.Component {
     static _template() {
       return {
         Overlay: {
@@ -38932,7 +38378,7 @@ var APP_accelerator_home_ui = (function () {
   };
   var thunder$8 = thunderJS$1(config$5);
   var appApi$9 = new AppApi();
-  class CodeScreen extends lng$1.Component {
+  class CodeScreen extends t.Component {
     static _template() {
       return {
         Wrapper: {
@@ -39111,7 +38557,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   var appApi$8 = new AppApi();
-  class AlexaLoginScreen extends lng$1.Component {
+  class AlexaLoginScreen extends t.Component {
     static _template() {
       return {
         Wrapper: {
@@ -39299,7 +38745,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const appApi$7 = new AppApi();
-  class SuccessScreen extends lng$1.Component {
+  class SuccessScreen extends t.Component {
     static _template() {
       return {
         Wrapper: {
@@ -39506,7 +38952,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   var appApi$6 = new AppApi();
-  class FailureScreen extends lng$1.Component {
+  class FailureScreen extends t.Component {
     static _template() {
       return {
         Wrapper: {
@@ -39638,7 +39084,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Reboot Confirmation Screen.
    */
-  class AlexaConfirmationScreen extends lng$1.Component {
+  class AlexaConfirmationScreen extends t.Component {
     pageTransition() {
       return 'left';
     }
@@ -39675,7 +39121,7 @@ var APP_accelerator_home_ui = (function () {
             y: 125,
             mountX: 0.5,
             text: {
-              text: Language.translate("Alexa will be disabled, are you sure you want to exit?"),
+              text: Language$1.translate("Alexa will be disabled, are you sure you want to exit?"),
               fontFace: CONFIG.language.font,
               fontSize: 25
             }
@@ -39836,7 +39282,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class CameraStreamingScreen extends lng$1.Component {
+  class CameraStreamingScreen extends t.Component {
     static _template() {
       return {
         Background: {
@@ -39847,7 +39293,7 @@ var APP_accelerator_home_ui = (function () {
             y: 390,
             w: 910,
             h: 520,
-            type: lng$1.shaders.Hole
+            type: t.shaders.Hole
           },
           visible: true
         },
@@ -39878,7 +39324,7 @@ var APP_accelerator_home_ui = (function () {
             y: 450,
             mount: 0.5,
             text: {
-              text: Language.translate("Switch 1"),
+              text: Language$1.translate("Switch 1"),
               fontFace: CONFIG.language.font,
               fontSize: 32,
               textColor: 0xFFF9F9F9,
@@ -39911,7 +39357,7 @@ var APP_accelerator_home_ui = (function () {
             y: 550,
             mount: 0.5,
             text: {
-              text: Language.translate("Switch 2"),
+              text: Language$1.translate("Switch 2"),
               fontFace: CONFIG.language.font,
               fontSize: 32,
               textColor: 0xFFF9F9F9,
@@ -39944,7 +39390,7 @@ var APP_accelerator_home_ui = (function () {
             y: 650,
             mount: 0.5,
             text: {
-              text: Language.translate("Switch 3"),
+              text: Language$1.translate("Switch 3"),
               fontFace: CONFIG.language.font,
               fontSize: 32,
               textColor: 0xFFF9F9F9,
@@ -39977,7 +39423,7 @@ var APP_accelerator_home_ui = (function () {
             y: 750,
             mount: 0.5,
             text: {
-              text: Language.translate("Switch 4"),
+              text: Language$1.translate("Switch 4"),
               fontFace: CONFIG.language.font,
               fontSize: 32,
               textColor: 0xFFF9F9F9,
@@ -40013,6 +39459,17 @@ var APP_accelerator_home_ui = (function () {
       VideoPlayer.position(350, 270);
       VideoPlayer.size(890, 600);
       VideoPlayer.open(args.cameraUrl);
+      VideoPlayer.consumer(this);
+    }
+    $videoPlayerEvent(eventName) {
+      if (eventName === "Error" || eventName === "Abort") {
+        VideoPlayer.reload();
+      } else if (eventName === "Ended") {
+        if (!Router.isNavigating()) {
+          VideoPlayer.close();
+          Router.navigate('camera/player/ExitScreen');
+        }
+      }
     }
     _handleBack() {
       VideoPlayer.close();
@@ -40108,6 +39565,185 @@ var APP_accelerator_home_ui = (function () {
             this.tag("Switch4.Button").src = "static/images/settings/ToggleOnOrange.png";
             console.log("Switch4 Turned On");
           }
+        }
+      }];
+    }
+  }
+
+  class CameraStreamingScreenExitConfirmationScreen extends t.Component {
+    pageTransition() {
+      return 'left';
+    }
+    static _template() {
+      return {
+        w: 1920,
+        h: 2000,
+        rect: true,
+        color: 0xCC000000,
+        RebootScreen: {
+          x: 950,
+          y: 270,
+          Title: {
+            x: 0,
+            y: 0,
+            mountX: 0.5,
+            text: {
+              text: Language$1.translate("Streaming has Ended Please go to Home"),
+              fontFace: CONFIG.language.font,
+              fontSize: 40,
+              textColor: CONFIG.theme.hex
+            }
+          },
+          BorderTop: {
+            x: 0,
+            y: 75,
+            w: 1558,
+            h: 3,
+            rect: true,
+            mountX: 0.5
+          },
+          Info: {
+            x: 0,
+            y: 125,
+            mountX: 0.5,
+            text: {
+              text: Language$1.translate("Click Confirm to go to Home!"),
+              fontFace: CONFIG.language.font,
+              fontSize: 25
+            }
+          },
+          Buttons: {
+            x: 100,
+            y: 200,
+            w: 440,
+            mountX: 0.5,
+            h: 50,
+            Confirm: {
+              x: 0,
+              w: 200,
+              mountX: 0.5,
+              h: 50,
+              rect: true,
+              color: 0xFFFFFFFF,
+              Title: {
+                x: 100,
+                y: 25,
+                mount: 0.5,
+                text: {
+                  text: Language$1.translate("Confirm"),
+                  fontFace: CONFIG.language.font,
+                  fontSize: 22,
+                  textColor: 0xFF000000
+                }
+              }
+            },
+            Cancel: {
+              x: 220,
+              w: 200,
+              mountX: 0.5,
+              h: 50,
+              rect: true,
+              color: 0xFF7D7D7D,
+              Title: {
+                x: 100,
+                y: 25,
+                mount: 0.5,
+                text: {
+                  text: Language$1.translate("Cancel"),
+                  fontFace: CONFIG.language.font,
+                  fontSize: 22,
+                  textColor: 0xFF000000
+                }
+              }
+            }
+          },
+          BorderBottom: {
+            x: 0,
+            y: 300,
+            w: 1558,
+            h: 3,
+            rect: true,
+            mountX: 0.5
+          }
+        }
+      };
+    }
+    _focus() {
+      this._setState('Confirm');
+    }
+    _handleBack() {
+      if (!Router.isNavigating()) {
+        Router.navigate('camera/player');
+      }
+    }
+    static _states() {
+      return [class Confirm extends this {
+        $enter() {
+          this._focus();
+        }
+        _handleEnter() {
+          Router.navigate('menu');
+        }
+        _handleRight() {
+          this._setState('Cancel');
+        }
+        _focus() {
+          this.tag('Confirm').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('Confirm.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('Confirm').patch({
+            color: 0xFFFFFFFF
+          });
+          this.tag('Confirm.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        $exit() {
+          this._unfocus();
+        }
+      }, class Cancel extends this {
+        $enter() {
+          this._focus();
+        }
+        _handleEnter() {
+          if (!Router.isNavigating()) {
+            Router.back();
+          }
+        }
+        _handleLeft() {
+          this._setState('Confirm');
+        }
+        _focus() {
+          this.tag('Cancel').patch({
+            color: CONFIG.theme.hex
+          });
+          this.tag('Cancel.Title').patch({
+            text: {
+              textColor: 0xFFFFFFFF
+            }
+          });
+        }
+        _unfocus() {
+          this.tag('Cancel').patch({
+            color: 0xFF7D7D7D
+          });
+          this.tag('Cancel.Title').patch({
+            text: {
+              textColor: 0xFF000000
+            }
+          });
+        }
+        $exit() {
+          this._unfocus();
         }
       }];
     }
@@ -40215,6 +39851,9 @@ var APP_accelerator_home_ui = (function () {
       component: CameraStreamingScreen,
       widgets: ['Menu']
     }, {
+      path: 'camera/player/ExitScreen',
+      component: CameraStreamingScreenExitConfirmationScreen
+    }, {
       path: 'dtvplayer',
       component: DTVPlayer,
       widgets: ['Volume', 'TvOverlays', 'ChannelOverlay', "SettingsOverlay", "AppCarousel"]
@@ -40264,7 +39903,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class to render items in side panel.
    */
-  class SidePanelItem extends lng$1.Component {
+  class SidePanelItem extends t.Component {
     /**
      * Function to render various elements in the side panel item.
      */
@@ -40356,7 +39995,7 @@ var APP_accelerator_home_ui = (function () {
    **/
 
   /** Class for side panel in home UI */
-  class SidePanel extends lng$1.Component {
+  class SidePanel extends t.Component {
     static _template() {
       return {
         color: 0xff000000,
@@ -40369,7 +40008,7 @@ var APP_accelerator_home_ui = (function () {
           y: 127,
           w: 240,
           h: 750,
-          type: lng$1.components.ListComponent,
+          type: t.components.ListComponent,
           roll: true,
           horizontal: false,
           invertDirection: true
@@ -40522,7 +40161,7 @@ var APP_accelerator_home_ui = (function () {
    **/
 
   /** Class for top panel in home UI */
-  class TopPanel extends lng$1.Component {
+  class TopPanel extends t.Component {
     static _template() {
       return {
         TopPanel: {
@@ -40551,7 +40190,7 @@ var APP_accelerator_home_ui = (function () {
             // mountY: 0.5,
             text: {
               fontSize: 40,
-              text: Language.translate('home'),
+              text: Language$1.translate('home'),
               textColor: CONFIG.theme.hex,
               fontStyle: 'bolder',
               fontFace: CONFIG.language.font,
@@ -40750,7 +40389,7 @@ var APP_accelerator_home_ui = (function () {
       Router.focusPage();
     }
   };
-  class Menu extends lng$1.Component {
+  class Menu extends t.Component {
     static _template() {
       return {
         TopPanel: {
@@ -41186,7 +40825,7 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   };
   var thunder$6 = thunderJS$1(config$3);
-  class Volume extends lng$1.Component {
+  class Volume extends t.Component {
     constructor() {
       super(...arguments);
       _defineProperty(this, "setVolume", async val => {
@@ -41338,7 +40977,6 @@ var APP_accelerator_home_ui = (function () {
           y: -30
         }
       });
-      this.updateValues();
     }
     unfocus() {
       //the volume widget would never be actually focused
@@ -41402,14 +41040,14 @@ var APP_accelerator_home_ui = (function () {
    * Class for HDMI Output Screen.
    */
   var appApi$4 = new AppApi();
-  class HdmiOutputScreen extends lng$1.Component {
+  class HdmiOutputScreen extends t.Component {
     static _template() {
       return {
         HdmiOutputScreenContents: {
           x: 200,
           y: 275,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -41526,7 +41164,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Audio screen.
    */
 
-  class AudioScreen extends lng$1.Component {
+  class AudioScreen extends t.Component {
     static _template() {
       return {
         AudioScreenOverlay: {
@@ -41541,7 +41179,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Audio Output: ') + " HDMI",
+                text: Language$1.translate('Audio Output: ') + " HDMI",
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -41565,7 +41203,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Output Mode: '),
+                text: Language$1.translate('Output Mode: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -41590,7 +41228,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Full Dynamic Range'),
+                text: Language$1.translate('Full Dynamic Range'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -41615,7 +41253,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Audio Language: ') + "Auto",
+                text: Language$1.translate('Audio Language: ') + "Auto",
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -41640,7 +41278,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Navigation Feedback'),
+                text: Language$1.translate('Navigation Feedback'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -41665,7 +41303,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Bluetooth: ') + "None",
+                text: Language$1.translate('Bluetooth: ') + "None",
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -41695,7 +41333,7 @@ var APP_accelerator_home_ui = (function () {
     _focus() {
       this._setState('OutputMode');
       this.appApi.getSoundMode().then(result => {
-        this.tag('OutputMode.Title').text.text = Language.translate('Output Mode: ') + result.soundMode;
+        this.tag('OutputMode.Title').text.text = Language$1.translate('Output Mode: ') + result.soundMode;
       });
     }
     hide() {
@@ -41876,14 +41514,14 @@ var APP_accelerator_home_ui = (function () {
    * Class for Resolution Screen.
    */
 
-  class ResolutionScreen extends lng$1.Component {
+  class ResolutionScreen extends t.Component {
     static _template() {
       return {
         ResolutionScreenContents: {
           x: 200,
           y: 275,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -42014,7 +41652,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Video screen.
    */
 
-  class VideoScreen extends lng$1.Component {
+  class VideoScreen extends t.Component {
     static _template() {
       return {
         VideoScreenContents: {
@@ -42027,7 +41665,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Resolution: '),
+                text: Language$1.translate('Resolution: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42051,7 +41689,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('High Dynamic Range: '),
+                text: Language$1.translate('High Dynamic Range: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42068,7 +41706,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Match Content: '),
+                text: Language$1.translate('Match Content: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42094,7 +41732,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Output Format:'),
+                text: Language$1.translate('Output Format:'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42120,7 +41758,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Chroma:'),
+                text: Language$1.translate('Chroma:'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42145,7 +41783,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('HDCP Status: '),
+                text: Language$1.translate('HDCP Status: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42165,15 +41803,15 @@ var APP_accelerator_home_ui = (function () {
     }
     _focus() {
       this._appApi.getResolution().then(resolution => {
-        this.tag("Resolution.Title").text.text = Language.translate('Resolution: ') + resolution;
+        this.tag("Resolution.Title").text.text = Language$1.translate('Resolution: ') + resolution;
       }).catch(err => {
         console.log("Error fetching the Resolution");
       });
       this._appApi.getHDCPStatus().then(result => {
         if (result.isHDCPCompliant && result.isHDCPEnabled) {
-          this.tag("HDCP.Title").text.text = "".concat(Language.translate('HDCP Status: '), "Enabled, Version: ").concat(result.currentHDCPVersion);
+          this.tag("HDCP.Title").text.text = "".concat(Language$1.translate('HDCP Status: '), "Enabled, Version: ").concat(result.currentHDCPVersion);
         } else {
-          this.tag("HDCP.Title").text.text = "".concat(Language.translate('HDCP Status: '), "Not Supported ");
+          this.tag("HDCP.Title").text.text = "".concat(Language$1.translate('HDCP Status: '), "Not Supported ");
         }
       });
       this._appApi.getHDRSetting().then(result => {
@@ -42185,7 +41823,7 @@ var APP_accelerator_home_ui = (function () {
           "HdrDolbyvision": "Dolby Vision",
           "HdrTechnicolor": "Technicolor HDR"
         };
-        this.tag("HDR.Title").text.text = Language.translate('High Dynamic Range: ') + availableHDROptions[result];
+        this.tag("HDR.Title").text.text = Language$1.translate('High Dynamic Range: ') + availableHDROptions[result];
       });
       this._setState('Resolution');
     }
@@ -42336,7 +41974,7 @@ var APP_accelerator_home_ui = (function () {
   var appApi$3 = new AppApi();
   var defaultInterface = "";
   var currentInterface = [];
-  class NetworkInfo extends lng$1.Component {
+  class NetworkInfo extends t.Component {
     static _template() {
       return {
         NetworkInfoScreenContents: {
@@ -42350,7 +41988,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Status: '),
+                text: Language$1.translate('Status: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42377,7 +42015,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Connection Type: '),
+                text: Language$1.translate('Connection Type: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42404,7 +42042,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('IP Address: '),
+                text: Language$1.translate('IP Address: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42430,7 +42068,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Gateway: '),
+                text: Language$1.translate('Gateway: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42457,7 +42095,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('MAC Address: '),
+                text: Language$1.translate('MAC Address: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42484,7 +42122,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Internet Protocol: '),
+                text: Language$1.translate('Internet Protocol: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42511,7 +42149,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('SSID: '),
+                text: Language$1.translate('SSID: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42538,7 +42176,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Signal Strength: '),
+                text: Language$1.translate('Signal Strength: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -42644,7 +42282,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const wifi$1 = new Wifi();
-  class JoinAnotherNetworkComponent extends lng$1.Component {
+  class JoinAnotherNetworkComponent extends t.Component {
     handleDone() {
       var securityCode = this.securityCodes[this.securityCodeIndex].value;
       if (!this.textCollection['EnterSSID']) {
@@ -42722,7 +42360,7 @@ var APP_accelerator_home_ui = (function () {
         NetworkBox: {
           x: 400,
           y: 160,
-          texture: lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
+          texture: t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
         },
         NetworkText: {
           x: 420,
@@ -42750,7 +42388,7 @@ var APP_accelerator_home_ui = (function () {
         TypeBox: {
           x: 400,
           y: 230,
-          texture: lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false),
+          texture: t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false),
           ArrowForward: {
             h: 30,
             w: 45,
@@ -42794,7 +42432,7 @@ var APP_accelerator_home_ui = (function () {
         PasswordBox: {
           x: 400,
           y: 300,
-          texture: lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
+          texture: t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
         },
         Pwd: {
           x: 420,
@@ -42850,7 +42488,7 @@ var APP_accelerator_home_ui = (function () {
     static _states() {
       return [class EnterSSID extends this {
         $enter() {
-          this.tag('NetworkBox').texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
+          this.tag('NetworkBox').texture = t.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
         }
         _handleDown() {
           this._setState("EnterSecurity");
@@ -42859,11 +42497,11 @@ var APP_accelerator_home_ui = (function () {
           this._setState('Keyboard');
         }
         $exit() {
-          this.tag('NetworkBox').texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
+          this.tag('NetworkBox').texture = t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
         }
       }, class EnterSecurity extends this {
         $enter() {
-          this.tag("TypeBox").texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
+          this.tag("TypeBox").texture = t.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
         }
         _handleUp() {
           this._setState("EnterSSID");
@@ -42898,14 +42536,14 @@ var APP_accelerator_home_ui = (function () {
           }
         }
         $exit() {
-          this.tag("TypeBox").texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
+          this.tag("TypeBox").texture = t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
         }
       }, class EnterPassword extends this {
         $enter() {
           if (this.pwdUnReachable) {
             this._setState("EnterSecurity");
           }
-          this.tag('PasswordBox').texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
+          this.tag('PasswordBox').texture = t.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false);
         }
         _handleUp() {
           this._setState("EnterSecurity");
@@ -42917,7 +42555,7 @@ var APP_accelerator_home_ui = (function () {
           this._setState('Keyboard');
         }
         $exit() {
-          this.tag('PasswordBox').texture = lng$1.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
+          this.tag('PasswordBox').texture = t.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
         }
       }, class Keyboard extends this {
         $enter(state) {
@@ -43039,7 +42677,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class WifiPairingScreen extends lng$1.Component {
+  class WifiPairingScreen extends t.Component {
     static _template() {
       return {
         PairingScreen: {
@@ -43095,7 +42733,7 @@ var APP_accelerator_home_ui = (function () {
             x: 417,
             y: 208,
             zIndex: 2,
-            texture: lng$1.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false)
+            texture: t.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false)
           },
           PasswrdSwitch: {
             h: 45,
@@ -43123,7 +42761,7 @@ var APP_accelerator_home_ui = (function () {
           List: {
             x: 417,
             y: 331,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1080,
             h: 400,
             itemSize: 28,
@@ -43294,7 +42932,7 @@ var APP_accelerator_home_ui = (function () {
         }
       }, class PasswordSwitchState extends this {
         $enter() {
-          this.tag("PasswordBox").texture = lng$1.Tools.getRoundRect(1279, 88, 0, 3, CONFIG.theme.hex, false);
+          this.tag("PasswordBox").texture = t.Tools.getRoundRect(1279, 88, 0, 3, CONFIG.theme.hex, false);
         }
         _handleDown() {
           this._setState("Pair");
@@ -43313,7 +42951,7 @@ var APP_accelerator_home_ui = (function () {
           this.isOn = bool;
         }
         $exit() {
-          this.tag("PasswordBox").texture = lng$1.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false);
+          this.tag("PasswordBox").texture = t.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false);
         }
       }];
     }
@@ -43339,12 +42977,12 @@ var APP_accelerator_home_ui = (function () {
    **/
   const errorTitle = 'Error Title';
   const errorMsg = 'Error Message';
-  class FailComponent extends lng$1.Component {
+  class FailComponent extends t.Component {
     notify(args) {
       console.log(args);
       if (args.title && args.msg) {
         this.tag('FailComponent.Title').text.text = args.title;
-        this.tag('FailComponent.Message').text.text = Language.translate(args.msg);
+        this.tag('FailComponent.Message').text.text = Language$1.translate(args.msg);
       }
     }
     _unfocus() {
@@ -43396,7 +43034,7 @@ var APP_accelerator_home_ui = (function () {
               y: 25,
               mount: 0.5,
               text: {
-                text: Language.translate("OK"),
+                text: Language$1.translate("OK"),
                 fontFace: CONFIG.language.font,
                 fontSize: 22
               }
@@ -43437,7 +43075,7 @@ var APP_accelerator_home_ui = (function () {
   /**
   * Class for WiFi screen.
   */
-  class WiFiScreen extends lng$1.Component {
+  class WiFiScreen extends t.Component {
     static _template() {
       return {
         WifiContents: {
@@ -43450,7 +43088,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('WiFi On/Off'),
+                text: Language$1.translate('WiFi On/Off'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -43487,7 +43125,7 @@ var APP_accelerator_home_ui = (function () {
                 margin: 0
               },
               List: {
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 w: 1920 - 300,
                 itemSize: 90,
                 horizontal: false,
@@ -43503,7 +43141,7 @@ var APP_accelerator_home_ui = (function () {
               },
               List: {
                 w: 1920 - 300,
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 itemSize: 90,
                 horizontal: false,
                 invertDirection: true,
@@ -43522,7 +43160,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Join Another Network'),
+                text: Language$1.translate('Join Another Network'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44037,7 +43675,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const wifi = new Wifi();
-  class NetworkInterfaceScreen extends lng$1.Component {
+  class NetworkInterfaceScreen extends t.Component {
     _construct() {
       this.LoadingIcon = Utils.asset('images/settings/Loading.png');
     }
@@ -44053,7 +43691,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('WiFi'),
+                text: Language$1.translate('WiFi'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44077,7 +43715,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Ethernet'),
+                text: Language$1.translate('Ethernet'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44256,7 +43894,7 @@ var APP_accelerator_home_ui = (function () {
     * Class for Other Network Config Screen.
     */
 
-  class NetworkConfigurationScreen extends lng$1.Component {
+  class NetworkConfigurationScreen extends t.Component {
     static _template() {
       return {
         rect: true,
@@ -44274,7 +43912,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Network Info'),
+                text: Language$1.translate('Network Info'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44299,7 +43937,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Network Interface: '),
+                text: Language$1.translate('Network Interface: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44323,7 +43961,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Test Internet Access: '),
+                text: Language$1.translate('Test Internet Access: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44350,7 +43988,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Static Mode'),
+                text: Language$1.translate('Static Mode'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44411,10 +44049,10 @@ var APP_accelerator_home_ui = (function () {
       });
     }
     _unfocus() {
-      this.tag('TestInternetAccess.Title').text.text = Language.translate('Test Internet Access: ');
+      this.tag('TestInternetAccess.Title').text.text = Language$1.translate('Test Internet Access: ');
     }
     $NetworkInterfaceText(text) {
-      this.tag('NetworkInterface.Title').text.text = Language.translate('Network Interface: ') + text;
+      this.tag('NetworkInterface.Title').text.text = Language$1.translate('Network Interface: ') + text;
     }
     hide() {
       this.tag('NetworkConfigurationScreenContents').visible = false;
@@ -44472,11 +44110,11 @@ var APP_accelerator_home_ui = (function () {
           this.loadingAnimation.start();
           this.tag('TestInternetAccess.Loader').visible = true;
           this._network.isConnectedToInternet().then(result => {
-            let connectionStatus = Language.translate("Internet Access: ");
+            let connectionStatus = Language$1.translate("Internet Access: ");
             if (result) {
-              connectionStatus += Language.translate("Connected");
+              connectionStatus += Language$1.translate("Connected");
             } else {
-              connectionStatus += Language.translate("Not Connected");
+              connectionStatus += Language$1.translate("Not Connected");
             }
             setTimeout(() => {
               this.tag('TestInternetAccess.Loader').visible = false;
@@ -44559,7 +44197,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for pairing screen for the Bluetooth.
    */
-  class BluetoothPairingScreen extends lng$1.Component {
+  class BluetoothPairingScreen extends t.Component {
     static _template() {
       return {
         BluetoothPair: {
@@ -44629,7 +44267,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Unpair"),
+                  text: Language$1.translate("Unpair"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -44648,7 +44286,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Cancel"),
+                  text: Language$1.translate("Cancel"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xFF000000
@@ -44819,7 +44457,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Bluetooth screen.
    */
-  class BluetoothScreen extends lng$1.Component {
+  class BluetoothScreen extends t.Component {
     static _template() {
       return {
         Bluetooth: {
@@ -44832,7 +44470,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Bluetooth On/Off'),
+                text: Language$1.translate('Bluetooth On/Off'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44856,7 +44494,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Searching for Devices'),
+                text: Language$1.translate('Searching for Devices'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -44877,7 +44515,7 @@ var APP_accelerator_home_ui = (function () {
             PairedNetworks: {
               y: 180,
               List: {
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 w: 1920 - 300,
                 itemSize: 90,
                 horizontal: false,
@@ -44892,7 +44530,7 @@ var APP_accelerator_home_ui = (function () {
               visible: false,
               List: {
                 w: 1920 - 300,
-                type: lng$1.components.ListComponent,
+                type: t.components.ListComponent,
                 itemSize: 90,
                 horizontal: false,
                 invertDirection: true,
@@ -44911,7 +44549,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Add A Device'),
+                text: Language$1.translate('Add A Device'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -45443,7 +45081,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for DVB Scan screen.
    */
-  class DvbSScan extends lng$1.Component {
+  class DvbSScan extends t.Component {
     static _template() {
       return {
         DvbSScanScreenContents: {
@@ -45463,7 +45101,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Satellite"),
+                    text: Language$1.translate("Satellite"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45487,7 +45125,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Frequency"),
+                    text: Language$1.translate("Frequency"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45511,7 +45149,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Polarity"),
+                    text: Language$1.translate("Polarity"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45535,7 +45173,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Symbol Rate"),
+                    text: Language$1.translate("Symbol Rate"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45559,7 +45197,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("FEC"),
+                    text: Language$1.translate("FEC"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45583,7 +45221,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("DVB-S2"),
+                    text: Language$1.translate("DVB-S2"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45607,7 +45245,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Modulation"),
+                    text: Language$1.translate("Modulation"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45631,7 +45269,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Search Mode"),
+                    text: Language$1.translate("Search Mode"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45655,7 +45293,7 @@ var APP_accelerator_home_ui = (function () {
                   y: 45,
                   mountY: 0.5,
                   text: {
-                    text: Language.translate("Clear existing service list"),
+                    text: Language$1.translate("Clear existing service list"),
                     textColor: COLORS.titleColor,
                     fontFace: CONFIG.language.font,
                     fontSize: 25
@@ -45686,7 +45324,7 @@ var APP_accelerator_home_ui = (function () {
               y: 27,
               mount: 0.5,
               text: {
-                text: Language.translate("Start Scan"),
+                text: Language$1.translate("Start Scan"),
                 textColor: 0xff000000,
                 fontFace: CONFIG.language.font,
                 fontSize: 24
@@ -45703,7 +45341,7 @@ var APP_accelerator_home_ui = (function () {
               y: 25,
               mountY: 0.5,
               text: {
-                text: Language.translate("Error!"),
+                text: Language$1.translate("Error!"),
                 textColor: CONFIG.theme.hex,
                 fontFace: CONFIG.language.font,
                 fontSize: 21
@@ -45721,7 +45359,7 @@ var APP_accelerator_home_ui = (function () {
               y: 25,
               mountY: 0.5,
               text: {
-                text: Language.translate("Please wait scan in progress") + "...",
+                text: Language$1.translate("Please wait scan in progress") + "...",
                 textColor: CONFIG.theme.hex,
                 fontFace: CONFIG.language.font,
                 fontSize: 21
@@ -45801,10 +45439,10 @@ var APP_accelerator_home_ui = (function () {
         actions: [{
           p: "text.text",
           v: {
-            0: Language.translate("Please wait scan in progress"),
-            0.3: Language.translate("Please wait scan in progress") + ".",
-            0.6: Language.translate("Please wait scan in progress") + "..",
-            0.9: Language.translate("Please wait scan in progress") + "..."
+            0: Language$1.translate("Please wait scan in progress"),
+            0.3: Language$1.translate("Please wait scan in progress") + ".",
+            0.6: Language$1.translate("Please wait scan in progress") + "..",
+            0.9: Language$1.translate("Please wait scan in progress") + "..."
           }
         }]
       });
@@ -45960,32 +45598,32 @@ var APP_accelerator_home_ui = (function () {
     setFrequency(frequency) {
       this._setState("Frequency");
       this.selectedFrequency = frequency;
-      this.tag("Frequency.Title").text.text = Language.translate("Frequency") + ": " + (this.selectedFrequency !== "" ? this.selectedFrequency : Language.translate("Select a") + " " + Language.translate("Frequency"));
+      this.tag("Frequency.Title").text.text = Language$1.translate("Frequency") + ": " + (this.selectedFrequency !== "" ? this.selectedFrequency : Language$1.translate("Select a") + " " + Language$1.translate("Frequency"));
     }
     setSymbolRate(symbolrate) {
       this._setState("SymbolRate");
       this.selectedSymbolRate = symbolrate;
-      this.tag("SymbolRate.Title").text.text = Language.translate("Symbol Rate") + ": " + (this.selectedSymbolRate !== "" ? this.selectedSymbolRate : Language.translate("Select a") + " " + Language.translate("Symbol Rate"));
+      this.tag("SymbolRate.Title").text.text = Language$1.translate("Symbol Rate") + ": " + (this.selectedSymbolRate !== "" ? this.selectedSymbolRate : Language$1.translate("Select a") + " " + Language$1.translate("Symbol Rate"));
     }
     resetForm() {
       this.setScanFinished();
       //reset the form variables to initial state on exit from this form
       this.selectedSatellite = {};
-      this.tag("Satellite.Title").text.text = Language.translate("Satellite");
+      this.tag("Satellite.Title").text.text = Language$1.translate("Satellite");
       this.selectedFrequency = "";
-      this.tag("Frequency.Title").text.text = Language.translate("Frequency");
+      this.tag("Frequency.Title").text.text = Language$1.translate("Frequency");
       this.selectedPolarity = "";
-      this.tag("Polarity.Title").text.text = Language.translate("Polarity");
+      this.tag("Polarity.Title").text.text = Language$1.translate("Polarity");
       this.selectedSymbolRate = "";
-      this.tag("SymbolRate.Title").text.text = Language.translate("Symbol Rate");
+      this.tag("SymbolRate.Title").text.text = Language$1.translate("Symbol Rate");
       this.selectedFEC = "";
-      this.tag("FEC.Title").text.text = Language.translate("FEC");
+      this.tag("FEC.Title").text.text = Language$1.translate("FEC");
       this.selectedDVBS2 = false;
       this.tag("DVBS2.Button").src = Utils.asset("images/settings/ToggleOffWhite.png");
       this.selectedModulation = "";
-      this.tag("Modulation.Title").text.text = Language.translate("Modulation");
+      this.tag("Modulation.Title").text.text = Language$1.translate("Modulation");
       this.selectedSearchType = "";
-      this.tag("SearchType.Title").text.text = Language.translate("Search Mode");
+      this.tag("SearchType.Title").text.text = Language$1.translate("Search Mode");
       this.selectedRetune = false;
       this.tag("Retune.Button").src = Utils.asset("images/settings/ToggleOffWhite.png");
       this.tag("ErrorNotification").visible = false;
@@ -45993,25 +45631,25 @@ var APP_accelerator_home_ui = (function () {
     verifyInputs() {
       let errorString = "";
       if (Object.keys(this.selectedSatellite).length === 0) {
-        errorString += "| " + Language.translate("Satellite") + " ";
+        errorString += "| " + Language$1.translate("Satellite") + " ";
       }
       if (this.selectedFrequency === "") {
-        errorString += "| " + Language.translate("Frequency") + " ";
+        errorString += "| " + Language$1.translate("Frequency") + " ";
       }
       if (this.selectedPolarity === "") {
-        errorString += "| " + Language.translate("Polarity") + " ";
+        errorString += "| " + Language$1.translate("Polarity") + " ";
       }
       if (this.selectedSymbolRate === "") {
-        errorString += "| " + Language.translate("Symbol Rate") + " ";
+        errorString += "| " + Language$1.translate("Symbol Rate") + " ";
       }
       if (this.selectedFEC === "") {
-        errorString += "| " + Language.translate("FEC") + " ";
+        errorString += "| " + Language$1.translate("FEC") + " ";
       }
       if (this.selectedModulation === "") {
-        errorString += "| " + Language.translate("Modulation") + " ";
+        errorString += "| " + Language$1.translate("Modulation") + " ";
       }
       if (this.selectedSearchType === "") {
-        errorString += "| " + Language.translate("Search Mode") + " ";
+        errorString += "| " + Language$1.translate("Search Mode") + " ";
       }
       return errorString;
     }
@@ -46042,13 +45680,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectSatellite").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Satellite"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Satellite"), true);
             }
             $exit() {
               this.tag("SelectSatellite").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
-              this.tag("Satellite.Title").text.text = Language.translate("Satellite") + ": " + (Object.keys(this.selectedSatellite).length !== 0 ? this.selectedSatellite.name : Language.translate("Select a") + " " + Language.translate("Satellite"));
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
+              this.tag("Satellite.Title").text.text = Language$1.translate("Satellite") + ": " + (Object.keys(this.selectedSatellite).length !== 0 ? this.selectedSatellite.name : Language$1.translate("Select a") + " " + Language$1.translate("Satellite"));
             }
             _getFocused() {
               return this.tag("SelectSatellite");
@@ -46085,12 +45723,12 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectFrequency").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Frequency"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Frequency"), true);
             }
             $exit() {
               this.tag("SelectFrequency").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
             }
             _getFocused() {
               return this.tag("SelectFrequency");
@@ -46121,13 +45759,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectPolarity").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Polarity"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Polarity"), true);
             }
             $exit() {
               this.tag("SelectPolarity").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
-              this.tag("Polarity.Title").text.text = Language.translate("Polarity") + ": " + (this.selectedPolarity !== "" ? this.selectedPolarity.charAt(0).toUpperCase() + this.selectedPolarity.slice(1) : Language.translate("Select a") + " " + Language.translate("Polarity"));
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
+              this.tag("Polarity.Title").text.text = Language$1.translate("Polarity") + ": " + (this.selectedPolarity !== "" ? this.selectedPolarity.charAt(0).toUpperCase() + this.selectedPolarity.slice(1) : Language$1.translate("Select a") + " " + Language$1.translate("Polarity"));
             }
             _getFocused() {
               return this.tag("SelectPolarity");
@@ -46166,12 +45804,12 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectSymbolRate").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Symbol Rate"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Symbol Rate"), true);
             }
             $exit() {
               this.tag("SelectSymbolRate").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
             }
             _getFocused() {
               return this.tag("SelectSymbolRate");
@@ -46202,13 +45840,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectFEC").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("FEC"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("FEC"), true);
             }
             $exit() {
               this.tag("SelectFEC").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
-              this.tag("FEC.Title").text.text = Language.translate("FEC") + ": " + (this.selectedFEC !== "" ? this.selectedFEC.replace("fec", "").replace("_", "/").toUpperCase() : Language.translate("Select a") + " " + Language.translate("FEC"));
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
+              this.tag("FEC.Title").text.text = Language$1.translate("FEC") + ": " + (this.selectedFEC !== "" ? this.selectedFEC.replace("fec", "").replace("_", "/").toUpperCase() : Language$1.translate("Select a") + " " + Language$1.translate("FEC"));
             }
             _getFocused() {
               return this.tag("SelectFEC");
@@ -46262,13 +45900,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectModulation").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Modulation"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Modulation"), true);
             }
             $exit() {
               this.tag("SelectModulation").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
-              this.tag("Modulation.Title").text.text = Language.translate("Modulation") + ": " + (this.selectedModulation !== "" ? this.selectedModulation.toUpperCase() : Language.translate("Select a") + " " + Language.translate("Modulation"));
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
+              this.tag("Modulation.Title").text.text = Language$1.translate("Modulation") + ": " + (this.selectedModulation !== "" ? this.selectedModulation.toUpperCase() : Language$1.translate("Select a") + " " + Language$1.translate("Modulation"));
             }
             _getFocused() {
               return this.tag("SelectModulation");
@@ -46301,13 +45939,13 @@ var APP_accelerator_home_ui = (function () {
             $enter() {
               this.tag("DvbSScanScreenContents").visible = false;
               this.tag("SelectSearchType").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language.translate("Search Mode"), true);
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan") + " / " + Language$1.translate("Search Mode"), true);
             }
             $exit() {
               this.tag("SelectSearchType").visible = false;
               this.tag("DvbSScanScreenContents").visible = true;
-              this.fireAncestors('$updatePageTitle', Language.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
-              this.tag("SearchType.Title").text.text = Language.translate("Search Mode") + ": " + (this.selectedSearchType !== "" ? this.selectedSearchType.charAt(0).toUpperCase() + this.selectedSearchType.slice(1) : Language.translate("Select a") + " " + Language.translate("Search Mode"));
+              this.fireAncestors('$updatePageTitle', Language$1.translate("Settings / Live TV / Scan / DVB-S Scan"), true);
+              this.tag("SearchType.Title").text.text = Language$1.translate("Search Mode") + ": " + (this.selectedSearchType !== "" ? this.selectedSearchType.charAt(0).toUpperCase() + this.selectedSearchType.slice(1) : Language$1.translate("Select a") + " " + Language$1.translate("Search Mode"));
             }
             _getFocused() {
               return this.tag("SelectSearchType");
@@ -46380,7 +46018,7 @@ var APP_accelerator_home_ui = (function () {
               }, 30000);
             });
           } else {
-            this.tag("ErrorNotification.Content").text.text = Language.translate("Please enter the values for the following ") + errorString;
+            this.tag("ErrorNotification.Content").text.text = Language$1.translate("Please enter the values for the following ") + errorString;
             this.tag("ErrorNotification").visible = true;
           }
         }
@@ -46410,7 +46048,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Live TV Scan screen.
    */
-  class LiveTVScan extends lng$1.Component {
+  class LiveTVScan extends t.Component {
     static _template() {
       return {
         LiveTVScanScreenContents: {
@@ -46424,7 +46062,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('DVB-T Scan'),
+                text: Language$1.translate('DVB-T Scan'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -46449,7 +46087,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('DVB-C Scan'),
+                text: Language$1.translate('DVB-C Scan'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -46473,7 +46111,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('DVB-S Scan'),
+                text: Language$1.translate('DVB-S Scan'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -46589,7 +46227,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Live TV settings screen.
    */
-  class LiveTVSettings extends lng$1.Component {
+  class LiveTVSettings extends t.Component {
     static _template() {
       return {
         LiveTVSettingsScreenContents: {
@@ -46602,7 +46240,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate("Activate / Deactivate"),
+                text: Language$1.translate("Activate / Deactivate"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -46626,7 +46264,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate("Scan"),
+                text: Language$1.translate("Scan"),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -46747,7 +46385,7 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class SleepTimerScreen extends lng$1.Component {
+  class SleepTimerScreen extends t.Component {
     static _template() {
       return {
         SleepTimer: {
@@ -46755,7 +46393,7 @@ var APP_accelerator_home_ui = (function () {
           x: 200,
           List: {
             w: 1920 - 300,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             itemSize: 90,
             horizontal: false,
             invertDirection: true,
@@ -46858,14 +46496,14 @@ var APP_accelerator_home_ui = (function () {
    * See the License for the specific language governing permissions and
    * limitations under the License.
    **/
-  class EnergySavingsScreen extends lng$1.Component {
+  class EnergySavingsScreen extends t.Component {
     static _template() {
       return {
         EnerygySavingContents: {
           x: 200,
           y: 275,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -46917,7 +46555,7 @@ var APP_accelerator_home_ui = (function () {
 
     _firstEnable() {
       this._appApi = new AppApi();
-      this.options = [Language.translate("Deep Sleep"), Language.translate("Light Sleep")];
+      this.options = [Language$1.translate("Deep Sleep"), Language$1.translate("Light Sleep")];
       this.tag('EnerygySavingContents').h = this.options.length * 90;
       this.tag('EnerygySavingContents.List').h = this.options.length * 90;
       this.loadingAnimation = this.tag('Loader').animation({
@@ -46945,9 +46583,9 @@ var APP_accelerator_home_ui = (function () {
       let standbyMode = "";
       this._appApi.getPreferredStandbyMode().then(result => {
         if (result.preferredStandbyMode == "LIGHT_SLEEP") {
-          standbyMode = Language.translate("Light Sleep");
+          standbyMode = Language$1.translate("Light Sleep");
         } else if (result.preferredStandbyMode == "DEEP_SLEEP") {
-          standbyMode = Language.translate("Deep Sleep");
+          standbyMode = Language$1.translate("Deep Sleep");
         }
         this.tag('List').items = this.options.map((item, index) => {
           return {
@@ -46992,7 +46630,7 @@ var APP_accelerator_home_ui = (function () {
     default: 1
   });
   const loader = 'Loader';
-  class LanguageScreen extends lng$1.Component {
+  class LanguageScreen extends t.Component {
     static _template() {
       return {
         LanguageScreenContents: {
@@ -47003,7 +46641,7 @@ var APP_accelerator_home_ui = (function () {
               margin: 0
             },
             List: {
-              type: lng$1.components.ListComponent,
+              type: t.components.ListComponent,
               w: 1920 - 300,
               itemSize: 90,
               horizontal: false,
@@ -47102,7 +46740,7 @@ var APP_accelerator_home_ui = (function () {
    * limitations under the License.
    **/
   const _privacyPolicy = "Privacy\n  Welcome to RDKCentral.com, a website owned and operated by RDK Management, LLC (\u201CRDK Management,\u201D \u201Cwe,\u201D or \u201Cus\u201D). This privacy policy discloses the privacy practices for this website only, including an explanation of:\n  \n  the categories of personally identifiable information about you that may be collected and how that information is used;\n  how we collect and use non-personally identifiable information about your use of the website;\n  the categories of persons or entities with whom the information may be shared;\n  the choices that are available to you regarding collection, use, and distribution of the information;\n  how you can opt out of RDK-related promotional e-mail;\n  the kind of security procedures that are in place to protect the loss, misuse or alteration of information;\n  how you can review and request changes to the information; and\n  how we notify users of this website of changes to this privacy policy.\n  Questions regarding this policy should be directed to \u201CRDK Management \u2013 Privacy Feedback\u201D and can be submitted via e-mail to info@rdkcentral.com.\n  \n  \n  What categories of information do we collect?\n  The information collected by RDK Management falls into two categories: (1) information voluntarily supplied by users of the website and (2) tracking information recorded as users navigate through the website. Some of this information is personally identifiable information (i.e., information that identifies a particular person, such as e-mail address), but much of it is not.\n  \n  To make use of some features on our website, like the RDK Wiki, users need to register and provide certain information as part of the registration process. We may ask, for example, for your name, e-mail address, street address, and zip code. We might also request information about your employer and the type of work that you do, in order to determine whether your employer is a member of the RDK program, to help us ensure that you are given access to the correct portions of the website, and to tailor our website content and e-mail (if you\u2019ve registered to receive e-mail) to your interests to make it more useful to you. If you are a registered user, our systems will remember some of this information the next time you log in and use our website, but you can always review and change your information by logging in and editing your profile here.\n  \n  The more you tell us about yourself, the more value we can offer you. Supplying this information is entirely voluntary. But if you choose not to supply the information, we may be unable to provide you with access to all of the features of this website. There are certain features of this website, including the Wiki and requesting to receive RDK-related promotional e-mail, that you will not be able to use unless you provide certain personally identifiable information about yourself. When you submit any personally identifiable information over this website, RDK Management (i) will use the information for the purposes described at the time you submit it and (ii) may use the information to contact you, subject to the contact preferences in your profile. If you want to remain completely anonymous, you\u2019re still free to take advantage of the publicly available content on our website without registration.\n  \n  Does RDK Management analyze my interaction with this website?\n  Some of the third-party service providers that RDK Management uses to deliver services, like analytics providers, may collect information on this website as disclosed in this privacy policy. This information may include personally identifiable information or may be used to contact you online.\n  \n  We and our service providers may use cookies to provide these services. The World Wide Web Consortium (W3C) has started a process to develop a \u201CDo Not Track\u201D Standard. Since the definitions and rules for such a standard have not yet been defined, RDK Management does not yet respond to \u201CDo Not Track\u201D signals sent from browsers.\n  \n  You may opt out of receiving cookies from the companies that provide services on this website by going to www.networkadvertising.org/consumer/opt_out.asp or http://www.aboutads.info/choices.\n  \n  What categories of persons or entities do we share personally identifiable information with?\n  We consider the personally identifiable information contained in our business records to be confidential. We may sometimes disclose personally identifiable information about you to our affiliates or to others who work for us. We may also disclose personally identifiable information about you to service providers and vendors, and to others who provide products and services to us. For example, when you use certain functions on this website you may notice that the website actually collecting or processing the information may be other than an RDK Management website. We may be required by law or legal process to disclose certain personally identifiable information about you to lawyers and parties in connection with litigation and to law enforcement personnel. For example, we may be required by law to disclose personally identifiable information about you without your consent and without notice in order to comply with a valid legal process such as a subpoena, court order, or search warrant.\n  \n  What do we do to personalize your use of this website?\n  We, or our service providers, may customize this website based on non-personal information including: (i) the IP address associated with your computer for purposes of determining your approximate geographic location; (ii) the type of web page that is being displayed; or (iii) the content on the page that is shown. Because this activity automatically applies to all users and it is purely contextual, this type of content delivery cannot be customized or controlled by individual users. We may also personalize this website based on the information that you provided us during registration. You may modify this information as further described in this Privacy Policy.\n  \n  To help make our website more responsive to the needs of our users, we use a standard feature of browser software called a \u201Ccookie.\u201D We use cookies to help us tailor our website to your needs, to deliver a better, more personalized service, and to remember certain choices you\u2019ve made so you don\u2019t have to re-enter them.\n  \n  RDK Management uses cookies, among other things, to remember your username and password, if you choose to store them, as well as to remember some of your personalization preferences and website features. RDK Management does not store your name or other personal information in cookies. You may read about enabling, disabling, and deleting cookies here. Of course, if you set your browser not to accept cookies or you delete them, you may not be able to take advantage of the personalized features enjoyed by other users of our website.\n  \n  The cookies we use don\u2019t directly identify users of our website as particular persons. Rather, they contain information sufficient to simplify and improve a user\u2019s experience on our website. For example, we may use session-based cookies to track the pages on our website visited by our users. We can build a better website if we know which pages our users are visiting and how often. Or, we may use persistent cookies to simplify access to a user\u2019s account information over our website, for example.\n  \n  In connection with the standard operation of RDK Management\u2019s systems, certain non-personally identifiable information about users of this website is recorded. This information is used primarily to tailor and enhance users\u2019 experience using the website. We may use this information in an aggregate, non-personally identifiable form to, among other things, measure the use of our website and determine which pages are the most popular with website users.\n  \n  We may also use one or more audience segmenting technology providers to help present content on this website. These providers uses cookies, web beacons, or similar technologies on your computer or mobile or other device to serve you advertisements or content tailored to interests you have shown by browsing on this and other websites you have visited. It also helps determine whether you have seen a particular piece of content before and in order to avoid sending you duplicates. In doing so, these providers collect non-personally identifiable information such as your browser type, your operating system, web pages visited, time of visits, content viewed, ads viewed, and other click stream data. When you visit this website, these providers may use cookies or web beacons to note which product and service descriptions your browser visited. The use of cookies, web beacons, or similar technologies by these providers is subject to their own privacy policies, not RDK Management\u2019s privacy policy for this website. If you do not want the benefits of the cookies used by these providers, you may opt-out of them by visiting http://www.networkadvertising.org/consumer/opt_out.asp or by visiting their opt-out pages.\n  \n  Your Access to and Control over your information?\n  You may opt out of any future contacts from us at any time. You can do the following at any time via email to support@rdkcentral.com or info@rdkcentral.com or unsubscribe to emails.\n  \n  Request to see all the information stored in the system\n  Accuracy of your data can be checked or corrected.\n  Personal data will be archived, in case user does not access our system for 90 days. However, user can request for deletion by writing to us at support@rdkcentral.com\n  Express any concern you have about our use of your data\n  Opt out from receiving emails by clicking unsubscribe.\n  How do users opt out of RDK-related promotional e-mail?\n  You can opt out of receiving RDK-related promotional e-mail from RDK Management using the opt-out link found in the footer of any of these e-mails. You can also e-mail the request to the attention of \u201CRDK Management \u2013 E-mail Opt Out\u201D via e-mail to info@rdkcentral.com.\n  \n  Other Websites\n  \n  To make our website more valuable to our users, we may offer some features in conjunction with other providers. Our website may also include links to other websites whose privacy policies and practices we don\u2019t control. Once you leave our website by linking to another one (you can tell where you are by checking the address \u2013 known as a URL \u2013 in the location bar on your browser), use of any information you provide is governed by the privacy policy of the operator of the website you\u2019re visiting. That policy may differ from ours. If you can\u2019t find the privacy policy of any of these websites via a link from the site\u2019s homepage, you should contact the website directly for more information.\n  \n  Security\n  \n  All information gathered on our website is stored within a database accessible only to RDK Management, its affiliates, and their specifically-authorized contractors and vendors. However, as effective as any security measure implemented by RDK Management may be, no security system is impenetrable. We cannot guarantee the complete security of our database, nor can we guarantee that information you supply won\u2019t be intercepted while being transmitted to us over the Internet. If you don\u2019t want us to know any particular information about you, don\u2019t include it in anything that you submit or post to this website or send to us in e-mail. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our policies.\n  \n  Changes to this Privacy Policy\n  \n  We may change this privacy policy from time to time. If we change this privacy policy at some point in the future, we\u2019ll post the changes on our website and by continuing to use the website after we post any changes, you accept and agree to this privacy statement, as modified.\n  \n  A Special Note About Children\n  \n  This website is not directed to children under the age of 13, and RDK Management does not knowingly collect personally identifiable information from anyone under the age of 18 on this website.\n  \n  Contacting us:\n  \n  If you have any questions about RDK Management, LLC privacy policy, the data we hold on you, or you would like to exercise one of your data protection rights, please do not hesitate to contact us.\n  \n  Data Protection Officer:  Herman-Jan Smith\n  \n  Email us at: hj.smith@rdkcentral.com\n  \n  Contacting the appropriate authority:\n  \n  Should you wish to report a complaint or if you feel that Our Company has not addressed your concern in a satisfactory manner, you may contact the Information Commissioner\u2019s Office.\n  \n  Email: compliance_team@rdkcentral.com\n  \n  Address:  1701 JFK Boulevard, Philadelphia, PA 19103 U.S.A";
-  class PrivacyPolicyScreen extends lng$1.Component {
+  class PrivacyPolicyScreen extends t.Component {
     static _template() {
       return {
         PrivacyPolicyScreenContents: {
@@ -47175,7 +46813,7 @@ var APP_accelerator_home_ui = (function () {
    */
 
   const xcastApi$1 = new XcastApi();
-  class PrivacyScreen extends lng$1.Component {
+  class PrivacyScreen extends t.Component {
     static _template() {
       return {
         PrivacyScreenContents: {
@@ -47189,7 +46827,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Local Device Discovery'),
+                text: Language$1.translate('Local Device Discovery'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -47213,7 +46851,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('USB Media Devices'),
+                text: Language$1.translate('USB Media Devices'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -47237,7 +46875,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Audio Input'),
+                text: Language$1.translate('Audio Input'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -47261,7 +46899,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Clear Cookies and App Data'),
+                text: Language$1.translate('Clear Cookies and App Data'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -47276,7 +46914,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Privacy Policy and License'),
+                text: Language$1.translate('Privacy Policy and License'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -47504,7 +47142,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Video and Audio screen.
    */
 
-  class DeviceInformationScreen extends lng$1.Component {
+  class DeviceInformationScreen extends t.Component {
     static _template() {
       return {
         DeviceInfoWrapper: {
@@ -47529,7 +47167,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Chipset"),
+                  text: Language$1.translate("Chipset"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -47561,7 +47199,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 135,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Serial Number"),
+                  text: Language$1.translate("Serial Number"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -47593,7 +47231,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 225,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Location"),
+                  text: Language$1.translate("Location"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -47625,7 +47263,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 360,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Supported DRM & Key-System"),
+                  text: Language$1.translate("Supported DRM & Key-System"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   wordWrapWidth: 1600,
@@ -47661,7 +47299,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 540,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Firmware version"),
+                  text: Language$1.translate("Firmware version"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -47693,7 +47331,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 720,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("App Info"),
+                  text: Language$1.translate("App Info"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -47854,13 +47492,13 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for rendering items in Settings screen.
    */
-  class TimeOverlayItems extends lng$1.Component {
+  class TimeOverlayItems extends t.Component {
     static _template() {
       return {
         TimeItemsContents: {
           y: 3,
           List: {
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             h: 810,
             w: 1920 - 300,
             itemSize: 90,
@@ -47934,7 +47572,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for rendering items in Settings screen.
    */
-  class TimeZoneOverlayItem extends lng$1.Component {
+  class TimeZoneOverlayItem extends t.Component {
     _construct() {
       this.Arrow = Utils.asset('/images/settings/Arrow.png');
       this.Tick = Utils.asset('/images/settings/Tick.png');
@@ -47976,13 +47614,13 @@ var APP_accelerator_home_ui = (function () {
           x: 1600,
           mountX: 1,
           mountY: 0.5,
-          texture: lng$1.Tools.getSvgTexture(this.Arrow, 45, 45),
+          texture: t.Tools.getSvgTexture(this.Arrow, 45, 45),
           color: 0xffffffff
         },
         Tick: {
           y: 45,
           mountY: 0.5,
-          texture: lng$1.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
+          texture: t.Tools.getSvgTexture(this.Tick, 32.5, 32.5),
           color: 0xffffffff,
           visible: item[2]
         },
@@ -48029,7 +47667,7 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  class TimeZone extends lng$1.Component {
+  class TimeZone extends t.Component {
     /**
      * @param {object} args
      */
@@ -48048,7 +47686,7 @@ var APP_accelerator_home_ui = (function () {
           clipping: true,
           List: {
             y: 3,
-            type: lng$1.components.ListComponent,
+            type: t.components.ListComponent,
             w: 1920 - 300,
             itemSize: 90,
             horizontal: false,
@@ -48220,7 +47858,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Firmware screen.
    */
 
-  class FirmwareScreen extends lng$1.Component {
+  class FirmwareScreen extends t.Component {
     static _template() {
       return {
         FirmwareContents: {
@@ -48232,7 +47870,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Firmware State: '),
+                text: Language$1.translate('Firmware State: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 22
@@ -48245,7 +47883,7 @@ var APP_accelerator_home_ui = (function () {
               y: 90,
               mountY: 0.5,
               text: {
-                text: Language.translate('Firmware Versions: '),
+                text: Language$1.translate('Firmware Versions: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 22
@@ -48258,7 +47896,7 @@ var APP_accelerator_home_ui = (function () {
               y: 135,
               mountY: 0.5,
               text: {
-                text: Language.translate("Downloaded Firmware Version: "),
+                text: Language$1.translate("Downloaded Firmware Version: "),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 22
@@ -48292,7 +47930,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Check for Update"),
+                  text: Language$1.translate("Check for Update"),
                   fontFace: CONFIG.language.font,
                   fontSize: 24
                 }
@@ -48344,11 +47982,11 @@ var APP_accelerator_home_ui = (function () {
       const downloadState = ['Uninitialized', 'Requesting', 'Downloading', 'Failed', 'DownLoad Complete', 'Validation Complete', 'Preparing to Reboot'];
       this._appApi.getFirmwareUpdateState().then(res => {
         console.log("getFirmwareUpdateState from firmware screen " + JSON.stringify(res));
-        this.tag('State.Title').text.text = Language.translate("Firmware State: ") + downloadState[res.firmwareUpdateState];
+        this.tag('State.Title').text.text = Language$1.translate("Firmware State: ") + downloadState[res.firmwareUpdateState];
       });
       this._appApi.getDownloadFirmwareInfo().then(res => {
         console.log("getDownloadFirmwareInfo from firmware screen " + JSON.stringify(res));
-        this.tag('Version.Title').text.text = Language.translate("Firmware Versions: ") + res.currentFWVersion;
+        this.tag('Version.Title').text.text = Language$1.translate("Firmware Versions: ") + res.currentFWVersion;
       });
       this._setState('FirmwareUpdate');
     }
@@ -48358,7 +47996,7 @@ var APP_accelerator_home_ui = (function () {
         if (res.downloadPercent < 0) {
           this.tag('DownloadedPercent.Title').text.text = "";
         } else {
-          this.tag('DownloadedPercent.Title').text.text = Language.translate("Download Progress: ") + res.downloadPercent + "%";
+          this.tag('DownloadedPercent.Title').text.text = Language$1.translate("Download Progress: ") + res.downloadPercent + "%";
         }
       }).catch(err => {
         console.error(err);
@@ -48368,7 +48006,7 @@ var APP_accelerator_home_ui = (function () {
       this._appApi.updateFirmware().then(res => {
         this._appApi.getDownloadFirmwareInfo().then(result => {
           console.log("getDownloadFirmwareInfo : ".concat(JSON.stringify(result.downloadFWVersion)));
-          this.tag('DownloadedVersion.Title').text.text = Language.translate('Downloaded Firmware Version: ') + "".concat(result.downloadFWVersion ? result.downloadFWVersion : 'NA');
+          this.tag('DownloadedVersion.Title').text.text = Language$1.translate('Downloaded Firmware Version: ') + "".concat(result.downloadFWVersion ? result.downloadFWVersion : 'NA');
         }).catch(err => {
           console.error(err);
         });
@@ -48408,7 +48046,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for Reboot Confirmation Component.
    */
-  class RebootConfirmation extends lng$1.Component {
+  class RebootConfirmation extends t.Component {
     static _template() {
       return {
         RebootScreen: {
@@ -48419,7 +48057,7 @@ var APP_accelerator_home_ui = (function () {
             y: 0,
             mountX: 0.5,
             text: {
-              text: Language.translate("Reboot"),
+              text: Language$1.translate("Reboot"),
               fontFace: CONFIG.language.font,
               fontSize: 40,
               textColor: CONFIG.theme.hex
@@ -48438,7 +48076,7 @@ var APP_accelerator_home_ui = (function () {
             y: 125,
             mountX: 0.5,
             text: {
-              text: Language.translate("Click Confirm to reboot!"),
+              text: Language$1.translate("Click Confirm to reboot!"),
               fontFace: CONFIG.language.font,
               fontSize: 25
             }
@@ -48461,7 +48099,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Confirm"),
+                  text: Language$1.translate("Confirm"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xff000000
@@ -48480,7 +48118,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 25,
                 mount: 0.5,
                 text: {
-                  text: Language.translate("Cancel"),
+                  text: Language$1.translate("Cancel"),
                   fontFace: CONFIG.language.font,
                   fontSize: 22,
                   textColor: 0xff000000
@@ -48646,7 +48284,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Video and Audio screen.
    */
 
-  class DeviceScreen extends lng$1.Component {
+  class DeviceScreen extends t.Component {
     static _template() {
       return {
         DeviceScreenContents: {
@@ -48659,7 +48297,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Info'),
+                text: Language$1.translate('Info'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -48683,7 +48321,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Time Zone'),
+                text: Language$1.translate('Time Zone'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -48707,7 +48345,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Check for Firmware Update'),
+                text: Language$1.translate('Check for Firmware Update'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -48732,7 +48370,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Reboot'),
+                text: Language$1.translate('Reboot'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -48749,7 +48387,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Factory Reset'),
+                text: Language$1.translate('Factory Reset'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -48978,7 +48616,7 @@ var APP_accelerator_home_ui = (function () {
   * Class for AdvancedSettings screen.
   */
 
-  class AdvanceSettingsScreen extends lng$1.Component {
+  class AdvanceSettingsScreen extends t.Component {
     static _template() {
       return {
         AdvanceScreenContents: {
@@ -48993,7 +48631,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('TTS Options'),
+                text: Language$1.translate('TTS Options'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49018,7 +48656,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('CEC Control'),
+                text: Language$1.translate('CEC Control'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49044,7 +48682,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Bug Report'),
+                text: Language$1.translate('Bug Report'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49070,7 +48708,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Contact Support'),
+                text: Language$1.translate('Contact Support'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49094,7 +48732,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Device'),
+                text: Language$1.translate('Device'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49293,7 +48931,7 @@ var APP_accelerator_home_ui = (function () {
    * Class for Other Settings Screen.
    */
 
-  class OtherSettingsScreen extends lng$1.Component {
+  class OtherSettingsScreen extends t.Component {
     static _template() {
       return {
         OtherSettingsScreenContents: {
@@ -49307,7 +48945,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Sleep Timer: Off'),
+                text: Language$1.translate('Sleep Timer: Off'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49333,7 +48971,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Remote Control'),
+                text: Language$1.translate('Remote Control'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49359,7 +48997,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Screen-Saver: '),
+                text: Language$1.translate('Screen-Saver: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49383,7 +49021,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Energy Saver: '),
+                text: Language$1.translate('Energy Saver: '),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49409,7 +49047,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Language'),
+                text: Language$1.translate('Language'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49434,7 +49072,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Privacy'),
+                text: Language$1.translate('Privacy'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49458,7 +49096,7 @@ var APP_accelerator_home_ui = (function () {
               y: 45,
               mountY: 0.5,
               text: {
-                text: Language.translate('Advanced Settings'),
+                text: Language$1.translate('Advanced Settings'),
                 textColor: COLORS.titleColor,
                 fontFace: CONFIG.language.font,
                 fontSize: 25
@@ -49502,17 +49140,17 @@ var APP_accelerator_home_ui = (function () {
       this._setState('SleepTimer');
     }
     $updateStandbyMode(standbyMode) {
-      this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + standbyMode;
+      this.tag("EnergySaver.Title").text.text = Language$1.translate("Energy Saver: ") + standbyMode;
     }
     $sleepTimerText(text) {
-      this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + text;
+      this.tag('SleepTimer.Title').text.text = Language$1.translate('Sleep Timer: ') + text;
     }
     _focus() {
       this._setState('SleepTimer');
       if (Storage.get('TimeoutInterval')) {
-        this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + Storage.get('TimeoutInterval');
+        this.tag('SleepTimer.Title').text.text = Language$1.translate('Sleep Timer: ') + Storage.get('TimeoutInterval');
       } else {
-        this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + 'Off';
+        this.tag('SleepTimer.Title').text.text = Language$1.translate('Sleep Timer: ') + 'Off';
       }
       this._appApi.getPreferredStandbyMode().then(result => {
         let currentStandbyMode = "";
@@ -49521,7 +49159,7 @@ var APP_accelerator_home_ui = (function () {
         } else if (result.preferredStandbyMode == "DEEP_SLEEP") {
           currentStandbyMode = "Deep Sleep";
         }
-        this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + currentStandbyMode;
+        this.tag("EnergySaver.Title").text.text = Language$1.translate("Energy Saver: ") + currentStandbyMode;
       });
     }
     hide() {
@@ -49772,7 +49410,7 @@ var APP_accelerator_home_ui = (function () {
   /**
    * Class for settings screen.
    */
-  class SettingsOverlay extends lng$1.Component {
+  class SettingsOverlay extends t.Component {
     static _template() {
       return {
         Wrapper: {
@@ -49786,7 +49424,7 @@ var APP_accelerator_home_ui = (function () {
             y: 184,
             text: {
               fontSize: 40,
-              text: Language.translate("settings"),
+              text: Language$1.translate("settings"),
               textColor: CONFIG.theme.hex,
               fontStyle: "bolder",
               fontFace: CONFIG.language.font,
@@ -49804,7 +49442,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Network Configuration"),
+                  text: Language$1.translate("Network Configuration"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -49828,7 +49466,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Pair Remote Control"),
+                  text: Language$1.translate("Pair Remote Control"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -49852,7 +49490,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Video"),
+                  text: Language$1.translate("Video"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -49876,7 +49514,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Audio"),
+                  text: Language$1.translate("Audio"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -49900,7 +49538,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Other Settings"),
+                  text: Language$1.translate("Other Settings"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -49924,7 +49562,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate('Native Frame Rate'),
+                  text: Language$1.translate('Native Frame Rate'),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -49949,7 +49587,7 @@ var APP_accelerator_home_ui = (function () {
                 y: 45,
                 mountY: 0.5,
                 text: {
-                  text: Language.translate("Live TV"),
+                  text: Language$1.translate("Live TV"),
                   textColor: COLORS.titleColor,
                   fontFace: CONFIG.language.font,
                   fontSize: 25
@@ -50053,7 +49691,7 @@ var APP_accelerator_home_ui = (function () {
       if (alreadyTranslated) {
         this.tag("BreadCrumbs").text.text = title;
       } else {
-        this.tag("BreadCrumbs").text.text = Language.translate(title);
+        this.tag("BreadCrumbs").text.text = Language$1.translate(title);
       }
     }
     hide() {
@@ -50313,7 +49951,7 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  class AppCarousel extends lng$1.Component {
+  class AppCarousel extends t.Component {
     static _template() {
       return {
         rect: true,
@@ -50494,7 +50132,7 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  class Splash extends lng$1.Component {
+  class Splash extends t.Component {
     static _template() {
       return {};
     }
@@ -50516,7 +50154,7 @@ var APP_accelerator_home_ui = (function () {
     }
   }
 
-  class VideoInfoChange extends lng$1.Component {
+  class VideoInfoChange extends t.Component {
     static _template() {
       return {
         w: 1920,
@@ -51056,6 +50694,13 @@ var APP_accelerator_home_ui = (function () {
         console.log("App detected deviceType as:", result.devicetype != null ? result.devicetype : "tv");
         Storage.set("deviceType", result.devicetype != null ? result.devicetype : "tv");
       });
+      thunder$1.Controller.activate({
+        callsign: 'org.rdk.UserPreferences'
+      }).then(result => {
+        console.log("Result of UserPreferences activation plugin: " + result);
+      }).catch(err => {
+        reject(err);
+      });
       appApi.getPluginStatus("org.rdk.DeviceDiagnostics").then(res => {
         console.log("App DeviceDiagnostics state:", res[0].state);
         if (res[0].state === "deactivated") {
@@ -51440,6 +51085,8 @@ var APP_accelerator_home_ui = (function () {
           console.warn("App HdmiCec_2 onActiveSourceStatusUpdated discarding.");
         }
       });
+      let currentLanguage = availableLanguageCodes[localStorage.getItem('Language')];
+      appApi.setUILanguage(currentLanguage);
     }
     _firstEnable() {
       thunder$1.on("org.rdk.System", "onSystemPowerStateChanged", notification => {
@@ -51480,7 +51127,11 @@ var APP_accelerator_home_ui = (function () {
           resolve(false);
         });
         appApi.getVolumeLevel(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(volres => {
-          VolumePayload.msgPayload.event.payload.volume = volres.volumeLevel;
+          if (Number.isInteger(volres.volumeLevel)) {
+            VolumePayload.msgPayload.event.payload.volume = volres.volumeLevel;
+          } else {
+            VolumePayload.msgPayload.event.payload.volume = parseInt(volres.volumeLevel);
+          }
         });
         appApi.muteStatus(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0").then(muteRes => {
           VolumePayload.msgPayload.event.payload.muted = muteRes.muted;
@@ -51492,20 +51143,11 @@ var APP_accelerator_home_ui = (function () {
           resolve(false);
         });
         if (appApi.checkAlexaAuthStatus() === "AlexaHandleError") {
-          // Work Around: Actiavte SmartScreen asssuming Auth completed.
           let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')];
           let updatedTimeZone = appApi.getZone();
-          appApi.getAlexaDeviceSettings().then(response => {});
-          thunder$1.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
-            if (notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage) {
-              for (let i = 0; i < notification.xr_speech_avs.deviceSettings.supportedLocales.length; i++) {
-                if (updatedLanguage === notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()) {
-                  appApi.setLanguageinAlexa(updatedLanguage);
-                }
-              }
-            }
-          });
+          appApi.setUILanguage(updatedLanguage);
           appApi.setTimeZoneinAlexa(updatedTimeZone);
+          appApi.getAlexaDeviceSettings().then(response => {});
           console.log("App checkAlexaAuthStatus is AlexaHandleError; activating SmartScreen.");
           appApi.getPluginStatus("SmartScreen").then(res => {
             console.log("App getPluginStatus result: " + JSON.stringify(res));
@@ -51527,12 +51169,6 @@ var APP_accelerator_home_ui = (function () {
           console.log("VoiceControl.onServerMessage Notification: ", notification);
           if (appApi.checkAlexaAuthStatus() !== "AlexaUserDenied") {
             if (notification.xr_speech_avs.state_reporter === "authorization_req" || notification.xr_speech_avs.code) {
-              // DAB Demo Work Around - disabling.
-              //Storage.set("code", notification.xr_speech_avs.code)
-              //Storage.set("url", notification.xr_speech_avs.url)
-              //if(Router.getActiveHash() != "AlexaScreen" && Router.getActiveHash() != "CodeScreen1"){
-              //  Router.navigate("AlexaScreen")
-              //}
               console.log("Alexa Auth URL is ", notification.xr_speech_avs.url);
               if (!Router.isNavigating() && appApi.isConnectedToInternet() && Router.getActiveHash() === "menu") {
                 console.log("App Activating SmartScreen instance for Alexa Authentication.");
@@ -51862,6 +51498,17 @@ var APP_accelerator_home_ui = (function () {
                 VolumePayload.msgPayload.event.payload.volume = payload.volume;
                 VolumePayload.msgPayload.event.payload.muted = payload.mute;
                 appApi.audio_mute(Storage.get("deviceType") == "tv" ? "SPEAKER0" : "HDMI0", VolumePayload.msgPayload.event.payload.muted).then(res => {});
+              }
+            }
+          }
+          if (appApi.checkAlexaAuthStatus() != "AlexaUserDenied" && notification.xr_speech_avs.deviceSettings) {
+            let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')];
+            if (notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage) {
+              /* Get Alexa matching Locale String */
+              for (let i = 0; i < notification.xr_speech_avs.deviceSettings.supportedLocales.length; i++) {
+                if (updatedLanguage === notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()) {
+                  appApi.setLanguageinAlexa(updatedLanguage);
+                }
               }
             }
           }

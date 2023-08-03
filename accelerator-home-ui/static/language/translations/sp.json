@@ -156,6 +156,7 @@
   "Light Sleep": "Sueño ligero",
   "Connected": "Conectado",
   "Not Connected": "No conectado",
+  "Not Paired":"No emparejado",
   "Note": "Nota",
   "Ethernet cable is not connected": "El cable Ethernet no está conectado",
   "Try Again": "Intentar otra vez",
@@ -164,5 +165,13 @@
   "Native Frame Rate": "Velocidad de fotogramas nativa",
   "Settings  Other Settings  Screen Saver": "Ajustes / Otras configuraciones / Protector de pantalla",
   "Voice Remote Control": "Control remoto de voz",
-  "Settings  Bluetooth Voice Remote Control": "Ajustes / Bluetooth / Control remoto de voz"
+  "Settings  Bluetooth Voice Remote Control": "Ajustes / Bluetooth / Control remoto de voz",
+  "Click Confirm to FactoryReset!":"¡Haga clic en Confirmar restablecimiento de fábrica!",
+  "MacAddress":"Dirección MAC",
+  "RCU Name":"Nombre de la UCR",
+  "Connection Status":"Estado de conexión",
+  "Battery percent":"Porcentaje de batería",
+  "Software Version":"Versión del software",
+  "No Shows are being aired at the moment":"No Shows se están emitiendo en este momento"
+
 }

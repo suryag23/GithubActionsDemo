@@ -19,6 +19,7 @@
  import SettingsItem from './SettingsItem'
  import { COLORS } from '../colors/Colors'
  import { CONFIG } from '../Config/Config'
+ import { Language} from '@lightningjs/sdk'
 
  /**
   * Class for the item in the Bluetooth screen.
@@ -55,7 +56,7 @@
    set item(item) {
      this._item = item
      this.connected = item.connected ? 'Connected' : 'Not Connected'
-     this.status = item.paired ? this.connected : 'Not Paired'
+     this.status = item.paired ? Language.translate(this.connected) : Language.translate('Not Paired')
      this.tag('Item').patch({
        Left: {
          x: 10,

@@ -139,6 +139,7 @@ export default class LanguageScreen extends Lightning.Component {
                   }
                 })  
             }
+            appApi.setUILanguage(updatedLanguage)
             let path = location.pathname.split('index.html')[0]
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html"
             let notification_url = location.origin + path + url

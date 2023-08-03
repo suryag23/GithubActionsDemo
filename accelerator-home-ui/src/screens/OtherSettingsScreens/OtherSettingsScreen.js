@@ -225,7 +225,7 @@ export default class OtherSettingsScreen extends Lightning.Component {
         this._setState('SleepTimer')
     }
     $updateStandbyMode(standbyMode) {
-        this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + standbyMode
+        this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + Language.translate(standbyMode)
     }
 
     $sleepTimerText(text) {
@@ -252,7 +252,7 @@ export default class OtherSettingsScreen extends Lightning.Component {
             } else if (result.preferredStandbyMode == "DEEP_SLEEP") {
                 currentStandbyMode = "Deep Sleep"
             }
-            this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + currentStandbyMode
+            this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + Language.translate(currentStandbyMode)
         })
     }
 

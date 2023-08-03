@@ -44,6 +44,7 @@ import SuccessScreen from '../screens/SuccessScreen'
 import FailureScreen from '../screens/FailureScreen'
 import AlexaConfirmationScreen from '../screens/AlexaConfirmationScreen'
 import CameraStreamingScreen from '../screens/CameraStreamingScreen'
+import CameraStreamingScreenExitConfirmationScreen from '../screens/CameraStreamingScreenExitConfirmationScreen'
 
 let api = null
 
@@ -151,6 +152,10 @@ export default {
       path: 'camera/player',
       component: CameraStreamingScreen,
       widgets: ['Menu'],
+    },
+    {
+      path: 'camera/player/ExitScreen',
+      component: CameraStreamingScreenExitConfirmationScreen,
     },
     {
       path:'dtvplayer',
