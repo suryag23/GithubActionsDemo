@@ -17,6 +17,7 @@
  * limitations under the License.
  **/
 import AppApi from '../../api/AppApi'
+import AlexaApi from '../../api/AlexaApi'
 import { Lightning, Utils, Storage, Language, Router } from '@lightningjs/sdk'
 import SettingsMainItem from '../../items/SettingsMainItem'
 import { COLORS } from '../../colors/Colors'
@@ -32,7 +33,6 @@ const xcastApi = new XcastApi()
 let cookieToggle = false
 
 export default class PrivacyScreen extends Lightning.Component {
-
     _onChanged() {
         this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Privacy'));
     }
@@ -40,7 +40,6 @@ export default class PrivacyScreen extends Lightning.Component {
     pageTransition() {
         return 'left'
     }
-
 
     static _template() {
         return {
@@ -184,15 +183,15 @@ export default class PrivacyScreen extends Lightning.Component {
         this.AppApi = new AppApi()
     }
 
-
     _focus() {
         this._setState(this.state)
         this.checkLocalDeviceStatus()
         this.checkUSBDeviceStatus()
     }
+
     _handleBack() {
         if(!Router.isNavigating()){
-        Router.navigate('settings/other')
+            Router.navigate('settings/other')
         }
     }
 
@@ -214,10 +213,9 @@ export default class PrivacyScreen extends Lightning.Component {
             } else {
                 this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
             }
+        }).catch(err => {
+            this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
         })
-            .catch(err => {
-                this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
-            })
     }
 
     toggleLocalDeviceDiscovery() {
@@ -236,11 +234,10 @@ export default class PrivacyScreen extends Lightning.Component {
                     }
                 })
             }
+        }).catch(err => {
+            console.log('Service not active')
+            this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
         })
-            .catch(err => {
-                console.log('Service not active')
-                this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
-            })
     }
 
     static _states() {
@@ -311,7 +308,7 @@ export default class PrivacyScreen extends Lightning.Component {
                     this._setState('ClearCookies')
                 }
                 _handleEnter() {
-                    // 
+                    //
                 }
             },
             class ClearCookies extends this {
@@ -345,25 +342,20 @@ export default class PrivacyScreen extends Lightning.Component {
                     })
 
                     setTimeout(() => {
-                            this.AppApi.resetAVSCredentials()
+                        AlexaApi.get().resetAVSCredentials()
                             .then((result) => {
                                 console.log("Triggering AVS credential reset." ,result)
                                 if(result.success){
-                                    
                                     //SUCCESSFULL API CALL
                                     this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Completed'
-
                                     setTimeout(() => {
                                         this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
                                         this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
                                         cookieToggle = !cookieToggle
                                     }, 2000)
-                                }
-                                else{
-
+                                } else {
                                     //UNSUCCESSFULL API CALL
                                     this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Error'
-
                                     setTimeout(() => {
                                         this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
                                         this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')

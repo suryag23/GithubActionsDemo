@@ -18,11 +18,11 @@
  **/
 import ThunderJS from 'ThunderJS';
 import { Router, Settings, Storage } from '@lightningjs/sdk';
-import HDMIApi from './HDMIApi';;
+import HDMIApi from './HDMIApi';
 import NetflixIIDs from "../../static/data/NetflixIIDs.json";
 import HomeApi from './HomeApi';
-import { AlexaLauncherKeyMap, ApplicationStateReporter} from '../Config/AlexaConfig';
 import { availableLanguageCodes } from '../Config/Config';
+import AlexaApi from './AlexaApi.js';
 
 const config = {
   host: '127.0.0.1',
@@ -33,6 +33,7 @@ const config = {
   }
 }
 const thunder = ThunderJS(config)
+
 /**
  * Class that contains functions which commuicates with thunder API's
  */
@@ -406,6 +407,7 @@ export default class AppApi {
    */
 
   async launchApp(callsign, args) {
+    Storage.set("appSwitchingInProgress", true);
     const saveAbleRoutes = ["menu","epg","apps"] //routing back will happen to only these routes, otherwise it will default to #menu when exiting the app.
     const lastVisitedRoute = Router.getActiveHash();
     if(saveAbleRoutes.includes(lastVisitedRoute)){
@@ -465,6 +467,7 @@ export default class AppApi {
     const availableCallsigns = await this.getAvailableTypes();
 
     if (!availableCallsigns.includes(callsign)) {
+      Storage.set("appSwitchingInProgress", false);
       Router.navigate(Storage.get("lastVisitedRoute"));
       return Promise.reject("Can't launch App: " + callsign + " | Error: callsign not found!");
     }
@@ -472,6 +475,7 @@ export default class AppApi {
     if (!preventInternetCheck) {
       let internet = await this.isConnectedToInternet();
       if (!internet) {
+        Storage.set("appSwitchingInProgress", false);
         Router.navigate(Storage.get("lastVisitedRoute"));
         return Promise.reject("No Internet Available, can't launchApp.");
       }
@@ -487,6 +491,7 @@ export default class AppApi {
       }
     } catch (err) {
       console.error(err);
+      Storage.set("appSwitchingInProgress", false);
       Router.navigate(Storage.get("lastVisitedRoute"));
       return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device | Error: " + JSON.stringify(err));
     }
@@ -626,18 +631,8 @@ export default class AppApi {
         thunder.call("org.rdk.RDKShell", "launchApplication", params).then(res => {
           console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
           if (res.success) {
-            for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
-              if (value.callsign === callsign) {
-                ApplicationStateReporter.event.payload.value.id = key;
-                ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
-                ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
-                console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
-                thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
-                  console.error("VoiceControl sendVoiceMessage error:", err);
-                  resolve(false)
-                })
-                break;
-              }
+            if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+              AlexaApi.get().reportApplicationState(callsign);
             }
             if(args.appIdentifier){
               let order = Storage.get("appCarouselOrder")
@@ -654,9 +649,11 @@ export default class AppApi {
               }
             }
             Storage.set("applicationType", callsign);
+            Storage.set("appSwitchingInProgress", false);
             resolve(res);
           } else {
             console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res))
+            Storage.set("appSwitchingInProgress", false);
             Router.navigate(Storage.get("lastVisitedRoute"));
             reject(res)
           }
@@ -664,6 +661,7 @@ export default class AppApi {
           console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back")
           thunder.call('org.rdk.RDKShell', 'kill', { "client": callsign });
           this.launchResidentApp();
+          Storage.set("appSwitchingInProgress", false);
           Router.navigate(Storage.get("lastVisitedRoute"));
           reject(err)
         })
@@ -671,18 +669,8 @@ export default class AppApi {
         thunder.call("org.rdk.RDKShell", "launch", params).then(res => {
           console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
           if (res.success) {
-            for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
-              if (value.callsign === callsign) {
-                ApplicationStateReporter.event.payload.value.id = key;
-                ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
-                ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
-                console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
-                thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
-                  console.error("VoiceControl sendVoiceMessage error:", err);
-                  resolve(false)
-                })
-                break;
-              }
+            if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+              AlexaApi.get().reportApplicationState(callsign);
             }
             if(args.appIdentifier){
               let order = Storage.get("appCarouselOrder")
@@ -740,13 +728,12 @@ export default class AppApi {
               console.log("AppAPI Calling "+callsign+".deeplink with url: " + url);
               thunder.call(callsign, 'deeplink', url)
             }
-
+            Storage.set("appSwitchingInProgress", false);
             Storage.set("applicationType", callsign);
-
             resolve(res);
-
           } else {
             console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res))
+            Storage.set("appSwitchingInProgress", false);
             Router.navigate(Storage.get("lastVisitedRoute"));
             reject(res)
           }
@@ -756,6 +743,7 @@ export default class AppApi {
           //destroying the app incase it's stuck in launching | if taking care of ResidentApp as callsign, make sure to prevent destroying it
           thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
           this.launchResidentApp();
+          Storage.set("appSwitchingInProgress", false);
           Router.navigate(Storage.get("lastVisitedRoute"));
           reject(err)
         })
@@ -1854,14 +1842,9 @@ export default class AppApi {
 
   getVolumeLevel(port) {
     return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.DisplaySettings', 'getVolumeLevel', {
-          audioPort: port,
-        })
-        .then(result => {
+      thunder.call('org.rdk.DisplaySettings', 'getVolumeLevel', { audioPort: port }).then(result => {
           resolve(result)
-        })
-        .catch(err => {
+        }).catch(err => {
           console.error('AppAPI getVolumeLevel error:', JSON.stringify(err, 3, null))
           reject(false)
         })
@@ -2042,276 +2025,213 @@ export default class AppApi {
         })
     })
   }
-//clearLastDeepSleepReason
-clearLastDeepSleepReason() {
-  return new Promise((resolve) => {
-    thunder
-      .call('org.rdk.System', 'clearLastDeepSleepReason')
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI clearLastDeepSleepReason error:", err)
-        resolve(false)
-      })
-  })
-}
-getSupportedAudioPorts() {
-  return new Promise((resolve, reject) => {
-    thunder
-      .call('org.rdk.DisplaySettings', 'getSupportedAudioPorts')
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI getSupportedAudioPorts error:", err)
-        resolve(false)
-      });
-  })
-}
 
-monitorStatus(callsign) {
-  return new Promise((resolve, reject) => {
-    thunder
-      .call('Monitor', 'resetstats',{
-        "callsign" : callsign
-      })
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI monitorStatus error:", err)
-        resolve(false)
-      });
-  })
-}
-
-// warehouse api's
-internalReset() {
-  return new Promise((resolve, reject) => {
-    thunder
-      .call('org.rdk.Warehouse', 'internalReset',{
-        "passPhrase": "FOR TEST PURPOSES ONLY"
-    })
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI interalReset error:", err)
-        resolve(false)
-      });
-  })
-}
-
-isClean() {
-  return new Promise((resolve, reject) => {
-    thunder
-      .call('org.rdk.Warehouse', 'isClean')
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI isClean error:", err)
-        resolve(false)
-      });
-  })
-}
-
-lightReset() {
-  return new Promise((resolve, reject) => {
-    thunder
-      .call('org.rdk.Warehouse', 'lightReset')
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI lightReset error:", err)
-        resolve(false)
-      });
-  })
-}
-
-resetDevice() {
-  return new Promise((resolve, reject) => {
-    thunder
-      .call('org.rdk.Warehouse', 'resetDevice',{
-        "suppressReboot": false,
-        "resetType": "USERFACTORY"
-    })
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI resetDevice error:", err)
-        resolve(false)
-      });
-  })
-}
-
-//{ path: ".cache" }
-deletecache(systemcCallsign, path) {
-  return new Promise((resolve, reject) => {
-    thunder.call(systemcCallsign,'delete',{path: path})
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI deletecache error:", err)
-        resolve(false)
-      });
-  })
-}
-
-// activate controller plugin
-activateController(callsign){
-  return new Promise((resolve, reject) => {
-    thunder
-    .call('Controller', 'activate', { callsign: callsign })
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI activateController error:", err)
-        resolve(false)
-      });
-  })
-}
-
-checkStatus(plugin) {
-  return new Promise((resolve, reject) => {
-    thunder.call('Controller', 'status@' + plugin).then(res => {
-      console.log("AppAPI checkStatus ", JSON.stringify(res))
-      resolve(res)
-    }).catch(err => {
-      console.error("AppAPI checkStatus error:", err)
-      resolve(false)
-    });
-  })
-}
-
-configStatus(){
-//controller.1.configuration
-return new Promise((resolve, reject) => {
-  thunder.call('Controller', 'status').then(res => {
-      console.log("AppAPI configStatus ",JSON.stringify(res))
-      resolve(res)
-    }).catch(err => {
-      console.error("AppAPI configStatus error:", err)
-      resolve(false)
-    });
-  })
-}
-
-getAvCodeStatus(){
-  return new Promise((resolve, reject) => {
-    thunder
-      .call('org.rdk.DeviceDiagnostics', 'getAVDecoderStatus')
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.error("AppAPI getAvCodeStatus error:", err)
-        resolve(false)
-      });
-  })
-}
-
-SaveTimerValue(value1) {
-  console.log("persistenceSt",value1)
-  return new Promise((resolve, reject) => {
-    thunder
-      .call('org.rdk.PersistentStore', 'setValue', {
-        namespace: "ScreenSaverTime",
-        key: "timerValue",
-        value: value1
-      })
-      .then(result => {
-        resolve(result.success)
-      })
-      .catch(err => {
-        console.error('AppAPI SaveTimerValue ScreenSaverTime failed:', err)
-        reject()
-      })
-  })
-}
-
-getTimerValue() {
-  return new Promise((resolve) => {
-    thunder
-      .call('org.rdk.PersistentStore', 'getValue', { namespace: 'ScreenSaverTime', key: 'timerValue' })
-      .then(result => {
-        resolve(result.value)
-      })
-      .catch(err => {
-        resolve('')
-      })
-  })
-}
-
-  /**
-   * Function to send voice message.
-   */
-  resetAVSCredentials(){
-    return new Promise((resolve, reject) => {
-      Storage.set("AlexaVoiceAssitantState", "AlexaAuthPending");
-      thunder.Controller.activate({ callsign: 'SmartScreen' }).then(() => {
-        console.log("Alexa resetAVSCredentials; activating SmartScreen instance.")
-      })
-      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', {"msgPayload":{"event": "ResetAVS"}})
-        .then(result => {
-          resolve(result)
-        }).catch(err => {
-          resolve(false)
-        })
-    })
-  }
-
-  /**
-   * User can opt out Alexa; could be in Auth state or Some generic Alexa Error after Auth completed.
-   * Return respective map so that logic can be drawn based on that.
-   */
-  checkAlexaAuthStatus(){
-    if (Storage.get("AlexaVoiceAssitantState") === undefined || Storage.get("AlexaVoiceAssitantState") === null || Storage.get("AlexaVoiceAssitantState") === "AlexaAuthPending")
-      return "AlexaAuthPending"; // Do not handle Alexa Related Errors; only Handle its Auth status.
-    else
-      return Storage.get("AlexaVoiceAssitantState"); // Return the stored value of AlexaVoiceAssitantState
-  }
-
-  setAlexaAuthStatus(newState = false){
-    Storage.set("AlexaVoiceAssitantState", newState)
-    if (newState === "AlexaUserDenied") {
-      /* Free up Smartscreen resources */
-      thunder.Controller.deactivate({ callsign: 'SmartScreen' }).then(() => {
-        console.log("Alexa AlexaUserDenied; deactivating SmartScreen instance.")
-      })
-    }
-    console.warn("setAlexaAuthStatus with ", newState)
-  }
-
-  /**
-   * To track playback state of Alexa Smartscreen App(AmazonMusic or anything else)
-   */
-  checkAlexaSmartscreenAudioPlaybackState(){
-    if (Storage.get("AlexaSmartscreenAudioPlaybackState") === null || Storage.get("AlexaSmartscreenAudioPlaybackState") === "null")
-      return "stopped"; // Assume default state.
-    else
-      return Storage.get("AlexaSmartscreenAudioPlaybackState");
-  }
-  setAlexaSmartscreenAudioPlaybackState(newState = false){
-    Storage.set("AlexaSmartscreenAudioPlaybackState", newState)
-    console.log("setAlexaSmartscreenAudioPlaybackState with ", newState)
-  }
-  getAlexaDeviceSettings() {
-    return new Promise((resolve, reject) => {
-      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Get Device Settings" } })
+  //clearLastDeepSleepReason
+  clearLastDeepSleepReason() {
+    return new Promise((resolve) => {
+      thunder
+        .call('org.rdk.System', 'clearLastDeepSleepReason')
         .then(result => {
           resolve(result)
         })
         .catch(err => {
+          console.error("AppAPI clearLastDeepSleepReason error:", err)
           resolve(false)
         })
     })
   }
+  getSupportedAudioPorts() {
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('org.rdk.DisplaySettings', 'getSupportedAudioPorts')
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI getSupportedAudioPorts error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  monitorStatus(callsign) {
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('Monitor', 'resetstats',{
+          "callsign" : callsign
+        })
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI monitorStatus error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  // warehouse api's
+  internalReset() {
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('org.rdk.Warehouse', 'internalReset',{
+          "passPhrase": "FOR TEST PURPOSES ONLY"
+      })
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI interalReset error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  isClean() {
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('org.rdk.Warehouse', 'isClean')
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI isClean error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  lightReset() {
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('org.rdk.Warehouse', 'lightReset')
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI lightReset error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  resetDevice() {
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('org.rdk.Warehouse', 'resetDevice',{
+          "suppressReboot": false,
+          "resetType": "USERFACTORY"
+      })
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI resetDevice error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  //{ path: ".cache" }
+  deletecache(systemcCallsign, path) {
+    return new Promise((resolve, reject) => {
+      thunder.call(systemcCallsign,'delete',{path: path})
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI deletecache error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  // activate controller plugin
+  activateController(callsign){
+    return new Promise((resolve, reject) => {
+      thunder
+      .call('Controller', 'activate', { callsign: callsign })
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI activateController error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  checkStatus(plugin) {
+    return new Promise((resolve, reject) => {
+      thunder.call('Controller', 'status@' + plugin).then(res => {
+        //console.log("AppAPI checkStatus ", JSON.stringify(res))
+        resolve(res)
+      }).catch(err => {
+        console.error("AppAPI checkStatus error:", err)
+        resolve(false)
+      });
+    })
+  }
+
+  configStatus(){
+  //controller.1.configuration
+  return new Promise((resolve, reject) => {
+    thunder.call('Controller', 'status').then(res => {
+        //console.log("AppAPI configStatus ",JSON.stringify(res))
+        resolve(res)
+      }).catch(err => {
+        console.error("AppAPI configStatus error:", err)
+        resolve(false)
+      });
+    })
+  }
+
+  getAvCodeStatus(){
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('org.rdk.DeviceDiagnostics', 'getAVDecoderStatus')
+        .then(result => {
+          resolve(result)
+        })
+        .catch(err => {
+          console.error("AppAPI getAvCodeStatus error:", err)
+          resolve(false)
+        });
+    })
+  }
+
+  SaveTimerValue(value1) {
+    console.log("persistenceSt",value1)
+    return new Promise((resolve, reject) => {
+      thunder
+        .call('org.rdk.PersistentStore', 'setValue', {
+          namespace: "ScreenSaverTime",
+          key: "timerValue",
+          value: value1
+        })
+        .then(result => {
+          resolve(result.success)
+        })
+        .catch(err => {
+          console.error('AppAPI SaveTimerValue ScreenSaverTime failed:', err)
+          reject()
+        })
+    })
+  }
+
+  getTimerValue() {
+    return new Promise((resolve) => {
+      thunder
+        .call('org.rdk.PersistentStore', 'getValue', { namespace: 'ScreenSaverTime', key: 'timerValue' })
+        .then(result => {
+          resolve(result.value)
+        })
+        .catch(err => {
+          resolve('')
+        })
+    })
+  }
+
   setUILanguage(updatedLanguage) {
     return new Promise((resolve, reject) => {
       thunder.call('org.rdk.UserPreferences', 'setUILanguage',{"ui_language": updatedLanguage}).then(result => {
@@ -2321,28 +2241,58 @@ getTimerValue() {
       })
     })
   }
-  setLanguageinAlexa(updatedLanguage) {
-    let updatedLan = []
-    updatedLan.push(updatedLanguage)
-    console.log("setLanguageinAlexa sending :" + updatedLan)
-    return new Promise((resolve, reject) => {
-      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "locale": updatedLan } } })
-        .then(result => {
-          resolve(result)
-        }).catch(err => {
-          resolve(false)
-        })
-    })
-  }
-  setTimeZoneinAlexa(updatedTimeZone) {
-    console.log("setTimeZoneinAlexa sending :" + updatedTimeZone)
-    return new Promise((resolve, reject) => {
-      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "timezone": updatedTimeZone } } })
-        .then(result => {
-          resolve(result)
-        }).catch(err => {
-          resolve(false)
-        })
-    })
+
+  deeplinkToApp(app = undefined, payload = undefined, launchLocation = "voice", namespace = undefined) {
+    if (app === undefined || app === "" || payload == undefined) {
+      console.error("AppApi: deeplinkToApp '" + app +"' not possible with payload '" + payload +"'.");
+      resolve(false);
+    } else if (app.startsWith("YouTube")) {
+      let url = Storage.get(app+"DefaultURL").toString();
+      url = url.substring(0, url.indexOf('?'));
+      if (!url.endsWith("?")) url += "?";
+      url += ((Storage.get("applicationType") === app)?"inApp=true":"inApp=false");
+      // For the timebeing Alexa alone. Revisit when we have other voice sysyems.
+      url += "&launch=voice" + "&vs=" + ((launchLocation === "alexa")?2:0);
+
+      if (namespace === "ExternalMediaPlayer") {
+        // Received sample : {"payload":{"playbackContextToken":"{deeplinkMethodType=PLAY, searchString='cat videos'}"}}
+        url += "&va=" + ((payload.playbackContextToken.includes("deeplinkMethodType=PLAY"))?"play":"search");
+        if (payload.playbackContextToken.includes("deeplinkMethodType")) {
+          let searchString = payload.playbackContextToken.replace(/[{}]/g, '').split(',');
+          for (let i = 0; i < searchString.length; i++) {
+            if (searchString[i].includes("searchString")) {
+              let data = searchString[i].split('=').slice(1)[0].replace(/\'/g, '');
+              url += "&vaa=" + encodeURI(data.trim());
+              break;
+            }
+          }
+        }
+      } else if (namespace === "Alexa.SeekController") {
+        let time = payload.deltaPositionMilliseconds/1000
+        let minutes = Math.abs(parseInt(time / 60))
+        let seconds = Math.abs(parseInt(time % 60))
+        url += "&va=" + ((time < 0)?"mediaRewind":"mediaFastForward") + "&vaa=" + minutes + "m" + seconds + "s";
+      } else if (namespace === "Alexa.PlaybackController") {
+        let playbackOperations = new Set(["Play","Pause","FastForward","Rewind","Shuffle","Repeat"])
+        if (playbackOperations.has(payload)) {
+          url += "&va=media" + payload;
+        } else if (payload === "Next" || payload === "Previous") {
+          url += "&va=media" + payload + "Video";
+        }
+      }
+      console.info("AppApi: deeplinkToApp " + app + " url - " + url);
+      thunder.call(app, 'deeplink', url);
+    } else if (app === "Amazon") {
+      // TODO: no deeplink format support.
+      console.error("AppApi: deeplinkToApp '" + app +"' not supported.");
+      resolve(false);
+    } else if (app === "Netflix") {
+      // TODO: no deeplink format support.
+      console.error("AppApi: deeplinkToApp '" + app +"' not supported.");
+      resolve(false);
+    } else {
+      console.error("AppApi: deeplinkToApp '" + app +"' not supported.");
+      resolve(false);
+    }
   }
 }

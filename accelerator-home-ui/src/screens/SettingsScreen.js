@@ -31,12 +31,10 @@ const config = {
 };
 var thunder = ThunderJS(config);
 
-
 /**
  * Class for settings screen.
  */
 export default class SettingsScreen extends Lightning.Component {
-
   _onChanged() {
     this.widgets.menu.updateTopPanelText(Language.translate('Settings'));
   }
@@ -174,7 +172,6 @@ export default class SettingsScreen extends Lightning.Component {
           },
         },
 
-
         NFRStatus: {
           y: 450,
           type: SettingsMainItem,
@@ -251,15 +248,11 @@ export default class SettingsScreen extends Lightning.Component {
             src: Utils.asset('images/settings/Arrow.png'),
           },
         },
-
-
-
       },
     }
   }
 
   _init() {
-
     let self = this;
     this.appApi = new AppApi();
     this._setState('NetworkConfiguration')
@@ -278,19 +271,20 @@ export default class SettingsScreen extends Lightning.Component {
       this.tag("NFRStatus.Button").src = "static/images/settings/ToggleOffWhite.png"
     }
 
-
     this.dtvApi = new DTVApi();
     this.dtvPlugin = false; //plugin availability
-    this.dtvApi.activate().then((res) => {
-      this.dtvPlugin = true;
-      this.tag("DTVSettings").alpha = 1;
-    })
+    if (Storage.get("deviceType") != "IpStb") {
+      this.dtvApi.activate().then((res) => {
+        this.dtvPlugin = true;
+        this.tag("DTVSettings").alpha = 1;
+      })
+    }
   }
 
   _handleBack() {
     if(!Router.isNavigating()){
       Router.navigate('menu')
-      }
+    }
   }
 
   static _states() {
@@ -452,9 +446,6 @@ export default class SettingsScreen extends Lightning.Component {
           if (this.dtvPlugin) {
             Router.navigate('settings/livetv')
           }
-          // dtvApi.activate().then(res =>{
-          //   this.tag('DTVSettings.Title').text.text = 'DTV Settings: Activtion'+ res
-          // })
         }
       },
       class VoiceRemoteControl extends this{
@@ -476,9 +467,6 @@ export default class SettingsScreen extends Lightning.Component {
           if(!Router.isNavigating()){
             Router.navigate('settings/bluetooth/RCVolumeInfoScreen')
           }
-          // dtvApi.activate().then(res =>{
-          //   this.tag('DTVSettings.Title').text.text = 'DTV Settings: Activtion'+ res
-          // })
         }
       },
     ]

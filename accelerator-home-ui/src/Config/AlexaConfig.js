@@ -60,6 +60,18 @@ export const AlexaLauncherKeyMap = {
         "callsign": "Peacock",
         "url": "",
     },
+    // TODO: refactor
+    "amzn1.alexa-ask-target.app.73751": {
+        "name": "Amazon Alexa",
+        "callsign": "SmartScreen",
+        "url": "",
+    },
+    // TODO: refactor
+    "amzn1.alexa-ask-target.app.32470": {
+        "name": "Amazon Music",
+        "callsign": "SmartScreen",
+        "url": "",
+    },
     "amzn1.alexa-ask-target.app.92933": {
         "name": "Vimeo",
         "callsign": "LightningApp",
@@ -167,38 +179,6 @@ export const errorPayload = {
     }
 }
 
-export const PlaybackStateReport = {
-    "msgPayload": {
-        "event": {
-            "header":
-            {
-                "namespace": "Alexa",
-                 "name": "ChangeReport",
-                "messageId": "3d2521f2-4e93-4158-b91e-ba04637b91a9",
-                 "payloadVersion": "3"
-            },
-            "endpoint": { "endpointId": "rdk-video-device" },
-            "payload": {
-                "change": {
-                    "cause": { "type": "PHYSICAL_INTERACTION" },
-                    "properties": [{
-                        "namespace": "Alexa.PlaybackStateReporter",
-                         "name":"playbackState",
-                          "value": { "state": "Pause/stop/Resume/Play" },
-                        "timeOfSample": new Date().getFullYear() + "-"
-                        + (new Date().getMonth()+1)  + "-"
-                        + new Date().getDate() + "T"
-                        + new Date().getHours() + ":"
-                        + new Date().getMinutes() + ":"
-                        + new Date().getSeconds()+"Z",
-                        "uncertaintyInMilliseconds": 0
-                    }]
-                }
-            }
-        }
-    }
-}
-
 export const VolumePayload = {
     "msgPayload": {
         "event": {
@@ -216,45 +196,39 @@ export const VolumePayload = {
 }
 
 export const ApplicationStateReporter = {
-    "event": {
-        "header": {
-            "namespace": "Alexa",
-            "name": "ChangeReport",
-            "messageId": "3d2521f2-4e93-4158-b91e-ba04637b91a9",
-            "payloadVersion": "3"
-        },
-        "endpoint": {
-            "endpointId": "rdk-video-device"
-        },
-        "payload": {
-            "namespace": "Alexa.ApplicationStateReporter",
-            "name": "foregroundApplication",
-            "value": {
-            "id": "amzn1.alexa-ask-target.shortcut.33122",
-            "version": "2019020342",
-            "type": "vsk",
-            "metadata": {
-                "categories": [
-                "LAUNCHER"
-                ],
-                "isVisible": true
-            },
-            "timeOfSample": "2023-04-03T16:20:50.52Z",
-            "uncertaintyInMilliseconds": 0
+    "msgPayload": {
+        "event": {
+            "header": {
+                "namespace":"Alexa.ApplicationStateReporter",
+                "name":"ForegroundApplication",
+                "value": {
+                    "foregroundApplication": {
+                        "id":"amzn1.alexa-ask-target.app.70045",
+                        "version":"1",
+                        "type":"vsk",
+                        "metadata": {
+                            "categories":["OTHER"],
+                            "isVisible":true,
+                            "isHome": true
+                        }
+                    }
+                }
             }
         }
-    },
-    "context": {
-        "properties": [
-            {
-                "namespace": "Alexa.EndpointHealth",
-                "name": "connectivity",
+    }
+}
+
+/* state: PLAYING/PAUSED/STOPPED */
+export const PlaybackStateReport = {
+    "msgPayload": {
+        "event": {
+            "header": {
+                "namespace": "Alexa.PlaybackStateReporter",
+                "name": "playbackState",
                 "value": {
-                    "value": "OK"
-                },
-                "timeOfSample": "2021-12-01T18:20:50Z",
-                "uncertaintyInMilliseconds": 0
+                    "state": "PLAYING"
+                }
             }
-        ]
+        }
     }
 }

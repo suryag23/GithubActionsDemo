@@ -209,25 +209,27 @@ export default class BluetoothScreen extends Lightning.Component {
         })
         var RCInterval = Registry.setInterval(()=>{
             bluetoothApi.getNetStatus().then(result => {
-                var rcuNotConnectedStartPairing = 1;
-                console.log("SplashBluetoothScreen async RCInterval RemoteControl getNetStatus ", JSON.stringify(result))
-                if (result.status.remoteData != []) {
-                    result.status.remoteData.map(item =>{
-                        if(item.connected === true){
-                            console.log("SplashBluetoothScreen async RCInterval got connected RCU hence clearing ", RCInterval)
-                            Registry.clearInterval(RCInterval)
-                            rcuNotConnectedStartPairing = 0;
-                        }
-                    })
+                if (result.success) {
+                    var rcuNotConnectedStartPairing = 1;
+                    console.log("SplashBluetoothScreen async RCInterval RemoteControl getNetStatus ", JSON.stringify(result))
+                    if (result.status.remoteData != []) {
+                        result.status.remoteData.map(item =>{
+                            if(item.connected === true){
+                                console.log("SplashBluetoothScreen async RCInterval got connected RCU hence clearing ", RCInterval)
+                                Registry.clearInterval(RCInterval)
+                                rcuNotConnectedStartPairing = 0;
+                            }
+                        })
+                    }
+                    if ((result.status.remoteData === [] && (result.status.pairingState != "SEARCHING")) || rcuNotConnectedStartPairing) {//|| result.status.pairingState === "SEARCHING" ){
+                        console.log("SplashBluetoothScreen async RCInterval RemoteControl getNetStatus activateAutoPairing 4")
+                        appApi.activateAutoPairing().then(status => {
+                            console.log("Invoked activateAutoPairing() and got ", status)
+                            Registry.clearInterval(RCInterval) // org.rdk.RemoteControl 'onStatus' notification will do the rest.
+                        })
+                    }
                 }
-                if ((result.status.remoteData === [] && (result.status.pairingState != "SEARCHING")) || rcuNotConnectedStartPairing) {//|| result.status.pairingState === "SEARCHING" ){
-                    console.log("SplashBluetoothScreen async RCInterval RemoteControl getNetStatus activateAutoPairing 4")
-                    appApi.activateAutoPairing().then(status => {
-                        console.log("Invoked activateAutoPairing() and got ", status)
-                        Registry.clearInterval(RCInterval) // org.rdk.RemoteControl 'onStatus' notification will do the rest.
-                    })
-                }
-            })  
+            })
         }, 30000, true);
     }
 
@@ -373,7 +375,7 @@ export default class BluetoothScreen extends Lightning.Component {
                 _handleEnter() {
                     console.log('SplashBluetoothScreen states Start Pairing')
                     Router.navigate('splash/language')
-                    //this.rcPairingApis(); 
+                    //this.rcPairingApis();
                 }
                 $exit() {
                     this.tag('Buttons.StartPairing').alpha = 0.5

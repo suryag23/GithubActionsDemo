@@ -24,7 +24,7 @@
  /**
   * Class for Firmware screen.
   */
- 
+
  export default class FirmwareScreen extends Lightning.Component {
      static _template() {
          return {
@@ -101,26 +101,22 @@
              },
          }
      }
- 
+
      _firstEnable() {
- 
- 
          let state = ['Uninitialized', 'Requesting', 'Downloading', 'Failed', 'DownLoad Complete', 'Validation Complete', 'Preparing to Reboot']
- 
+
          const config = {
              host: '127.0.0.1',
              port: 9998,
              default: 1,
          }
- 
+
          const thunder = ThunderJS(config)
-         const systemcCallsign = "org.rdk.System.1"
-         thunder.Controller.activate({ callsign: systemcCallsign })
+         thunder.Controller.activate({ callsign: "org.rdk.System" })
              .then(res => {
- 
                  thunder.on(callsign, "onFirmwareUpdateStateChange", notification => {
-                     console.log(`Tanjirou's notification : on Firmware update state changed notifcation = ${JSON.stringify(notification)}`);
- 
+                     console.log(`FirmwareOverlay: on Firmware update state changed notifcation = ${JSON.stringify(notification)}`);
+
                      if (state[notification.firmwareUpdateStateChange] == "Downloading") {
                          this.downloadInterval = setInterval(() => {
                              console.log(`Downloading...`);
@@ -130,59 +126,54 @@
                          clearInterval(this.downloadInterval);
                          this.downloadInterval = null
                      }
- 
                  }, err => {
-                     console.error(`error while fetching notification ie. ${err}`)
+                     console.error(`FirmwareOverlay: error while fetching notification ie. ${err}`)
                  })
- 
- 
              })
-             .catch(err => { console.error(`error while activating the system plugin`) })
- 
+             .catch(err => { console.error(`FirmwareOverlay: error while activating the system plugin`) })
      }
- 
+
      _unfocus() {
          if (this.downloadInterval) {
              clearInterval(this.downloadInterval);
              this.downloadInterval = null
          }
      }
- 
+
      _focus() {
          this.downloadInterval = null;
          this._appApi = new AppApi();
          const downloadState = ['Uninitialized', 'Requesting', 'Downloading', 'Failed', 'DownLoad Complete', 'Validation Complete', 'Preparing to Reboot']
          this._appApi.getFirmwareUpdateState().then(res => {
-             console.log("getFirmwareUpdateState from firmware screen " + JSON.stringify(res))
+             console.log("FirmwareOverlay: getFirmwareUpdateState " + JSON.stringify(res))
              this.tag('State.Title').text.text = Language.translate("Firmware State: ") + downloadState[res.firmwareUpdateState]
          })
- 
+
          this._appApi.getDownloadFirmwareInfo().then(res => {
-             console.log("getDownloadFirmwareInfo from firmware screen " + JSON.stringify(res))
+             console.log("FirmwareOverlay: getDownloadFirmwareInfo " + JSON.stringify(res))
              this.tag('Version.Title').text.text = Language.translate("Firmware Versions: ") + res.currentFWVersion
          })
          this._setState('FirmwareUpdate')
      }
- 
+
      getDownloadPercent() {
          this._appApi.getFirmwareDownloadPercent().then(res => {
-             console.log(`getFirmwareDownloadPercent : ${JSON.stringify(res)}`);
+             console.log(`FirmwareOverlay: getFirmwareDownloadPercent ${JSON.stringify(res)}`);
              if (res.downloadPercent < 0) {
                  this.tag('DownloadedPercent.Title').text.text = "";
              }
              else {
                  this.tag('DownloadedPercent.Title').text.text = Language.translate("Download Progress: ") + res.downloadPercent + "%";
              }
- 
          }).catch(err => {
              console.error(err);
          })
      }
- 
+
      getDownloadFirmwareInfo() {
          this._appApi.updateFirmware().then(res => {
              this._appApi.getDownloadFirmwareInfo().then(result => {
-                 console.log(`getDownloadFirmwareInfo : ${JSON.stringify(result.downloadFWVersion)}`);
+                 console.log(`FirmwareOverlay: getDownloadFirmwareInfo : ${JSON.stringify(result.downloadFWVersion)}`);
                  this.tag('DownloadedVersion.Title').text.text = Language.translate('Downloaded Firmware Version: ') + `${result.downloadFWVersion ? result.downloadFWVersion : 'NA'}`
              }).catch(err => {
                  console.error(err);
@@ -191,7 +182,7 @@
              console.error(err);
          })
      }
- 
+
      static _states() {
          return [
              class FirmwareUpdate extends this{

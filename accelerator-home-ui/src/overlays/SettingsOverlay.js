@@ -207,7 +207,7 @@ var thunder = ThunderJS(config);
               src: Utils.asset('images/settings/ToggleOffWhite.png'),
             },
           },
-  
+
           DTVSettings: {
             alpha: 0.3,
             y: 540,
@@ -261,7 +261,7 @@ var thunder = ThunderJS(config);
        }
      };
    }
- 
+
    _focus() {
      this.tag("Wrapper").visible = true;
      this._setState("NetworkConfiguration");
@@ -279,18 +279,17 @@ var thunder = ThunderJS(config);
       console.log(`Netflix : NFRStatus is found to be disabled`)
       this.tag("NFRStatus.Button").src = "static/images/settings/ToggleOffWhite.png"
     }
-     this.appApi = new AppApi();
-     this.dtvApi = new DTVApi();
-     this.dtvPlugin = false; //plugin availability
-     this.dtvApi.activate().then((res) => {
-       // if (res){
-       this.dtvPlugin = true;
-       this.tag("DTVSettings").alpha = 1;
-       // }
-     });
+      this.appApi = new AppApi();
+      this.dtvApi = new DTVApi();
+      this.dtvPlugin = false; //plugin availability
+      if (Storage.get("deviceType") != "IpStb") {
+        this.dtvApi.activate().then((res) => {
+          this.dtvPlugin = true;
+          this.tag("DTVSettings").alpha = 1;
+        });
+      }
    }
 
- 
    _handleBack() {
      console.log("application Type = ", Storage.get("applicationType"));
      if (Storage.get("applicationType") === "") {
@@ -331,13 +330,13 @@ var thunder = ThunderJS(config);
 
    hide() {
     this.tag('SettingsScreenContents').visible = false
-   
+
  }
 
  show() {
     this.tag('SettingsScreenContents').visible = true
   }
-  $hideBreadCrum(){ 
+  $hideBreadCrum(){
     this.tag("BreadCrumbs").visible = false;
   }
   $showBreadCrum(){
@@ -378,7 +377,7 @@ var thunder = ThunderJS(config);
           this._setState("BluetoothScreenOverlay")
          }
        },
- 
+
        class Video extends this {
          $enter() {
            this.tag("Video")._focus();
@@ -396,7 +395,7 @@ var thunder = ThunderJS(config);
           this._setState('VideoScreenOverlay')
          }
        },
- 
+
        class Audio extends this {
          $enter() {
            this.tag("Audio")._focus();
@@ -414,7 +413,7 @@ var thunder = ThunderJS(config);
            this._setState("OtherSettings");
          }
        },
- 
+
        class OtherSettings extends this {
          $enter() {
            this.tag("OtherSettings")._focus();
@@ -609,4 +608,3 @@ var thunder = ThunderJS(config);
      ];
    }
  }
- 

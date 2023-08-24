@@ -19,8 +19,7 @@
 import { Lightning, Router, Language } from '@lightningjs/sdk'
 import AppApi from '../api/AppApi'
 import { CONFIG } from '../Config/Config'
-
-const appApi = new AppApi()
+import AlexaApi from '../api/AlexaApi'
 
 /**
  * Class for Reboot Confirmation Screen.
@@ -119,7 +118,7 @@ export default class AlexaConfirmationScreen extends Lightning.Component {
                     this._focus()
                 }
                 _handleEnter() {
-                    appApi.setAlexaAuthStatus("AlexaUserDenied")
+                    AlexaApi.get().setAlexaAuthStatus("AlexaUserDenied")
                     Router.navigate("menu")
                 }
                 _handleRight() {

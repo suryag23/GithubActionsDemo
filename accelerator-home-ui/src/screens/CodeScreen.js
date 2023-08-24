@@ -19,7 +19,7 @@
 import { Lightning, Registry, Router, Utils, Storage } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import ThunderJS from 'ThunderJS'
-import AppApi from '../api/AppApi'
+import AlexaApi from '../api/AlexaApi'
 
 const config = {
     host: '127.0.0.1',
@@ -27,7 +27,6 @@ const config = {
     default: 1,
 };
 var thunder = ThunderJS(config);
-var appApi = new AppApi();
 
 export default class CodeScreen extends Lightning.Component {
     static _template() {
@@ -103,41 +102,49 @@ export default class CodeScreen extends Lightning.Component {
         this._setState('Description')
     }
     _focus() {
-        if(appApi.checkAlexaAuthStatus() !== "AlexaUserDenied"){
-         thunder.Controller.activate({callsign: "org.rdk.VoiceControl"}).then(res => {
-            
-         thunder.on("org.rdk.VoiceControl", 'onServerMessage', notification => {
-            console.log("VoiceControl.onServerMessage Notification: ", notification)
-            this.VoiceControlData = notification
-            this.tag('Description').text.text = `Go to ${notification.xr_speech_avs.url}, enter this code`
-            this.tag("Description2").visible = true
-            this.tag("Description2").text.text = `${notification.xr_speech_avs.code}`
-            
-             console.log('avs code coming from CodeScreen')
-             if (notification.xr_speech_avs.state === "refreshed") {
-                // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
-                appApi.setAlexaAuthStatus("AlexaHandleError")
-                Router.navigate("SuccessScreen")
-              }
-              else if ((notification.xr_speech_avs.state === "uninitialized") || (notification.xr_speech_avs.state === "authorizing")) {
-                console.log("notification state is uninitialised")
-                appApi.setAlexaAuthStatus("AlexaAuthPending")
-              } else if (notification.xr_speech_avs.state === "unrecoverable error") {
-                console.log("notification state is unrecoverable error")
-                // Could be AUTH token Timeout; refresh it.
-                Router.navigate("FailureScreen")
-              }
-         })
-         }).catch(err => {
-         console.log("VoiceControl Plugin Activation ERROR!: ",err)
-         })
-         this._setState('Description')
+        if(AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied"){
+            thunder.Controller.activate({callsign: "org.rdk.VoiceControl"}).then(res => {
+                //AlexaApi.get().resetAVSCredentials();
+                thunder.on("org.rdk.VoiceControl", 'onServerMessage', notification => {
+                    console.log("VoiceControl.onServerMessage Notification: ", notification)
+                    this.VoiceControlData = notification
+                    if (notification.xr_speech_avs.url != undefined) {
+                        this.tag('Description').text.text = `Go to ${notification.xr_speech_avs.url}, enter this code`
+                    } else {
+                        this.tag('Description').text.text = `Fetching authorization code`
+                    }
+                    this.tag("Description2").visible = true
+                    if (notification.xr_speech_avs.code != undefined) {
+                        this.tag("Description2").text.text = `${notification.xr_speech_avs.code}`
+                    } else {
+                        this.tag("Description2").text.text = `Please wait...`
+                    }
+                    if (notification.xr_speech_avs.state === "refreshed") {
+                        // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
+                        AlexaApi.get().setAlexaAuthStatus("AlexaHandleError");
+                        AlexaApi.get().enableSmartScreen();
+                        Router.navigate("SuccessScreen");
+                    }
+                    else if ((notification.xr_speech_avs.state === "uninitialized") || (notification.xr_speech_avs.state === "authorizing")) {
+                        console.log("notification state is uninitialised")
+                        AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending")
+                    } else if (notification.xr_speech_avs.state === "unrecoverable error") {
+                        console.log("notification state is unrecoverable error")
+                        // Could be AUTH token Timeout; refresh it.
+                        Router.navigate("FailureScreen")
+                    }
+                })
+            }).catch(err => {
+                console.log("VoiceControl Plugin Activation ERROR!: ",err)
+            })
+            this._setState('Description')
        }
     }
-   
+
     _active() {
         this._setState('Description')
     }
+
     static _states() {
         return [
             class Description extends this{
@@ -161,7 +168,7 @@ export default class CodeScreen extends Lightning.Component {
                         Router.navigate('AlexaConfirmationScreen')
                     }
                 }
-                
+
                 _focus() {
                     this.tag('BackButton').patch({
                         color: CONFIG.theme.hex

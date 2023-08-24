@@ -23,7 +23,6 @@ const config = {
   default: 1,
 };
 const thunder = ThunderJS(config);
-const systemcCallsign = "DTV";
 let playerID = -1; //set to -1 to indicate nothing is currently playing
 
 let customServiceList = []; //list containing all channel details

@@ -249,7 +249,9 @@ export default class Epg extends Lightning.Component {
    let channel = this.getCurrentChannel();
    let events = await dtvApi.getEvents(channel.dvburi)
    let eventUri = null
-   eventUri=this.getEventURI(events);
+   if(events!=undefined){
+    eventUri=this.getEventURI(events);
+   }
    if (channel.dvburi === "OTT") {
       let params = {
         launchLocation: "epgScreen",

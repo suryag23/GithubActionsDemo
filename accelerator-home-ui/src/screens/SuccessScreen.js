@@ -19,8 +19,9 @@
 import { Lightning, Registry, Router, Utils } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import AppApi from '../api/AppApi'
+import AlexaApi from '../api/AlexaApi.js';
 
-const appApi = new AppApi();
+let appApi = new AppApi();
 
 export default class SuccessScreen extends Lightning.Component {
     static _template() {
@@ -147,18 +148,7 @@ export default class SuccessScreen extends Lightning.Component {
                   this.tag("DoneButton")
                 }
                 _handleEnter(){
-                    appApi.checkStatus('SmartScreen').then(result => {
-                        console.log("Alexa SuccessScreen SmartScreen checkStatus: " +result)
-                        switch(result[0].state) {
-                          case "Activation":
-                          case "deactivated":
-                          case "Deactivation":
-                          case "Precondition":
-                          case "suspended":
-                            appApi.activateController('SmartScreen')
-                            break;
-                        }
-                    })
+                    AlexaApi.get().enableSmartScreen()
                     Router.navigate('menu')
                 }
                 _focus() {

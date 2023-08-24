@@ -20,6 +20,7 @@ import { Language, Lightning, Router } from '@lightningjs/sdk'
 import LanguageItem from '../../items/LanguageItem'
 import { availableLanguages, availableLanguageCodes } from '../../Config/Config'
 import AppApi from '../../api/AppApi';
+import AlexaApi from '../../api/AlexaApi';
 import thunderJS from 'ThunderJS';
 
 const appApi = new AppApi()
@@ -126,18 +127,18 @@ export default class LanguageScreen extends Lightning.Component {
         _handleEnter() {
           if (localStorage.getItem('Language') !== availableLanguages[this._Languages.tag('List').index]) {
             localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index])
-            let updatedLanguage=availableLanguageCodes[localStorage.getItem('Language')]
-            if(appApi.checkAlexaAuthStatus() === "AlexaHandleError") {
-             appApi.getAlexaDeviceSettings().then((response) => { })
+            let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
+            if(AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") {
+              AlexaApi.get().getAlexaDeviceSettings();
                 thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
                   if(notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage){
                     for(let i=0;i<notification.xr_speech_avs.deviceSettings.supportedLocales.length;i++){
-                    if(updatedLanguage===notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()){
-                      appApi.setLanguageinAlexa(updatedLanguage)
-                     }
-                   }
+                      if(updatedLanguage===notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()){
+                        AlexaApi.get().updateDeviceLanguageInAlexa(updatedLanguage)
+                      }
+                    }
                   }
-                })  
+                })
             }
             appApi.setUILanguage(updatedLanguage)
             let path = location.pathname.split('index.html')[0]

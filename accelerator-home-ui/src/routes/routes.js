@@ -45,6 +45,7 @@ import FailureScreen from '../screens/FailureScreen'
 import AlexaConfirmationScreen from '../screens/AlexaConfirmationScreen'
 import CameraStreamingScreen from '../screens/CameraStreamingScreen'
 import CameraStreamingScreenExitConfirmationScreen from '../screens/CameraStreamingScreenExitConfirmationScreen'
+import AlexaApi from '../api/AlexaApi.js'
 
 let api = null
 
@@ -191,4 +192,9 @@ export default {
       component: AlexaConfirmationScreen
     }
   ],
+  afterEachRoute: (request) => {
+    if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+      AlexaApi.get().reportApplicationState(request.hash, true);
+    }
+  }
 }

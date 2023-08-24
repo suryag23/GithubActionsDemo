@@ -18,9 +18,8 @@
  **/
 import { Lightning, Router, Utils } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
-import AppApi from '../api/AppApi';
- 
-var appApi = new AppApi();
+import AlexaApi from '../api/AlexaApi'
+
 export default class FailureScreen extends Lightning.Component {
     static _template() {
         return {
@@ -93,12 +92,12 @@ export default class FailureScreen extends Lightning.Component {
                  this.tag("RetryButton")
                  this._focus()
                  this.tag('RetryButton.Title').text.textColor = CONFIG.theme.hex
-                 
+
                 }
                 _handleEnter(){
-                    appApi.resetAVSCredentials().then(res =>{console.log("resetAvsres",res)
-                    Router.navigate('AlexaLoginScreen')
-                }) 
+                    AlexaApi.get().resetAVSCredentials().then(()=>{
+                        Router.navigate('AlexaLoginScreen');
+                    })
                 }
                 _focus() {
                     this.tag('RetryButton').patch({
@@ -120,10 +119,12 @@ export default class FailureScreen extends Lightning.Component {
                         }
                     })
                 }
-                
+
                 $exit() {
                   this._unfocus()
                 }
-            }]}
+            }
+        ]
+    }
 }
 

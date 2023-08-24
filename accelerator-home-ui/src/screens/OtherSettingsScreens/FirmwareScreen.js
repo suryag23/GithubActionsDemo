@@ -117,8 +117,6 @@ export default class FirmwareScreen extends Lightning.Component {
     }
 
     _firstEnable() {
-
-
         let state = ['Uninitialized', 'Requesting', 'Downloading', 'Failed', 'DownLoad Complete', 'Validation Complete', 'Preparing to Reboot']
 
         const config = {
@@ -128,10 +126,8 @@ export default class FirmwareScreen extends Lightning.Component {
         }
 
         const thunder = ThunderJS(config)
-        const systemcCallsign = "org.rdk.System.1"
-        thunder.Controller.activate({ callsign: systemcCallsign })
+        thunder.Controller.activate({ callsign: "org.rdk.System" })
             .then(res => {
-
                 thunder.on(callsign, "onFirmwareUpdateStateChange", notification => {
                     console.log(`Tanjirou's notification : on Firmware update state changed notifcation = ${JSON.stringify(notification)}`);
 
@@ -144,15 +140,11 @@ export default class FirmwareScreen extends Lightning.Component {
                         clearInterval(this.downloadInterval);
                         this.downloadInterval = null
                     }
-
                 }, err => {
                     console.error(`error while fetching notification ie. ${err}`)
                 })
-
-
             })
             .catch(err => { console.error(`error while activating the system plugin`) })
-
     }
 
     _unfocus() {

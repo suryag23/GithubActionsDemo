@@ -39,6 +39,8 @@ import VideoInfoChange from './overlays/VideoInfoChange/VideoInfoChange.js';
 import Failscreen1 from './screens/FailScreen';
 import CECApi from './api/CECApi';
 import { appListInfo } from "./../static/data/AppListInfo.js";
+import VoiceApi from './api/VoiceApi.js';
+import AlexaApi from './api/AlexaApi.js';
 
 const config = {
   host: '127.0.0.1',
@@ -53,7 +55,7 @@ var dtvApi = new DTVApi();
 var hdmiApi = new HDMIApi()
 var cecApi = new CECApi();
 var xcastApi = new XcastApi();
-
+var voiceApi = new VoiceApi();
 
 export default class App extends Router.App {
   static getFonts() {
@@ -488,7 +490,12 @@ export default class App extends Router.App {
       Storage.set("deviceType", ((result.devicetype != null)?result.devicetype:"tv"));
     });
     thunder.Controller.activate({ callsign: 'org.rdk.UserPreferences' }).then(result => {
-      console.log("Result of UserPreferences activation plugin: "+result)
+      console.log("App UserPreferences plugin activation result: " + result)
+    }).catch(err => {
+      reject(err)
+    })
+    thunder.Controller.activate({ callsign: 'org.rdk.System' }).then(result => {
+      console.log("App System plugin activation result: " + result)
     }).catch(err => {
       reject(err)
     })
@@ -906,84 +913,88 @@ export default class App extends Router.App {
 
     console.log("App Calling listenToVoiceControl method to activate VoiceControl Plugin")
     this.listenToVoiceControl();
+    let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
+    appApi.setUILanguage(updatedLanguage)
+    /* Subscribe to Volume status events to report to Alexa. */
+    thunder.on('org.rdk.DisplaySettings', 'connectedAudioPortUpdated', notification => {
+      console.log("App got connectedAudioPortUpdated: ", notification)
+      // TODO: future -> can be used for volume adjustments ?
+    });
+    thunder.on('org.rdk.DisplaySettings', 'muteStatusChanged', notification => {
+      if (AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
+        AlexaApi.get().reportVolumeState(undefined, notification.muted);
+      }
+    });
+    thunder.on('org.rdk.DisplaySettings', 'volumeLevelChanged', notification => {
+      if (AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
+        AlexaApi.get().reportVolumeState(notification.volumeLevel, undefined);
+      }
+    });
+    thunder.on('org.rdk.System', 'onTimeZoneDSTChanged', notification => {
+      if (AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
+        AlexaApi.get().updateDeviceTimeZoneInAlexa(notification.newTimeZone);
+      }
+    });
   }
 
   listenToVoiceControl() {
     let self = this;
-    console.log("App listenToVoiceControl method got called, Activating and listening to VoiceControl Plugin")
-
-    thunder.Controller.activate({callsign: 'org.rdk.VoiceControl'}).then(res => {
-      console.log("App VoiceControl Plugin Activation result: ",res)
-      /* Alexa App State Report: HOME */
-      ApplicationStateReporter.event.payload.value.id = "amzn1.alexa-ask-target.shortcut.33122";
-      ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
-      ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
-      console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
-      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
-        console.error("VoiceControl sendVoiceMessage error:", err);
-        resolve(false)
-      })
-      appApi.getVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres => {
-         if(Number.isInteger(volres.volumeLevel)){
-        VolumePayload.msgPayload.event.payload.volume = volres.volumeLevel
-         }
-         else{
-           VolumePayload.msgPayload.event.payload.volume =  parseInt(volres.volumeLevel)
-         }
-      })
-      appApi.muteStatus(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(muteRes => {
-        VolumePayload.msgPayload.event.payload.muted = muteRes.muted
-      })
-      console.log("App reporting device volume to Alexa:", VolumePayload)
-      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',VolumePayload).then(result =>{console.log("deviceVoiceReport", result)}).catch(err => {
-        resolve(false)
-      })
-      if(appApi.checkAlexaAuthStatus() === "AlexaHandleError") {
-        let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
-        let updatedTimeZone = appApi.getZone()
-        appApi.setUILanguage(updatedLanguage)
-        appApi.setTimeZoneinAlexa(updatedTimeZone)
-        appApi.getAlexaDeviceSettings().then((response) => { })
-        console.log("App checkAlexaAuthStatus is AlexaHandleError; activating SmartScreen.");
-        appApi.getPluginStatus("SmartScreen").then(res => {
-          console.log("App getPluginStatus result: " + JSON.stringify(res));
-          if (res[0].state === "deactivated") {
-            thunder.Controller.activate({callsign: 'SmartScreen'}).then(res => {
-              console.log("App Activate SmartScreen result: " + res);
-            }).catch(err => {
-              console.error("App Activate SmartScreen ERROR!: ",err)
-            })
+    console.log("App listenToVoiceControl method got called, configuring VoiceControl Plugin")
+    voiceApi.activate().then(() => {
+      voiceApi.voiceStatus().then(voiceStatusResp => {
+        if (voiceStatusResp.ptt.status != "ready" || !voiceStatusResp.urlPtt.includes("avs://")) {
+          console.error("App voiceStatus says PTT/AVS not ready.");
+          // TODO: Future -> add option for user to select which Voice service provider.
+          // Then configure VoiceControl plugin for that end point.
+          // TODO: voiceApi.configureVoice()
+        }
+      });
+      if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaAuthPending") {
+        // Reset to trigger the OTP from stack.
+        AlexaApi.get().resetAVSCredentials();
+      } else if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") {
+        console.log("App checkAlexaAuthStatus is AlexaHandleError; enableSmartScreen.");
+        AlexaApi.get().enableSmartScreen();
+        AlexaApi.get().getAlexaDeviceSettings();
+        /* Alexa device volume state report. */
+        appApi.getConnectedAudioPorts().then(audioport => {
+          for (let i = 0; i < audioport.connectedAudioPorts.length && !audioport.connectedAudioPorts[i].startsWith("SPDIF"); i++) {
+            if ((Storage.get("deviceType") == "tv" && audioport.connectedAudioPorts[i].startsWith("SPEAKER")) ||
+              (Storage.get("deviceType") != "tv" && audioport.connectedAudioPorts[i].startsWith("HDMI"))) {
+                 appApi.muteStatus(audioport.connectedAudioPorts[i]).then(muteRes =>{
+                   appApi.getVolumeLevel(audioport.connectedAudioPorts[i]).then(volres =>{
+                  AlexaApi.get().reportVolumeState((volres.success?(Number.isInteger(volres.volumeLevel)? volres.volumeLevel: parseInt(volres.volumeLevel)):undefined), (muteRes.success? muteRes.muted : undefined))
+                  })
+               })
+            }
           }
-        }).catch(err => {
-          console.error("App getPluginStatus SmartScreen ERROR: ",err);
         })
+
+        /* Report device language */
+        AlexaApi.get().updateDeviceLanguageInAlexa(availableLanguageCodes[localStorage.getItem('Language')]);
+        /* Report device timeZone */
+        let updatedTimeZone = appApi.getZone();
+        AlexaApi.get().updateDeviceTimeZoneInAlexa(updatedTimeZone);
       }
 
-      console.log("App VoiceControl check if user has denied ALEXA:", appApi.checkAlexaAuthStatus())
+      console.log("App VoiceControl check if user has denied ALEXA:", AlexaApi.get().checkAlexaAuthStatus())
 
-      thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
-        console.log("VoiceControl.onServerMessage Notification: ", notification)
-
-        if(appApi.checkAlexaAuthStatus() !== "AlexaUserDenied") {
+      /* Handle VoiceControl Notifications */
+      voiceApi.registerEvent('onServerMessage', notification => {
+        console.log('App onServerMessage: ' + JSON.stringify(notification));
+        if (Storage.get("appSwitchingInProgress")) {
+          console.warn("App is appSwitchingInProgress? " + Storage.get("appSwitchingInProgress") + ", dropping processing the server notification.");
+          return;
+        }
+        if(AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
           if(notification.xr_speech_avs.state_reporter === "authorization_req" || notification.xr_speech_avs.code){
             console.log("Alexa Auth URL is ", notification.xr_speech_avs.url)
             if (!Router.isNavigating() && appApi.isConnectedToInternet() && (Router.getActiveHash() === "menu")) {
-              console.log("App Activating SmartScreen instance for Alexa Authentication.");
-              appApi.getPluginStatus("SmartScreen").then(res => {
-                console.log("App getPluginStatus result: " + JSON.stringify(res));
-                if (res[0].state === "deactivated") {
-                  thunder.Controller.activate({callsign: 'SmartScreen'}).then(res => {
-                    console.log("App Activate SmartScreen result: " + res);
-                  }).catch(err => {
-                    console.error("App Activate SmartScreen ERROR!: ",err)
-                  })
-                }
-              }).catch(err => {
-                console.error("App getPluginStatus SmartScreen ERROR: ",err);
-              })
+              console.log("App enableSmartScreen");
+              AlexaApi.get().enableSmartScreen();
             }
-            if(Router.getActiveHash() === "menu"){
-              if(Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen"){
+            if (Router.getActiveHash() === "menu") {
+              if(Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen") {
                 console.log("Routing to Alexa login page")
                 Router.navigate("AlexaLoginScreen")
               }
@@ -992,22 +1003,21 @@ export default class App extends Router.App {
           } else if (notification.xr_speech_avs.state_reporter === "authendication") {
             console.log("Alexa Auth State is now at ", notification.xr_speech_avs.state)
             if (notification.xr_speech_avs.state === "refreshed") {
-              // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.
-              appApi.setAlexaAuthStatus("AlexaHandleError")
+              AlexaApi.get().setAlexaAuthStatus("AlexaHandleError")
               Router.navigate("SuccessScreen")
             } else if ((notification.xr_speech_avs.state === "uninitialized") || (notification.xr_speech_avs.state === "authorizing")) {
-              appApi.setAlexaAuthStatus("AlexaAuthPending")
+              AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending")
             } else if (notification.xr_speech_avs.state === "unrecoverable error") {
               // Could be AUTH token Timeout; refresh it.
               Router.navigate("FailureScreen")
             }
           } else if (notification.xr_speech_avs.state_reporter === "login" && notification.xr_speech_avs.state === "User request to disable Alexa") {
             // https://jira.rdkcentral.com/jira/browse/RDKDEV-746: SDK abstraction layer sends on SKIP button event.
-            appApi.setAlexaAuthStatus("AlexaUserDenied")
+            AlexaApi.get().setAlexaAuthStatus("AlexaUserDenied")
           }
         }
 
-        if((appApi.checkAlexaAuthStatus() === "AlexaHandleError") && (notification.xr_speech_avs.state === "CONNECTING" ||
+        if((AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") && (notification.xr_speech_avs.state === "CONNECTING" ||
             notification.xr_speech_avs.state === "DISCONNECTED")) {// || notification.xr_speech_avs.state === "CONNECTED"
           this.tag("Failscreen1").alpha = 1
           this.tag("Widgets").visible = false;
@@ -1019,11 +1029,9 @@ export default class App extends Router.App {
             this.tag("Pages").visible = true;
           }, 5000);
         }
-        if((appApi.checkAlexaAuthStatus() != "AlexaUserDenied") && notification.xr_speech_avs.state){
+        if((AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") && notification.xr_speech_avs.state){
           if (notification.xr_speech_avs.state.guiAPL === "ACTIVATED") {
-            appApi.zorder("SmartScreen");
-            appApi.setOpacity("SmartScreen", 100);
-            appApi.visible("SmartScreen", true);
+            AlexaApi.get().displaySmartScreenOverlay();
             appApi.setFocus(Storage.get("applicationType") === "" ? "ResidentApp" : Storage.get("applicationType"));
           }
           if(notification.xr_speech_avs.state.dialogUX  === "idle" && notification.xr_speech_avs.state.audio === "stopped"){
@@ -1033,31 +1041,21 @@ export default class App extends Router.App {
               appApi.setFocus(Storage.get("applicationType") === "" ? "ResidentApp" : Storage.get("applicationType"));
             }
           }
-          if(notification.xr_speech_avs.state.dialogUX=== "idle" && notification.xr_speech_avs.state.audio  === "playing"){
-            appApi.zorder("SmartScreen")
-            appApi.setOpacity("SmartScreen", 100)
-            appApi.visible("SmartScreen", true)
-            appApi.setFocus("SmartScreen")
-          }
-          if(notification.xr_speech_avs.state.dialogUX=== "listening"){
-            appApi.zorder("SmartScreen")
-              appApi.setOpacity("SmartScreen", 100)
-            appApi.visible("SmartScreen", true)
-          }
-          if(notification.xr_speech_avs.state.dialogUX === "speaking"){
-            appApi.zorder("SmartScreen")
-            appApi.setOpacity("SmartScreen", 100)
-            appApi.visible("SmartScreen", true)
-            appApi.setFocus("SmartScreen")
+          if (notification.xr_speech_avs.state.dialogUX=== "idle" && notification.xr_speech_avs.state.audio  === "playing"){
+            AlexaApi.get().displaySmartScreenOverlay(true)
+          } else if (notification.xr_speech_avs.state.dialogUX=== "listening"){
+            AlexaApi.get().displaySmartScreenOverlay();
+          } else if(notification.xr_speech_avs.state.dialogUX === "speaking"){
+            AlexaApi.get().displaySmartScreenOverlay(true)
           }
           if (notification.xr_speech_avs.state_reporter === "dialog") {
             // Smartscreen playback state reports
             if ((notification.xr_speech_avs.state.dialogUX === "idle") && (notification.xr_speech_avs.state.audio)) {
-              appApi.setAlexaSmartscreenAudioPlaybackState(notification.xr_speech_avs.state.audio);
+              AlexaApi.get().setAlexaSmartscreenAudioPlaybackState(notification.xr_speech_avs.state.audio);
             }
           }
         }
-        if(notification.xr_speech_avs.directive && (appApi.checkAlexaAuthStatus() != "AlexaUserDenied")){
+        if(notification.xr_speech_avs.directive && (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied")){
           const header = notification.xr_speech_avs.directive.header
           const payload = notification.xr_speech_avs.directive.payload
            /////////Alexa.Launcher START
@@ -1075,57 +1073,29 @@ export default class App extends Router.App {
                   appIdentifier:self.appIdentifiers[appCallsign]
                 }
                 // Send AVS State report: STOP request if "playing" to end the Smartscreen App instance.
-                if (appApi.checkAlexaSmartscreenAudioPlaybackState() == "playing"){
-                  PlaybackStateReport.msgPayload.event.endpoint.endpointId = notification.xr_speech_avs.directive.endpoint.endpointId
-                  PlaybackStateReport.msgPayload.event.payload.change.properties[0].value.state = "Pause";
+                if (AlexaApi.get().checkAlexaSmartscreenAudioPlaybackState() == "playing"){
                   console.log("Sending playbackstatereport to Pause:", PlaybackStateReport)
-                  thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',PlaybackStateReport).catch(err => {
-                    console.error("VoiceControl sendVoiceMessage error:", err);
-                    resolve(false)
-                  })
+                  AlexaApi.get().reportPlaybackState("PAUSED");
                 }
                 console.log("Alexa is trying to launch "+ appCallsign + " using params: "+ JSON.stringify(params))
                 if(appCallsign){ //appCallsign is valid means target is an app and it needs to be launched
                   appApi.launchApp(appCallsign,params).catch(err => {
                     console.log("Alexa.Launcher LaunchTarget checkerrstatusAlexa", err)
-                    if(err.includes("Netflix")){
-                      errorPayload.msgPayload.event.payload.type = "INVALID_VALUE"
-                      errorPayload.msgPayload.event.payload.message ="AppId is not supported in RDK,"
+                    if (err.includes("Netflix")) {
+                      AlexaApi.get().reportErrorState(notification.xr_speech_avs.directive, "INVALID_VALUE", "Unsupported AppID")
+                    } else {
+                      AlexaApi.get().reportErrorState(notification.xr_speech_avs.directive)
                     }
-                    else{
-                      errorPayload.msgPayload.event.payload.type = "ENDPOINT_UNREACHABLE"
-                      errorPayload.msgPayload.event.payload.message ="ENDPOINT_UNREACHABLE"
-                    }
-                    errorPayload.msgPayload.event.header.correlationToken = notification.xr_speech_avs.directive.header.correlationToken
-                    errorPayload.msgPayload.event.header.payloadVersion = notification.xr_speech_avs.directive.header.payloadVersion
-                    errorPayload.msgPayload.event.endpoint.endpointId = notification.xr_speech_avs.directive.endpoint.endpointId
-                    errorPayload.msgPayload.event.header.messageId = notification.xr_speech_avs.directive.header.messageId
-                    console.log("Alexa.Launcher LaunchTarget errorpayload",errorPayload)
                     console.error("Alexa.Launcher LaunchTarget Error in launching "+ appCallsign + " via Alexa: " + JSON.stringify(err))
-                    thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',errorPayload).then(result =>{console.log("alexaError", result)}).catch(err => {
-                      resolve(false)
-                    })
                   });
                 } else if(targetRoute){
                   console.log("Alexa.Launcher is trying to route to ", JSON.stringify(targetRoute))
                   // exits the app if any and navigates to the specific route.
                   this.jumpToRoute(targetRoute);
-                  for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
-                    if (value.hasOwnProperty("route") && (value.route === targetRoute)) {
-                      ApplicationStateReporter.event.payload.value.id = key;
-                      ApplicationStateReporter.event.payload.value.timeOfSample = new Date().toISOString();
-                      ApplicationStateReporter.context.properties[0].timeOfSample = new Date().toISOString();
-                      console.log("Sending appstatereport to Alexa:", ApplicationStateReporter);
-                      thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage', ApplicationStateReporter).catch(err => {
-                        console.error("VoiceControl sendVoiceMessage error:", err);
-                        resolve(false)
-                      })
-                      break;
-                    }
-                  }
                 }
               } else {
                 console.log("Alexa.Launcher is trying to launch an unsupported app : "+JSON.stringify(payload))
+                AlexaApi.get().reportErrorState(notification.xr_speech_avs.directive)
               }
             }
           }/////////Alexa.Launcher END
@@ -1161,7 +1131,7 @@ export default class App extends Router.App {
                   appCallsign = null;
                   launchParams = null;
                 } else if (!entityId.length && (Storage.get("applicationType") != "")) {
-                  /* TODO: Current focused app is not ResidentApp; redirect generic search to it if supported. */
+                  /* give it to current focused app */
                   console.warn("Alexa.RemoteVideoPlayer: " + Storage.get("applicationType") + " is the focued app; need Voice search integration support to it.");
                 } else if (!entityId.length && (Storage.get("applicationType") == "")) {
                   /* Generic global search without a target app; redirect to Youtube as of now. */
@@ -1191,61 +1161,17 @@ export default class App extends Router.App {
               }
             }
           }
-          else if(header.namespace === "Alexa.PlaybackController"){
-            console.log("chek",notification.xr_speech_avs.directive.header)
-            PlaybackStateReport.msgPayload.event.endpoint.endpointId = notification.xr_speech_avs.directive.endpoint.endpointId
-            PlaybackStateReport.msgPayload.event.payload.change.properties[0].value.state  = notification.xr_speech_avs.directive.header.name;
-            console.log("playbackstatereport",PlaybackStateReport)
-            thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',PlaybackStateReport).then(result =>{console.log("alexaPlayback", result)}).catch(err => {
-            resolve(false)
-            })
-            let currentApp=Storage.get("applicationType")
-            let playbackOperations=new Set(["Play","Pause","FastForward","Rewind","Shuffle","Repeat"])
-            if(currentApp.startsWith("YouTube"))
-            {
-                if(playbackOperations.has(notification.xr_speech_avs.directive.header.name))
-                {
-                  let url = Storage.get(currentApp+"DefaultURL")+"&va=media"+notification.xr_speech_avs.directive.header.name+"&vs=2&inApp=true";
-                  console.log("Operation performed with deeplink URL: " + url)
-                  thunder.call(currentApp, 'deeplink', url)
-                }
-                else if(notification.xr_speech_avs.directive.header.name === "Next" || notification.xr_speech_avs.directive.header.name === "Previous")
-                {
-                  let url = Storage.get(currentApp+"DefaultURL")+"&va=media"+notification.xr_speech_avs.directive.header.name+"Video&vs=2&inApp=true";
-                  console.log("Operation performed with deeplink URL: " + url)
-                  thunder.call(currentApp, 'deeplink', url)
-                }
-            }
+          else if (header.namespace === "Alexa.PlaybackController") {
+            appApi.deeplinkToApp(Storage.get("applicationType"), header.name, "alexa", header.namespace);
+            AlexaApi.get().reportPlaybackState(header.name);
           }
           else if(header.namespace === "Alexa.SeekController")
           {
-              console.log("Seek controller",notification.xr_speech_avs.directive)
-              let currentApp=Storage.get("applicationType")
-              if(currentApp.startsWith("YouTube"))
-              {
-                  let time=notification.xr_speech_avs.directive.payload.deltaPositionMilliseconds/1000
-                  let minutes=Math.abs(parseInt(time/60))
-                  let seconds=Math.abs(parseInt(time%60))
-                  if(time<0)
-                  {
-                    let url=Storage.get(currentApp+"DefaultURL")+"&va=mediaRewind&vaa="+minutes+"m"+seconds+"s"+"&vs=2&inApp=true";
-                    console.log("Operation performed with deeplink URL: " + url)
-                    thunder.call(currentApp, 'deeplink', url)
-                  }
-                  else
-                  {
-                    let url=Storage.get(currentApp+"DefaultURL")+"&va=mediaFastForward&vaa="+minutes+"m"+seconds+"s"+"&vs=2&inApp=true";
-                    console.log("Operation performed with deeplink URL: " + url)
-                    thunder.call(currentApp, 'deeplink', url)
-                  }
-              }
+            appApi.deeplinkToApp(Storage.get("applicationType"), payload, "alexa", header.namespace);
           }
           else if(header.namespace === "AudioPlayer"){
             if (header.name === "Play") {
-              appApi.visible("SmartScreen", true);
-              appApi.setOpacity("SmartScreen", 100);
-              appApi.zorder("SmartScreen");
-              appApi.setFocus("SmartScreen");
+              AlexaApi.get().displaySmartScreenOverlay(true)
               AlexaAudioplayerActive = true;
               console.log("App AudioPlayer: Suspending the current app:'" + Storage.get("applicationType") + "'");
               if (Storage.get("applicationType") != "") {
@@ -1255,10 +1181,7 @@ export default class App extends Router.App {
           }
           else if (header.namespace === "TemplateRuntime") {
             if (header.name === "RenderPlayerInfo") {
-              appApi.visible("SmartScreen", true);
-              appApi.setOpacity("SmartScreen", 100);
-              appApi.zorder("SmartScreen");
-              appApi.setFocus("SmartScreen");
+              AlexaApi.get().displaySmartScreenOverlay(true)
               AlexaAudioplayerActive = true;
             }
           }
@@ -1266,107 +1189,97 @@ export default class App extends Router.App {
             console.log("Speaker")
             if(header.name === "AdjustVolume"){
               VolumePayload.msgPayload.event.header.messageId = header.messageId
-              appApi.getVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres =>{
-                console.log("volres",volres, parseInt(volres.volumeLevel))
-              if((parseInt(volres.volumeLevel) >= 0) || (parseInt(volres.volumeLevel) <= 100)) {
-                VolumePayload.msgPayload.event.payload.volume = parseInt(volres.volumeLevel) + payload.volume
-                console.log("volumepayload", VolumePayload.msgPayload.event.payload.volume)
-                if(VolumePayload.msgPayload.event.payload.volume < 0){
-                  VolumePayload.msgPayload.event.payload.volume = 0
+              appApi.getConnectedAudioPorts().then(audioport => {
+                for (let i = 0; i < audioport.connectedAudioPorts.length && !audioport.connectedAudioPorts[i].startsWith("SPDIF"); i++) {
+                  if ((Storage.get("deviceType") == "tv" && audioport.connectedAudioPorts[i].startsWith("SPEAKER")) ||
+                    (Storage.get("deviceType") != "tv" && audioport.connectedAudioPorts[i].startsWith("HDMI"))) {
+                    appApi.getVolumeLevel(audioport.connectedAudioPorts[i]).then(volres =>{
+                      console.log("getVolumeLevel[" + audioport.connectedAudioPorts[i] + "] is:" + parseInt(volres.volumeLevel))
+                      if((parseInt(volres.volumeLevel) >= 0) || (parseInt(volres.volumeLevel) <= 100)) {
+                        VolumePayload.msgPayload.event.payload.volume = parseInt(volres.volumeLevel) + payload.volume
+                        console.log("volumepayload", VolumePayload.msgPayload.event.payload.volume)
+                        if(VolumePayload.msgPayload.event.payload.volume < 0){
+                          VolumePayload.msgPayload.event.payload.volume = 0
+                        } else if(VolumePayload.msgPayload.event.payload.volume > 100){
+                          VolumePayload.msgPayload.event.payload.volume = 100
+                        }
+                      }
+                      VolumePayload.msgPayload.event.payload.muted = false
+                      appApi.setVolumeLevel(audioport.connectedAudioPorts[i], VolumePayload.msgPayload.event.payload.volume).then(res => {
+                        this.tag("Volume").onVolumeChanged()
+                      });
+                    });
+                  }
                 }
-                if(VolumePayload.msgPayload.event.payload.volume > 100){
-                  VolumePayload.msgPayload.event.payload.volume = 100
-                }
-              }
-              VolumePayload.msgPayload.event.payload.muted = false
-              console.log("cehckvolume", VolumePayload.msgPayload.event.payload.volume)
-              console.log("adjust volume", VolumePayload)
-              appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), VolumePayload.msgPayload.event.payload.volume).then(res =>{})
-              })
-
+              });
             }
             if(header.name === "SetVolume"){
-            // VolumePayload.msgPayload.event.header.name=  header.name
               VolumePayload.msgPayload.event.header.messageId = header.messageId
               VolumePayload.msgPayload.event.payload.volume = payload.volume
               VolumePayload.msgPayload.event.payload.muted = false
               console.log("adjust volume", VolumePayload)
               console.log("checkvolume", VolumePayload.msgPayload.event.payload.volume)
-              appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), VolumePayload.msgPayload.event.payload.volume).then(res =>{
-                this.tag("Volume").onVolumeChanged()
-              })
+              if (VolumePayload.msgPayload.event.payload.volume > 100) {
+                VolumePayload.msgPayload.event.payload.volume = 100
+              } else if (VolumePayload.msgPayload.event.payload.volume < 0) {
+                VolumePayload.msgPayload.event.payload.volume = 0
+              }
+              appApi.getConnectedAudioPorts().then(audioport => {
+                for (let i = 0; i < audioport.connectedAudioPorts.length && !audioport.connectedAudioPorts[i].startsWith("SPDIF"); i++) {
+                  if ((Storage.get("deviceType") == "tv" && audioport.connectedAudioPorts[i].startsWith("SPEAKER")) ||
+                    (Storage.get("deviceType") != "tv" && audioport.connectedAudioPorts[i].startsWith("HDMI"))) {
+                    appApi.setVolumeLevel(audioport.connectedAudioPorts[i], VolumePayload.msgPayload.event.payload.volume).then(()=>{
+                      this.tag("Volume").onVolumeChanged()
+                    });
+                  }
+                }
+              });
             }
             if(header.name === "SetMute"){
               VolumePayload.msgPayload.event.header.messageId = header.messageId
               VolumePayload.msgPayload.event.payload.volume = payload.volume
               VolumePayload.msgPayload.event.payload.muted = payload.mute
-              appApi.audio_mute(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"),VolumePayload.msgPayload.event.payload.muted).then(res =>{})
+              appApi.getConnectedAudioPorts().then(audioport => {
+                for (let i = 0; i < audioport.connectedAudioPorts.length && !audioport.connectedAudioPorts[i].startsWith("SPDIF"); i++) {
+                  if ((Storage.get("deviceType") == "tv" && audioport.connectedAudioPorts[i].startsWith("SPEAKER")) ||
+                    (Storage.get("deviceType") != "tv" && audioport.connectedAudioPorts[i].startsWith("HDMI"))) {
+                      appApi.audio_mute(audioport.connectedAudioPorts[i], VolumePayload.msgPayload.event.payload.muted).then(()=>{
+                      this.tag("Volume").onVolumeMute()
+                    });
+                  }
+                }
+              });
             }
           }
+          else if (header.namespace === "ExternalMediaPlayer") {
+            appApi.deeplinkToApp(Storage.get("applicationType"), payload, "alexa", header.namespace);
+          }
         }
-        if ((appApi.checkAlexaAuthStatus() != "AlexaUserDenied") && notification.xr_speech_avs.deviceSettings) {
+        if ((AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") && notification.xr_speech_avs.deviceSettings) {
           let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
           if (notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage) {
             /* Get Alexa matching Locale String */
             for (let i = 0; i < notification.xr_speech_avs.deviceSettings.supportedLocales.length; i++) {
               if (updatedLanguage === notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()) {
-                appApi.setLanguageinAlexa(updatedLanguage)
+                AlexaApi.get().updateDeviceLanguageInAlexa(updatedLanguage)
               }
             }
           }
         }
-      })
-
-      thunder.on('org.rdk.VoiceControl', 'onKeywordVerification', notification => {
-        console.log("VoiceControl.onKeywordVerification Notification: " + JSON.stringify(notification))
-      })
-
-      thunder.on('org.rdk.VoiceControl', 'onSessionBegin', notification => {
+      });
+      voiceApi.registerEvent('onSessionBegin', notification => {
         this.$hideImage(0);
-        console.log("VoiceControl.onSessionBegin Notification: " + JSON.stringify(notification))
-      })
-
-      thunder.on('org.rdk.VoiceControl', 'onSessionEnd', notification => {
-        console.log("VoiceControl.onSessionEnd Notification: " + JSON.stringify(notification))
+      });
+      voiceApi.registerEvent('onSessionEnd', notification => {
         if (notification.result === "success" && notification.success.transcription === "User request to disable Alexa") {
           console.warn("App VoiceControl.onSessionEnd got disable Alexa.")
-          appApi.resetAVSCredentials() // To avoid Audio Feedback
-          appApi.setAlexaAuthStatus("AlexaUserDenied") // Reset back to disabled as resetAVSCredentials() sets to ErrorHandling.
+          AlexaApi.get().resetAVSCredentials() // To avoid Audio Feedback
+          AlexaApi.get().setAlexaAuthStatus("AlexaUserDenied") // Reset back to disabled as resetAVSCredentials() sets to ErrorHandling.
         }
-      })
-
-      thunder.on('org.rdk.VoiceControl', 'onStreamBegin', notification => {
-        console.log("VoiceControl.onStreamBegin Notification: " + JSON.stringify(notification))
-      })
-
-      thunder.on('org.rdk.VoiceControl', 'onStreamEnd', notification => {
-        console.log("VoiceControl.onStreamEnd Notification: " + JSON.stringify(notification))
-      })
-
-      thunder.on('org.rdk.VoiceControl', 'onSuspend', notification => {
-        console.log("VoiceControl.onSuspend Notification: " + JSON.stringify(notification))
-      })
+      });
     }).catch(err => {
-      console.log("VoiceControl Plugin Activation ERROR!: ",err)
+      console.error("App VoiceControl Plugin activation error:", err);
     })
-  }
-
-  activateChildApp(plugin) { //#currentlyNotUsed #needToBeRemoved
-    fetch('http://127.0.0.1:9998/Service/Controller/')
-      .then(res => res.json())
-      .then(data => {
-        data.plugins.forEach(element => {
-          if (element.callsign === plugin) {
-            Storage.set('applicationType', plugin);
-            appApi.launchPremiumApp(plugin).catch(() => { });
-            appApi.setVisibility('ResidentApp', false);
-          }
-        });
-        console.log('launching app')
-      })
-      .catch(err => {
-        console.log(`${plugin} not available`, err)
-      })
   }
 
   deactivateChildApp(plugin) { //#needToBeRemoved
@@ -1439,7 +1352,6 @@ export default class App extends Router.App {
   }
 
   $initLaunchPad(url) {
-
     return new Promise((resolve, reject) => {
       appApi.getPluginStatus('Netflix')
         .then(result => {
@@ -1582,7 +1494,7 @@ export default class App extends Router.App {
     });
 
     this.xcastApi.registerEvent('onApplicationStateRequest', notification => {
-      console.log("App onApplicationStateRequest: " + JSON.stringify(notification));
+      //console.log("App onApplicationStateRequest: " + JSON.stringify(notification));
       if (this.xcastApps(notification.applicationName)) {
         let applicationName = this.xcastApps(notification.applicationName);
         let appState = { "applicationName": notification.applicationName, "state": "stopped" };

@@ -163,7 +163,7 @@ export default class XcastApi {
   onApplicationStateChanged(params) {
     return new Promise((resolve, reject) => {
       this._thunder.call('org.rdk.Xcast.1', 'onApplicationStateChanged', params).then(result => {
-        console.log("XCastAPI onApplicationStateChanged Updating: "+ JSON.stringify(params) +" result: ",JSON.stringify(result))
+        //console.log("XCastAPI onApplicationStateChanged Updating: "+ JSON.stringify(params) +" result: ",JSON.stringify(result))
         resolve(result);
       }).catch(err => { console.error(err); resolve(false); });
     });

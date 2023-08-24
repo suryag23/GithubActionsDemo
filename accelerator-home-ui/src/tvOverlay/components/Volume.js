@@ -20,15 +20,15 @@
 import { Lightning, Registry, Utils, Storage } from "@lightningjs/sdk";
 import AppApi from "../../api/AppApi";
 import { CONFIG } from "../../Config/Config";
-import { VolumePayload } from "../../Config/AlexaConfig";
 import ThunderJS from 'ThunderJS';
+
 const config = {
     host: '127.0.0.1',
     port: 9998,
     default: 1,
-  };
+};
 
-  var thunder = ThunderJS(config);
+var thunder = ThunderJS(config);
 
 export default class Volume extends Lightning.Component {
     static _template() {
@@ -133,38 +133,33 @@ export default class Volume extends Lightning.Component {
     }
 
     setVolume = async (val) => {
-        const value = await this.appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), val)
-        this.appApi.getVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres =>{
-            console.log("volres",volres, parseInt(volres.volumeLevel))
-           VolumePayload.msgPayload.event.header.messageId=  "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
-            VolumePayload.msgPayload.event.payload.volume =  parseInt(volres.volumeLevel)
-            VolumePayload.msgPayload.event.payload.muted = false
-            console.log("Volumepayload",VolumePayload)
-            thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',VolumePayload).catch(err => {
-                resolve(false)
-              })
+        let audioport = await this.getAudioPorts()
+        for (let i = 0; i < audioport.length; i++) {
+            if ((Storage.get("deviceType") == "tv" && audioport[i].startsWith("SPEAKER")) ||
+                (Storage.get("deviceType") != "tv" && audioport[i].startsWith("HDMI"))) {
+                await this.appApi.setVolumeLevel(audioport[i], val)
 
-        })
-        return value
+            }
+        }
+        return true;
     }
 
     setMute = async (val) => {
-        const status = await this.appApi.audio_mute(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), val)
-        this.appApi.muteStatus(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(volres =>{
-            console.log("volres",volres, parseInt(volres.muted))
-            VolumePayload.msgPayload.event.header.messageId=  "8912c9cc-a770-4fe9-8bf1-87e01a4a1f0b"
-            VolumePayload.msgPayload.event.payload.muted = volres.muted
-            console.log("Volumepayload",VolumePayload)
-            thunder.call('org.rdk.VoiceControl', 'sendVoiceMessage',VolumePayload).catch(err => {
-                resolve(false)
-            })
-        })
-        return status
+        let audioport = await this.getAudioPorts()
+        for (let i = 0; i < audioport.length; i++) {
+            if ((Storage.get("deviceType") == "tv" && audioport[i].startsWith("SPEAKER")) ||
+                (Storage.get("deviceType") != "tv" && audioport[i].startsWith("HDMI"))) {
+                const status = this.appApi.audio_mute(audioport[i], val)
+
+            }
+        }
+        return true;
     }
 
     _updateText(val) {
         this.tag('Text').text.text = val
     }
+
     _updateIcon(check) {
         if (check) {
             this.tag('VolumeInfo').src = Utils.asset('images/volume/Volume_Mute.png');
@@ -179,7 +174,6 @@ export default class Volume extends Lightning.Component {
                 y: -30
             }
         })
-    
     }
 
     unfocus() { //the volume widget would never be actually focused
@@ -191,32 +185,44 @@ export default class Volume extends Lightning.Component {
         })
     }
 
-    getAudioPort() {
+    getAudioPorts() {
         return new Promise((resolve, reject) => {
         this.appApi.getConnectedAudioPorts().then(res => {
-            console.log("Volume Audio port:",res.connectedAudioPorts[0])
-            resolve(res.connectedAudioPorts[0])
+            resolve(res.connectedAudioPorts)
         })}).catch(err => {
             console.error('Volume getConnectedAudioPorts error:', JSON.stringify(err, 3, null))
             reject(false)
         })
     }
+    updateIcon(audioport){
+        return new Promise((resolve,reject)=> {
+        this.appApi.muteStatus(audioport).then(result => {
+            this.mute = result.muted;
+            this._updateIcon(this.mute);
+            resolve(true)
+        });
+        })
+    }
+
 
     getVolume() {
         return new Promise(async (resolve, reject) => {
-            let audioport = await this.getAudioPort()
-            this.appApi.getVolumeLevel(audioport).then(res1 => {
-                this.appApi.muteStatus(audioport).then(result => {
-                    this.mute = result.muted;
-                    this._updateIcon(this.mute);
-                });
-                if (res1) {
-                    resolve(parseInt(res1.volumeLevel));
+            let audioport = await this.getAudioPorts()
+            /* Returns an array. */
+            for (let i = 0; i < audioport.length; i++) {
+                if ((Storage.get("deviceType") == "tv" && audioport[i].startsWith("SPEAKER")) ||
+                    (Storage.get("deviceType") != "tv" && audioport[i].startsWith("HDMI"))) {
+                    this.appApi.getVolumeLevel(audioport[i]).then(async res1 => {
+                        await this.updateIcon(audioport[i])
+                        if (res1) {
+                            resolve(parseInt(res1.volumeLevel));
+                        }
+                    }).catch(err => {
+                        console.error('Volume getVolumeLevel error:', JSON.stringify(err, 3, null))
+                        reject(false)
+                    })
                 }
-            }).catch(err => {
-                console.error('Volume getVolumeLevel error:', JSON.stringify(err, 3, null))
-                reject(false)
-            })
+            }
         })
     }
 }
