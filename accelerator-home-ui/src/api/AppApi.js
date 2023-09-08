@@ -670,7 +670,11 @@ export default class AppApi {
           console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
           if (res.success) {
             if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-              AlexaApi.get().reportApplicationState(callsign);
+              if ((callsign === "HtmlApp") || (callsign === "LightningApp")) {
+                AlexaApi.get().reportApplicationState(url);
+              } else {
+                AlexaApi.get().reportApplicationState(callsign);
+              }
             }
             if(args.appIdentifier){
               let order = Storage.get("appCarouselOrder")
@@ -1747,19 +1751,14 @@ export default class AppApi {
   //NETWORK INFO APIS
 
   //1. Get IP Setting
-  getIPSetting(defaultInterface) {
+  getIPSetting(defaultInterface, ipversion = "IPv4") {
     return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.Network', 'getIPSettings', {
-          "interface": defaultInterface,
-        })
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error("AppAPI getIPSetting error:", JSON.stringify(err, 3, null))
-          resolve(false)
-        })
+      thunder.call('org.rdk.Network', 'getIPSettings', {"interface": defaultInterface, "ipversion": ipversion}).then(result => {
+        resolve(result)
+      }).catch(err => {
+        console.error("AppAPI getIPSetting error:", JSON.stringify(err, 3, null))
+        resolve(false)
+      })
     })
   }
 

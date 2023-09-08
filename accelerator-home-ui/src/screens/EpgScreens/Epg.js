@@ -350,6 +350,8 @@ export default class Epg extends Lightning.Component {
           width -= ((new Date(shows[i].endtime) - rtp) / (1000 * 60) / 30) * 236
         }
         //------------ Trimming ends here-----------------
+        if(shows[i].shortdescription === "")
+        {
         cells.push({
           x: x,
           y: index * 81,
@@ -363,6 +365,22 @@ export default class Epg extends Lightning.Component {
           duration: shows[i].duration,
           endtime: shows[i].endtime,
         })
+      }
+      else{
+        cells.push({
+          x: x,
+          y: index * 81,
+          w: width,
+          type: Cell,
+          txt: shows[i].name,
+          description: shows[i].description,
+          width: width,
+          starttime: shows[i].starttime,
+          showIndex: i,
+          duration: shows[i].duration,
+          endtime: shows[i].endtime,
+        })
+      }
         let hx = shows[i].duration + shows[i].starttime
         x += width
       }

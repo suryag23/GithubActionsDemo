@@ -136,6 +136,10 @@ export const AlexaLauncherKeyMap = {
         "name": "Apps",
         "route": "apps"
     },
+    "amzn1.alexa-ask-target.shortcut.82911": {
+        "name": "Audio Output",
+        "route": "settings/audio"
+    },
     "amzn1.alexa-ask-target.shortcut.68228": {
         "name": "Guide",
         "route": "epg"
@@ -148,13 +152,49 @@ export const AlexaLauncherKeyMap = {
         "name": "Bluetooth Settings",
         "route": "settings/bluetooth"
     },
+    "amzn1.alexa-ask-target.app.30720": {
+        "name": "Simple Player",
+        "route": "player"
+    },
+    "amzn1.alexa-ask-target.shortcut.72631": {
+        "name": "Language Settings",
+        "route": "settings/other/language"
+    },
     "amzn1.alexa-ask-target.shortcut.58566": {
         "name": "Network Settings",
         "route": "settings/network"
     },
+    "amzn1.alexa-ask-target.shortcut.07345": {
+        "name": "Power Settings",
+        "route": "settings/other/energy"
+    },
     "amzn1.alexa-ask-target.shortcut.12736": {
         "name": "Privacy Settings",
         "route": "settings/other/privacy"
+    },
+    "amzn1.alexa-ask-target.shortcut.69249": {
+        "name": "Reset",
+        "route": "settings/advanced/device/factoryReset"
+    },
+    "amzn1.alexa-ask-target.shortcut.78173": {
+        "name": "Resolution Settings",
+        "route": "settings/video/resolution"
+    },
+    "amzn1.alexa-ask-target.shortcut.94631": {
+        "name": "Sleep timer",
+        "route": "settings/other/timer"
+    },
+    "amzn1.alexa-ask-target.shortcut.32343": {
+        "name": "Sound Settings",
+        "route": "settings/audio"
+    },
+    "amzn1.alexa-ask-target.shortcut.10089": {
+        "name": "System Information",
+        "route": "settings/advanced/device/info"
+    },
+    "amzn1.alexa-ask-target.shortcut.01622": {
+        "name": "Terms and Policy",
+        "route": "settings/other/privacyPolicy"
     },
 };
 

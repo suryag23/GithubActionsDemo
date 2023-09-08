@@ -17,10 +17,10 @@
  * limitations under the License.
  **/
 
-import { Lightning, Utils } from "@lightningjs/sdk";
+import { Lightning, Utils, Storage } from "@lightningjs/sdk";
 import { CONFIG } from "../Config/Config";
 import StatusProgress from '../overlays/StatusProgress'
-import { uninstallDACApp } from '../api/DACApi'
+import { uninstallDACApp,fetchAppIcon,fetchLocalAppIcon } from '../api/DACApi'
 
 export default class ManageAppItem extends Lightning.Component {
     static _template() {
@@ -72,16 +72,16 @@ export default class ManageAppItem extends Lightning.Component {
     }
 
     set info(data) {
-        if(!data.hasOwnProperty('url'))
-            data.url = "/images/apps/DACApp_455_255.png";
         this.data = data
-        if (data.url.startsWith('/images')) {
+       if(!data.hasOwnProperty('icon'))
+            data.icon = "/images/apps/DACApp_455_255.png";
+       if (data.icon.startsWith('/images')) {
             this.tag('Image').patch({
-                src: Utils.asset(data.url),
+            src: Utils.asset(data.icon),
             });
         } else {
-            this.tag('Image').patch({
-                src: data.url,
+           this.tag('Image').patch({
+           src: data.icon,
             });
         }
         this.tag('Text').text.text = data.installed[0].appName
@@ -125,13 +125,30 @@ export default class ManageAppItem extends Lightning.Component {
         this._app.isUnInstalling = await uninstallDACApp(this._app, this.tag('StatusProgress'))
     }
 
-    _init() {
+    async _init() {
         this._app = {}
         this._app.isRunning = false
         this._app.isInstalled = false
         this._app.isInstalling = false
         this._app.isUnInstalling = false
         this._buttonIndex = 0;
+        if(Storage.get("CloudAppStore"))
+        {
+            let icon=await fetchAppIcon(this.data.id,this.data.installed[0].version)
+            this.tag('Image').patch({
+                src: icon,
+            });
+        }
+        else
+        {
+            let icon=await fetchLocalAppIcon(this.data.id)
+            if(icon!==undefined)
+            {
+                this.tag('Image').patch({
+                    src: Utils.asset(icon),
+                });
+            }
+        }
     }
 
     _focus() {

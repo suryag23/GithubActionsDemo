@@ -20,7 +20,7 @@
 import { Lightning, Utils, Language, Storage } from "@lightningjs/sdk";
 import { CONFIG } from "../Config/Config";
 import StatusProgress from '../overlays/StatusProgress'
-import { installDACApp, getInstalledDACApps } from '../api/DACApi'
+import { installDACApp, getInstalledDACApps, fetchAppUrl } from '../api/DACApi'
 
 export default class AppCatalogItem extends Lightning.Component {
     static _template() {
@@ -71,16 +71,16 @@ export default class AppCatalogItem extends Lightning.Component {
     }
 
     set info(data) {
-        if(!data.hasOwnProperty('url'))
-            data.url = "/images/apps/DACApp_455_255.png";
         this.data = data
-        if (data.url.startsWith('/images')) {
+        if(!data.hasOwnProperty('icon'))
+            data.icon = "/images/apps/DACApp_455_255.png";
+        if (data.icon.startsWith('/images')) {
             this.tag('Image').patch({
-                src: Utils.asset(data.url),
+                src: Utils.asset(data.icon),
             });
         } else {
             this.tag('Image').patch({
-                src: data.url,
+                src: data.icon,
             });
         }
         this.tag('Text').text.text = data.name
@@ -158,17 +158,33 @@ export default class AppCatalogItem extends Lightning.Component {
         this.tag("Text").alpha = 0
     }
     async _handleEnter(){
-        this._app.url = this.data.uri
         this._app.id = this.data.id
         this._app.name = this.data.name
         this._app.version = this.data.version
         this._app.type = this.data.type
+        if(Storage.get("CloudAppStore"))
+        {
+            this._app.description = this.data.description
+            this._app.size = this.data.size
+            this._app.category = this.data.category
+            this._app.url=await fetchAppUrl(this._app.id, this._app.version)
+            console.log("fetchAppUrl:",this._app.url)
+        }
+        else
+        {
+            this._app.url = this.data.uri
+        }
         let installedApps = await getInstalledDACApps()
         this._app.isInstalled = installedApps.find((a) => {
             return a.id === this._app.id })
         if (this._app.isInstalled === undefined)
             this._app.isInstalled = false
-        this.myfireINSTALL()
+        if(this._app.url !== undefined)
+        {
+            this.myfireINSTALL()
+        }
+        else
+            console.error("App url undefined")
     }
 }
 

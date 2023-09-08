@@ -41,6 +41,7 @@ import CECApi from './api/CECApi';
 import { appListInfo } from "./../static/data/AppListInfo.js";
 import VoiceApi from './api/VoiceApi.js';
 import AlexaApi from './api/AlexaApi.js';
+import AAMPVideoPlayer from './MediaPlayer/AAMPVideoPlayer';
 
 const config = {
   host: '127.0.0.1',
@@ -126,6 +127,9 @@ export default class App extends Router.App {
           alpha:0,
           type: Failscreen1
         },
+        AAMPVideoPlayer:{
+          type: AAMPVideoPlayer
+        },
       ScreenSaver:{
         alpha:0,
         w: 2000,
@@ -152,7 +156,11 @@ export default class App extends Router.App {
     console.log(key, key.keyCode)
     this.$hideImage(0);
     if (key.keyCode == Keymap.Home) {
-      this.jumpToRoute("menu"); //method to exit the current app(if any) and route to home screen
+      if (Storage.get('applicationType').includes("dac.native")) {
+        this.jumpToRoute("apps");
+      } else {
+        this.jumpToRoute("menu"); //method to exit the current app(if any) and route to home screen
+      }
       return true
     }
     else if (key.keyCode == Keymap.Inputs_Shortcut) { //for inputs overlay
@@ -1091,7 +1099,10 @@ export default class App extends Router.App {
                 } else if(targetRoute){
                   console.log("Alexa.Launcher is trying to route to ", JSON.stringify(targetRoute))
                   // exits the app if any and navigates to the specific route.
+                  Storage.set("appSwitchingInProgress", true);
                   this.jumpToRoute(targetRoute);
+                  Storage.set("applicationType", "");
+                  Storage.set("appSwitchingInProgress", false);
                 }
               } else {
                 console.log("Alexa.Launcher is trying to launch an unsupported app : "+JSON.stringify(payload))
@@ -1167,7 +1178,13 @@ export default class App extends Router.App {
           }
           else if(header.namespace === "Alexa.SeekController")
           {
+            if(Router.getActiveHash() === "player" || Router.getActiveHash() === "usb/player") {
+              let time = notification.xr_speech_avs.directive.payload.deltaPositionMilliseconds/1000
+              this.tag("AAMPVideoPlayer").voiceSeek(time)
+           }
+           else {
             appApi.deeplinkToApp(Storage.get("applicationType"), payload, "alexa", header.namespace);
+           }
           }
           else if(header.namespace === "AudioPlayer"){
             if (header.name === "Play") {

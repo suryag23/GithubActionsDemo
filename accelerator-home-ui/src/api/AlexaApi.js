@@ -70,7 +70,7 @@ export default class AlexaApi extends VoiceApi {
         if (app.toLowerCase() === "menu")
           ApplicationStateReporter.msgPayload.event.header.value.foregroundApplication.metadata.isHome = true;
         break;
-      } else if (!isRoute && (value.callsign === app)) {
+      } else if (!isRoute && (value.callsign === app || value.url === app)) {
         ApplicationStateReporter.msgPayload.event.header.value.foregroundApplication.id = key;
         ApplicationStateReporter.msgPayload.event.header.value.foregroundApplication.metadata.isHome = false;
         break;

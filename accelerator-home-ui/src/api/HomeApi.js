@@ -41,7 +41,7 @@ let IpAddress2 = "";
 
 let networkApi = new NetworkApi();
 networkApi
-  .getIP()
+  .getStbIp()
   .then((ip) => {
     IpAddress1 = ip;
     Storage.set("ipAddress", IpAddress1);
@@ -232,7 +232,7 @@ export default class HomeApi {
       callsign = items[i].callsign
       if(items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids"){
         callsign = "Cobalt"
-      } 
+      }
       await appApi.getPluginStatus(callsign).then(res => {
       }).catch(err => {
         console.log("Error:",err)

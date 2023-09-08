@@ -97,7 +97,12 @@ async function registerLISAEvents(id, progress) {
 
 export const installDACApp = async (app , progress) => {
   let platName = await getPlatformNameForDAC()
-  const url = app.url.replace(/amlogic/g, platName)
+  let url=app.url
+  if(!Storage.get("CloudAppStore"))
+  {
+     url = app.url.replace(/ah212/g, platName)
+  }
+  
   registerLISAEvents(app.id, progress)
 
   let result = null
@@ -176,23 +181,27 @@ export const getPlatformNameForDAC = async () => {
     platform = platform.split('-')[0]
   }
 
-  if (platform === 'raspberrypi') {
-    return 'broadcom'
-  } else if (platform === 'brcm972180hbc') {
+  if (platform.startsWith('raspberrypi4')) {
+    return 'rpi4'
+  }
+  else if (platform.startsWith('raspberrypi')) {
+    return 'rpi3'
+  } 
+  else if (platform === 'brcm972180hbc') {
     return '7218c'
   } else if (platform === 'brcm972127ott') {
     return '72127ott'
   } else if (platform === 'vip7802') {
     return '7218c'
   } else if (platform.toLowerCase().includes('hp44h')) {
-    return 'amlogic'
+    return 'ah212'
   } else if (platform.toLowerCase().includes('amlogic')) {
-    return 'amlogic'
+    return 'ah212'
   } else if (platform.toLowerCase().includes('mediabox')) {
     return 'realtek'
   } else {
     // default
-    return '7218c'
+    return 'rpi3'
   }
 }
 
@@ -276,25 +285,50 @@ export const startDACApp = async (app) => {
 
 /* WorkAround until proper cloud based App Catalog support */
 export const getAppCatalogInfo = async () => {
+  Storage.set("CloudAppStore", true);
   let appListArray = null
   try {
     let data = new HomeApi().getPartnerAppsInfo();
     if (data) {
       data = await JSON.parse(data);
       if (data != null && data.hasOwnProperty("app-catalog-path")) {
+        Storage.set("CloudAppStore", false);
+        console.log("Fetching apps from local server")
         let url = data["app-catalog-path"]
         await fetch(url, {method: 'GET', cache: "no-store"})
         .then(response => response.text())
         .then(result => {
           result = JSON.parse(result)
           console.log("DACApi fetch result: ", result)
-          if (result.hasOwnProperty("AppCatalogInfo")) {
-            appListArray = result["AppCatalogInfo"];
+          if (result.hasOwnProperty("applications")) {
+            appListArray = result["applications"];
           } else {
-            console.error("DACApi result does not have AppCatalogInfo")
+            console.error("DACApi result does not have applications")
+            Storage.set("CloudAppStore", true);
           }
       })
-        .catch(error => console.log("DACApi fetch error", error));
+      .catch(error => {
+        console.error("DACApi fetch error from local server", error)
+        Storage.set("CloudAppStore", true);
+    });
+    }
+    else if(Storage.get("CloudAppStore") && data.hasOwnProperty("app-catalog-cloud"))
+    {
+      console.log("Fetching apps from cloud server")
+      let cloud_data=data["app-catalog-cloud"]
+      let url = cloud_data["url"]+"?platform=arm:v7:linux&category=application"
+      await fetch(url, {method: 'GET', cache: "no-store"})
+      .then(response => response.text())
+      .then(result => {
+        result = JSON.parse(result)
+        console.log("DACApi fetch result: ", result)
+        if (result.hasOwnProperty("applications")) {
+          appListArray = result["applications"];
+        } else {
+          console.error("DACApi result does not have applications")
+        }
+    })
+      .catch(error => console.log("DACApi fetch error from cloud", error));
       }
     } else {
       console.error("DACApi Appstore info not available; DAC features won't work.")
@@ -303,4 +337,143 @@ export const getAppCatalogInfo = async () => {
     console.log("DACApi Appstore info Error: ", error)
   }
   return appListArray == null ? undefined : appListArray;
+}
+
+export const getFirmwareVersion = async () => {
+  let firmwareVerList=null, firmwareVer=null
+  try {
+    let data = new HomeApi().getPartnerAppsInfo();
+    if (data) {
+      data = await JSON.parse(data);
+      if (data != null && data.hasOwnProperty("app-catalog-cloud")) {
+        let cloud_data=data["app-catalog-cloud"]
+        if(cloud_data.hasOwnProperty("firmwareVersions"))
+        {
+          firmwareVerList=cloud_data['firmwareVersions']
+          let i=0
+          while(i<firmwareVerList.length)
+          {
+            if(await getPlatformNameForDAC() === firmwareVerList[i].platform)
+            {
+              firmwareVer=firmwareVerList[i].ver
+              break
+            }
+            i+=1
+          }
+          if(firmwareVer===null)
+              console.error("Platform not supported")
+        }
+        else
+        {
+          console.error("Firmware version not available")
+        }
+      }
+
+    } else {
+      console.error("DACApi Appstore info not available; DAC features won't work.")
+    }
+  } catch (error) {
+    console.log("DACApi Appstore info Error: ", error)
+  }
+  return firmwareVer;
+}
+
+export const fetchAppIcon = async (id, version) => {
+  let appIcon=null
+  try {
+    let data = new HomeApi().getPartnerAppsInfo();
+    if (data) {
+      data = await JSON.parse(data);
+      if (data != null && data.hasOwnProperty("app-catalog-cloud")) {
+        let cloud_data=data["app-catalog-cloud"]
+        let url = cloud_data["url"]+"/"+id+":"+version+"?platformName="+await getPlatformNameForDAC()+"&firmwareVer="+ await getFirmwareVersion()
+        await fetch(url, {method: 'GET', cache: "no-store"})
+        .then(response => response.text())
+        .then(result => {
+          result = JSON.parse(result)
+          console.log("App fetch result: ", result)
+          if (result.hasOwnProperty("header")) {
+            appIcon = result.header.icon;
+          } else {
+            console.error("App does not have URL")
+          }
+      })
+        .catch(error => console.log("App Icon fetch error", error));
+      }
+    } else {
+      console.error("DACApi Appstore info not available; DAC features won't work.")
+    }
+  } catch (error) {
+    console.log("DACApi Appstore info Error: ", error)
+  }
+  return appIcon == null ? undefined : appIcon;
+}
+
+export const fetchLocalAppIcon = async (id) => {
+  let appIcon=null
+  try {
+    let data = new HomeApi().getPartnerAppsInfo();
+    if (data) {
+      data = await JSON.parse(data);
+      if (data != null && data.hasOwnProperty("app-catalog-path")) {
+        let url=data["app-catalog-path"]
+        await fetch(url, {method: 'GET', cache: "no-store"})
+        .then(response => response.text())
+        .then(result => {
+          result = JSON.parse(result)
+          if (result.hasOwnProperty("applications")) {
+            let appListArray = result["applications"];
+            for(let i=0;i<appListArray.length;i++)
+            {
+                if(appListArray[i].id=== id)
+                {
+                  appIcon=appListArray[i]["icon"]
+                  break;
+                }
+            }
+          } else {
+            console.error("DACApi result does not have applications")
+            Storage.set("CloudAppStore", true);
+          }
+      })
+        .catch(error => console.log("App Icon fetch error", error));
+      }
+    } else {
+      console.error("DACApi Appstore info not available; DAC features won't work.")
+    }
+  } catch (error) {
+    console.log("DACApi Appstore info Error: ", error)
+  }
+  return appIcon == null ? undefined : appIcon;
+}
+
+export const fetchAppUrl = async (id, version) => {
+  let appUrl=null
+  try {
+    let data = new HomeApi().getPartnerAppsInfo();
+    if (data) {
+      data = await JSON.parse(data);
+      if (data != null && data.hasOwnProperty("app-catalog-cloud")) {
+        let cloud_data=data["app-catalog-cloud"]
+        let url = cloud_data["url"]+"/"+id+":"+version+"?platformName="+await getPlatformNameForDAC()+"&firmwareVer="+ await getFirmwareVersion()
+        await fetch(url, {method: 'GET', cache: "no-store"})
+        .then(response => response.text())
+        .then(result => {
+          result = JSON.parse(result)
+          console.log("App fetch result: ", result)
+          if (result.hasOwnProperty("header")) {
+            appUrl = result.header.url;
+          } else {
+            console.error("App does not have URL")
+          }
+      })
+        .catch(error => console.log("App URL fetch error", error));
+      }
+    } else {
+      console.error("DACApi Appstore info not available; DAC features won't work.")
+    }
+  } catch (error) {
+    console.log("DACApi Appstore info Error: ", error)
+  }
+  return appUrl == null ? undefined : appUrl;
 }

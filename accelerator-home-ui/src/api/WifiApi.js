@@ -389,4 +389,35 @@ export default class Wifi {
         })
     })
   }
+  deleteNameSpace(){
+    return new Promise((resolve, reject) => {
+      this._thunder
+        .call('org.rdk.PersistentStore', 'deleteNamespace', {namespace: "wifi"})
+        .then(result => {
+          resolve(result.success)
+        })
+        .catch(err => {
+          console.error('delete namespace failed', err)
+          reject()
+        })
+    })
+  }
+
+  activateOnError() {
+    return new Promise((resolve, reject) => {
+      this._thunder
+        .call('Controller', 'activate', { callsign: this.callsign }).then(result => {
+          this._thunder.on(this.callsign, 'onError', notification => {
+            if (this._events.has('onError')) {
+              this._events.get('onError')(notification)
+            }
+          })
+          resolve(result)
+        })
+        .catch(err => {
+          console.error(`Wifi activation failed: ${err}`)
+          reject(err)
+        })
+    })
+  }
 }

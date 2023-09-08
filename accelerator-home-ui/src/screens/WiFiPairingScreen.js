@@ -211,9 +211,17 @@ export default class WifiPairingScreen extends Lightning.Component {
 
   // }
   startConnect(password) {
+    let flag=0
+    this._wifi.activateOnError()
+    this._wifi.registerEvent('onError', notification => {
+      if(notification.code===0||notification.code===4){
+         this._wifi.deleteNameSpace()
+         flag=1
+       }
+       })
     this._wifi.connect(this._item, password).then(() => {
       this._wifi.saveSSID(this._item.ssid, password, this._item.security).then((response) => {
-        if (response.result === 0 && response.success === true) {
+        if (response.result === 0 && response.success === true &&flag===0) {
           this._wifi.SaveSSIDKey(this._item.ssid).then((persistenceResponse)=>{console.log(persistenceResponse)})
           // console.log(response);
         }

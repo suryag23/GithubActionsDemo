@@ -21,6 +21,8 @@ import LightningPlayerControls from './LightningPlayerControl';
 import { CONFIG } from '../Config/Config';
 import ChannelOverlay from './ChannelOverlay';
 
+let player = null
+let position = null
 /**
  * Class to render AAMP video player.
  */
@@ -153,7 +155,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
     document.body.appendChild(this.videoEl)
     this.playbackSpeeds = [-16, -8, -4, -2, 1, 2, 4, 8, 16]
     this.playerStatesEnum = { idle: 0, initializing: 1, playing: 8, paused: 6, seeking: 7 }
-    this.player = null
+    player = null
     this.playbackRateIndex = this.playbackSpeeds.indexOf(1)
     this.defaultInitConfig = {
       initialBitrate: 2500000,
@@ -185,20 +187,20 @@ export default class AAMPVideoPlayer extends Lightning.Component {
    */
   _playbackStateChanged(event) {
     switch (event.state) {
-      case this.player.playerStatesEnum.idle:
-        this.playerState = this.player.playerStatesEnum.idle
+      case player.playerStatesEnum.idle:
+        this.playerState = player.playerStatesEnum.idle
         break
-      case this.player.playerStatesEnum.initializing:
-        this.playerState = this.player.playerStatesEnum.initializing
+      case player.playerStatesEnum.initializing:
+        this.playerState = player.playerStatesEnum.initializing
         break
-      case this.player.playerStatesEnum.playing:
-        this.playerState = this.player.playerStatesEnum.playing
+      case player.playerStatesEnum.playing:
+        this.playerState = player.playerStatesEnum.playing
         break
-      case this.player.playerStatesEnum.paused:
-        this.playerState = this.player.playerStatesEnum.paused
+      case player.playerStatesEnum.paused:
+        this.playerState = player.playerStatesEnum.paused
         break
-      case this.player.playerStatesEnum.seeking:
-        this.playerState = this.player.playerStatesEnum.seeking
+      case player.playerStatesEnum.seeking:
+        this.playerState = player.playerStatesEnum.seeking
         break
       default:
         break
@@ -235,8 +237,8 @@ export default class AAMPVideoPlayer extends Lightning.Component {
    * @param event playback event.
    */
   _mediaProgressUpdate(event) {
-    this.position = event.positionMiliseconds / 1000
-    this.tag('PlayerControls').currentTime = this.position
+    position = event.positionMiliseconds / 1000
+    this.tag('PlayerControls').currentTime = position
   }
 
   /**
@@ -261,21 +263,21 @@ export default class AAMPVideoPlayer extends Lightning.Component {
    * Function to create the video player instance for video playback and its initial settings.
    */
   createPlayer() {
-    if (this.player !== null) {
+    if (player !== null) {
       this.destroy()
-      this.player = null
+      player = null
     }
 
     try {
-      this.player = new AAMPMediaPlayer()
-      this.player.addEventListener('playbackStateChanged', this._playbackStateChanged)
-      this.player.addEventListener('playbackCompleted', this._mediaEndReached.bind(this))
-      this.player.addEventListener('playbackSpeedChanged', this._mediaSpeedChanged)
-      this.player.addEventListener('bitrateChanged', this._bitrateChanged)
-      this.player.addEventListener('playbackFailed', this._mediaPlaybackFailed.bind(this))
-      this.player.addEventListener('playbackProgressUpdate', this._mediaProgressUpdate.bind(this))
-      this.player.addEventListener('playbackStarted', this._mediaPlaybackStarted.bind(this))
-      this.player.addEventListener('durationChanged', this._mediaDurationChanged)
+      player = new AAMPMediaPlayer()
+      player.addEventListener('playbackStateChanged', this._playbackStateChanged)
+      player.addEventListener('playbackCompleted', this._mediaEndReached.bind(this))
+      player.addEventListener('playbackSpeedChanged', this._mediaSpeedChanged)
+      player.addEventListener('bitrateChanged', this._bitrateChanged)
+      player.addEventListener('playbackFailed', this._mediaPlaybackFailed.bind(this))
+      player.addEventListener('playbackProgressUpdate', this._mediaProgressUpdate.bind(this))
+      player.addEventListener('playbackStarted', this._mediaPlaybackStarted.bind(this))
+      player.addEventListener('durationChanged', this._mediaDurationChanged)
       this.playerState = this.playerStatesEnum.idle
     } catch (error) {
       console.error('AAMPMediaPlayer is not defined')
@@ -291,12 +293,12 @@ export default class AAMPVideoPlayer extends Lightning.Component {
     this.videoInfo = videoInfo
     this.configObj = this.defaultInitConfig
     this.configObj.drmConfig = this.videoInfo.drmConfig
-    this.player.initConfig(this.configObj)
-    this.player.load(videoInfo.url)
+    player.initConfig(this.configObj)
+    player.load(videoInfo.url)
 
     this.tag('PlayerControls').title = videoInfo.title
-    this.tag('PlayerControls').duration = this.player.getDurationSec()
-    console.log('Dureation of video', this.player.getDurationSec())
+    this.tag('PlayerControls').duration = player.getDurationSec()
+    console.log('Duration of video', player.getDurationSec())
     this.tag('PlayerControls').currentTime = 0
     this.play()
   }
@@ -305,7 +307,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
    * Starts playback when enough data is buffered at play head.
    */
   play() {
-    this.player.play()
+    player.play()
     this.playbackRateIndex = this.playbackSpeeds.indexOf(1)
   }
 
@@ -313,14 +315,14 @@ export default class AAMPVideoPlayer extends Lightning.Component {
    * Pauses playback.
    */
   pause() {
-    this.player.pause()
+    player.pause()
   }
 
   /**
    * Stop playback and free resources.
    */
   stop() {
-    this.player.stop()
+    player.stop()
     this.hidePlayerControls()
   }
 
@@ -342,11 +344,15 @@ export default class AAMPVideoPlayer extends Lightning.Component {
   }
 
   seekFwd() {
-    this.player.seek(this.position+10)
+    player.seek(position+10)
   }
 
   seekRwd() {
-    this.player.seek(this.position-10)
+    player.seek(position-10)
+  }
+
+  voiceSeek(time) {
+    player.seek(position+time)
   }
 
   nextTrack() {
@@ -395,7 +401,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
       this.playbackRateIndex++
     }
     this.rate = this.playbackSpeeds[this.playbackRateIndex]
-    this.player.setPlaybackRate(this.rate)
+    player.setPlaybackRate(this.rate)
   }
 
   /**
@@ -406,7 +412,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
       this.playbackRateIndex--
     }
     this.rate = this.playbackSpeeds[this.playbackRateIndex]
-    this.player.setPlaybackRate(this.rate)
+    player.setPlaybackRate(this.rate)
   }
 
   /**
@@ -414,26 +420,26 @@ export default class AAMPVideoPlayer extends Lightning.Component {
    * @returns player instance.
    */
   getPlayer() {
-    return this.player
+    return player
   }
 
   /**
    * Function to release the video player instance when not in use.
    */
   destroy() {
-    if (this.player.getCurrentState() !== this.playerStatesEnum.idle) {
-      this.player.stop()
+    if (player.getCurrentState() !== this.playerStatesEnum.idle) {
+      player.stop()
     }
-    this.player.removeEventListener('playbackStateChanged', this._playbackStateChanged)
-    this.player.removeEventListener('playbackCompleted', this._mediaEndReached)
-    this.player.removeEventListener('playbackSpeedChanged', this._mediaSpeedChanged)
-    this.player.removeEventListener('bitrateChanged', this._bitrateChanged)
-    this.player.removeEventListener('playbackFailed', this._mediaPlaybackFailed.bind(this))
-    this.player.removeEventListener('playbackProgressUpdate', this._mediaProgressUpdate.bind(this))
-    this.player.removeEventListener('playbackStarted', this._mediaPlaybackStarted.bind(this))
-    this.player.removeEventListener('durationChanged', this._mediaDurationChanged)
-    this.player.release()
-    this.player = null
+    player.removeEventListener('playbackStateChanged', this._playbackStateChanged)
+    player.removeEventListener('playbackCompleted', this._mediaEndReached)
+    player.removeEventListener('playbackSpeedChanged', this._mediaSpeedChanged)
+    player.removeEventListener('bitrateChanged', this._bitrateChanged)
+    player.removeEventListener('playbackFailed', this._mediaPlaybackFailed.bind(this))
+    player.removeEventListener('playbackProgressUpdate', this._mediaProgressUpdate.bind(this))
+    player.removeEventListener('playbackStarted', this._mediaPlaybackStarted.bind(this))
+    player.removeEventListener('durationChanged', this._mediaDurationChanged)
+    player.release()
+    player = null
     this.hidePlayerControls()
   }
 
