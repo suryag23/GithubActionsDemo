@@ -172,6 +172,7 @@
   "Connection Status":"Estado de conexión",
   "Battery percent":"Porcentaje de batería",
   "Software Version":"Versión del software",
-  "No Shows are being aired at the moment":"No Shows se están emitiendo en este momento"
-
+  "No Shows are being aired at the moment":"No Shows se están emitiendo en este momento",
+  "Press OK to enter Password":"Presione OK para ingresar la contraseña",
+  "Press OK to enter SSID":"Presione OK para ingresar SSID"
 }

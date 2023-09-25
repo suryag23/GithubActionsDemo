@@ -155,7 +155,7 @@ export default class App extends Router.App {
     let self = this;
     console.log(key, key.keyCode)
     this.$hideImage(0);
-    if (key.keyCode == Keymap.Home) {
+    if (key.keyCode == Keymap.Home && !Router.isNavigating()) {
       if (Storage.get('applicationType').includes("dac.native")) {
         this.jumpToRoute("apps");
       } else {
@@ -163,7 +163,7 @@ export default class App extends Router.App {
       }
       return true
     }
-    else if (key.keyCode == Keymap.Inputs_Shortcut) { //for inputs overlay
+    else if (key.keyCode == Keymap.Inputs_Shortcut && !Router.isNavigating()) { //for inputs overlay
       if (Storage.get("applicationType") !== "") {
         if (Router.getActiveHash() === "tv-overlay/inputs") {
           Router.reload();
@@ -195,7 +195,7 @@ export default class App extends Router.App {
       }
       return true
     }
-    else if (key.keyCode == Keymap.Picture_Setting_Shortcut) { //for video settings overlay
+    else if (key.keyCode == Keymap.Picture_Setting_Shortcut && !Router.isNavigating()) { //for video settings overlay
       if (Storage.get("applicationType") !== "") {
         if (Router.getActiveHash() === "tv-overlay/settings") {
           Router.reload();
@@ -227,7 +227,7 @@ export default class App extends Router.App {
       }
       return true;
     }
-    else if (key.keyCode == Keymap.Settings_Shortcut) {
+    else if (key.keyCode == Keymap.Settings_Shortcut && !Router.isNavigating()) {
       console.log(`settings shortcut`)
       if (Storage.get("applicationType") === "") { //launch settings overlay/page depending on the current route.
         if(Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player"){ //player supports settings overlay, so launch it as overlay
@@ -265,11 +265,11 @@ export default class App extends Router.App {
       }
       return true;
     }
-    else if (key.keyCode == Keymap.Guide_Shortcut) {
+    else if (key.keyCode == Keymap.Guide_Shortcut && !Router.isNavigating()) {
       Router.navigate('epg')
       return true
     }
-    else if (key.keyCode == Keymap.Amazon) {
+    else if (key.keyCode == Keymap.Amazon && !Router.isNavigating()) {
       let params = {
         launchLocation: "dedicatedButton",
         appIdentifier: self.appIdentifiers["Amazon"]
@@ -279,7 +279,7 @@ export default class App extends Router.App {
       });
       return true
     }
-    else if (key.keyCode == Keymap.Youtube) {
+    else if (key.keyCode == Keymap.Youtube && !Router.isNavigating()) {
       let params = {
         launchLocation: "dedicatedButton",
         appIdentifier:self.appIdentifiers["YouTube"]
@@ -289,7 +289,7 @@ export default class App extends Router.App {
       });
       return true
     }
-    else if (key.keyCode == Keymap.Netflix) { //launchLocation mapping is in launchApp method in AppApi.js
+    else if (key.keyCode == Keymap.Netflix && !Router.isNavigating()) { //launchLocation mapping is in launchApp method in AppApi.js
       let params = {
         launchLocation: "dedicatedButton",
         appIdentifier:self.appIdentifiers["Netflix"]
@@ -299,7 +299,7 @@ export default class App extends Router.App {
       });
       return true
     }
-    else if(key.keyCode == Keymap.AppCarousel) {
+    else if(key.keyCode == Keymap.AppCarousel && !Router.isNavigating()) {
       if (Storage.get("applicationType") === "") { // if resident app is on focus
         if(Router.getActiveHash() === "menu"){
           return true;
@@ -366,7 +366,7 @@ export default class App extends Router.App {
         powerState = 'DEEP_SLEEP'
       })
       return true
-    } else if (key.keyCode === Keymap.AudioVolumeMute) {
+    } else if (key.keyCode === Keymap.AudioVolumeMute && !Router.isNavigating()) {
       if (Storage.get('applicationType') === ''){
         this.tag("Volume").onVolumeMute();
       } else {
@@ -385,7 +385,7 @@ export default class App extends Router.App {
         }
       }
       return true
-    } else if (key.keyCode == Keymap.AudioVolumeUp) {
+    } else if (key.keyCode == Keymap.AudioVolumeUp && !Router.isNavigating()) {
       if (Storage.get('applicationType') === ''){
         this.tag("Volume").onVolumeKeyUp();
       } else {
@@ -404,7 +404,7 @@ export default class App extends Router.App {
         }
       }
       return true
-    } else if (key.keyCode == Keymap.AudioVolumeDown) {
+    } else if (key.keyCode == Keymap.AudioVolumeDown && !Router.isNavigating()) {
       if (Storage.get('applicationType') === ''){
         this.tag("Volume").onVolumeKeyDown();
       } else {
@@ -969,7 +969,7 @@ export default class App extends Router.App {
           for (let i = 0; i < audioport.connectedAudioPorts.length && !audioport.connectedAudioPorts[i].startsWith("SPDIF"); i++) {
             if ((Storage.get("deviceType") == "tv" && audioport.connectedAudioPorts[i].startsWith("SPEAKER")) ||
               (Storage.get("deviceType") != "tv" && audioport.connectedAudioPorts[i].startsWith("HDMI"))) {
-                 appApi.muteStatus(audioport.connectedAudioPorts[i]).then(muteRes =>{
+                 appApi.getMuted(audioport.connectedAudioPorts[i]).then(muteRes =>{
                    appApi.getVolumeLevel(audioport.connectedAudioPorts[i]).then(volres =>{
                   AlexaApi.get().reportVolumeState((volres.success?(Number.isInteger(volres.volumeLevel)? volres.volumeLevel: parseInt(volres.volumeLevel)):undefined), (muteRes.success? muteRes.muted : undefined))
                   })
@@ -997,14 +997,20 @@ export default class App extends Router.App {
         if(AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
           if(notification.xr_speech_avs.state_reporter === "authorization_req" || notification.xr_speech_avs.code){
             console.log("Alexa Auth URL is ", notification.xr_speech_avs.url)
-            if (!Router.isNavigating() && appApi.isConnectedToInternet() && (Router.getActiveHash() === "menu")) {
+            if (!Router.isNavigating() && !AlexaApi.get().isSmartScreenActiavated() && Router.getActiveHash() === "menu") {
               console.log("App enableSmartScreen");
               AlexaApi.get().enableSmartScreen();
             }
-            if (Router.getActiveHash() === "menu") {
+            if ((Router.getActiveHash() === "menu") && (Storage.get("applicationType") === "")) {
               if(Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen") {
-                console.log("Routing to Alexa login page")
-                Router.navigate("AlexaLoginScreen")
+                appApi.isConnectedToInternet(internet => {
+                  if (internet && !Router.isNavigating()) {
+                    console.log("Routing to Alexa login page")
+                    Router.navigate("AlexaLoginScreen")
+                  } else {
+                    console.log("No internet access; do not route to Alexa login page");
+                  }
+                });
               }
             }
             console.log("Alexa Auth OTP is ", notification.xr_speech_avs.code)
@@ -1256,16 +1262,7 @@ export default class App extends Router.App {
               VolumePayload.msgPayload.event.header.messageId = header.messageId
               VolumePayload.msgPayload.event.payload.volume = payload.volume
               VolumePayload.msgPayload.event.payload.muted = payload.mute
-              appApi.getConnectedAudioPorts().then(audioport => {
-                for (let i = 0; i < audioport.connectedAudioPorts.length && !audioport.connectedAudioPorts[i].startsWith("SPDIF"); i++) {
-                  if ((Storage.get("deviceType") == "tv" && audioport.connectedAudioPorts[i].startsWith("SPEAKER")) ||
-                    (Storage.get("deviceType") != "tv" && audioport.connectedAudioPorts[i].startsWith("HDMI"))) {
-                      appApi.audio_mute(audioport.connectedAudioPorts[i], VolumePayload.msgPayload.event.payload.muted).then(()=>{
-                      this.tag("Volume").onVolumeMute()
-                    });
-                  }
-                }
-              });
+              this.tag("Volume").onVolumeMute(payload.mute)
             }
           }
           else if (header.namespace === "ExternalMediaPlayer") {

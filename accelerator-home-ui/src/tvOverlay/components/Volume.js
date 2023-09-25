@@ -74,12 +74,15 @@ export default class Volume extends Lightning.Component {
         this.appApi = new AppApi()
         this.volTimeout = null
         this.volume = 0
-        this.mute = false;
+        this.getMuteStatus();
+        console.log("_firstEnable this.mute-", this.mute);
     }
 
     async onVolumeKeyDown() {
         this.volume = await this.getVolume();
         this.focus();
+        console.log("onVolumeKeyDown this.mute-", this.mute);
+        this._updateIcon(this.mute)
         this._updateText(this.volume);
         this.volTimeout && Registry.clearTimeout(this.volTimeout)
         this.volTimeout = Registry.setTimeout(() => {
@@ -87,14 +90,17 @@ export default class Volume extends Lightning.Component {
         }, 2000)
         if (this.volume > 0) {
             this.volume -= 5;
-            if (this.setVolume(this.volume))
+            if (this.setVolume(this.volume)) {
+                this._updateIcon((this.mute = false))
                 this._updateText(this.volume)
+            }
         }
     }
 
     async onVolumeKeyUp() {
         this.volume = await this.getVolume();
         this.focus();
+        this._updateIcon(this.mute)
         this._updateText(this.volume);
         this.volTimeout && Registry.clearTimeout(this.volTimeout)
         this.volTimeout = Registry.setTimeout(() => {
@@ -102,28 +108,31 @@ export default class Volume extends Lightning.Component {
         }, 2000)
         if (this.volume < 100) {
             this.volume += 5;
-            if (this.setVolume(this.volume))
+            if (this.setVolume(this.volume)) {
+                this._updateIcon((this.mute = false))
                 this._updateText(this.volume)
+            }
         }
     }
 
-    async onVolumeMute() {
+    async onVolumeMute(requestedState = undefined) {
         this.volume = await this.getVolume();
+        await this.getMuteStatus(); // to update this.mute
         this.focus();
         this._updateText(this.volume);
         this.volTimeout && Registry.clearTimeout(this.volTimeout)
         this.volTimeout = Registry.setTimeout(() => {
             this.unfocus()
         }, 2000)
-        if (this.setMute(!this.mute)) {
-            this.mute = !this.mute
-            this._updateIcon(this.mute)
+        if (this.setMute(((requestedState != undefined)?requestedState:!this.mute))) {
+            this._updateIcon(((requestedState != undefined)?requestedState:!this.mute))
         }
     }
 
     async onVolumeChanged() {
         this.volume = await this.getVolume();
         this.focus();
+        this._updateIcon(this.mute)
         this._updateText(this.volume);
         this.volTimeout && Registry.clearTimeout(this.volTimeout)
         this.volTimeout = Registry.setTimeout(() => {
@@ -138,7 +147,6 @@ export default class Volume extends Lightning.Component {
             if ((Storage.get("deviceType") == "tv" && audioport[i].startsWith("SPEAKER")) ||
                 (Storage.get("deviceType") != "tv" && audioport[i].startsWith("HDMI"))) {
                 await this.appApi.setVolumeLevel(audioport[i], val)
-
             }
         }
         return true;
@@ -149,8 +157,22 @@ export default class Volume extends Lightning.Component {
         for (let i = 0; i < audioport.length; i++) {
             if ((Storage.get("deviceType") == "tv" && audioport[i].startsWith("SPEAKER")) ||
                 (Storage.get("deviceType") != "tv" && audioport[i].startsWith("HDMI"))) {
-                const status = this.appApi.audio_mute(audioport[i], val)
+                this.appApi.audio_mute(audioport[i], val)
+            }
+        }
+        return true;
+    }
 
+    getMuteStatus = async (val) => {
+        let audioport = await this.getAudioPorts()
+        for (let i = 0; i < audioport.length; i++) {
+            if ((Storage.get("deviceType") == "tv" && audioport[i].startsWith("SPEAKER")) ||
+                (Storage.get("deviceType") != "tv" && audioport[i].startsWith("HDMI"))) {
+                this.appApi.getMuted(audioport[i]).then(result => {
+                    if (result.success) {
+                        this.mute = result.muted;
+                    }
+                });
             }
         }
         return true;
@@ -194,16 +216,16 @@ export default class Volume extends Lightning.Component {
             reject(false)
         })
     }
+
     updateIcon(audioport){
         return new Promise((resolve,reject)=> {
-        this.appApi.muteStatus(audioport).then(result => {
-            this.mute = result.muted;
-            this._updateIcon(this.mute);
-            resolve(true)
-        });
+            this.appApi.getMuted(audioport).then(result => {
+                this.mute = result.muted;
+                this._updateIcon(this.mute);
+                resolve(true)
+            });
         })
     }
-
 
     getVolume() {
         return new Promise(async (resolve, reject) => {

@@ -37,5 +37,7 @@
   "USB": "USB",
   "Settings  Network Configuration  Network Interface  WiFi": "Settings / Network Configuration / Network Interface / WiFi",
   "Settings  Other Settings  Screen Saver": "Settings / Other Settings / Screen Saver",
-  "Settings  Bluetooth Voice Remote Control":"Settings / Bluetooth / Voice Remote Control"
+  "Settings  Bluetooth Voice Remote Control":"Settings / Bluetooth / Voice Remote Control",
+  "Press OK to enter Password":"Press OK to enter Password",
+  "Press OK to enter SSID":"Press OK to enter SSID"
 }

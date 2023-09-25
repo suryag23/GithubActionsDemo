@@ -72,7 +72,7 @@ export default class AppApi {
       header.append('pragma', 'no-cache');
       header.append('cache-control', 'no-cache');
 
-      fetch("https://apps.rdkcentral.com/rdk-apps/accelerator-home-ui/index.html", { method: 'GET', headers: header, }).then(res => {
+      fetch("https://example.com/index.html", { method: 'GET', headers: header, }).then(res => {
         if (res.status >= 200 && res.status <= 300) {
           console.log("AppAPI Connected to internet");
           resolve(true)
@@ -162,7 +162,7 @@ export default class AppApi {
           resolve(result)
         })
         .catch(err => {
-          console.error("AppAPI Controller plugin status check failed.");
+          console.error("AppAPI Controller plugin '"+plugin+"' status check failed.");
           reject(err)
         })
     })
@@ -1850,7 +1850,7 @@ export default class AppApi {
     })
   }
 
-  muteStatus(port) {
+  getMuted(port) {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.DisplaySettings', 'getMuted', {

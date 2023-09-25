@@ -96,7 +96,7 @@ export default class Network {
   getStbIp() {
     return new Promise((resolve, reject) => {
       this._thunder.call(this.callsign, 'getStbIp').then(result => {
-        this.INFO(this.callsign + "[getStbIp] result: " + result)
+        this.INFO(this.callsign + "[getStbIp] result: " + JSON.stringify(result))
         if (result.success) {
           resolve(result.ip)
         }
@@ -220,7 +220,7 @@ export default class Network {
         let header = new Headers();
         header.append('pragma', 'no-cache');
         header.append('cache-control', 'no-cache');
-        fetch("https://apps.rdkcentral.com/rdk-apps/accelerator-home-ui/index.html",{method: 'GET',headers: header,}).then(res => {
+        fetch("https://example.com/index.html",{method: 'GET',headers: header,}).then(res => {
           this.INFO(this.callsign + "[isConnectedToInternet] result: " + res)
           if(res.status >= 200 && res.status <= 300){
             console.log("Connected to internet");

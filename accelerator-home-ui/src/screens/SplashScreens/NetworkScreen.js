@@ -209,7 +209,12 @@ export default class NetworkScreen extends Lightning.Component {
             }
             _handleEnter() {
                 if (AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
-                    Router.navigate('AlexaLoginScreen')
+                    network.isConnectedToInternet().then(result => {
+                        if(result)
+                            Router.navigate('AlexaLoginScreen')
+                        else
+                            Router.navigate('menu')
+                    })
                 } else {
                     Router.navigate('menu')
                 }

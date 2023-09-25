@@ -38,6 +38,24 @@ export default class AlexaApi extends VoiceApi {
     return instance
   }
 
+  /* Can be used to reduce enableSmartScreen() call */
+  isSmartScreenActiavated() {
+    let appApi = new AppApi();
+    appApi.checkStatus('SmartScreen').then(result => {
+      console.log("AlexaAPI: isSmartScreenActiavated result-", result);
+      switch (result[0].state.toLowerCase()) {
+        case "resumed":
+        case "activated": break;
+        default:
+          return(false);
+      }
+      return true;
+    }).catch(err => {
+      console.error("AlexaAPI: isSmartScreenActiavated error-", err);
+      return(false);
+    });
+  }
+
   enableSmartScreen() {
     thunder.Controller.activate({callsign: 'SmartScreen'}).then(res => {
       console.log("AlexaAPI: Activate SmartScreen result: " + res);
