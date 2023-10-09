@@ -66,7 +66,7 @@ export default class LogoScreen extends Lightning.Component {
     }
 
    async _focus() {
-        let path = 'splash/bluetooth'
+        let path = ((Storage.get('setup') === "true")? 'menu':'splash/bluetooth')
         var map = { 37: false, 38: false, 39: false, 40: false };
         this.handler = (e) => {
             if (e.keyCode in map) {

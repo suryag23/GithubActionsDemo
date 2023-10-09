@@ -278,6 +278,7 @@ import FailComponent from './FailComponent'
    renderDeviceList(ssids) {
     this._pairedList  =[];
     this._pairedNetworks.h = 0;
+    this._availableNetworks.tag('List').rollMax=ssids.length*90
     this._pairedNetworks.tag('List').items = []
     this._pairedNetworks.tag('List').h  = 0
      this._wifi.getConnectedSSID().then(result => {

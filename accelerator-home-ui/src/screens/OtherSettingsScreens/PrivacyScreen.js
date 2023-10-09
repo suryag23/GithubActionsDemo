@@ -342,26 +342,25 @@ export default class PrivacyScreen extends Lightning.Component {
                     })
 
                     setTimeout(() => {
-                        AlexaApi.get().resetAVSCredentials()
-                            .then((result) => {
-                                console.log("Triggering AVS credential reset." ,result)
-                                if(result.success){
-                                    //SUCCESSFULL API CALL
-                                    this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Completed'
-                                    setTimeout(() => {
-                                        this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
-                                        this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
-                                        cookieToggle = !cookieToggle
-                                    }, 2000)
-                                } else {
-                                    //UNSUCCESSFULL API CALL
-                                    this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Error'
-                                    setTimeout(() => {
-                                        this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
-                                        this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
-                                        cookieToggle = !cookieToggle
-                                    }, 2000)
-                                }
+                        AlexaApi.get().resetAVSCredentials().then((result) => {
+                            console.log("Triggering AVS credential reset." ,result)
+                            if (result.success) {
+                                AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending");
+                                this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Completed'
+                                setTimeout(() => {
+                                    this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
+                                    this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
+                                    cookieToggle = !cookieToggle
+                                }, 2000)
+                            } else {
+                                //UNSUCCESSFULL API CALL
+                                this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Error'
+                                setTimeout(() => {
+                                    this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
+                                    this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
+                                    cookieToggle = !cookieToggle
+                                }, 2000)
+                            }
                         })
                     }, 2000)
                 }
@@ -381,7 +380,7 @@ export default class PrivacyScreen extends Lightning.Component {
                 }
                 _handleEnter() {
                     if(!Router.isNavigating()){
-                    Router.navigate('settings/other/privacyPolicy')
+                        Router.navigate('settings/other/privacyPolicy')
                     }
                 }
             },

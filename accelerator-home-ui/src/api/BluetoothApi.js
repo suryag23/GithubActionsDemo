@@ -172,7 +172,7 @@ deactivateBluetooth(){
     return new Promise((resolve, reject) => {
       this._thunder
         .call('org.rdk.Bluetooth', 'startScan', {
-          timeout: '10',
+          timeout: 10,
           profile: `KEYBOARD,
                     MOUSE,
                     JOYSTICK,
@@ -413,7 +413,6 @@ deactivateBluetooth(){
   }
 
   setAudioStream(deviceID) {
-
     return new Promise((resolve, reject) => {
       this._thunder
         .call('org.rdk.Bluetooth', 'setAudioStream', { "deviceID": deviceID, "audioStreamName": "AUXILIARY" })
@@ -429,32 +428,4 @@ deactivateBluetooth(){
         })
     })
   }
-  remotepluginactivate(){
-    return new Promise((resolve, reject) => {
-      this.callsign = "org.rdk.RemoteControl"
-      this._thunder
-        .call('Controller', 'activate', { callsign: this.callsign })
-        .then(result => {
-          //console.log("remoteactivateresult", result)
-          resolve(true)
-        }).catch(err => {
-          reject(err)
-        })
-    })
-  }
-
-  getNetStatus(){
-    return new Promise((resolve, reject) => {
-      this._thunder
-        .call('org.rdk.RemoteControl', 'getNetStatus',{"netType":1})
-        .then(result => {
-          console.log("getnet", result)
-          resolve(result)
-        })
-        .catch(err => {
-          console.error(`Can't get discovered devices : ${JSON.stringify(err)}`)
-        })
-    })
-  }
-
 }

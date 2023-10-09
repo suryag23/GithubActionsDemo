@@ -24,13 +24,13 @@
  import { COLORS } from '../../colors/Colors'
  import { CONFIG } from '../../Config/Config'
 import FailComponent from './FailComponent'
- 
+
  /**
   * Class for Bluetooth screen.
   */
  export default class BluetoothScreen extends Lightning.Component {
    static _template() {
-     return {  
+     return {
        Bluetooth: {
          y: 275,
          x: 200,
@@ -137,10 +137,10 @@ import FailComponent from './FailComponent'
         type: FailComponent,
         visible: false
        }
- 
+
      }
    }
- 
+
   //  $navigateBack() {
   //   this._setState('AddADevice')
   // }
@@ -157,11 +157,11 @@ import FailComponent from './FailComponent'
   show() {
       this.tag('Bluetooth').visible = true
   }
- 
+
    _unfocus() {
      this._disable()
    }
- 
+
    _firstEnable() {
      this._bt = new BluetoothApi()
      this._bluetooth = false
@@ -172,17 +172,17 @@ import FailComponent from './FailComponent'
      this._pairedNetworks = this.tag('Networks.PairedNetworks')
      this._availableNetworks = this.tag('Networks.AvailableNetworks')
      this.renderDeviceList()
- 
- 
+
+
      this.loadingAnimation = this.tag('Searching.Loader').animation({
        duration: 3, repeat: -1, stopMethod: 'immediate', stopDelay: 0.2,
        actions: [{ p: 'rotation', v: { sm: 0, 0: 0, 1: 2 * Math.PI } }]
      });
- 
+
    }
- 
+
    _focus() {
- 
+
      this._setState('AddADevice')
      this._enable()
      if (this._bluetooth) {
@@ -193,7 +193,7 @@ import FailComponent from './FailComponent'
        //this._bt.startScan()
      }
    }
- 
+
    /**
     * Function to be excuted when the Bluetooth screen is enabled.
     */
@@ -207,7 +207,7 @@ import FailComponent from './FailComponent'
        }
      }, 5000)
    }
- 
+
    /**
     * Function to be executed when the Bluetooth screen is disabled from the screen.
     */
@@ -215,11 +215,11 @@ import FailComponent from './FailComponent'
      Registry.clearInterval(this.scanTimer)
      this._bt.stopScan()
    }
- 
+
    /**
     * Function to be executed when add a device is pressed
     */
- 
+
    showAvailableDevices() {
      this.tag('Switch').patch({ alpha: 0 });
      this.tag('PairedNetworks').patch({ alpha: 0 });
@@ -230,7 +230,7 @@ import FailComponent from './FailComponent'
      // this.tag('TopPanel').patch({ alpha: 0 });
      // this.tag('SidePanel').patch({ alpha: 0 });
    }
- 
+
    hideAvailableDevices() {
      this.tag('Switch').patch({ alpha: 1 });
      this.tag('PairedNetworks').patch({ alpha: 1 });
@@ -241,8 +241,8 @@ import FailComponent from './FailComponent'
      // this.tag('TopPanel').patch({ alpha: 0 });
      // this.tag('SidePanel').patch({ alpha: 0 });
    }
- 
- 
+
+
    /**
     * Function to render list of Bluetooth devices
     */
@@ -272,6 +272,7 @@ import FailComponent from './FailComponent'
            } else return device
          }
        })
+       this._availableNetworks.tag('List').rollMax=this._otherList.length*90
        this._availableNetworks.h = this._otherList.length * 90
        this._availableNetworks.tag('List').h = this._otherList.length * 90
        this._availableNetworks.tag('List').items = this._otherList.map((item, index) => {
@@ -285,7 +286,7 @@ import FailComponent from './FailComponent'
        })
      })
    }
- 
+
    pressEnter(option) {
      if (option === 'Cancel') {
        this._setState('AddADevice')
@@ -293,7 +294,7 @@ import FailComponent from './FailComponent'
        this._bt.pair(this._availableNetworks.tag('List').element._item.deviceID).then(result => {
          let btName = this._availableNetworks.tag('List').element._item.name
          if (result.success) {
-          this.tag("FailScreen").notify({ title: btName, msg: 'Pairing Succesful'})
+          this.tag("FailScreen").notify({ title: btName, msg: 'Pairing Successful'})
           this._setState('FailScreen');
          } else {
           this.tag("FailScreen").notify({ title: btName, msg: 'Pairing Failed'})
@@ -358,7 +359,7 @@ import FailComponent from './FailComponent'
    $BluetoothParams(){
     return this._pairedNetworks.tag('List').element._item
    }
- 
+
    static _states() {
      return [
        class Switch extends this {
@@ -446,7 +447,7 @@ import FailComponent from './FailComponent'
           this.hide()
           this.fireAncestors('$hideBreadCrum')
           this.tag('BluetoothPairingScreen').visible = true
-          
+
         }
         _getFocused() {
           return this.tag('BluetoothPairingScreen')
@@ -467,7 +468,7 @@ import FailComponent from './FailComponent'
             this.hide()
             this.fireAncestors('$hideBreadCrum')
             this.tag('FailScreen').visible = true
-           
+
         }
         $exit() {
             this.show()
@@ -486,7 +487,7 @@ import FailComponent from './FailComponent'
       }
      ]
    }
- 
+
    /**
     * Function to navigate through the lists in the screen.
     * @param {string} listname
@@ -513,7 +514,7 @@ import FailComponent from './FailComponent'
        }
      }
    }
- 
+
    /**
     * Function to turn on and off Bluetooth.
     */
@@ -546,7 +547,7 @@ import FailComponent from './FailComponent'
          })
      }
    }
- 
+
    /**
     * Function to activate Bluetooth plugin.
     */
@@ -586,14 +587,14 @@ import FailComponent from './FailComponent'
          this.renderDeviceList()
         this.tag("FailScreen").notify({ title: notification.name, msg: notification.newStatus})
         this._setState('FailScreen');
- 
+
        })
      })
        .catch(err => {
          console.log(err)
        })
    }
- 
+
    /**
     * Function to respond to Bluetooth client.
     * @param {number} deviceID
@@ -603,4 +604,3 @@ import FailComponent from './FailComponent'
      this._bt.respondToEvent(deviceID, 'onPairingRequest', responseValue)
    }
  }
- 

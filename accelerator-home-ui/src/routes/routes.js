@@ -46,6 +46,7 @@ import AlexaConfirmationScreen from '../screens/AlexaConfirmationScreen'
 import CameraStreamingScreen from '../screens/CameraStreamingScreen'
 import CameraStreamingScreenExitConfirmationScreen from '../screens/CameraStreamingScreenExitConfirmationScreen'
 import AlexaApi from '../api/AlexaApi.js'
+import { Storage } from '@lightningjs/sdk'
 
 let api = null
 
@@ -195,6 +196,10 @@ export default {
   afterEachRoute: (request) => {
     if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
       AlexaApi.get().reportApplicationState(request.hash, true);
+    }
+    if (request.hash === "menu") {
+      /* To prevent the onboarding screen appearing next time. */
+      Storage.set("setup", true);
     }
   }
 }

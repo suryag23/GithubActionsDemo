@@ -254,6 +254,7 @@ export default class NetworkList extends Lightning.Component {
       } else {
         this._pairedList = []
       }
+      this._availableNetworks.tag('List').rollMax=ssids.length*90
       this._pairedNetworks.h = this._pairedList.length * 90
       this._pairedNetworks.tag('List').h = this._pairedList.length * 90
       this._pairedNetworks.tag('List').items = this._pairedList.map((item, index) => {

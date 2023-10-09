@@ -97,24 +97,27 @@ async function registerLISAEvents(id, progress) {
 
 export const installDACApp = async (app , progress) => {
   let platName = await getPlatformNameForDAC()
-  let url=app.url
+  let url = app.url
   if(!Storage.get("CloudAppStore"))
   {
      url = app.url.replace(/ah212/g, platName)
   }
-  
+
   registerLISAEvents(app.id, progress)
 
   let result = null
+  let param = {
+    id: app.id,
+    type: 'application/dac.native',
+    appName: app.name,
+    category: app.category,
+    versionAsParameter: app.version,
+    url: url
+  }
+
   try {
-    result = await thunderJS()['LISA'].install({
-      id: app.id,
-      type: 'application/dac.native',
-      appName: app.name,
-      category: app.category,
-      versionAsParameter: app.version,
-      url: url
-    })
+    console.info("installDACApp LISA.install with param:", JSON.stringify(param))
+    result = await thunderJS()['LISA'].install(param)
   } catch (error) {
     console.error('DACApi Error on installDACApp: ' + error.code + ' ' + error.message)
     return false
@@ -134,13 +137,16 @@ export const uninstallDACApp = async (app, progress) => {
   registerLISAEvents(app.id, progress)
 
   let result = null
+  let param = {
+    id: app.id,
+    type: 'application/dac.native',
+    versionAsParameter: app.version,
+    uninstallType: 'full'
+  }
+
   try {
-    result = await thunderJS()['LISA'].uninstall({
-      id: app.id,
-      type: 'application/dac.native',
-      versionAsParameter: app.version,
-      uninstallType: 'full'
-    })
+    console.info("uninstallDACApp LISA.uninstall with params:", JSON.stringify(param))
+    result = await thunderJS()['LISA'].uninstall(param)
   } catch (error) {
     console.error('DACApi Error on LISA uninstall: ' + error.code + ' ' + error.message)
     return false
@@ -179,19 +185,20 @@ export const getPlatformNameForDAC = async () => {
   if (platform == null) {
     platform = await getDeviceName()
     platform = platform.split('-')[0]
+    console.info("getPlatformNameForDAC platform after split: ", JSON.stringify(platform))
   }
 
   if (platform.startsWith('raspberrypi4')) {
     return 'rpi4'
-  }
-  else if (platform.startsWith('raspberrypi')) {
+  } else if (platform.startsWith('raspberrypi')) {
     return 'rpi3'
-  } 
-  else if (platform === 'brcm972180hbc') {
+  } else if (platform === 'brcm972180hbc') {
     return '7218c'
   } else if (platform === 'brcm972127ott') {
     return '72127ott'
   } else if (platform === 'vip7802') {
+    return '7218c'
+  } else if (platform === 'm393') {
     return '7218c'
   } else if (platform.toLowerCase().includes('hp44h')) {
     return 'ah212'

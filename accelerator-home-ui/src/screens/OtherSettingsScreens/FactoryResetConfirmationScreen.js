@@ -22,6 +22,7 @@ import BluetoothApi from '../../api/BluetoothApi'
 import { CONFIG } from '../../Config/Config'
 import WifiApi from '../../api/WifiApi'
 import AlexaApi from '../../api/AlexaApi.js';
+import RCApi from '../../api/RemoteControl'
 
 const appApi = new AppApi()
 const _btApi = new BluetoothApi()
@@ -116,7 +117,7 @@ export default class RebootConfirmationScreen extends Lightning.Component {
         }
     }
 
-    _init(){
+    _init() {
         this.AppApi = new AppApi()
     }
 
@@ -161,28 +162,30 @@ export default class RebootConfirmationScreen extends Lightning.Component {
                 if(btunpair.success != true){ console.log("btunpair",btunpair) }
             }
         }
+        await RCApi.get().activate().then(()=>{ RCApi.get().factoryReset(); });
         let contollerStat = await appApi.checkStatus("Monitor")
         for(let i=0; i< contollerStat[0].configuration.observables.length; i++){
             let monitorstat = await appApi.monitorStatus(contollerStat[0].configuration.observables[i].callsign).catch(err =>{ console.log("monitorStatus",err) });
             if(monitorstat.length < 0){ console.log("monitorStatus",monitorstat) }
         }
         // warehouse apis
-        let internalReset = await appApi.internalReset().catch(err => { console.log("internalReset",err) });
+        let internalReset = await appApi.internalReset().catch(err => { console.error("internalReset",err) });
         if (internalReset.success != true || internalReset.error) { console.log("internalReset",internalReset) }
-        let isClean =  await appApi.isClean().catch(err => { console.log("isClean",err) });
+        let isClean =  await appApi.isClean().catch(err => { console.error("isClean",err) });
         if (isClean.success != true) { console.log("isClean",isClean) }
-        let lightReset = await appApi.lightReset().catch(err => { console.log("lightReset",err)});
+        let lightReset = await appApi.lightReset().catch(err => { console.error("lightReset",err)});
         if (lightReset.success != true || lightReset.error) { console.log("lightReset",lightReset) }
-        let resetDevice = await appApi.resetDevice().catch(err => { console.log("resetDevice",err) });
+        let resetDevice = await appApi.resetDevice().catch(err => { console.error("resetDevice",err) });
         if (resetDevice.success != true || resetDevice.error) { console.log("resetDevice",resetDevice) }
-        let rsactivitytime = await appApi.resetInactivityTime().catch(err => { console.log("resetInactivityTime",err) });
+        let rsactivitytime = await appApi.resetInactivityTime().catch(err => { console.error("resetInactivityTime",err) });
         if (rsactivitytime.success != true) { console.log("rsactivitytime",rsactivitytime) }
-        let clearLastDeepSleepReason = await appApi.clearLastDeepSleepReason().catch(err => { console.log("clearLastDeepSleepReason",err) });
+        let clearLastDeepSleepReason = await appApi.clearLastDeepSleepReason().catch(err => { console.error("clearLastDeepSleepReason",err) });
         if (clearLastDeepSleepReason.success != true) { console.log("clearLastDeepSleepReason",clearLastDeepSleepReason) }
-        let clearSSID = await _wfApi.clearSSID().catch(err =>  { console.log("clearSSID",err) });
+        let clearSSID = await _wfApi.clearSSID().catch(err =>  { console.error("clearSSID",err) });
         if (clearSSID.success != true)  { console.log("clearSSID",clearSSID) }
-        let wifidisconnect = await _wfApi.disconnect().catch(err =>{ console.log("wifidisconnect",err) });
+        let wifidisconnect = await _wfApi.disconnect().catch(err =>{ console.error("wifidisconnect",err) });
         if (wifidisconnect.success != true) { console.log("wifidisconnect",wifidisconnect) }
+        await appApi.clearCache().catch(err => { console.error("clearCache error: ", err)})
         await appApi.reboot().then(result => { console.log('device rebooting' + JSON.stringify(result))})
     }
 

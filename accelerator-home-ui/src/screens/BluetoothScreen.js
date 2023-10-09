@@ -191,7 +191,6 @@ export default class BluetoothScreen extends Lightning.Component {
   }
 
   _focus() {
-
     this._setState('AddADevice')
     this._enable()
     if (this._bluetooth) {
@@ -206,7 +205,7 @@ export default class BluetoothScreen extends Lightning.Component {
   _handleBack() {
     if(!Router.isNavigating()){
       Router.navigate('settings')
-      }
+    }
   }
   /**
    * Function to be excuted when the Bluetooth screen is enabled.
@@ -226,7 +225,9 @@ export default class BluetoothScreen extends Lightning.Component {
    * Function to be executed when the Bluetooth screen is disabled from the screen.
    */
   _disable() {
-    Registry.clearInterval(this.scanTimer)
+    if (this.scanTimer) {
+      Registry.clearInterval(this.scanTimer)
+    }
     this._bt.stopScan()
   }
 
@@ -338,6 +339,7 @@ export default class BluetoothScreen extends Lightning.Component {
           } else return device
         }
       })
+      this._availableNetworks.tag('List').rollMax=this._otherList.length*90
       this._availableNetworks.h = this._otherList.length * 90
       this._availableNetworks.tag('List').h = this._otherList.length * 90
       this._availableNetworks.tag('List').items = this._otherList.map((item, index) => {
@@ -359,7 +361,7 @@ export default class BluetoothScreen extends Lightning.Component {
       this._bt.pair(this._availableNetworks.tag('List').element._item.deviceID).then(result => {
         let btName = this._availableNetworks.tag('List').element._item.name
         if (result.success) {
-          this.widgets.fail.notify({ title: btName, msg: 'Pairing Succesful' })
+          this.widgets.fail.notify({ title: btName, msg: 'Pairing Successful' })
           Router.focusWidget('Fail')
         } else {
           this.widgets.fail.notify({ title: btName, msg: 'Pairing Failed' })

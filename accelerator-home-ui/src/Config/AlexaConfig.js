@@ -72,11 +72,6 @@ export const AlexaLauncherKeyMap = {
         "callsign": "SmartScreen",
         "url": "",
     },
-    "amzn1.alexa-ask-target.app.92933": {
-        "name": "Vimeo",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.VimeoRelease",
-    },
     "amzn1.alexa-ask-target.app.96247": {
         "name": "The Weather Network",
         "callsign": "LightningApp",

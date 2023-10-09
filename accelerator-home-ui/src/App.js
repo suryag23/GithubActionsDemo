@@ -951,10 +951,13 @@ export default class App extends Router.App {
     voiceApi.activate().then(() => {
       voiceApi.voiceStatus().then(voiceStatusResp => {
         if (voiceStatusResp.ptt.status != "ready" || !voiceStatusResp.urlPtt.includes("avs://")) {
-          console.error("App voiceStatus says PTT/AVS not ready.");
+          console.error("App voiceStatus says PTT/AVS not ready, enabling it.");
           // TODO: Future -> add option for user to select which Voice service provider.
           // Then configure VoiceControl plugin for that end point.
           // TODO: voiceApi.configureVoice()
+          if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+            voiceApi.configureVoice({"enable":true});
+          }
         }
       });
       if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaAuthPending") {
@@ -1002,15 +1005,9 @@ export default class App extends Router.App {
               AlexaApi.get().enableSmartScreen();
             }
             if ((Router.getActiveHash() === "menu") && (Storage.get("applicationType") === "")) {
-              if(Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen") {
-                appApi.isConnectedToInternet(internet => {
-                  if (internet && !Router.isNavigating()) {
-                    console.log("Routing to Alexa login page")
-                    Router.navigate("AlexaLoginScreen")
-                  } else {
-                    console.log("No internet access; do not route to Alexa login page");
-                  }
-                });
+              if(Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen" && !Router.isNavigating()) {
+                console.log("Routing to Alexa login page")
+                Router.navigate("AlexaLoginScreen")
               }
             }
             console.log("Alexa Auth OTP is ", notification.xr_speech_avs.code)

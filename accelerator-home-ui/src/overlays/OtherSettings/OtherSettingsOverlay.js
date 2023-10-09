@@ -29,7 +29,7 @@
  /**
   * Class for Other Settings Screen.
   */
- 
+
  export default class OtherSettingsScreen extends Lightning.Component {
      static _template() {
          return {
@@ -229,7 +229,7 @@
                 type: AdvanceSettingsScreen,
                 visible: false
              },
-             
+
          }
      }
      _init() {
@@ -239,21 +239,21 @@
      $updateStandbyMode(standbyMode) {
          this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + standbyMode
      }
- 
+
      $sleepTimerText(text) {
          this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + text
      }
- 
+
      _focus() {
         this._setState('SleepTimer')
- 
+
          if (Storage.get('TimeoutInterval')) {
              this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + Storage.get('TimeoutInterval')
          }
          else {
              this.tag('SleepTimer.Title').text.text = Language.translate('Sleep Timer: ') + 'Off'
          }
- 
+
          this._appApi.getPreferredStandbyMode().then(result => {
              let currentStandbyMode = ""
              if (result.preferredStandbyMode == "LIGHT_SLEEP") {
@@ -265,18 +265,17 @@
          })
      }
 
-   hide() {
-    this.tag('OtherSettingsScreenContents').visible = false
-   
- }
+    hide() {
+        this.tag('OtherSettingsScreenContents').visible = false
+    }
 
- show() {
-    this.tag('OtherSettingsScreenContents').visible = true
-  }
- 
+    show() {
+        this.tag('OtherSettingsScreenContents').visible = true
+    }
+
      static _states() {
          return [
- 
+
              class SleepTimer extends this {
                  $enter() {
                      this.tag('SleepTimer')._focus()
@@ -295,7 +294,7 @@
                     this._setState("SleepTimerScreen")
                  }
              },
- 
+
              class RemoteControl extends this {
                  $enter() {
                      this.tag('RemoteControl')._focus()
@@ -310,7 +309,7 @@
                      this._setState('ScreenSaver')
                  }
                  _handleEnter() {
- 
+
                  }
              },
              class ScreenSaver extends this {
@@ -327,7 +326,7 @@
                      this._setState('EnergySaver')
                  }
                  _handleEnter() {
-                     // 
+                     //
                  }
              },
              class EnergySaver extends this {
@@ -347,7 +346,7 @@
                     this._setState("EnergySavingsScreen")
                  }
              },
- 
+
              class Language extends this {
                  $enter() {
                      this.tag('Language')._focus()

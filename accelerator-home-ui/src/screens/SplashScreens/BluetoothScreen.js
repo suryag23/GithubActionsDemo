@@ -22,6 +22,7 @@ import { CONFIG } from '../../Config/Config'
 import AppApi from '../../api/AppApi';
 import BluetoothApi from '../../api/BluetoothApi';
 import ThunderJS from 'ThunderJS'
+import RCApi from '../../api/RemoteControl';
 
 var appApi = new AppApi();
 var bluetoothApi = new BluetoothApi();
@@ -131,6 +132,10 @@ export default class BluetoothScreen extends Lightning.Component {
         }
     }
 
+    _active() {
+        this.timeout = 30;
+    }
+
     _PairingApis() {
         //bluetoothApi.btactivate().then(enableResult =>{
         //  console.log('1')
@@ -157,7 +162,9 @@ export default class BluetoothScreen extends Lightning.Component {
                                         //console.log("disable")
                                         bluetoothApi.deactivateBluetooth().then(deactivateBluetooth => {
                                             console.log("SplashBluetoothScreen DeactivatedBluetooth", deactivateBluetooth)
-                                            Router.navigate('splash/language')
+                                            if (Router.getActiveHash() === "splash/bluetooth"){
+                                                Router.navigate('splash/language')
+                                            }
                                         })
 
                                     })
@@ -185,91 +192,80 @@ export default class BluetoothScreen extends Lightning.Component {
         })
     }
 
-    async rcPairingApis() {
-        _thunder.on('org.rdk.RemoteControl', 'onStatus', notification => {
-            console.log("SplashBluetoothScreen async RemoteControl onStatus ", JSON.stringify(notification))
-            var rcuNotConnectedStartPairing = 1;
-            if (notification.status.remoteData != []) { // result.status.pairingState === "IDLE/SEARCHING/COMPLETED")
-                notification.status.remoteData.map(item =>{
-                    if(item.connected === true){
-                        this.tag('Info').text.text = `paired this device ${item.name}`
+    onStatusCB(cbData) {
+        console.log("BluetoothScreen cbData:", JSON.stringify(cbData));
+        // getStatus response has 'success' property; notification payload does not have that.
+        if ((cbData !== undefined) && (cbData.hasOwnProperty("success")?cbData.success:true)) {
+            if (cbData.status.remoteData.length) {
+                console.log("BluetoothScreen rcPairingApis RemoteData Length ", cbData.status.remoteData.length)
+                cbData.status.remoteData.map(item=>{
+                    this.tag('Info').text.text = `paired with device ${item.name}`
+                    // Do not clear this.RCTimeout if need to run this in background to reconnect on loss.
+                    // if (this.RCTimeout) {
+                    //     console.log("SplashBluetoothScreen clearTimeout(this.RCTimeout)");
+                    //     Registry.clearTimeout(this.RCTimeout)
+                    // }
+                    // To stop the display counter.
+                    if (Router.getActiveHash() === "splash/bluetooth") {
+                        if (this.timeInterval) {
+                            Registry.clearInterval(this.timeInterval)
+                        }
                         Registry.setTimeout(() => {
-                            if(Router.getActiveHash() === "splash/bluetooth"){
-                                Router.navigate('splash/language')
-                            }
+                            Router.navigate('splash/language')
                         }, 2000)
-                        rcuNotConnectedStartPairing = 0;
                     }
                 })
-            }
-            console.log("SplashBluetoothScreen async RemoteControl checking condition to kick start pairing")
-            if ((notification.status.remoteData === [] || rcuNotConnectedStartPairing) && (notification.status.pairingState != "SEARCHING")) {
-                appApi.activateAutoPairing()
-            }
-        })
-        var RCInterval = Registry.setInterval(()=>{
-            bluetoothApi.getNetStatus().then(result => {
-                if (result.success) {
-                    var rcuNotConnectedStartPairing = 1;
-                    console.log("SplashBluetoothScreen async RCInterval RemoteControl getNetStatus ", JSON.stringify(result))
-                    if (result.status.remoteData != []) {
-                        result.status.remoteData.map(item =>{
-                            if(item.connected === true){
-                                console.log("SplashBluetoothScreen async RCInterval got connected RCU hence clearing ", RCInterval)
-                                Registry.clearInterval(RCInterval)
-                                rcuNotConnectedStartPairing = 0;
-                            }
-                        })
-                    }
-                    if ((result.status.remoteData === [] && (result.status.pairingState != "SEARCHING")) || rcuNotConnectedStartPairing) {//|| result.status.pairingState === "SEARCHING" ){
-                        console.log("SplashBluetoothScreen async RCInterval RemoteControl getNetStatus activateAutoPairing 4")
-                        appApi.activateAutoPairing().then(status => {
-                            console.log("Invoked activateAutoPairing() and got ", status)
-                            Registry.clearInterval(RCInterval) // org.rdk.RemoteControl 'onStatus' notification will do the rest.
-                        })
-                    }
+            } else {
+                switch(cbData.status.pairingState) {
+                    case "IDLE":
+                    case "FAILED":
+                        RCApi.get().startPairing(30);
+                        break;
                 }
-            })
-        }, 30000, true);
+            }
+        }
+    }
+
+    async rcPairingFlow(activatePlugin = false) {
+        if (activatePlugin) {
+            await RCApi.get().activate().catch(err => {
+                console.error("SplashBluetoothScreen org.rdk.RemoteControl activate error:", err)
+                return;
+            });
+        }
+        _thunder.on('org.rdk.RemoteControl', 'onStatus', data => { this.onStatusCB(data) });
+        this.RCTimeout = Registry.setTimeout(()=>{
+            RCApi.get().getNetStatus().then(result => {this.onStatusCB(result);});
+        }, 5, true);
     }
 
     _init() {
-        appApi.getPluginStatus('org.rdk.RemoteControl')
-            .then(result => {
-                if (result[0].state != "activated") {
-                    bluetoothApi.remotepluginactivate()
-                    _thunder.on('Controller', 'statechange', notification => {
-                        console.log("SplashBluetoothScreen init RemoteControlController statechange Notification : " + JSON.stringify(notification))
-                        if (notification.state === "Activated") {
-                            console.log("SplashBluetoothScreen init rcPairingApis")
-                            this.rcPairingApis();
-                        }
-                    })
-                }
-                else {
-                    console.log("SplashBluetoothScreen init RemoteControl already activated")
-                    this.rcPairingApis();
-                }
-            })
-            .catch(err => {
-                console.log('SplashBluetoothScreen init remote autoPair plugin error:', JSON.stringify(err))
-                appApi.getPluginStatusParams('org.rdk.Bluetooth').then(pluginresult => {
-                    console.log("SplashBluetoothScreen init status", pluginresult[1])
-                    if (pluginresult[1] === 'deactivated') {
-                        bluetoothApi.btactivate().then(result => {
-                            console.log("SplashBluetoothScreen init pairing bluetooth")
-                            this._PairingApis()
-                        })
-                    }
-                    else {
-                        console.log("SplashBluetoothScreen init status not deactivated")
+        appApi.getPluginStatus('org.rdk.RemoteControl').then(result => {
+            if (result[0].state != "activated") {
+                console.log("SplashBluetoothScreen init RemoteControl activate.")
+                this.rcPairingFlow(true);
+            } else {
+                console.log("SplashBluetoothScreen init RemoteControl already activated.")
+                this.rcPairingFlow();
+            }
+        }).catch(err => {
+            console.log('SplashBluetoothScreen getPluginStatus org.rdk.RemoteControl error:', JSON.stringify(err))
+            appApi.getPluginStatusParams('org.rdk.Bluetooth').then(pluginresult => {
+                console.log("SplashBluetoothScreen getPluginStatusParams org.rdk.Bluetooth:", pluginresult[1])
+                if (pluginresult[1] === 'deactivated') {
+                    bluetoothApi.btactivate().then(result => {
+                        console.log("SplashBluetoothScreen init pairing bluetooth")
                         this._PairingApis()
-                    }
-                })
+                    })
+                } else {
+                    console.log("SplashBluetoothScreen init status not deactivated")
+                    this._PairingApis()
+                }
             })
+        })
     }
 
-    _focus() {
+    _active() {
         this.initTimer()
     }
 
@@ -277,31 +273,22 @@ export default class BluetoothScreen extends Lightning.Component {
         return 'left'
     }
 
-    _unfocus() {
+    initTimer() {
+        this.timeInterval = Registry.setInterval(() => {
+            if (this.timeout > 0) { --this.timeout }
+            else { this.timeout = 30; }
+            this.tag('Timer').text.text = this.timeout >= 10 ?`0:${this.timeout}`:`0:0${this.timeout}`
+            if (this.timeout === 0) this._setState('StartPairing')
+        }, 1000)
+    }
+
+    _inactive() {
         if (this.timeInterval) {
             Registry.clearInterval(this.timeInterval)
         }
-        //this.tag('Timer').text.text = '0:10'
-    }
-
-    getTimeRemaining(endtime) {
-        const total = Date.parse(endtime) - Date.parse(new Date())
-        const seconds = Math.floor((total / 1000) % 60)
-        return { total, seconds }
-    }
-
-    initTimer() {
-        const endTime = new Date(Date.parse(new Date()) + 30000)
-        const timerText = this.tag('Timer')
-        this.timeInterval = Registry.setInterval(() => {
-            const time = this.getTimeRemaining(endTime)
-            timerText.text.text = time.seconds >= 10 ?`0:${time.seconds}`:`0:0${time.seconds}`
-            if (time.total <= 0) {
-                Registry.clearInterval(this.timeInterval)
-                this._setState('StartPairing')
-                //Router.navigate('splash/language')
-            }
-        }, 1000)
+        if (this.RCTimeout) {
+            Registry.clearTimeout(this.RCTimeout)
+        }
     }
 
     static _states() {
@@ -375,7 +362,6 @@ export default class BluetoothScreen extends Lightning.Component {
                 _handleEnter() {
                     console.log('SplashBluetoothScreen states Start Pairing')
                     Router.navigate('splash/language')
-                    //this.rcPairingApis();
                 }
                 $exit() {
                     this.tag('Buttons.StartPairing').alpha = 0.5
