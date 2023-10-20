@@ -27,7 +27,7 @@ const config = {
     port: 9998,
     default: 1,
   };
-  
+
   var thunder = ThunderJS(config);
 export default class SreenSaverScreen extends Lightning.Component {
 
@@ -112,7 +112,7 @@ export default class SreenSaverScreen extends Lightning.Component {
             { value: '5 Minutes', tick: false },
             { value: '15 Minutes', tick: false },
             { value: '30 Minutes', tick: false },
-            { value: '60 Minutes', tick: false }   
+            { value: '60 Minutes', tick: false }
         ]
         //let timeoutInterval = Storage.get('TimeoutInterval');
         if (!FocusedValue) {
@@ -136,20 +136,21 @@ export default class SreenSaverScreen extends Lightning.Component {
 
     _handleBack() {
         if(!Router.isNavigating()){
-        Router.navigate('settings/other')
+            Router.navigate('settings/other')
         }
     }
 
     setTimerValue(time){
         if(time === "Off"){
-         appApi.enabledisableinactivityReporting(false).then(resp => console.log(resp))
+            appApi.enabledisableinactivityReporting(false).then(resp => console.log(resp))
+            Storage.remove('ScreenSaverTimeoutInterval')
         }
         else{
             // 10
             appApi.enabledisableinactivityReporting(true).then(resp => {
                  appApi.setInactivityInterval(parseInt(time)).then(res => {
                     console.log("setinactivityres", res)
-                     Storage.set('TimeoutInterval1', time)
+                     Storage.set('ScreenSaverTimeoutInterval', time)
                      console.log(`successfully set the timer to ${time} minutes`)
                      thunder.on('org.rdk.RDKShell', 'onUserInactivity', notification => {
                         console.log("UserInactivityStatusNotification: ", JSON.stringify(notification))
@@ -164,10 +165,7 @@ export default class SreenSaverScreen extends Lightning.Component {
                      console.error(`error while setting the timer`)
                    });
                 })
-                 
-             
-            }  
-        
+            }
     }
 
     static _states() {

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning } from "@lightningjs/sdk";
+import { Language, Lightning } from "@lightningjs/sdk";
 import { CONFIG } from '../Config/Config'
 
 export default class WifiFailScreen extends Lightning.Component {
@@ -37,7 +37,7 @@ export default class WifiFailScreen extends Lightning.Component {
                 y: 0,
                 mountX: 0.5,
                 text: {
-                    text: "Wifi Error",
+                    text: Language.translate("Wifi Error"),
                     fontFace: CONFIG.language.font,
                     fontSize: 40,
                     textColor: CONFIG.theme.hex,
@@ -86,5 +86,4 @@ export default class WifiFailScreen extends Lightning.Component {
     _handleBack() {
         this.fireAncestors("$removeFailScreen")
     }
-
 }

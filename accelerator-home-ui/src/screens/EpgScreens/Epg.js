@@ -65,7 +65,7 @@ export default class Epg extends Lightning.Component {
           h: 81,
           mountY: 0.5,
           text: {
-            text: 'Today',
+            text: Language.translate('Today'),
             fontFace: CONFIG.language.font,
             fontStyle: 'normal',
             fontSize: 21,
@@ -83,7 +83,7 @@ export default class Epg extends Lightning.Component {
           h: 81,
           mountY: 0.5,
           text: {
-            text: 'SHOW',
+            text: Language.translate('SHOW'),
             fontFace: CONFIG.language.font,
             fontStyle: 'bold',
             fontSize: 21,
@@ -101,7 +101,7 @@ export default class Epg extends Lightning.Component {
           h: 81,
           mountY: 0.5,
           text: {
-            text: 'SHOW-TIMINGS',
+            text: Language.translate('SHOW-TIMINGS'),
             fontFace: CONFIG.language.font,
             fontStyle: 'normal',
             fontSize: 21,
@@ -119,7 +119,7 @@ export default class Epg extends Lightning.Component {
           h: 81,
           mountY: 0.5,
           text: {
-            text: 'CHANNEL-NAME',
+            text: Language.translate('CHANNEL-NAME'),
             fontFace: CONFIG.language.font,
             fontStyle: 'normal',
             fontSize: 21,
@@ -137,7 +137,7 @@ export default class Epg extends Lightning.Component {
           h: 81,
           mountY: 0.5,
           text: {
-            text: 'SHOW-DETAILS',
+            text: Language.translate('SHOW-DETAILS'),
             fontFace: CONFIG.language.font,
             fontStyle: 'normal',
             fontSize: 21,
@@ -231,7 +231,9 @@ export default class Epg extends Lightning.Component {
 
 
   _handleBack() {
-    Router.navigate("menu")
+    if (!Router.isNavigating()) {
+      Router.navigate("menu")
+    }
   }
 
   getEventURI(events){
@@ -840,7 +842,7 @@ export default class Epg extends Lightning.Component {
           let events = await dtvApi.getEvents(channel.dvburi)
            eventUri=this.getEventURI(events);
           }
-          
+
           setTimeout(function () {
             let today = new Date()
             today.setHours(0)
@@ -850,11 +852,11 @@ export default class Epg extends Lightning.Component {
             let t = today.getTime()
             let day = 24 * 60 * 60 * 1000
             if(starttime==0){
-              daylabel.text.text = 'TODAY'
+              daylabel.text.text = Language.translate('TODAY')
              }else if(starttime>t){
               t = starttime - t
               if (t < day) {
-                daylabel.text.text = 'TODAY'
+                daylabel.text.text = Language.translate('TODAY')
               } else{
                 let cellStartTime = new Date(starttime)
                 daylabel.text.text = cellStartTime.getDate() +'-' + (cellStartTime.getMonth() + 1) + '-' +cellStartTime.getFullYear()
@@ -862,15 +864,15 @@ export default class Epg extends Lightning.Component {
              }else{
               t = t-starttime
               if (t < day) {
-                daylabel.text.text = 'TODAY'
+                daylabel.text.text = Language.translate('TODAY')
               } else {
                 if(dTriangle.__active&&eventUri===null){
-                  daylabel.text.text = 'TODAY'
+                  daylabel.text.text = Language.translate('TODAY')
                 } else{
                 let cellStartTime = new Date(starttime)
                 daylabel.text.text = cellStartTime.getDate() +'-' + (cellStartTime.getMonth() + 1) + '-' +cellStartTime.getFullYear()
               }
-            } 
+            }
              }
           }, 0)
         }

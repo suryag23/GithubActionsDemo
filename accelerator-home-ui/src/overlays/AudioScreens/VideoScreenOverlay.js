@@ -206,7 +206,7 @@ export default class VideoScreen extends Lightning.Component {
     this._setState('Resolution')
   }
 
- 
+
   hide() {
     this.tag('VideoScreenContents').visible = false
   }
@@ -229,7 +229,7 @@ export default class VideoScreen extends Lightning.Component {
         _handleEnter() {
           this._setState("ResolutionOverlay")
         }
-       
+
 
       },
       class HDR extends this{
@@ -248,7 +248,7 @@ export default class VideoScreen extends Lightning.Component {
         _handleEnter() {
          //
         }
-       
+
       },
       class MatchContent extends this{
         $enter() {
@@ -295,7 +295,7 @@ export default class VideoScreen extends Lightning.Component {
           this._setState('OutputFormat')
         }
         _handleDown() {
-          // this._setState('HDCP') 
+          // this._setState('HDCP')
         }
         _handleEnter() {
           //
@@ -314,7 +314,7 @@ export default class VideoScreen extends Lightning.Component {
         _handleEnter() {
           //
         }
-       
+
       },
       class ResolutionOverlay extends this {
         $enter() {

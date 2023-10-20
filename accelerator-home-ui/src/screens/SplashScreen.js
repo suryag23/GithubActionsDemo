@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils, Router } from '@lightningjs/sdk'
+import { Lightning, Utils, Router, Language } from '@lightningjs/sdk'
 import BluetoothApi from './../api/BluetoothApi'
 import HomeApi from '../api/HomeApi'
 import AppApi from '../api/AppApi'
@@ -54,7 +54,7 @@ export default class SplashScreen extends Lightning.Component {
             fontFace: CONFIG.language.font,
             fontSize: 55,
             textAlign: 'center',
-            text: 'Pair Your Remote',
+            text: Language.translate('Pair your remote control'),
             textColor: 0xffffffff,
           },
         },
@@ -67,7 +67,7 @@ export default class SplashScreen extends Lightning.Component {
             fontSize: 35,
             textAlign: 'center',
             maxLines: 2,
-            text: 'Please put the remote in pairing mode, scanning will start in a minute',
+            text: Language.translate("Put the remote control in pairing mode; scan will start in one moment"),
             textColor: 0xffe5e5e5,
           },
         },
@@ -95,7 +95,7 @@ export default class SplashScreen extends Lightning.Component {
             fontFace: CONFIG.language.font,
             fontSize: 55,
             textAlign: 'center',
-            text: "You're not connected to the internet",
+            text: Language.translate("You're not connected to the internet"),
             textColor: 0xffffffff,
           },
         },
@@ -108,7 +108,7 @@ export default class SplashScreen extends Lightning.Component {
             textAlign: 'center',
             maxLines: 2,
             text:
-              'Please connect to either a wired connection or a WiFi Network, For WiFi network press home and then go to settings',
+              Language.translate('Please connect to a wired network or a WiFi Network; press Home and then go to Settings'),
             wordWrapWidth: 1400,
             textColor: 0xffe5e5e5,
           },
@@ -128,7 +128,7 @@ export default class SplashScreen extends Lightning.Component {
             fontFace: CONFIG.language.font,
             fontSize: 55,
             textAlign: 'center',
-            text: 'Choose a Service',
+            text: Language.translate('Choose a Service'),
             textColor: 0xffffffff,
           },
         },
@@ -310,7 +310,7 @@ export default class SplashScreen extends Lightning.Component {
           let timer = setTimeout(() => {
             if (!connected)
               this.tag('AutoRemotePair.Description').text =
-                'Please put the remote in pairing mode, No Bluetooth device found'
+                Language.translate('Please put the remote in pairing mode')+", "+ Language.translate('No device found')
             setTimeout(() => {
               if (this.hasInternet == false) this._setState('ConnectivityScreen')
               else Router.navigate('home', { path: 'settings' })
@@ -318,7 +318,7 @@ export default class SplashScreen extends Lightning.Component {
           }, 10000)
           let error = () => {
             this.tag('AutoRemotePair.Description').text =
-              'Please put the remote in pairing mode, , No Bluetooth device found'
+              Language.translate('Please put the remote in pairing mode')+", "+Language.translate('No device found')
             setTimeout(() => {
               if (this.hasInternet == false) this._setState('ConnectivityScreen')
               else Router.navigate('home', { path: 'settings' })
@@ -327,7 +327,7 @@ export default class SplashScreen extends Lightning.Component {
           myAnimation.start()
           setTimeout(() => {
             this.tag('AutoRemotePair.Description').text =
-              'Please put the remote in pairing mode, Scanning...'
+            Language.translate('Please put the remote in pairing mode')+", "+ Language.translate("Scanning")+'...'
             const rotateAnimation = this.tag('AutoRemotePair.LoadingIcon').animation({
               duration: 1,
               repeat: -1,
@@ -351,7 +351,7 @@ export default class SplashScreen extends Lightning.Component {
             let pairedDevices = this._bt.pairedDevices
             if (pairedDevices.length > 0) {
               this._bt.connect(pairedDevices[0].deviceID, pairedDevices[0].deviceType)
-              this.tag('AutoRemotePair.Description').text = pairedDevices[0].deviceType + 'remote is paired'
+              this.tag('AutoRemotePair.Description').text = pairedDevices[0].deviceType + Language.translate('remote is paired')
             } else {
               setTimeout(() => {
                 this._bt.getPairedDevices().then(() => {
@@ -368,7 +368,7 @@ export default class SplashScreen extends Lightning.Component {
           this._bt.registerEvent('onConnectionChange', () => {
             let connectedDevices = this._bt.connectedDevices
             if (connectedDevices.length > 0) {
-              this.tag('AutoRemotePair.Description').text = 'Remote is Connected to ' + connectedDevices[0].name
+              this.tag('AutoRemotePair.Description').text = Language.translate('Remote is Connected to ') + connectedDevices[0].name
               connected = true
               clearTimeout(timer)
               setTimeout(() => {
@@ -381,7 +381,7 @@ export default class SplashScreen extends Lightning.Component {
                   let connectedDevices = this._bt.connectedDevices
                   if (connectedDevices.length > 0) {
                     this.tag('AutoRemotePair.Description').text =
-                      'Please put the remote in pairing mode, Connected to ' +
+                      Language.translate('Connected to ') +
                       connectedDevices[0].name
                     connected = true
                     clearTimeout(timer)

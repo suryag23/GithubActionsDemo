@@ -1,10 +1,10 @@
-import { Lightning, Utils } from "@lightningjs/sdk";
+import { Language, Lightning, Utils } from "@lightningjs/sdk";
 import AppApi from "../../api/AppApi";
 import { CONFIG } from "../../Config/Config";
 import TimeOverlayItems from "../../items/TimeOverlayItems";
 import TimeZoneOverlayItem from "../../items/TimeZoneOverlayItem";
 
-export default class TimeZone extends Lightning.Component { 
+export default class TimeZone extends Lightning.Component {
     /**
      * @param {object} args
      */
@@ -39,7 +39,7 @@ export default class TimeZone extends Lightning.Component {
                     mountX: 0.5,
                     MSG: {
                         text: {
-                            text: 'TimeZone API not present',
+                            text: Language.translate('Not supported'),
                             fontFace: CONFIG.language.font,
                             fontSize: 40,
                             textColor: 0xffffffff

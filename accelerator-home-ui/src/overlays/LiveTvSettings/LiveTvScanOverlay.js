@@ -21,7 +21,7 @@
  import SettingsMainItem from '../../items/SettingsMainItem'
  import { CONFIG } from '../../Config/Config'
  import DvbSScan from './DvbSScan'
- 
+
  /**
   * Class for Live TV Scan screen.
   */
@@ -111,7 +111,7 @@
             }
         }
     }
- 
+
    _init() {
      this._setState('SScan')
    }
@@ -126,9 +126,9 @@
     show() {
         this.tag("LiveTVScanScreenContents").visible = true;
     }
- 
-  
- 
+
+
+
    static _states() {
     return [
         class TScan extends this{
@@ -174,12 +174,12 @@
             $enter() {
                 this.hide()
                 this.tag('DvbSScan').visible = true
-                this.fireAncestors('$updatePageTitle', 'Settings / Live TV / Scan / DVB-S Scan')
+                this.fireAncestors('$updatePageTitle', Language.translate('Settings / Live TV / Scan / DVB-S Scan'))
             }
             $exit() {
                 this.show()
                 this.tag('DvbSScan').visible = false
-                this.fireAncestors('$updatePageTitle', 'Settings / Live TV / Scan')
+                this.fireAncestors('$updatePageTitle', Language.translate('Settings / Live TV / Scan'))
             }
             _getFocused() {
                 return this.tag('DvbSScan')
@@ -191,4 +191,3 @@
     ]
    }
  }
- 

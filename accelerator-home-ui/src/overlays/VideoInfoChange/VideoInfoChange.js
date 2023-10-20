@@ -35,7 +35,6 @@ export default class VideoInfoChange extends Lightning.Component {
     }
 
     clear(){
-    
         this.patch({
             smooth: {
               y: -340

@@ -123,9 +123,9 @@ export default class BluetoothPairingScreen extends Lightning.Component {
         this._setState('ConnectDisconnect')
         this.tag('Title').text = item.name
         if (item.connected) {
-            this.tag('BluetoothPair.Buttons.ConnectDisconnect.Title').text = 'Disconnect'
+            this.tag('BluetoothPair.Buttons.ConnectDisconnect.Title').text = Language.translate('Disconnect')
         } else {
-            this.tag('BluetoothPair.Buttons.ConnectDisconnect.Title').text = 'Connect'
+            this.tag('BluetoothPair.Buttons.ConnectDisconnect.Title').text = Language.translate('Connect')
         }
     }
 

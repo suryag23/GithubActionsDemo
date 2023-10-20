@@ -109,11 +109,11 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
             if (notification.newInterfaceName === "ETHERNET") {
                 this.loadingAnimation.stop()
                 this.tag('Ethernet.Loader').visible = false
-                this.tag('Ethernet.Title').text.text = 'Ethernet: Connected'
+                this.tag('Ethernet.Title').text.text = 'Ethernet: ' + Language.translate("Connected")
             } else if (notification.newInterfaceName === "" && notification.oldInterfaceName === "WIFI") {
                 this.loadingAnimation.stop()
                 this.tag('Ethernet.Loader').visible = false
-                this.tag('Ethernet.Title').text.text = 'Ethernet: Error, Retry!'
+                this.tag('Ethernet.Title').text.text = 'Ethernet: '+Language.translate('Error')+', '+Language.translate('Retry')+'!'
             } else if (notification.newInterfaceName === "WIFI") {
                 this.loadingAnimation.stop()
                 this.tag('Ethernet.Loader').visible = false

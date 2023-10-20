@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Registry, Router, Utils, Storage } from '@lightningjs/sdk'
+import { Lightning, Registry, Router, Utils, Storage, Language } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import ThunderJS from 'ThunderJS'
 import AlexaApi from '../api/AlexaApi'
@@ -43,7 +43,7 @@ export default class CodeScreen extends Lightning.Component {
                         y: 30,
                         mount: 0.5,
                         text: {
-                            text: "Back",
+                            text: Language.translate("Back"),
                             fontFace: CONFIG.language.font,
                             fontSize: 22,
                             textColor: 0xFF000000,
@@ -83,7 +83,7 @@ export default class CodeScreen extends Lightning.Component {
                         y: 500,
                         mount: 0.5,
                         text: {
-                            text: "Loading Code ...",
+                            text: Language.translate("Loading Code") +"...",
                             fontFace: CONFIG.language.font,
                             fontSize: 32,
                             textColor: 0xFF00CAFF,
@@ -109,15 +109,15 @@ export default class CodeScreen extends Lightning.Component {
                     console.log("VoiceControl.onServerMessage Notification: ", notification)
                     this.VoiceControlData = notification
                     if (notification.xr_speech_avs.url != undefined) {
-                        this.tag('Description').text.text = `Go to ${notification.xr_speech_avs.url}, enter this code`
+                        this.tag('Description').text.text = Language.translate('Enter the code at') + ` ${notification.xr_speech_avs.url}`
                     } else {
-                        this.tag('Description').text.text = `Fetching authorization code`
+                        this.tag('Description').text.text = Language.translate('Fetching authorization code')
                     }
                     this.tag("Description2").visible = true
                     if (notification.xr_speech_avs.code != undefined) {
                         this.tag("Description2").text.text = `${notification.xr_speech_avs.code}`
                     } else {
-                        this.tag("Description2").text.text = `Please wait...`
+                        this.tag("Description2").text.text = Language.translate('Please wait')
                     }
                     if (notification.xr_speech_avs.state === "refreshed") {
                         // DAB Demo Work Around - show Alexa Error screens only after Auth is succeeded.

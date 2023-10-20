@@ -16,14 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning } from '@lightningjs/sdk'
+ import { Language, Lightning } from '@lightningjs/sdk'
  import { CONFIG } from '../../Config/Config'
  import ConfirmAndCancel from '../../items/ConfirmAndCancel'
  import PasswordSwitch from '../../screens/PasswordSwitch'
  import { Keyboard } from '../../ui-components/index'
  import { KEYBOARD_FORMATS } from '../../ui-components/components/Keyboard'
  import WifiApi from '../../api/WifiApi'
- 
+
  export default class WifiPairingScreen extends Lightning.Component {
    static _template() {
      return {
@@ -44,7 +44,7 @@
            w: 300,
            h: 75,
            zIndex: 2,
-           text: { text: 'Password: ', fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
+           text: { text: Language.translate("Password")+": ", fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
          },
          Pwd: {
            x: 437,
@@ -66,7 +66,7 @@
            zIndex: 2,
            texture: Lightning.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false)
          },
- 
+
          PasswrdSwitch: {
            h: 45,
            w: 66.9,
@@ -77,12 +77,12 @@
            mount: 0.5,
          },
          ShowPassword: {
-           x: 1398,
+           x: 1390,
            y: 240,
            w: 300,
            h: 75,
            zIndex: 2,
-           text: { text: 'Show Password', fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
+           text: { text: Language.translate('Show Password'), fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
          },
          List: {
            x: 417,
@@ -108,15 +108,15 @@
            formats: KEYBOARD_FORMATS.qwerty
          }
        },
- 
- 
+
+
      }
    }
- 
+
    _updateText(txt) {
      this.tag("Pwd").text.text = txt;
    }
- 
+
    item(item) {
      this.star = "";
      this.passwd = "";
@@ -129,7 +129,7 @@
      } else {
        options = ['Connect', 'Cancel']
      }
- 
+
      this.tag('List').items = options.map((item, index) => {
        return {
          ref: item,
@@ -142,24 +142,24 @@
      })
      this._setState('Pair')
    }
- 
+
    _focus() {
      this.hidePasswd = true;
      this._setState('Pair')
      this.item(this.fireAncestors("$PairingnetworkParams"))
-    
+
    }
    _unfocus() {
- 
+
    }
- 
+
    _init() {
      this.star = "";
      this.passwd = "";
      this.isOn = false;
      this._wifi = new WifiApi()
    }
- 
+
    pressEnter(option) {
      if (option === 'Cancel') {
       this.fireAncestors("$navigateBack")
@@ -196,10 +196,10 @@
        })
        this.fireAncestors("$navigateBack")
      })
- 
+
    }
- 
- 
+
+
    static _states() {
      return [
        class Password extends this {
@@ -207,11 +207,11 @@
            this.shifter = false;
            this.capsLock = false;
          }
- 
+
          _getFocused() {
            return this.tag("KeyBoard")
          }
- 
+
          $onSoftKey({ key }) {
            if (key === 'Done') {
              this.startConnect(this.passwd)
@@ -234,7 +234,7 @@
              this.passwd += key
              this._updateText(this.hidePasswd ? this.star : this.passwd)
            }
- 
+
          }
          _handleUp() {
            this._setState("Pair")
@@ -268,7 +268,7 @@
              this.pressEnter(this.tag('List').element.ref)
            }
          }
- 
+
        },
        class PasswordSwitchState extends this{
          $enter() {
@@ -280,7 +280,7 @@
          _getFocused() {
            return this.tag('PasswrdSwitch');
          }
- 
+
          $handleEnter(bool) {
            if (bool) {
              this._updateText(this.passwd)
@@ -292,7 +292,7 @@
            }
            this.isOn = bool;
          }
- 
+
          $exit() {
            this.tag("PasswordBox").texture = Lightning.Tools.getRoundRect(1279, 88, 0, 3, 0xffffffff, false)
          }
@@ -300,4 +300,3 @@
      ]
    }
  }
- 

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils } from '@lightningjs/sdk'
+import { Language, Lightning, Utils } from '@lightningjs/sdk'
 import SettingsMainItem from '../../items/SettingsMainItem'
 import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
@@ -38,7 +38,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                         y: 45,
                         mountY: 0.5,
                         text: {
-                            text: 'Pairing Status: ',
+                            text: Language.translate('Pairing Status')+": ",
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             fontSize: 25,
@@ -62,7 +62,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                         y: 45,
                         mountY: 0.5,
                         text: {
-                            text: 'Firmware Version: ',
+                            text: Language.translate('Firmware version')+": ",
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             fontSize: 25,
@@ -86,7 +86,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                         y: 45,
                         mountY: 0.5,
                         text: {
-                            text: 'Test Microphone',
+                            text: Language.translate('Test Microphone'),
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             fontSize: 25,
@@ -109,7 +109,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                         y: 45,
                         mountY: 0.5,
                         text: {
-                            text: 'Battery Health: ',
+                            text: Language.translate('Battery percent')+': ',
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             fontSize: 25,
@@ -120,7 +120,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                         y: 45 + 35,
                         mountY: 0.5,
                         text: {
-                            text: 'Signal Strength: ',
+                            text: Language.translate('Signal Strength: '),
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             fontSize: 25,
@@ -131,7 +131,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                         y: 45 + 35 + 35,
                         mountY: 0.5,
                         text: {
-                            text: 'Voice Capable: ',
+                            text: Language.translate('Voice Capable')+': ',
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             fontSize: 25,
@@ -141,7 +141,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                 },
             },
             PairingStatusScreen: {
-                // 
+                //
             },
         }
     }
@@ -172,7 +172,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                     this._setState('FirmwareVersion')
                 }
                 _handleEnter() {
-                    // 
+                    //
                 }
             },
             class FirmwareVersion extends this {
@@ -189,7 +189,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                     this._setState('TestMicrophone')
                 }
                 _handleEnter() {
-                    // 
+                    //
                 }
             },
             class TestMicrophone extends this {
@@ -203,7 +203,7 @@ export default class RemoteControlScreen extends Lightning.Component {
                     this._setState('FirmwareVersion')
                 }
                 _handleEnter() {
-                    // 
+                    //
                 }
             },
         ]

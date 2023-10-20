@@ -23,14 +23,14 @@
  import { CONFIG } from "../../Config/Config";
  import AppApi from "../../api/AppApi";
  import HdmiOutputScreen from './HdmiOutputScreen';
- 
+
  /**s
   * Class for Audio screen.
   */
- 
+
  export default class AudioScreen extends Lightning.Component {
    static _template() {
-     return {       
+     return {
        AudioScreenOverlay: {
          x: 200,
          y: 275,
@@ -108,7 +108,7 @@
              src: Utils.asset('images/settings/Arrow.png'),
            },
          },
- 
+
          AudioLanguage: {
            y: 270,
            alpha: 0.3,
@@ -134,7 +134,7 @@
              src: Utils.asset('images/settings/Arrow.png'),
            },
          },
- 
+
          NavigationFeedback: {
            y: 360,
            alpha: 0.3,
@@ -160,7 +160,7 @@
              src: Utils.asset('images/settings/ToggleOnWhite.png'),
            },
          },
- 
+
          Bluetooth: {
            alpha: 0.3,
            y: 450,
@@ -186,21 +186,19 @@
              src: Utils.asset('images/settings/Arrow.png'),
            },
          },
-         
        },
        HdmiOutputScreen:{
         type: HdmiOutputScreen,
         visible: false,
        },
-     
     }
    }
- 
+
    _init() {
      this.appApi = new AppApi();
      this._setState('OutputMode')
    }
- 
+
    _focus() {
     this._setState('OutputMode')
      this.appApi.getSoundMode()
@@ -208,15 +206,14 @@
          this.tag('OutputMode.Title').text.text = Language.translate('Output Mode: ') + result.soundMode
        })
    }
-  
- 
+
    hide() {
      this.tag('AudioScreenOverlay').visible = false
    }
    show() {
      this.tag('AudioScreenOverlay').visible = true
    }
- 
+
    static _states() {
      return [
        class AudioOutput extends this{
@@ -232,7 +229,7 @@
          _handleEnter() {
           this._setState('HdmiOutputScreen')
          }
- 
+
        },
        class OutputMode extends this{
          $enter() {
@@ -251,7 +248,7 @@
           console.log("hdmioutputscreen")
           this._setState('HdmiOutputScreen')
          }
-         
+
        },
        class DynamicRange extends this{
          $enter() {
@@ -272,8 +269,8 @@
             * 1 - get DRC Mode which doesnot return a drc mode and the success value is mostly false
             * 2- set Volume - able to set the value to 100
             * 3- get Volume - able to get the volume successfully as well
-            * 4- 
-            * 
+            * 4-
+            *
             */
            //console.log(`Enter input was given to dynamic range ... `);
            // gets the drc mode
@@ -281,7 +278,7 @@
            }).catch(err => {
              console.log(err)
            })
- 
+
            this.appApi.setVolumeLevel(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0"), 100).then(res => {
              this.appApi.getVolumeLevel().catch(err => {
                console.log(err)
@@ -289,7 +286,7 @@
            }).catch(err => {
              console.log(err)
            });
- 
+
            this.appApi.getConnectedAudioPorts().then(res => {
            }).catch(err => {
              console.log(err)
@@ -299,23 +296,23 @@
            }).catch(err => {
              console.log(err)
            })
- 
+
            this.appApi.getSupportedAudioPorts().catch(err => {
              console.log(`Error while getting the supported Audio ports ie. ${err}`);
            });
- 
+
            // set enable Audio POrt
            this.appApi.setEnableAudioPort(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(res => {
- 
+
              this.appApi.getEnableAudioPort(((Storage.get("deviceType")=="tv")?"SPEAKER0":"HDMI0")).then(res => {
- 
+
              }).catch(err => {
                console.log(err)
              })
            }).catch(err => {
              console.log(err)
            });
- 
+
            // set zoom setting ,possible values : FULL, NONE, Letterbox 16x9, Letterbox 14x9, CCO, PanScan, Letterbox 2.21 on 4x3, Letterbox 2.21 on 16x9, Platform, Zoom 16x9, Pillarbox 4x3, Widescreen 4x3
            this.appApi.setZoomSetting("FULL").then(res => {
              this.appApi.getZoomSetting().then(res => {
@@ -375,10 +372,7 @@
           console.log("hdmioutputscreenbackHDMI")
           this._setState("OutputMode")
         }
-       
       }
      ]
- 
    }
  }
- 

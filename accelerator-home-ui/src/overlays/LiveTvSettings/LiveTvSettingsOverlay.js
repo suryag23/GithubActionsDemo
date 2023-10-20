@@ -168,12 +168,12 @@
           $enter() {
               this.hide()
               this.tag('LiveTvScanOverlay').visible = true
-              this.fireAncestors('$updatePageTitle', 'Settings / Live TV / Scan')
+              this.fireAncestors('$updatePageTitle', Language.translate('Settings / Live TV / Scan'))
           }
           $exit() {
               this.show()
               this.tag('LiveTvScanOverlay').visible = false
-              this.fireAncestors('$updatePageTitle', 'Settings / Live TV ')
+              this.fireAncestors('$updatePageTitle', Language.translate('Settings / Live TV'))
           }
           _getFocused() {
               return this.tag('LiveTvScanOverlay')

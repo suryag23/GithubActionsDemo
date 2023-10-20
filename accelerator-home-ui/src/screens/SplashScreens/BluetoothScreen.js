@@ -48,7 +48,7 @@ export default class BluetoothScreen extends Lightning.Component {
                     y: 0,
                     mountX: 0.5,
                     text: {
-                        text: "Pairing Your Remote",
+                        text: Language.translate("Pair your remote control"),
                         fontFace: CONFIG.language.font,
                         fontSize: 40,
                         textColor: CONFIG.theme.hex,
@@ -63,7 +63,7 @@ export default class BluetoothScreen extends Lightning.Component {
                     y: 135,
                     mountX: 0.5,
                     text: {
-                        text: "Please put the remote in pairing mode, scanning will start in a moment.",
+                        text: Language.translate("Put the remote control in pairing mode; scan will start in one moment"),
                         fontFace: CONFIG.language.font,
                         fontSize: 25,
                     },
@@ -98,7 +98,7 @@ export default class BluetoothScreen extends Lightning.Component {
                             y: 30,
                             mount: 0.5,
                             text: {
-                                text: "Continue Setup",
+                                text: Language.translate("Continue Setup"),
                                 fontFace: CONFIG.language.font,
                                 fontSize: 22,
                                 textColor: 0xFF000000,
@@ -114,7 +114,7 @@ export default class BluetoothScreen extends Lightning.Component {
                             y: 30,
                             mount: 0.5,
                             text: {
-                                text: "SKIP",
+                                text: Language.translate("SKIP"),
                                 fontFace: CONFIG.language.font,
                                 fontSize: 22,
                                 textColor: 0xFF000000,
@@ -296,7 +296,7 @@ export default class BluetoothScreen extends Lightning.Component {
             class RemotePair extends this{
                 $enter() {
                     this.tag('Timer').visible = true
-                    this.tag('Info').text.text = 'Please put the remote in pairing mode, scanning will start in a moment.'
+                    this.tag('Info').text.text = Language.translate('Put the remote control in pairing mode; scan will start in one moment')
                 }
                 _handleRight() {
                     this._setState('Scanning')
@@ -309,7 +309,7 @@ export default class BluetoothScreen extends Lightning.Component {
             class Scanning extends this{
                 $enter() {
                     this.tag('Loader').visible = true
-                    this.tag('Info').text.text = 'Scanning'
+                    this.tag('Info').text.text = Language.translate('Scanning')
                 }
                 _handleRight() {
                     this._setState('PairComplete')
@@ -325,7 +325,7 @@ export default class BluetoothScreen extends Lightning.Component {
             class PairComplete extends this{
                 $enter() {
                     this.tag('Buttons.Continue').visible = true
-                    this.tag('Info').text.text = 'Pairing complete'
+                    this.tag('Info').text.text = Language.translate('Pairing Successful')
                 }
                 _handleLeft() {
                     this._setState('Scanning')

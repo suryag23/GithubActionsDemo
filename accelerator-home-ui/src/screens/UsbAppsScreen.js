@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router } from "@lightningjs/sdk"
+import { Language, Lightning, Router } from "@lightningjs/sdk"
 import UsbApi from '../api/UsbApi'
 import { CONFIG } from '../Config/Config.js'
 import { imageListInfo } from '../../static/data/ImageListInfo'
@@ -31,11 +31,11 @@ let isAudio = false;
 var usbApi = new UsbApi();
 
 export default class UsbAppsScreen extends Lightning.Component {
-  
+
   _onChanged() {
     this.widgets.menu.updateTopPanelText('USB')
   }
-  
+
   static _template() {
     return {
       UsbAppsScreenContents: {
@@ -57,7 +57,7 @@ export default class UsbAppsScreen extends Lightning.Component {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: "Videos",
+              text: Language.translate("Videos"),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF,
             },
@@ -87,7 +87,7 @@ export default class UsbAppsScreen extends Lightning.Component {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: "Audio",
+              text: Language.translate("Audio"),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF,
             },
@@ -107,9 +107,6 @@ export default class UsbAppsScreen extends Lightning.Component {
             itemScrollOffset: -4,
             clipping: false,
           },
-
-
-
           Text3: {
             // x: 10 + 25,
             y: 486,
@@ -117,7 +114,7 @@ export default class UsbAppsScreen extends Lightning.Component {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: "Photos",
+              text: Language.translate("Photos"),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF,
             },
@@ -145,7 +142,7 @@ export default class UsbAppsScreen extends Lightning.Component {
             text: {
               fontFace: CONFIG.language.font,
               fontSize: 25,
-              text: "Folders",
+              text: Language.translate("Folders"),
               fontStyle: 'normal',
               textColor: 0xFFFFFFFF,
             },
@@ -230,17 +227,17 @@ export default class UsbAppsScreen extends Lightning.Component {
   }
 
   _handleBack() {
-    if(!(this.cwd.length === 0)){ 
-      let clone = [...this.cwd] 
-      clone.pop(); 
-      let cwdname = clone.join("/"); 
-      usbApi.cd(cwdname).then(res => { 
-      this.cwd.pop(); 
-      this.loadData(); 
-      }).catch(err => { 
-      console.error(`error while getting the usb contents; error = ${JSON.stringify(err)}`); 
-      }); 
-    }else{ 
+    if(!(this.cwd.length === 0)){
+      let clone = [...this.cwd]
+      clone.pop();
+      let cwdname = clone.join("/");
+      usbApi.cd(cwdname).then(res => {
+      this.cwd.pop();
+      this.loadData();
+      }).catch(err => {
+      console.error(`error while getting the usb contents; error = ${JSON.stringify(err)}`);
+      });
+    }else{
       Router.navigate('menu');
     }
   }
@@ -566,7 +563,7 @@ export default class UsbAppsScreen extends Lightning.Component {
       row3.visible = false;
       text4.visible = false;
       row4.visible = false;
-      //either the usb is not mounted or there aren't any videos , images or audio files. 
+      //either the usb is not mounted or there aren't any videos , images or audio files.
     } else {
       this.tag('NoUSB').visible = false;
       if (videoListInfo.length === 0) {
@@ -651,9 +648,4 @@ export default class UsbAppsScreen extends Lightning.Component {
   _unfocus() {
     //this.exitFunctionality()
   }
-
-
-
-
-
 }

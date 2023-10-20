@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Registry, Router, Utils } from '@lightningjs/sdk'
+import { Language, Lightning, Registry, Router, Utils } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import AppApi from '../api/AppApi'
 import AlexaApi from '../api/AlexaApi.js';
@@ -48,7 +48,7 @@ export default class SuccessScreen extends Lightning.Component {
                     y: 380,
                     mount: 0.5,
                     text: {
-                        text: "You are ready to use alexa. Here are some things to try",
+                        text: Language.translate("You are ready to use alexa. Here are some things to try"),
                         fontFace: CONFIG.language.font,
                         fontSize: 32,
                         textColor: 0xFFF9F9F9,
@@ -64,7 +64,7 @@ export default class SuccessScreen extends Lightning.Component {
                         y: 30,
                         mount: 0.5,
                         text: {
-                            text: `"Alexa, play some jazz music"`,
+                            text: Language.translate("Play some jazz music"),
                             fontFace: CONFIG.language.font,
                             fontSize: 28,
                             textColor: 0xFF232F3E,
@@ -81,7 +81,7 @@ export default class SuccessScreen extends Lightning.Component {
                         y: 30,
                         mount: 0.5,
                         text: {
-                            text: `"Alexa, play my Flash Briefing"`,
+                            text: Language.translate("Play my Flash Briefing"),
                             fontFace: CONFIG.language.font,
                             fontSize: 28,
                             textColor: 0xFF232F3E,
@@ -98,7 +98,7 @@ export default class SuccessScreen extends Lightning.Component {
                         y: 30,
                         mount: 0.5,
                         text: {
-                            text: `"Alexa, what's your favourite movie?"`,
+                            text: Language.translate("What's your favourite movie?"),
                             fontFace: CONFIG.language.font,
                             fontSize: 28,
                             textColor: 0xFF232F3E,
@@ -116,7 +116,7 @@ export default class SuccessScreen extends Lightning.Component {
                     y: 30,
                     mount: 0.5,
                     text: {
-                        text: "Done",
+                        text: Language.translate("Finished"),
                         fontFace: CONFIG.language.font,
                         fontSize: 22,
                         textColor: 0xFF000000,

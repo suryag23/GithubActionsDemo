@@ -254,6 +254,12 @@ export default class OtherSettingsScreen extends Lightning.Component {
             }
             this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + Language.translate(currentStandbyMode)
         })
+
+        if (Storage.get('ScreenSaverTimeoutInterval')) {
+            this.tag('ScreenSaver.Title').text.text = Language.translate('Screen-Saver: ') + Storage.get('ScreenSaverTimeoutInterval') + ' min'
+        } else {
+            this.tag('ScreenSaver.Title').text.text = Language.translate('Screen-Saver: ') + 'Off'
+        }
     }
 
     _handleBack() {

@@ -87,7 +87,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         x: 758,
         y: 70,
         text: {
-          text: "Find and join a WiFi network",
+          text: Language.translate("Find and join a WiFi network"),
           fontFace: CONFIG.language.font,
           fontSize: 35,
           textColor: CONFIG.theme.hex,
@@ -100,7 +100,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         x: 190,
         y: 176,
         text: {
-          text: "Network Name: ",
+          text: Language.translate("Network Name")+": ",
           fontFace: CONFIG.language.font,
           fontSize: 25,
         },
@@ -128,7 +128,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         x: 190,
         y: 246,
         text: {
-          text: "Security: ",
+          text: Language.translate("Security")+": ",
           fontFace: CONFIG.language.font,
           fontSize: 25,
         },
@@ -172,7 +172,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         x: 190,
         y: 316,
         text: {
-          text: "Password:",
+          text: Language.translate("Password")+":",
           fontFace: CONFIG.language.font,
           fontSize: 25,
         },
@@ -219,12 +219,12 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         visible:true
       },
       ShowPassword: {
-        x: 1420,
+        x: 1405,
         y: 312,
         w: 300,
         h: 75,
         zIndex: 2,
-        text: { text: 'Show Password', fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
+        text: { text: Language.translate('Show Password'), fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
         visible:true
       }
     }

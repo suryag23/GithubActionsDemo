@@ -205,7 +205,9 @@ export const getPlatformNameForDAC = async () => {
   } else if (platform.toLowerCase().includes('amlogic')) {
     return 'ah212'
   } else if (platform.toLowerCase().includes('mediabox')) {
-    return 'realtek'
+    return 'rtd1319'
+  } else if (platform.toLowerCase().includes('blade')) {
+    return 'rtd1319'
   } else {
     // default
     return 'rpi3'

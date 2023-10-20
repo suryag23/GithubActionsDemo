@@ -28,16 +28,16 @@
  import SearchType from "../../screens/DTVScreens/InputScreens/Searchtype";
  import IntegerInput from "../../screens/DTVScreens/InputScreens/IntegerInput";
  import ThunderJS from "ThunderJS";
- 
+
  const dtvApi = new DTVApi();
- 
+
  const config = {
    host: "127.0.0.1",
    port: 9998,
    default: 1,
  };
  const thunder = ThunderJS(config);
- 
+
  /**
   * Class for DVB Scan screen.
   */
@@ -366,7 +366,7 @@
        },
      };
    }
- 
+
    _init() {
      this._setState("Satellite");
      this.preventExit = false;
@@ -379,14 +379,14 @@
      this.selectedModulation = "";
      this.selectedSearchType = "";
      this.selectedRetune = false; //default value is set to false
- 
+
      this.loadingAnimation = this.tag("ScanProgress.Loader").animation({
        duration: 3,
        repeat: -1,
        stopMethod: "immediate",
        actions: [{ p: "rotation", v: { sm: 0, 0: 0, 1: 2 * Math.PI } }],
      });
- 
+
      this.inProgressAnimation = this.tag("ScanProgress.Title").animation({
        duration: 0.6,
        repeat: 0,
@@ -394,14 +394,14 @@
        actions: [{ p: "text.text", v: { 0: Language.translate("Please wait scan in progress"), 0.3:Language.translate("Please wait scan in progress")+".", 0.6:Language.translate("Please wait scan in progress")+"..", 0.9: Language.translate("Please wait scan in progress")+"..." } }],
      });
    }
- 
+
    setScanInProgress() {
      this.preventExit = true;
      this.loadingAnimation.start();
      this.inProgressAnimation.start();
      this.tag("ScanProgress").visible = true;
    }
- 
+
    setScanFinished() {
      this.preventExit = false;
      this.loadingAnimation.stop();
@@ -409,7 +409,7 @@
      this.tag("ScanProgress").visible = false;
      this.tag("ScanProgress.Title").visible = false;
    }
- 
+
    _captureKey() {
      if(this.preventExit){
        this.tag("ScanProgress.Title").visible = true;
@@ -452,7 +452,7 @@
      // console.log(this.modulationList);
      // console.log(this.searchtypeList);
    }
- 
+
    _firstActive() {
      let searchEventListener = thunder.on("DTV", "searchstatus", (notification) => {
        console.log("SearchStatus Notification: ", JSON.stringify(notification));
@@ -461,55 +461,55 @@
          this.setScanFinished();
        }
      })
- 
+
      ///////////////satellite
- 
+
      this.satelliteList = [];
      dtvApi.satelliteList().then((res) => {
        this.satelliteList = res;
      });
- 
+
      ///////////////////polarity
- 
+
      this.polarityList = [];
      dtvApi.polarityList().then((res) => {
        this.polarityList = res;
      });
- 
+
      ///////////////////symbolRate
      //symbol rate has some predefined values additional to custom imput
      this.symbolRateList = [];
      dtvApi.symbolRateList().then((res) => {
        this.symbolRateList = res;
      });
- 
+
      ////////////////////FEC
- 
+
      this.fecList = [];
      dtvApi.fecList().then((res) => {
        this.fecList = res;
      });
- 
+
      ///////////////////modulation
- 
+
      this.modulationList = [];
      dtvApi.modulationList().then((res) => {
        this.modulationList = res;
      });
- 
+
      ///////////////////searchtype
- 
+
      this.searchtypeList = [];
      dtvApi.searchtypeList().then((res) => {
        this.searchtypeList = res;
      });
    }
- 
+
    _handleBack() {
      this.resetForm();
      return false; //so that handleBack of parent is also executed.
    }
- 
+
    $getSatelliteList() {
      return this.satelliteList;
    }
@@ -520,7 +520,7 @@
    $getSelectedSatellite() {
      return this.selectedSatellite;
    }
- 
+
    $getPolarityList() {
      return this.polarityList;
    }
@@ -531,7 +531,7 @@
    $getSelectedPolarity() {
      return this.selectedPolarity;
    }
- 
+
    $getFECList() {
      return this.fecList;
    }
@@ -542,7 +542,7 @@
    $getSelectedFEC() {
      return this.selectedFEC;
    }
- 
+
    $getModulationList() {
      return this.modulationList;
    }
@@ -553,7 +553,7 @@
    $getSelectedModulation() {
      return this.selectedModulation;
    }
- 
+
    $getSearchTypeList() {
      return this.searchtypeList;
    }
@@ -564,7 +564,7 @@
    $getSelectedSearchType() {
      return this.selectedSearchType;
    }
- 
+
    setFrequency(frequency) {
      this._setState("Frequency");
      this.selectedFrequency = frequency;
@@ -574,7 +574,7 @@
          ? this.selectedFrequency
          : Language.translate("Select a")+ " " + Language.translate("Frequency"));
    }
- 
+
    setSymbolRate(symbolrate) {
      this._setState("SymbolRate");
      this.selectedSymbolRate = symbolrate;
@@ -584,9 +584,9 @@
          ? this.selectedSymbolRate
          : Language.translate("Select a")+ " " + Language.translate("Symbol Rate"));
    }
- 
+
    resetForm() {
- 
+
      this.setScanFinished();
      //reset the form variables to initial state on exit from this form
      this.selectedSatellite = {};
@@ -613,7 +613,7 @@
      );
      this.tag("ErrorNotification").visible = false;
    }
- 
+
    verifyInputs() {
      let errorString = "";
      if (Object.keys(this.selectedSatellite).length === 0) {
@@ -639,7 +639,7 @@
      }
      return errorString;
    }
- 
+
    static _states() {
      return [
        class Satellite extends this {
@@ -678,7 +678,7 @@
                  Language.translate("Satellite") + ": " +
                    (Object.keys(this.selectedSatellite).length !== 0
                      ? this.selectedSatellite.name
-                     : Language.translate("Select a")+ " " + Language.translate("Satellite")); 
+                     : Language.translate("Select a")+ " " + Language.translate("Satellite"));
                }
                _getFocused() {
                  return this.tag("SelectSatellite");
@@ -707,7 +707,7 @@
            this.tag("SelectFrequency").patch({
              prevVal: this.selectedFrequency, //previous value is passed to retain the previously entered value
              onHandleDone: this.setFrequency.bind(this), //pass a function that will be executed when done is clicked on the keyboard
-           }); 
+           });
            this._setState("Frequency.SelectFrequency");
          }
          static _states() {
@@ -796,7 +796,7 @@
              prevVal: this.selectedSymbolRate, //previous value is passed to retain the previously entered value
              onHandleDone: this.setSymbolRate.bind(this), //pass a function that will be executed when done is clicked on the keyboard
              presetValues: this.symbolRateList, //can handle a list of predefined values that can be selected using arrow keys
-           }); 
+           });
            this._setState("SymbolRate.SelectSymbolRate");
          }
          static _states() {
@@ -929,7 +929,7 @@
                  Language.translate("Modulation") + ": " +
                    (this.selectedModulation !== ""
                      ? this.selectedModulation.toUpperCase()
-                     : Language.translate("Select a")+ " " + Language.translate("Modulation")); 
+                     : Language.translate("Select a")+ " " + Language.translate("Modulation"));
                }
                _getFocused() {
                  return this.tag("SelectModulation");
@@ -976,7 +976,7 @@
                    (this.selectedSearchType !== ""
                      ? this.selectedSearchType.charAt(0).toUpperCase() +
                        this.selectedSearchType.slice(1)
-                     : Language.translate("Select a")+ " " + Language.translate("Search Mode")); 
+                     : Language.translate("Select a")+ " " + Language.translate("Search Mode"));
                }
                _getFocused() {
                  return this.tag("SelectSearchType");
@@ -1066,4 +1066,3 @@
      ];
    }
  }
- 

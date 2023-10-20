@@ -16,12 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils } from '@lightningjs/sdk'
+ import { Language, Lightning, Utils } from '@lightningjs/sdk'
  import SettingsMainItem from '../../items/SettingsMainItem'
  import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
 import VideoScreen from './VideoScreen'
- 
+
 import AudioScreen from './AudioScreen'
  /**
   * Class for Video and Audio screen.
@@ -29,7 +29,7 @@ import AudioScreen from './AudioScreen'
 
  export default class VideoAndAudioScreen extends Lightning.Component {
     static _template(){
-        return { 
+        return {
             x:0,
             y:0,
             VideoAndAudioScreenContents:{    //contents in the VideoAndAudioScreen are placed inside the main screen, child screens are outside VideoAndAudioScreenContents
@@ -89,7 +89,7 @@ import AudioScreen from './AudioScreen'
                     y: 45,
                     mountY: 0.5,
                     text: {
-                        text: 'Video Display',
+                        text: Language.translate('Video Display'),
                         textColor: COLORS.titleColor,
                         fontFace: CONFIG.language.font,
                         fontSize: 25,
@@ -113,7 +113,7 @@ import AudioScreen from './AudioScreen'
                     y: 45,
                     mountY: 0.5,
                     text: {
-                        text: 'Audio',
+                        text: Language.translate('Audio'),
                         textColor: COLORS.titleColor,
                         fontFace: CONFIG.language.font,
                         fontSize: 25,
@@ -169,7 +169,7 @@ import AudioScreen from './AudioScreen'
                     this._setState('CCOptions')
                 }
                 _handleEnter(){
-                    // 
+                    //
                 }
             },
             class CCOptions extends this {
@@ -186,7 +186,7 @@ import AudioScreen from './AudioScreen'
                     this._setState('Video')
                 }
                 _handleEnter(){
-                    // 
+                    //
                 }
             },
             class Video extends this {

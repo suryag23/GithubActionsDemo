@@ -29,7 +29,6 @@ export default class SleepTimerScreen extends Lightning.Component {
         return 'left'
     }
 
-
     static _template() {
         return {
             rect: true,

@@ -563,7 +563,7 @@ export default class AppApi {
           if (!url.endsWith("&")) {
             url += "&"
           }
-          url += ((Storage.get("appplicationType") === callsign)? "inApp=true":"inApp=false")
+          url += ((Storage.get("applicationType") === callsign)? "inApp=true":"inApp=false")
         }
         if (!url.includes("launch=")) {
           if (!url.endsWith("&")) {
@@ -1711,6 +1711,52 @@ export default class AppApi {
         .catch(err => {
           console.error("AppAPI setPreferredStandbyMode error:", JSON.stringify(err, 3, null))
           resolve(false)
+        })
+    })
+  }
+
+  getNetworkStandbyMode() {
+    return new Promise((resolve, reject) => {
+      thunder.call('org.rdk.System', 'getNetworkStandbyMode').then(result => {
+          resolve(result)
+        }).catch(err => {
+          console.error("AppAPI getNetworkStandbyMode error:", JSON.stringify(err, 3, null))
+          reject(err)
+        })
+    })
+  }
+
+  getRFCConfig(rfcParamsList) {
+    return new Promise((resolve, reject) => {
+      thunder.call('org.rdk.System', 'getRFCConfig', rfcParamsList).then(result => {
+          if (result.success) resolve(result)
+          reject(false)
+        }).catch(err => {
+          console.error("AppAPI getRFCConfig error:", JSON.stringify(err, 3, null))
+          reject(err)
+        })
+    })
+  }
+
+  setNetworkStandbyMode(nwStandby = true) {
+    return new Promise((resolve, reject) => {
+      thunder.call('org.rdk.System', 'setNetworkStandbyMode', { nwStandby: nwStandby }).then(result => {
+          resolve(result.success)
+        }).catch(err => {
+          console.error("AppAPI setNetworkStandbyMode error:", JSON.stringify(err, 3, null))
+          reject(err)
+        })
+    })
+  }
+
+  setWakeupSrcConfiguration(params) {
+    console.log("AppAPI: setWakeupSrcConfiguration params:", JSON.stringify(params));
+    return new Promise((resolve, reject) => {
+      thunder.call('org.rdk.System', 'setWakeupSrcConfiguration', params).then(result => {
+          resolve(result.success)
+        }).catch(err => {
+          console.error("AppAPI setWakeupSrcConfiguration error:", JSON.stringify(err, 3, null))
+          reject(err)
         })
     })
   }

@@ -361,10 +361,10 @@ export default class BluetoothScreen extends Lightning.Component {
       this._bt.pair(this._availableNetworks.tag('List').element._item.deviceID).then(result => {
         let btName = this._availableNetworks.tag('List').element._item.name
         if (result.success) {
-          this.widgets.fail.notify({ title: btName, msg: 'Pairing Successful' })
+          this.widgets.fail.notify({ title: btName, msg: Language.translate('Pairing Successful') })
           Router.focusWidget('Fail')
         } else {
-          this.widgets.fail.notify({ title: btName, msg: 'Pairing Failed' })
+          this.widgets.fail.notify({ title: btName, msg: Language.translate('Pairing Failed') })
           Router.focusWidget('Fail')
         }
         this.hideAvailableDevices()
@@ -378,11 +378,11 @@ export default class BluetoothScreen extends Lightning.Component {
         .then(result => {
           let btName = this._pairedNetworks.tag('List').element._item.name
           if (!result) {
-            this.widgets.fail.notify({ title: btName, msg: 'Connection Failed' })
+            this.widgets.fail.notify({ title: btName, msg: Language.translate('Connection Failed') })
             Router.focusWidget('Fail')
           } else {
             this._bt.setAudioStream(this._pairedNetworks.tag('List').element._item.deviceID)
-            this.widgets.fail.notify({ title: btName, msg: 'Connection Successful' })
+            this.widgets.fail.notify({ title: btName, msg: Language.translate('Connection Successful') })
             Router.focusWidget('Fail')
           }
         })
@@ -395,10 +395,10 @@ export default class BluetoothScreen extends Lightning.Component {
         .then(result => {
           let btName = this._pairedNetworks.tag('List').element._item.name
           if (!result) {
-            this.widgets.fail.notify({ title: btName, msg: 'Failed to Disconnect' })
+            this.widgets.fail.notify({ title: btName, msg: Language.translate('Failed to Disconnect') })
             Router.focusWidget('Fail')
           } else {
-            this.widgets.fail.notify({ title: btName, msg: 'Disconnected' })
+            this.widgets.fail.notify({ title: btName, msg: Language.translate('Disconnected') })
             Router.focusWidget('Fail')
           }
         })
@@ -406,10 +406,10 @@ export default class BluetoothScreen extends Lightning.Component {
       this._bt.unpair(this._pairedNetworks.tag('List').element._item.deviceID).then(result => {
         let btName = this._pairedNetworks.tag('List').element._item.name
         if (result) {
-          this.widgets.fail.notify({ title: btName, msg: 'Unpaired' })
+          this.widgets.fail.notify({ title: btName, msg: Language.translate('Unpaired') })
           Router.focusWidget('Fail')
         } else {
-          this.widgets.fail.notify({ title: btName, msg: 'Unpairing Failed' })
+          this.widgets.fail.notify({ title: btName, msg: Language.translate('Unpairing Failed') })
           Router.focusWidget('Fail')
         }
       })
@@ -609,12 +609,12 @@ export default class BluetoothScreen extends Lightning.Component {
         let btName = notification.name
         if (notification.connected) {
           if (this.widgets.fail) {
-            this.widgets.fail.notify({ title: btName, msg: 'CONNECTED' })
+            this.widgets.fail.notify({ title: btName, msg: Language.translate('Connected') })
             Router.focusWidget('Fail')
           }
         } else {
           if (this.widgets.fail) {
-            this.widgets.fail.notify({ title: btName, msg: 'DISCONNECTED' })
+            this.widgets.fail.notify({ title: btName, msg: Language.translate('Disconnected') })
             Router.focusWidget('Fail')
           }
         }

@@ -162,7 +162,7 @@ export default class RCInformationScreen extends Lightning.Component {
                         y: 315,
                         mountY: 0.5,
                         text: {
-                            text: Language.translate(` Battery percent`),
+                            text: Language.translate('Battery percent'),
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             wordWrapWidth: 1600,

@@ -263,6 +263,12 @@
              }
              this.tag("EnergySaver.Title").text.text = Language.translate("Energy Saver: ") + currentStandbyMode
          })
+
+         if (Storage.get('ScreenSaverTimeoutInterval')) {
+            this.tag('ScreenSaver.Title').text.text = Language.translate('Screen-Saver: ') + Storage.get('ScreenSaverTimeoutInterval') + ' min'
+         } else {
+            this.tag('ScreenSaver.Title').text.text = Language.translate('Screen-Saver: ') + 'Off'
+         }
      }
 
     hide() {

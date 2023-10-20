@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils } from '@lightningjs/sdk'
+ import { Launch, Lightning, Utils } from '@lightningjs/sdk'
  import SettingsMainItem from '../../items/SettingsMainItem'
  import { COLORS } from '../../colors/Colors'
  import { CONFIG } from '../../Config/Config'
@@ -24,10 +24,10 @@
  import { Language } from '@lightningjs/sdk';
  import ThunderJS from 'ThunderJS'
  import WifiScreen from './NetworkWifiOverlay'
- 
+
  const wifi = new Wifi()
  export default class NetworkInterfaceScreen extends Lightning.Component {
- 
+
      _construct() {
          this.LoadingIcon = Utils.asset('images/settings/Loading.png')
      }
@@ -91,11 +91,11 @@
              }
          }
      }
- 
+
      _focus() {
          this._setState('WiFi');
      }
- 
+
      _init() {
          const config = {
              host: '127.0.0.1',
@@ -110,41 +110,41 @@
              if (notification.newInterfaceName === "ETHERNET") {
                  this.loadingAnimation.stop()
                  this.tag('Ethernet.Loader').visible = false
-                 this.tag('Ethernet.Title').text.text = 'Ethernet: Connected'
+                 this.tag('Ethernet.Title').text.text = 'Ethernet: '+Language.translate('Connected')
              } else if (notification.newInterfaceName === "" && notification.oldInterfaceName === "WIFI") {
                  this.loadingAnimation.stop()
                  this.tag('Ethernet.Loader').visible = false
-                 this.tag('Ethernet.Title').text.text = 'Ethernet: Error, Retry!'
+                 this.tag('Ethernet.Title').text.text = 'Ethernet: '+Language.translate('Error')+","+Language.translate('Retry')+'!'
              } else if (notification.newInterfaceName === "WIFI") {
                  this.loadingAnimation.stop()
                  this.tag('Ethernet.Loader').visible = false
                  this.tag('Ethernet.Title').text.text = 'Ethernet'
              }
          })
- 
+
          this.loadingAnimation = this.tag('Ethernet.Loader').animation({
              duration: 3, repeat: -1, stopMethod: 'immediate', stopDelay: 0.2,
              actions: [{ p: 'rotation', v: { sm: 0, 0: 0, 1: 2 * Math.PI } }]
          });
- 
+
          this.tag('Ethernet.Loader').src = this.LoadingIcon
      }
- 
+
      _firstActive() {
          this.tag('Ethernet.Loader').on('txError', () => {
              const url = 'http://127.0.0.1:50050/lxresui/static/images/settings/Loading.png'
              this.tag('Ethernet.Loader').src = url
          })
      }
- 
+
      hide() {
          this.tag('NetworkInterfaceScreenContents').visible = false
      }
- 
+
      show() {
          this.tag('NetworkInterfaceScreenContents').visible = true
      }
- 
+
      setEthernetInterface() {
          wifi.getInterfaces().then(res => {
              res.interfaces.forEach(element => {
@@ -161,9 +161,9 @@
              });
          })
      }
- 
-     
-   
+
+
+
      static _states() {
          return [
              class WiFi extends this {
@@ -181,7 +181,7 @@
                 }
                  _handleEnter() {
                     this._setState("WifiScreen")
- 
+
                  }
              },
              class Ethernet extends this {

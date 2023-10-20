@@ -389,7 +389,7 @@ export default class MainView extends Lightning.Component {
           console.log('onSignalChanged ', JSON.stringify(notification))
           if (notification.signalStatus !== 'stableSignal') {
             this.appApi.setVisibility('ResidentApp', true)
-            this.widgets.fail.notify({ title: this.tag('Inputs.Slider').items[this.tag('Inputs.Slider').index].data.displayName, msg: 'Input disconnected' })
+            this.widgets.fail.notify({ title: this.tag('Inputs.Slider').items[this.tag('Inputs.Slider').index].data.displayName, msg: Language.translate("Input disconnected") })
             Router.focusWidget('Fail')
           }
         })

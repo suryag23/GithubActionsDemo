@@ -21,7 +21,7 @@
  import { availableLanguages } from '../../Config/Config'
  import AppApi from '../../api/AppApi';
  import thunderJS from 'ThunderJS';
- 
+
  const appApi = new AppApi()
  const thunder = thunderJS({
    host: '127.0.0.1',
@@ -29,8 +29,8 @@
    default: 1,
  })
  const loader = 'Loader'
- 
- export default class LanguageScreen extends Lightning.Component { 
+
+ export default class LanguageScreen extends Lightning.Component {
   static _template() {
      return {
        LanguageScreenContents: {
@@ -52,7 +52,7 @@
        }
      }
    }
- 
+
    _init() {
      this._Languages = this.tag('LanguageScreenContents.Languages')
      this._Languages.h = availableLanguages.length * 90
@@ -84,11 +84,11 @@
          console.log('Error', err);
        });
    }
- 
+
    _focus() {
      this._setState('Languages')
    }
- 
+
    static _states() {
      return [
        class Languages extends this{
@@ -118,7 +118,7 @@
        },
      ]
    }
- 
+
    _navigate(dir) {
      let list = this._Languages.tag('List')
      if (dir === 'down') {
@@ -127,5 +127,4 @@
        if (list.index > 0) list.setPrevious()
      }
    }
- 
  }

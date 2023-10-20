@@ -19,9 +19,7 @@
  import { Lightning, Utils, Language } from '@lightningjs/sdk'
  import AppApi from '../../api/AppApi';
  import EnergySavingsItem from '../../items/EnergySavingsItem'
- 
- 
- 
+
  export default class EnergySavingsScreen extends Lightning.Component {
      static _template() {
          return {
@@ -51,20 +49,20 @@
              },
          }
      }
- 
+
      $resetPrevTickObject(prevTicObject) {
          if (!this.prevTicOb) {
              this.prevTicOb = prevTicObject;
- 
+
          }
          else {
              this.prevTicOb.tag("Item.Tick").visible = false;
- 
+
              this.prevTicOb = prevTicObject;
- 
+
          }
      }
- 
+
      static _states() {
          return [
              class Options extends this{
@@ -110,7 +108,7 @@
              } else if (result.preferredStandbyMode == "DEEP_SLEEP") {
                  standbyMode = Language.translate("Deep Sleep")
              }
- 
+
              this.tag('List').items = this.options.map((item, index) => {
                  return {
                      ref: 'Option' + index,

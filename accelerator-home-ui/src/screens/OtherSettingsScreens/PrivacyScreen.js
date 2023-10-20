@@ -330,11 +330,11 @@ export default class PrivacyScreen extends Lightning.Component {
                     //TOGGLE BUTTON
                     if(cookieToggle){
                         this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOnOrange.png')
-                        this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - In Progress'
+                        this.tag('ClearCookies.Title').text = Language.translate('Clear Cookies and App Data') + " - " + Language.translate('In Progress')
                     }
                     else{
                         this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
-                        this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
+                        this.tag('ClearCookies.Title').text = Language.translate('Clear Cookies and App Data')
                     }
                     this.AppApi.clearCache()
                         .then(() => {
@@ -346,17 +346,17 @@ export default class PrivacyScreen extends Lightning.Component {
                             console.log("Triggering AVS credential reset." ,result)
                             if (result.success) {
                                 AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending");
-                                this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Completed'
+                                this.tag('ClearCookies.Title').text = Language.translate('Clear Cookies and App Data') + " - " + Language.translate('Finished')
                                 setTimeout(() => {
-                                    this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
+                                    this.tag('ClearCookies.Title').text = Language.translate('Clear Cookies and App Data')
                                     this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
                                     cookieToggle = !cookieToggle
                                 }, 2000)
                             } else {
                                 //UNSUCCESSFULL API CALL
-                                this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data - Error'
+                                this.tag('ClearCookies.Title').text = Language.translate('Clear Cookies and App Data')+ " - " + Language.translate("Error!")
                                 setTimeout(() => {
-                                    this.tag('ClearCookies.Title').text = 'Clear Cookies and App Data'
+                                    this.tag('ClearCookies.Title').text = Language.translate('Clear Cookies and App Data')
                                     this.tag('ClearCookies.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
                                     cookieToggle = !cookieToggle
                                 }, 2000)

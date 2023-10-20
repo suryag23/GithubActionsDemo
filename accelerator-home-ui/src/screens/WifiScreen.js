@@ -31,7 +31,6 @@ import { CONFIG } from '../Config/Config'
 var previousFocusedItemSSid
 export default class WiFiScreen extends Lightning.Component {
 
-
   pageTransition() {
     return 'left'
   }
@@ -128,7 +127,6 @@ export default class WiFiScreen extends Lightning.Component {
         },
       },
     }
-
   }
 
   _active() {
@@ -140,9 +138,8 @@ export default class WiFiScreen extends Lightning.Component {
     this._enable()
   }
 
-
   _firstEnable() {
-      this.wifiLoading = this.tag('Switch.Loader').animation({
+    this.wifiLoading = this.tag('Switch.Loader').animation({
       duration: 3,
       repeat: -1,
       stopMethod: 'immediate',
@@ -269,27 +266,26 @@ export default class WiFiScreen extends Lightning.Component {
    */
   renderDeviceList(ssids) {
     this._pairedList  =[];
-     this._pairedNetworks.h = 0;
-     this._availableNetworks.tag('List').rollMax=ssids.length*90
-     this._pairedNetworks.tag('List').items = []
-     this._pairedNetworks.tag('List').h  = 0
+    this._pairedNetworks.h = 0;
+    this._availableNetworks.tag('List').rollMax=ssids.length*90
+    this._pairedNetworks.tag('List').items = []
+    this._pairedNetworks.tag('List').h  = 0
     this._wifi.getConnectedSSID().then(result => {
       console.log("getconnectedSSID response", result)
       if (result.ssid != '') {
         this._pairedList = [result]
         this._pairedNetworks.h = this._pairedList.length * 90
-      this._pairedNetworks.tag('List').h = this._pairedList.length * 90
-      this._pairedNetworks.tag('List').items = this._pairedList.map((item, index) => {
-        item.connected = true
-        return {
-          ref: 'Paired' + index,
-          w: 1920 - 300,
-          h: 90,
-          type: WiFiItem,
-          item: item,
-        }
-      })
-
+        this._pairedNetworks.tag('List').h = this._pairedList.length * 90
+        this._pairedNetworks.tag('List').items = this._pairedList.map((item, index) => {
+          item.connected = true
+          return {
+            ref: 'Paired' + index,
+            w: 1920 - 300,
+            h: 90,
+            type: WiFiItem,
+            item: item,
+          }
+        })
       }
 
       this._otherList = ssids.filter(device => {
@@ -322,12 +318,11 @@ export default class WiFiScreen extends Lightning.Component {
       }
     });
     this._availableNetworks.tag('List').setIndex(IndexVal)
-   
 }
- 
+
   _handleBack() {
     if(!Router.isNavigating()){
-    Router.navigate('settings/network/interface')
+      Router.navigate('settings/network/interface')
     }
   }
 
@@ -365,7 +360,6 @@ export default class WiFiScreen extends Lightning.Component {
             this.tag('Switch.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
             this.tag('Switch.Button').scaleX = -1;
           }
-
         }
         _getFocused() {
           return this._pairedNetworks.tag('List').element
@@ -388,17 +382,16 @@ export default class WiFiScreen extends Lightning.Component {
             this.tag('Switch.Button').src = Utils.asset('images/settings/ToggleOffWhite.png');
             this.tag('Switch.Button').scaleX = -1;
           }
-
         }
         _getFocused() {
           previousFocusedItemSSid=this._availableNetworks.tag('List').element._item.ssid
           return this._availableNetworks.tag('List').element
         }
-     _handleDown() {
-        this._navigate('AvailableDevices', 'down')
+        _handleDown() {
+          this._navigate('AvailableDevices', 'down')
         }
         _handleUp() {
-        this._navigate('AvailableDevices', 'up')
+          this._navigate('AvailableDevices', 'up')
         }
         _handleEnter() {
           console.log("SSID check", this._availableNetworks.tag('List').element._item)
@@ -413,14 +406,14 @@ export default class WiFiScreen extends Lightning.Component {
                     this._wifi.clearSSID()
                     Router.navigate('settings/network/interface/wifi/connect', { wifiItem: this._availableNetworks.tag('List').element._item })
                   }
-                  
+
                 })
                 console.log(response)
               })
-              .catch(err =>{ 
+              .catch(err =>{
                 Router.navigate('settings/network/interface/wifi/connect', { wifiItem: this._availableNetworks.tag('List').element._item })
-                this._wifi.SaveSSIDKey("").then(()=>{})})
-               
+                this._wifi.SaveSSIDKey("").then(()=>{})
+              })
             }
             else { Router.navigate('settings/network/interface/wifi/connect', { wifiItem: this._availableNetworks.tag('List').element._item })}
           })
@@ -562,21 +555,18 @@ export default class WiFiScreen extends Lightning.Component {
         Router.focusWidget('Fail')
       }
     })
-this._wifi.registerEvent('onAvailableSSIDs', notification => {
- console.log("Notification[onAvailableSSIDs]:", notification.ssids)
-    this.renderDeviceList(notification.ssids)
- if (!notification.moreData) {
- setTimeout(() => {
-  this.tag('Switch.Loader').visible = false
- this.wifiLoading.stop()
-  }, 1000)
+    this._wifi.registerEvent('onAvailableSSIDs', notification => {
+      console.log("Notification[onAvailableSSIDs]:", notification.ssids)
+      this.renderDeviceList(notification.ssids)
+      if (!notification.moreData) {
+        setTimeout(() => {
+          this.tag('Switch.Loader').visible = false
+          this.wifiLoading.stop()
+        }, 1000)
+      }
+    })
   }
-  
-  })
-}
   _inactive(){
- previousFocusedItemSSid=undefined
-
+    previousFocusedItemSSid=undefined
   }
 }
- 

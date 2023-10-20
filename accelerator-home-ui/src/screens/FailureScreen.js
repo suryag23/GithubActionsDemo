@@ -16,9 +16,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router, Utils } from '@lightningjs/sdk'
+import { Lightning, Router, Utils, Language, Storage } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import AlexaApi from '../api/AlexaApi'
+import AppApi from '../api/AppApi';
+import ThunderJS from "ThunderJS";
+
+const config = {
+    host: "127.0.0.1",
+    port: 9998,
+    default: 1,
+};
+var thunder = ThunderJS(config);
 
 export default class FailureScreen extends Lightning.Component {
     static _template() {
@@ -45,7 +54,7 @@ export default class FailureScreen extends Lightning.Component {
                     y: 380,
                     mount: 0.5,
                     text: {
-                        text: "Something went wrong, please try again",
+                        text: Language.translate('Alexa something went wrong message'),
                         fontFace: CONFIG.language.font,
                         fontSize: 32,
                         textColor: 0xFFF9F9F9,
@@ -62,7 +71,7 @@ export default class FailureScreen extends Lightning.Component {
                     y: 30,
                     mount: 0.5,
                     text: {
-                        text: "Retry",
+                        text: Language.translate('Retry'),
                         fontFace: CONFIG.language.font,
                         fontSize: 22,
                         textColor: 0xFF000000,
@@ -79,6 +88,16 @@ export default class FailureScreen extends Lightning.Component {
     _init(){
     }
     _focus() {
+        this.appApi = new AppApi();
+        this.currentApp=Storage.get("applicationType")
+            if(this.currentApp!=="")
+            {
+                this.tag('RetryButton.Title').patch({
+                    text: {
+                            text: Language.translate("Dismiss")
+                        }
+                    })
+            }
         this._setState('RetryButton')
       }
       _active(){
@@ -95,9 +114,37 @@ export default class FailureScreen extends Lightning.Component {
 
                 }
                 _handleEnter(){
-                    AlexaApi.get().resetAVSCredentials().then(()=>{
-                        Router.navigate('AlexaLoginScreen');
-                    })
+                        if(this.currentApp!=="")
+                        {
+                            AlexaApi.get().resetAVSCredentials().then(()=>{
+                                console.log("avs credentials reseted")
+                            })
+                            console.log("Current app: "+ this.currentApp + ", moving the app to front")
+                            this.appApi.setVisibility("ResidentApp", false);
+                            thunder
+                            .call("org.rdk.RDKShell", "moveToFront", {
+                                client: this.currentApp,
+                            })
+                            .then((result) => {
+                                console.log(this.currentApp, " moveToFront Success");
+                                thunder
+                                .call("org.rdk.RDKShell", "setFocus", {
+                                    client: this.currentApp,
+                                })
+                                .then((result) => {
+                                    console.log(this.currentApp, " setFocus Success");
+                                })
+                                .catch((err) => {
+                                    console.log("Error", err);
+                                });
+                            });
+                        }
+                        else
+                        {
+                            AlexaApi.get().resetAVSCredentials().then(()=>{
+                                Router.navigate('AlexaLoginScreen');
+                            })
+                        }
                 }
                 _focus() {
                     this.tag('RetryButton').patch({

@@ -35,7 +35,7 @@ export default class Cell extends Lightning.Component {
         Title: {
           x: 10, y: 45, mountY: 0.5,
           text: {
-            text: ins ? ins : Language.translate("No Shows are being aired at the moment"),            
+            text: ins ? ins : Language.translate("No Shows are being aired at the moment"),
             fontFace: CONFIG.language.font,
             fontStyle: 'normal',
             fontSize: 21,

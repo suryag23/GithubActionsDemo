@@ -50,7 +50,7 @@ export default class TimeZone extends Lightning.Component {
                     mountX: 0.5,
                     MSG: {
                         text: {
-                            text: 'TimeZone API not present',
+                            text: Language.translate('Not supported'),
                             fontFace: CONFIG.language.font,
                             fontSize: 40,
                             textColor: 0xffffffff
@@ -89,7 +89,7 @@ export default class TimeZone extends Lightning.Component {
                     data.push([i, this.resp[i], this.zone !== undefined ? this.zone.split('/')[0] === i : false])
                 }
             }
-            if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") {
+            if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError" && this.zone.length) {
                 AlexaApi.get().updateDeviceTimeZoneInAlexa(this.zone)
             }
         } catch (error) {

@@ -492,6 +492,9 @@ export default class App extends Router.App {
       "Amazon":"n:2",
       "Prime":"n:2"
     }
+    if (!availableLanguages.includes(localStorage.getItem('Language'))) {
+      localStorage.setItem('Language', 'English')
+    }
     this.userInactivity();
     appApi.deviceType().then(result => {
       console.log("App detected deviceType as:", ((result.devicetype != null)?result.devicetype:"tv"));
@@ -504,6 +507,32 @@ export default class App extends Router.App {
     })
     thunder.Controller.activate({ callsign: 'org.rdk.System' }).then(result => {
       console.log("App System plugin activation result: " + result)
+      let rfc = "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.XDial.WolWakeEnable"
+      let rfcList = {rfcList:[rfc]}
+      appApi.getRFCConfig(rfcList).then(rfcStatus => {
+        if (rfcStatus.hasOwnProperty("success") && rfcStatus.success) {
+          if ((rfcStatus.RFCConfig.hasOwnProperty(rfc)) && (rfcStatus.RFCConfig[rfc] === "true")) {
+            appApi.setNetworkStandbyMode().then(result => {
+              if (!result.success) {
+                console.warn("App RFC setNetworkStandbyMode returned false; trying updated API.")
+                let param = {wakeupSources:[
+                  {
+                    "WAKEUPSRC_WIFI": true,
+                    "WAKEUPSRC_IR": true,
+                    "WAKEUPSRC_POWER_KEY": true,
+                    "WAKEUPSRC_CEC": true,
+                    "WAKEUPSRC_LAN": true
+                  }
+                ]}
+                appApi.setWakeupSrcConfiguration(param);
+              }
+            })
+          } else {
+            console.error("App RFC WolWakeEnable response:", JSON.stringify(rfcStatus));
+            console.error("App RFC check of WolWakeEnable failed.");
+          }
+        }
+      })
     }).catch(err => {
       reject(err)
     })
@@ -561,9 +590,6 @@ export default class App extends Router.App {
     })
 
     keyIntercept()
-    if (!availableLanguages.includes(localStorage.getItem('Language'))) {
-      localStorage.setItem('Language', 'English')
-    }
 
     thunder.on('Controller.1', 'all', noti => {
       console.log("App controller notification:", noti)
@@ -893,8 +919,10 @@ export default class App extends Router.App {
       console.warn("App HdmiCec_2 onActiveSourceStatusUpdated discarding.");
     }
   })
-  let currentLanguage=availableLanguageCodes[localStorage.getItem('Language')]
-  appApi.setUILanguage(currentLanguage)
+    let currentLanguage = availableLanguageCodes[localStorage.getItem('Language')]
+    if (currentLanguage.length) {
+      appApi.setUILanguage(currentLanguage)
+    }
   }
 
   _firstEnable() {
@@ -922,7 +950,9 @@ export default class App extends Router.App {
     console.log("App Calling listenToVoiceControl method to activate VoiceControl Plugin")
     this.listenToVoiceControl();
     let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
-    appApi.setUILanguage(updatedLanguage)
+    if (updatedLanguage.length) {
+      appApi.setUILanguage(updatedLanguage)
+    }
     /* Subscribe to Volume status events to report to Alexa. */
     thunder.on('org.rdk.DisplaySettings', 'connectedAudioPortUpdated', notification => {
       console.log("App got connectedAudioPortUpdated: ", notification)
@@ -945,10 +975,10 @@ export default class App extends Router.App {
     });
   }
 
-  listenToVoiceControl() {
+  async listenToVoiceControl() {
     let self = this;
     console.log("App listenToVoiceControl method got called, configuring VoiceControl Plugin")
-    voiceApi.activate().then(() => {
+    await voiceApi.activate().then(() => {
       voiceApi.voiceStatus().then(voiceStatusResp => {
         if (voiceStatusResp.ptt.status != "ready" || !voiceStatusResp.urlPtt.includes("avs://")) {
           console.error("App voiceStatus says PTT/AVS not ready, enabling it.");
@@ -956,13 +986,16 @@ export default class App extends Router.App {
           // Then configure VoiceControl plugin for that end point.
           // TODO: voiceApi.configureVoice()
           if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-            voiceApi.configureVoice({"enable":true});
+            AlexaApi.get().setAlexaAuthStatus("")
+            voiceApi.configureVoice({"enable":true}).then(()=>{
+              AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending")
+            });
           }
         }
       });
       if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaAuthPending") {
         // Reset to trigger the OTP from stack.
-        AlexaApi.get().resetAVSCredentials();
+        // AlexaApi.get().resetAVSCredentials();
       } else if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") {
         console.log("App checkAlexaAuthStatus is AlexaHandleError; enableSmartScreen.");
         AlexaApi.get().enableSmartScreen();
@@ -982,10 +1015,18 @@ export default class App extends Router.App {
         })
 
         /* Report device language */
-        AlexaApi.get().updateDeviceLanguageInAlexa(availableLanguageCodes[localStorage.getItem('Language')]);
+        if (availableLanguageCodes[localStorage.getItem('Language')].length) {
+          AlexaApi.get().updateDeviceLanguageInAlexa(availableLanguageCodes[localStorage.getItem('Language')]);
+        }
         /* Report device timeZone */
-        let updatedTimeZone = appApi.getZone();
-        AlexaApi.get().updateDeviceTimeZoneInAlexa(updatedTimeZone);
+        appApi.getZone().then(updatedTimeZone => {
+          if (updatedTimeZone.length) {
+            console.log("App updateDeviceTimeZoneInAlexa with zone:", updatedTimeZone)
+            AlexaApi.get().updateDeviceTimeZoneInAlexa(updatedTimeZone);
+          } else {
+            console.error("App getTimezoneDST returned:", updatedTimeZone)
+          }
+        });
       }
 
       console.log("App VoiceControl check if user has denied ALEXA:", AlexaApi.get().checkAlexaAuthStatus())
@@ -1018,7 +1059,7 @@ export default class App extends Router.App {
               Router.navigate("SuccessScreen")
             } else if ((notification.xr_speech_avs.state === "uninitialized") || (notification.xr_speech_avs.state === "authorizing")) {
               AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending")
-            } else if (notification.xr_speech_avs.state === "unrecoverable error") {
+            } else if ((notification.xr_speech_avs.state === "unrecoverable error") && (Storage.get("applicationType") === "")) {
               // Could be AUTH token Timeout; refresh it.
               Router.navigate("FailureScreen")
             }

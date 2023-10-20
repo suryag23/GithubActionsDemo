@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Utils, Storage } from "@lightningjs/sdk";
+import { Lightning, Utils, Storage, Language } from "@lightningjs/sdk";
 import { CONFIG } from "../Config/Config";
 import StatusProgress from '../overlays/StatusProgress'
 import { uninstallDACApp,fetchAppIcon,fetchLocalAppIcon } from '../api/DACApi'
@@ -49,7 +49,7 @@ export default class ManageAppItem extends Lightning.Component {
                     x: this.width / 2,
                     y: this.height / 2,
                     text: {
-                        text: "Uninstalling App ..",
+                        text: Language.translate("Uninstalling App")+"..",
                         fontFace: CONFIG.language.font,
                         fontSize: 30,
 
@@ -113,7 +113,7 @@ export default class ManageAppItem extends Lightning.Component {
     displayLabel()
     {
         return new Promise((resolve,reject)=>{
-            this.tag("OverlayText").text.text="App Uninstalled"
+            this.tag("OverlayText").text.text=Language.translate("App Uninstalled")
             this.tag("Overlay").alpha=0.7
             this.tag("OverlayText").alpha=1
             this.tag("Overlay").setSmooth('alpha', 0, {duration: 5})

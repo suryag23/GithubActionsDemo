@@ -294,10 +294,10 @@ import FailComponent from './FailComponent'
        this._bt.pair(this._availableNetworks.tag('List').element._item.deviceID).then(result => {
          let btName = this._availableNetworks.tag('List').element._item.name
          if (result.success) {
-          this.tag("FailScreen").notify({ title: btName, msg: 'Pairing Successful'})
+          this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Pairing Successful')})
           this._setState('FailScreen');
          } else {
-          this.tag("FailScreen").notify({ title: btName, msg: 'Pairing Failed'})
+          this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Pairing Failed')})
           this._setState('FailScreen');
          }
        }).finally(() => {
@@ -312,11 +312,11 @@ import FailComponent from './FailComponent'
          .then(result => {
            let btName = this._pairedNetworks.tag('List').element._item.name
            if (!result) {
-            this.tag("FailScreen").notify({ title: btName, msg: 'Connection Failed'})
+            this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Connection Failed')})
             this._setState('FailScreen');
            } else {
              this._bt.setAudioStream(this._pairedNetworks.tag('List').element._item.deviceID)
-             this.tag("FailScreen").notify({ title: btName, msg: 'Connection Successful'})
+             this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Connection Successful')})
              this._setState('FailScreen');
            }
          }).finally(() => {
@@ -331,10 +331,10 @@ import FailComponent from './FailComponent'
          .then(result => {
            let btName = this._pairedNetworks.tag('List').element._item.name
            if (!result) {
-            this.tag("FailScreen").notify({ title: btName, msg: 'Failed to Disconnect'})
+            this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Failed to Disconnect')})
             this._setState('FailScreen');
            } else {
-            this.tag("FailScreen").notify({ title: btName, msg: 'Disconnected'})
+            this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Disconnected')})
             this._setState('FailScreen');
            }
          }).finally(() => {
@@ -344,10 +344,10 @@ import FailComponent from './FailComponent'
        this._bt.unpair(this._pairedNetworks.tag('List').element._item.deviceID).then(result => {
          let btName = this._pairedNetworks.tag('List').element._item.name
          if (result) {
-          this.tag("FailScreen").notify({ title: btName, msg: 'Unpaired'})
+          this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Unpaired')})
           this._setState('FailScreen');
          } else {
-          this.tag("FailScreen").notify({ title: btName, msg: 'Unpairing Failed'})
+          this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Unpairing Failed')})
           this._setState('FailScreen');
          }
        }).finally(() => {
@@ -566,10 +566,10 @@ import FailComponent from './FailComponent'
          this.renderDeviceList()
          let btName = notification.name
          if (notification.connected) {
-          this.tag("FailScreen").notify({ title: btName, msg: 'CONNECTION SUCCESS'})
+          this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Connection Successful')})
           this._setState('FailScreen');
          } else {
-          this.tag("FailScreen").notify({ title: btName, msg: 'CONNECTION FAILED'})
+          this.tag("FailScreen").notify({ title: btName, msg: Language.translate('Connection Failed')})
           this._setState('FailScreen');
          }
        })

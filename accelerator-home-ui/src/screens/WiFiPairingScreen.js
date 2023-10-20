@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router } from '@lightningjs/sdk'
+import { Language, Lightning, Router } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import ConfirmAndCancel from '../items/ConfirmAndCancel'
 import PasswordSwitch from './PasswordSwitch'
@@ -54,7 +54,7 @@ export default class WifiPairingScreen extends Lightning.Component {
           w: 300,
           h: 75,
           zIndex: 2,
-          text: { text: 'Password: ', fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
+          text: { text: Language.translate('Password')+": ", fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
         },
         Pwd: {
           x: 437,
@@ -87,12 +87,12 @@ export default class WifiPairingScreen extends Lightning.Component {
           mount: 0.5,
         },
         ShowPassword: {
-          x: 1398,
+          x: 1390,
           y: 240,
           w: 300,
           h: 75,
           zIndex: 2,
-          text: { text: 'Show Password', fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
+          text: { text: Language.translate('Show Password'), fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
         },
         List: {
           x: 417,
@@ -118,8 +118,6 @@ export default class WifiPairingScreen extends Lightning.Component {
           formats: KEYBOARD_FORMATS.qwerty
         }
       },
-
-
     }
   }
 
@@ -139,7 +137,6 @@ export default class WifiPairingScreen extends Lightning.Component {
     } else {
       Router.navigate('settings/network/interface/wifi')
     }
-
   }
 
   item(item) {
@@ -215,10 +212,10 @@ export default class WifiPairingScreen extends Lightning.Component {
     this._wifi.activateOnError()
     this._wifi.registerEvent('onError', notification => {
       if(notification.code===0||notification.code===4){
-         this._wifi.deleteNameSpace()
-         flag=1
-       }
-       })
+        this._wifi.deleteNameSpace()
+        flag=1
+      }
+    })
     this._wifi.connect(this._item, password).then(() => {
       this._wifi.saveSSID(this._item.ssid, password, this._item.security).then((response) => {
         if (response.result === 0 && response.success === true &&flag===0) {

@@ -44,7 +44,7 @@ export default class AlexaConfirmationScreen extends Lightning.Component {
                     y: 0,
                     mountX: 0.5,
                     text: {
-                        text: "Exit Alexa",
+                        text: Language.translate("Exit Alexa"),
                         fontFace: CONFIG.language.font,
                         fontSize: 40,
                         textColor: CONFIG.theme.hex,
@@ -58,7 +58,7 @@ export default class AlexaConfirmationScreen extends Lightning.Component {
                     y: 125,
                     mountX: 0.5,
                     text: {
-                        text: Language.translate("Alexa will be disabled, are you sure you want to exit?"),
+                        text: Language.translate("Alexa will be disabled, are you sure to exit?"),
                         fontFace: CONFIG.language.font,
                         fontSize: 25,
                     },
@@ -72,7 +72,7 @@ export default class AlexaConfirmationScreen extends Lightning.Component {
                             y: 25,
                             mount: 0.5,
                             text: {
-                                text: "Yes",
+                                text: Language.translate("Yes"),
                                 fontFace: CONFIG.language.font,
                                 fontSize: 22,
                                 textColor: 0xFF000000
@@ -86,7 +86,7 @@ export default class AlexaConfirmationScreen extends Lightning.Component {
                             y: 25,
                             mount: 0.5,
                             text: {
-                                text: "No",
+                                text: Language.translate("No"),
                                 fontFace: CONFIG.language.font,
                                 fontSize: 22,
                                 textColor: 0xFF000000

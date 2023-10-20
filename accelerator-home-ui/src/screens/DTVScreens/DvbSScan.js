@@ -700,7 +700,7 @@ export default class DvbSScan extends Lightning.Component {
                 Language.translate("Satellite") + ": " +
                   (Object.keys(this.selectedSatellite).length !== 0
                     ? this.selectedSatellite.name
-                    : Language.translate("Select a")+ " " + Language.translate("Satellite")); 
+                    : Language.translate("Select a")+ " " + Language.translate("Satellite"));
               }
               _getFocused() {
                 return this.tag("SelectSatellite");
@@ -729,7 +729,7 @@ export default class DvbSScan extends Lightning.Component {
           this.tag("SelectFrequency").patch({
             prevVal: this.selectedFrequency, //previous value is passed to retain the previously entered value
             onHandleDone: this.setFrequency.bind(this), //pass a function that will be executed when done is clicked on the keyboard
-          }); 
+          });
           this._setState("Frequency.SelectFrequency");
         }
         static _states() {
@@ -822,7 +822,7 @@ export default class DvbSScan extends Lightning.Component {
             prevVal: this.selectedSymbolRate, //previous value is passed to retain the previously entered value
             onHandleDone: this.setSymbolRate.bind(this), //pass a function that will be executed when done is clicked on the keyboard
             presetValues: this.symbolRateList, //can handle a list of predefined values that can be selected using arrow keys
-          }); 
+          });
           this._setState("SymbolRate.SelectSymbolRate");
         }
         static _states() {
@@ -961,7 +961,7 @@ export default class DvbSScan extends Lightning.Component {
                 Language.translate("Modulation") + ": " +
                   (this.selectedModulation !== ""
                     ? this.selectedModulation.toUpperCase()
-                    : Language.translate("Select a")+ " " + Language.translate("Modulation")); 
+                    : Language.translate("Select a")+ " " + Language.translate("Modulation"));
               }
               _getFocused() {
                 return this.tag("SelectModulation");
@@ -1010,7 +1010,7 @@ export default class DvbSScan extends Lightning.Component {
                   (this.selectedSearchType !== ""
                     ? this.selectedSearchType.charAt(0).toUpperCase() +
                       this.selectedSearchType.slice(1)
-                    : Language.translate("Select a")+ " " + Language.translate("Search Mode")); 
+                    : Language.translate("Select a")+ " " + Language.translate("Search Mode"));
               }
               _getFocused() {
                 return this.tag("SelectSearchType");

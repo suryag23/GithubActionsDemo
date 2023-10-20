@@ -27,9 +27,9 @@
  /**
   * Class for Privacy Screen.
   */
- 
+
  const xcastApi = new XcastApi()
- 
+
  export default class PrivacyScreen extends Lightning.Component {
      static _template() {
          return {
@@ -147,8 +147,8 @@
                          src: Utils.asset('images/settings/Arrow.png'),
                      },
                  },
- 
- 
+
+
              },
              PrivacyPolicyScreen:{
                 type: PrivacyPolicyScreen,
@@ -156,21 +156,21 @@
              },
          }
      }
- 
+
      _firstEnable() {
          this._setState('LocalDeviceDiscovery')
          this.checkLocalDeviceStatus()
          this.USBApi = new UsbApi()
          this.AppApi = new AppApi()
      }
- 
- 
+
+
      _focus() {
          this._setState(this.state)
          this.checkLocalDeviceStatus()
          this.checkUSBDeviceStatus()
      }
-    
+
      checkUSBDeviceStatus() {
          if (!Storage.get('UsbMedia')) {
              this.tag('UsbMediaDevices.Button').src = Utils.asset('images/settings/ToggleOnOrange.png')
@@ -181,7 +181,7 @@
              this.tag('UsbMediaDevices.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
          }
      }
- 
+
      checkLocalDeviceStatus() {
          xcastApi.getEnabled().then(res => {
              if (res.enabled) {
@@ -194,7 +194,7 @@
                  this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
              })
      }
- 
+
      toggleLocalDeviceDiscovery() {
          xcastApi.getEnabled().then(res => {
              if (!res.enabled) {
@@ -217,12 +217,12 @@
                  this.tag('LocalDeviceDiscovery.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
              })
      }
- 
+
      hide() {
         this.tag('PrivacyScreenContents').visible = false
-       
+
      }
-    
+
      show() {
         this.tag('PrivacyScreenContents').visible = true
       }
@@ -294,7 +294,7 @@
                      this._setState('ClearCookies')
                  }
                  _handleEnter() {
-                     // 
+                     //
                  }
              },
              class ClearCookies extends this {

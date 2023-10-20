@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Utils, Storage } from "@lightningjs/sdk";
+import { Lightning, Utils, Storage, Language } from "@lightningjs/sdk";
 import { CONFIG } from "../Config/Config";
 import HDMIApi from "../api/HDMIApi";
 
@@ -56,7 +56,7 @@ export default class TvOverlayInputItem extends Lightning.Component {
           y: 45,
           mountY: 0.5,
           text: {
-            text: "Input not available",
+            text: Language.translate("Input not available"),
             fontSize: 25,
             textColor: 0xffffffff,
             fontFace: CONFIG.language.font,

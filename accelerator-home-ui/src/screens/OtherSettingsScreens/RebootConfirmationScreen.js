@@ -127,10 +127,6 @@ export default class RebootConfirmationScreen extends Lightning.Component {
         }
     }
 
-
-
-
-
     static _states() {
         return [
 
@@ -211,7 +207,7 @@ export default class RebootConfirmationScreen extends Lightning.Component {
                 $enter() {
                     this.loadingAnimation.start()
                     this.tag("Loader").visible = true
-                    this.tag("Title").text.text = "Rebooting..."
+                    this.tag("Title").text.text = Language.translate("Rebooting")+"..."
                     this.tag('Buttons').visible = false
                     this.tag('Info').visible = false
                 }
@@ -236,6 +232,4 @@ export default class RebootConfirmationScreen extends Lightning.Component {
             }
         ]
     }
-
-
 }

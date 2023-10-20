@@ -286,7 +286,7 @@ export default class NetworkInfo extends Lightning.Component {
                 defaultInterface = result.interface;
                 this.getIPSetting(defaultInterface)
                 if (defaultInterface === "WIFI") {
-                    this.tag("ConnectionType.Value").text.text = `Wireless`
+                    this.tag("ConnectionType.Value").text.text = Language.translate("Wireless")
                     this.tag("SSID").alpha = 1
                     this.tag("SignalStrength").alpha = 1
                 }
@@ -297,7 +297,7 @@ export default class NetworkInfo extends Lightning.Component {
                 }
                 else {
                     this.tag("ConnectionType.Value").text.text = `NA`
-                    this.tag("Status.Value").text.text = `Disconnected`
+                    this.tag("Status.Value").text.text = Language.translate('Disconnected')
                     this.tag("IPAddress.Value").text.text = `NA`
                     this.tag("Gateway.Value").text.text = `NA`
                     this.tag("MACAddress.Value").text.text = `NA`
@@ -309,7 +309,7 @@ export default class NetworkInfo extends Lightning.Component {
                         currentInterface = result.interfaces.filter((data) => data.interface === defaultInterface)
                         //console.log(currentInterface);
                         if (currentInterface[0].connected) {
-                            this.tag("Status.Value").text.text = `Connected`
+                            this.tag("Status.Value").text.text = Language.translate('Connected')
                             appApi.getConnectedSSID().
                                 then((result) => {
                                     if (parseInt(result.signalStrength) >= -50) {
@@ -336,7 +336,7 @@ export default class NetworkInfo extends Lightning.Component {
                                 .catch((error) => console.log(error));
                         }
                         else {
-                            this.tag('Status.Value').text.text = `Disconnected`
+                            this.tag('Status.Value').text.text = Language.translate('Disconnected')
                         }
                         this.tag('MACAddress.Value').text.text = `${currentInterface[0].macAddress}`
                     }).

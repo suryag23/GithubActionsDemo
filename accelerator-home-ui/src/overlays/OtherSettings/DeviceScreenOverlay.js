@@ -29,7 +29,7 @@ import RebootConfirmation from './RebootConfirmation';
  /**
   * Class for Video and Audio screen.
   */
- 
+
  export default class DeviceScreen extends Lightning.Component {
      static _template() {
          return {
@@ -166,28 +166,26 @@ import RebootConfirmation from './RebootConfirmation';
                 visible: false
              }
          }
- 
      }
- 
+
      _init() {
          this._appApi = new AppApi();
          this._network = new NetworkApi();
          this._setState('Info')
      }
- 
+
      _focus() {
         this._setState('Info')
      }
- 
+
     hide() {
         this.tag('DeviceScreenContents').visible = false
-       
      }
-    
+
      show() {
         this.tag('DeviceScreenContents').visible = true
       }
- 
+
      static _states() {
          return [
              class Info extends this{
@@ -272,7 +270,7 @@ import RebootConfirmation from './RebootConfirmation';
                      //this._setState('Info')
                  }
                  _handleEnter() {
- 
+
                  }
              },
              class DeviceInformationScreen extends this {
@@ -353,6 +351,6 @@ import RebootConfirmation from './RebootConfirmation';
               }
          ]
      }
- 
- 
+
+
  }

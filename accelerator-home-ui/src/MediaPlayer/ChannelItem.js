@@ -19,8 +19,8 @@
 
  import { Lightning } from '@lightningjs/sdk'
  import { CONFIG } from '../Config/Config'
- 
- 
+
+
  export default class ChannelItem extends Lightning.Component {
    static _template(){
      return {
@@ -47,13 +47,13 @@
         },
      }
    }
- 
+
    set item(item) {
     //  this.shows = item.shows;
      this._item = item
      this.tag('Item').patch({
          Title: {
-             x: 10, 
+             x: 10,
              y: 45,
              mountY: 0.5,
              text: { text: this.index+1 + "\t\t\t\t" + item.shortname, fontFace: CONFIG.language.font, fontSize: 21, textColor: 0xffFFFFFF,wordWrap:false,wordWrapWidth:232-20,maxLines:1,textOverflow:'...' }, // update the text
@@ -61,8 +61,8 @@
      })
    }
 
- 
- 
+
+
   _focus(){
     this.tag('TopLine').color = CONFIG.theme.hex
     this.tag('BottomLine').color = CONFIG.theme.hex
@@ -73,7 +73,7 @@
       zIndex: 2
     })
   }
- 
+
   _unfocus(){
     this.tag('TopLine').color = 0xFFFFFFFF
     this.tag('BottomLine').color = 0xFFFFFFFF
@@ -84,7 +84,4 @@
       zIndex: 1
     })
   }
- 
- 
-  }
- 
+}

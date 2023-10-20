@@ -26,7 +26,7 @@
  import JoinAnotherNetworkOverlay from './JoinAnotherNetworkOverlay'
 import WifiPairingScreen from './WifiPairingOverlayScreen'
 import FailComponent from './FailComponent'
- 
+
  /**
  * Class for WiFi screen.
  */
@@ -131,25 +131,25 @@ import FailComponent from './FailComponent'
         visible: false
        }
      }
- 
+
    }
- 
+
    _active() {
      this._setState('Switch')
    }
- 
+
    _focus() {
-     
+
      this._setState('Switch')
      this._enable()
    }
- 
+
    changeStateBack(state){
     this._setState(state)
    }
- 
+
    _firstEnable() {
- 
+
      this.wifiLoading = this.tag('Switch.Loader').animation({
        duration: 3,
        repeat: -1,
@@ -157,7 +157,7 @@ import FailComponent from './FailComponent'
        stopDelay: 0.2,
        actions: [{ p: 'rotation', v: { sm: 0, 0: 0, 1: Math.PI * 2 } }],
      })
- 
+
      this.onError = {
        0: 'SSID_CHANGED - The SSID of the network changed',
        1: 'CONNECTION_LOST - The connection to the network was lost',
@@ -165,7 +165,7 @@ import FailComponent from './FailComponent'
        3: 'CONNECTION_INTERRUPTED - The connection was interrupted',
        4: 'INVALID_CREDENTIALS - The connection failed due to invalid credentials',
        5: 'NO_SSID - The SSID does not exist',
-       6: 'UNKNOWN - Any other error.'
+       6: 'UNKNOWN - Any other error'
      }
      this._wifi = new WiFiApi()
      this._network = new NetworkApi()
@@ -250,7 +250,7 @@ import FailComponent from './FailComponent'
        }
      })
    }
- 
+
    /**
     * Function to be executed when the Wi-Fi screen is enabled.
     */
@@ -259,19 +259,19 @@ import FailComponent from './FailComponent'
        this._wifi.discoverSSIDs()
      }
    }
- 
+
    /**
     * Function to be executed when the Wi-Fi screen is disabled.
     */
    _disable() {
      this._wifi.stopScan()
    }
- 
+
    pairedDevices(){
     this._pairedNetworks.tag('List').items = []
     this._availableNetworks.tag('List').items =[]
   }
- 
+
    /**
     * Function to render list of Wi-Fi networks.
     */
@@ -296,8 +296,8 @@ import FailComponent from './FailComponent'
           item: item,
         }
       })
-      } 
- 
+      }
+
        this._otherList = ssids.filter(device => {
         console.log("SSID filter", device)
          result = this._pairedList.map(a => a.ssid)
@@ -321,7 +321,7 @@ import FailComponent from './FailComponent'
        })
      })
    }
-  
+
   hide() {
     this.tag('WifiContents').visible = false
   }
@@ -369,7 +369,7 @@ import FailComponent from './FailComponent'
              this.tag('Switch.Button').src = Utils.asset('images/settings/ToggleOffWhite.png')
              this.tag('Switch.Button').scaleX = -1;
            }
- 
+
          }
          _getFocused() {
            return this._pairedNetworks.tag('List').element
@@ -381,7 +381,7 @@ import FailComponent from './FailComponent'
            this._navigate('MyDevices', 'up')
          }
          _handleEnter() {
-         this.ListItem = this._pairedNetworks.tag('List').element._item 
+         this.ListItem = this._pairedNetworks.tag('List').element._item
           this._setState("WifiPairingScreen")
          }
        },
@@ -393,7 +393,7 @@ import FailComponent from './FailComponent'
              this.tag('Switch.Button').src = Utils.asset('images/settings/ToggleOffWhite.png');
              this.tag('Switch.Button').scaleX = -1;
            }
- 
+
          }
          _getFocused() {
            return this._availableNetworks.tag('List').element
@@ -406,16 +406,16 @@ import FailComponent from './FailComponent'
          }
          _handleEnter() {
           console.log("SSID check", this._availableNetworks.tag('List').element._item)
-          this.ListItem = this._availableNetworks.tag('List').element._item 
+          this.ListItem = this._availableNetworks.tag('List').element._item
           console.log("enter connect method")
           this._wifi.getSSIDKey().then((response)=>{
             console.log("ssid check")
             if(response === this.ListItem.ssid ){
               this._wifi.connect().then((response)=>{console.log(response)})
-              .catch(err =>{ 
+              .catch(err =>{
                 this._setState("WifiPairingScreen")
                 this._wifi.SaveSSIDKey("").then(()=>{})})
-               
+
             }
             else {this._setState("WifiPairingScreen")}
           })
@@ -450,14 +450,14 @@ import FailComponent from './FailComponent'
             this.hide()
             this.fireAncestors('$hideBreadCrum')
             this.tag('JoinAnotherNetworkOverlay').visible = true
-            
-           
+
+
         }
         $exit() {
             this.show()
             this.fireAncestors('$showBreadCrum')
             this.tag('JoinAnotherNetworkOverlay').visible = false
-            
+
         }
         _getFocused() {
             return this.tag('JoinAnotherNetworkOverlay')
@@ -473,7 +473,7 @@ import FailComponent from './FailComponent'
           this.hide()
           this.fireAncestors('$hideBreadCrum')
           this.tag('WifiPairingScreen').visible = true
-         
+
       }
       $exit() {
           this.show()
@@ -494,7 +494,7 @@ import FailComponent from './FailComponent'
           this.hide()
           this.fireAncestors('$hideBreadCrum')
           this.tag('FailScreen').visible = true
-         
+
       }
       $exit() {
           this.show()
@@ -513,13 +513,13 @@ import FailComponent from './FailComponent'
     }
      ]
    }
- 
+
    /**
     * Function to navigate through the lists in the screen.
     * @param {string} listname
     * @param {string} dir
     */
- 
+
    _navigate(listname, dir) {
      let list
      if (listname === 'MyDevices') list = this._pairedNetworks.tag('List')
@@ -585,8 +585,8 @@ import FailComponent from './FailComponent'
        this.pairedDevices()
      }
    }
- 
- 
+
+
    /**
     * Function to activate Wi-Fi plugin.
     */
@@ -616,7 +616,7 @@ import FailComponent from './FailComponent'
            this._wifi.setDefaultInterface('ETHERNET', true)
          }
        })
-       this.tag("FailScreen").notify({ title: 'WiFi Error', msg: this.onError[notification.code]})
+       this.tag("FailScreen").notify({ title: 'WiFi Error', msg: Language.translate(this.onError[notification.code])})
        this._setState('FailScreen');
      })
      this._wifi.registerEvent('onAvailableSSIDs', notification => {
@@ -628,8 +628,7 @@ import FailComponent from './FailComponent'
            this.wifiLoading.stop()
          }, 1000)
        }
- 
+
      })
    }
  }
- 

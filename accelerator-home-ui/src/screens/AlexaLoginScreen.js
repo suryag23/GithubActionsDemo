@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router, Utils } from '@lightningjs/sdk'
+import { Language, Lightning, Router, Utils } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import AlexaApi from '../api/AlexaApi'
 
@@ -35,7 +35,7 @@ export default class AlexaLoginScreen extends Lightning.Component {
                     y: 30,
                     mount: 0.5,
                     text: {
-                        text: "Back",
+                        text: Language.translate('Back'),
                         fontFace: CONFIG.language.font,
                         fontSize: 22,
                         textColor: 0xFF000000,
@@ -61,7 +61,7 @@ export default class AlexaLoginScreen extends Lightning.Component {
                     y: 380,
                     mount: 0.5,
                     text: {
-                        text: "Alexa allows you to use your voice to hear the news, check weather, control your smart home, and more.",
+                        text: Language.translate('Alexa welcome message'),
                         fontFace: CONFIG.language.font,
                         fontSize: 32,
                         textColor: 0xFFF9F9F9,
@@ -78,7 +78,7 @@ export default class AlexaLoginScreen extends Lightning.Component {
                         y: 30,
                         mount: 0.5,
                         text: {
-                            text: "Sign in with Amazon",
+                            text: Language.translate('Sign in with')+" Amazon",
                             fontFace: CONFIG.language.font,
                             fontSize: 28,
                             textColor: 0xFF000000,

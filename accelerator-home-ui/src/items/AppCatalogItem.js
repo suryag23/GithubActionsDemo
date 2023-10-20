@@ -49,7 +49,7 @@ export default class AppCatalogItem extends Lightning.Component {
                     x: this.width / 2,
                     y: this.height / 2,
                     text: {
-                        text: "Already installed!",
+                        text: Language.translate('Already installed') + "!",
                         fontFace: CONFIG.language.font,
                         fontSize: 20,
                     },
@@ -114,11 +114,11 @@ export default class AppCatalogItem extends Lightning.Component {
 
         updateStatus() {
         if (this._app.isRunning) {
-          this.tag('StatusProgress').setProgress(1.0, 'Running!')
+          this.tag('StatusProgress').setProgress(1.0, Language.translate('Running')+"!")
         } else {
           if (this._app.isInstalled) {
             console.log("App is installed")
-            this.tag('StatusProgress').setProgress(1.0, 'Installed!')
+            this.tag('StatusProgress').setProgress(1.0, Language.translate('Installed')+'!')
           } else {
             this.tag('StatusProgress').reset()
           }

@@ -194,6 +194,4 @@ export default class ChannelOverlay extends Lightning.Component {
       }
     }
   }
-
-
 }
