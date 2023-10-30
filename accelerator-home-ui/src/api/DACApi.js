@@ -204,7 +204,7 @@ export const getPlatformNameForDAC = async () => {
     return 'ah212'
   } else if (platform.toLowerCase().includes('amlogic')) {
     return 'ah212'
-  } else if (platform.toLowerCase().includes('mediabox')) {
+  } else if (platform.toLowerCase().includes('mediaclient')) {
     return 'rtd1319'
   } else if (platform.toLowerCase().includes('blade')) {
     return 'rtd1319'
