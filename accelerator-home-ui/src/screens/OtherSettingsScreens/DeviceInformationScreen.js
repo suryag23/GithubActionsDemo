@@ -21,6 +21,7 @@ import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
 import AppApi from '../../api/AppApi.js';
 import NetworkApi from '../../api/NetworkApi'
+import FireBoltApi from '../../api/firebolt/FireBoltApi';
 
 /**
  * Class for Video and Audio screen.
@@ -135,7 +136,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
                         y: 225,
                         mountY: 0.5,
                         text: {
-                            text: `City: N/A , Country: N/A `,
+                            text: `CountryCode:`,
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             fontSize: 25,
@@ -203,7 +204,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
                         y: 540,
                         mountY: 0.5,
                         text: {
-                            text: `UI Version: ${Settings.get('platform', 'version')}, Build Version: , Timestamp: `,
+                            text: `UI Version: ${Settings.get('platform', 'version')}, Build Version: , Firebolt API Version: `,
                             textColor: COLORS.titleColor,
                             fontFace: CONFIG.language.font,
                             fontSize: 25,
@@ -266,10 +267,48 @@ export default class DeviceInformationScreen extends Lightning.Component {
             this.tag("SerialNumber.Value").text.text = `${result.serialNumber}`;
         })
 
-        this.appApi.getSystemVersions().then(res => {
-            this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.stbVersion} \nTime Stamp - ${res.stbTimestamp} `
-        })
-            .catch(err => { console.error(`error while getting the system versions`) })
+        if ("ResidentApp" === Storage.get("selfClientName")) {
+            this.appApi.getSystemVersions().then(res => {
+                this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.stbVersion} \nTime Stamp - ${res.stbTimestamp} `
+            }).catch(err => {
+                console.error(`error while getting the system versions`)
+            })
+            this._network.isConnectedToInternet().then((result) => {
+                if (result.connectedToInternet === true) {
+                    this.appApi.getLocation().then(result => {
+                        console.log("getLocation from device info " + JSON.stringify(result))
+                        let locationInfo = ""
+                        if (result.city.length !== 0) {
+                            locationInfo = "City: " + result.city
+                        }
+                        else {
+                            locationInfo = "City: N/A "
+                        }
+                        if (result.country.length !== 0) {
+                            locationInfo += ", Country: " + result.country;
+                        }
+                        else {
+                            locationInfo += ", Country: N/A "
+                        }
+                        this.tag('Location.Value').text.text = `${locationInfo}`
+                    })
+                }
+                else {
+                    this.tag('Location.Value').text.text = `City: N/A, Country: N/A`
+                }
+            })
+        } else {
+            // Firebolt mode
+            FireBoltApi.get().deviceinfo.getversion().then(res => {
+                console.log(`build verion${res.firmware.readable} Firebolt API Version - ${res.api.readable}`)
+                this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.firmware.readable} \nFirebolt API Version - ${res.api.readable} `
+            }).catch(err => {
+                console.error(`error while getting the system versions from Firebolt.getversion API`)
+            })
+            FireBoltApi.get().localization.countryCode().then(res=>{
+                this.tag('Location.Value').text.text = `CountryCode: ${res}`;
+            })
+        }
 
         this.appApi.getDRMS().then(result => {
             console.log('from device info supported drms ' + JSON.stringify(result))
@@ -287,30 +326,6 @@ export default class DeviceInformationScreen extends Lightning.Component {
                 }
             });
             this.tag('SupportedDRM.Value').text.text = `${drms.substring(0, drms.length - 1)}`
-        })
-        this._network.isConnectedToInternet().then((result) => {
-            if (result.connectedToInternet === true) {
-                this.appApi.getLocation().then(result => {
-                    console.log("getLocation from device info " + JSON.stringify(result))
-                    let locationInfo = ""
-                    if (result.city.length !== 0) {
-                        locationInfo = "City: " + result.city
-                    }
-                    else {
-                        locationInfo = "City: N/A "
-                    }
-                    if (result.country.length !== 0) {
-                        locationInfo += ", Country: " + result.country;
-                    }
-                    else {
-                        locationInfo += ", Country: N/A "
-                    }
-                    this.tag('Location.Value').text.text = `${locationInfo}`
-                })
-            }
-            else {
-                this.tag('Location.Value').text.text = `City: N/A, Country: N/A`
-            }
         })
 
         this.appApi.getDeviceIdentification().then(result => {

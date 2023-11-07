@@ -251,5 +251,10 @@
   "CONNECTION_INTERRUPTED - The connection was interrupted":"CONNECTION_INTERRUPTED - La conexión fue interrumpida",
   "INVALID_CREDENTIALS - The connection failed due to invalid credentials":"INVALID_CREDENTIALS: la conexión falló debido a credenciales no válidas",
   "NO_SSID - The SSID does not exist":"NO_SSID: el SSID no existe",
-  "UNKNOWN - Any other error":"DESCONOCIDO - Cualquier otro error"
+  "UNKNOWN - Any other error":"DESCONOCIDO - Cualquier otro error",
+  "Security PIN input": "Entrada de PIN seguridad",
+  "Acknowledge":"Reconocer",
+  "Grant":"Conceder",
+  "Deny":"Denegar",
+  "Keyboard challenge":"Desafío del teclado"
 }

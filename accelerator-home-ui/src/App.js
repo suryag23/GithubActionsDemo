@@ -42,6 +42,11 @@ import { appListInfo } from "./../static/data/AppListInfo.js";
 import VoiceApi from './api/VoiceApi.js';
 import AlexaApi from './api/AlexaApi.js';
 import AAMPVideoPlayer from './MediaPlayer/AAMPVideoPlayer';
+import FireBoltApi from './api/firebolt/FireBoltApi';
+import PinChallengeProvider from './api/firebolt/provider/PinChallengeProvider';
+import AckChallengeProvider from './api/firebolt/provider/AckChallengeProvider';
+import KeyboardUIProvider from './api/firebolt/provider/KeyboardUIProvider';
+import { AcknowledgeChallenge, Keyboard, PinChallenge } from '@firebolt-js/manage-sdk'
 
 const config = {
   host: '127.0.0.1',
@@ -58,12 +63,19 @@ var cecApi = new CECApi();
 var xcastApi = new XcastApi();
 var voiceApi = new VoiceApi();
 
+
 export default class App extends Router.App {
   static getFonts() {
     return [{ family: CONFIG.language.font, url: Utils.asset('fonts/' + CONFIG.language.fontSrc) }];
   }
   _setup() {
+    Storage.set("selfClientName","ResidentApp");
     console.log("accelerator-home-ui version: " + Settings.get("platform", "version"))
+    if (window.__firebolt.endpoint !== undefined) {
+      console.log("window.__firebolt.endpoint ", JSON.stringify(window.__firebolt.endpoint));
+      Storage.set("selfClientName","FireboltMainApp-refui");
+    }
+    console.log("selfClientName:" , Storage.get("selfClientName"))
     Router.startRouter(routes, this);
     Storage.set("ResolutionChangeInProgress", false);
     document.onkeydown = e => {
@@ -172,13 +184,13 @@ export default class App extends Router.App {
         }
         // appApi.setVisibility('ResidentApp', true);
         thunder.call('org.rdk.RDKShell', 'moveToFront', {
-          client: 'ResidentApp'
+          client: Storage.get("selfClientName")
         }).then(result => {
-          appApi.setVisibility('ResidentApp', true); //#requiredChange
+          appApi.setVisibility(Storage.get("selfClientName"), true); //#requiredChange
           console.log('ResidentApp moveToFront Success');
           thunder
             .call("org.rdk.RDKShell", "setFocus", {
-              client: 'ResidentApp'
+              client: Storage.get("selfClientName")
             })
             .then((result) => {
               console.log("residentApp setFocus Success");
@@ -204,13 +216,13 @@ export default class App extends Router.App {
         }
         // appApi.setVisibility('ResidentApp', true);
         thunder.call('org.rdk.RDKShell', 'moveToFront', {
-          client: 'ResidentApp'
+          client: Storage.get("selfClientName")
         }).then(result => {
-          appApi.setVisibility('ResidentApp', true); //#requiredChange
+          appApi.setVisibility(Storage.get("selfClientName"), true); //#requiredChange
           console.log('ResidentApp moveToFront Success');
           thunder
             .call("org.rdk.RDKShell", "setFocus", {
-              client: 'ResidentApp'
+              client: Storage.get("selfClientName")
             })
             .then((result) => {
               console.log("Resident App setFocus Success");
@@ -428,8 +440,8 @@ export default class App extends Router.App {
   }
 
   _moveToFront() {
-    appApi.setVisibility('ResidentApp', true)
-    appApi.zorder('residentApp')
+    appApi.setVisibility(Storage.get("selfClientName"), true)
+    appApi.zorder(Storage.get("selfClientName"))
   }
 
   AvDecodernotificationcall(){
@@ -496,6 +508,25 @@ export default class App extends Router.App {
       localStorage.setItem('Language', 'English')
     }
     this.userInactivity();
+    FireBoltApi.get().deviceinfo.gettype()
+    FireBoltApi.get().lifecycle.ready()
+
+    FireBoltApi.get().lifecycle.registerEvent('foreground',value=>{
+      console.log("FireBoltApi[foreground] value:" + JSON.stringify(value) + ", launchResidentApp with:" +JSON.stringify(Storage.get("selfClientName")));
+      // Ripple launches refui with this rdkshell client name.
+      appApi.launchResidentApp(Storage.get("selfClientName"));
+    })
+    FireBoltApi.get().lifecycle.state().then(res=>{
+      console.log("Lifecycle.state result:"+res)
+    });
+
+    Keyboard.provide('xrn:firebolt:capability:input:keyboard', new KeyboardUIProvider(this))
+    console.log("Keyboard provider registered")
+    PinChallenge.provide('xrn:firebolt:capability:usergrant:pinchallenge', new PinChallengeProvider(this))
+    console.log("PinChallenge provider registered")
+    AcknowledgeChallenge.provide('xrn:firebolt:capability:usergrant:acknowledgechallenge', new AckChallengeProvider(this))
+    console.log("Acknowledge challenge provider registered")
+
     appApi.deviceType().then(result => {
       console.log("App detected deviceType as:", ((result.devicetype != null)?result.devicetype:"tv"));
       Storage.set("deviceType", ((result.devicetype != null)?result.devicetype:"tv"));
@@ -550,6 +581,8 @@ export default class App extends Router.App {
       }
     })
 
+
+
     appApi.getHDCPStatus().then(result => {
       Storage.set("UICacheonDisplayConnectionChanged", result.isConnected);
     })
@@ -589,7 +622,7 @@ export default class App extends Router.App {
       }
     })
 
-    keyIntercept()
+    keyIntercept(Storage.get("selfClientName"))
 
     thunder.on('Controller.1', 'all', noti => {
       console.log("App controller notification:", noti)
@@ -725,7 +758,7 @@ export default class App extends Router.App {
         }
         if (notification.callsign === Storage.get("applicationType")) { //only launch residentApp iff notification is from currentApp
           console.log(notification.callsign + " is in: " + notification.state + " state, and application type in Storage is still: " + Storage.get("applicationType") + " calling launchResidentApp")
-          appApi.launchResidentApp();
+          appApi.launchResidentApp(Storage.get("selfClientName"));
         }
       }
       if (notification && (notification.callsign === 'org.rdk.HdmiCec_2' && notification.state === 'Activated')) {
@@ -761,7 +794,7 @@ export default class App extends Router.App {
                 })
               }
 
-              appApi.visible('ResidentApp', false);
+              appApi.visible(Storage.get("selfClientName"), false);
             }
             if (notification.EventName === "requestsuspend") {
               this.deactivateChildApp('Netflix')
@@ -1416,7 +1449,7 @@ export default class App extends Router.App {
             if (url) {
               appApi.configureApplication('Netflix', url).then(() => {
                 appApi.launchPremiumApp("Netflix").then(res => {
-                  appApi.setVisibility('ResidentApp', false);
+                  appApi.setVisibility(Storage.get("selfClientName"), false);
                   resolve(true)
                 }).catch(err => { reject(false) });// ie. org.rdk.RDKShell.launch
               }).catch(err => {
@@ -1427,7 +1460,7 @@ export default class App extends Router.App {
             }
             else {
               appApi.launchPremiumApp("Netflix").then(res => {
-                appApi.setVisibility('ResidentApp', false);
+                appApi.setVisibility(Storage.get("selfClientName"), false);
                 resolve(true)
               }).catch(err => { reject(false) });// ie. org.rdk.RDKShell.launch
             }
@@ -1445,14 +1478,14 @@ export default class App extends Router.App {
                     console.error("Netflix : error while sending systemcommand : ", JSON.stringify(err))
                     reject(false);
                   });
-                appApi.setVisibility('ResidentApp', false);
+                appApi.setVisibility(Storage.get("selfClientName"), false);
                 resolve(true)
               }).catch(err => { reject(false) });// ie. org.rdk.RDKShell.launch
             }
             else {
               appApi.launchPremiumApp("Netflix").then(res => {
                 console.log(`Netflix : launch premium app resulted in `, JSON.stringify(res));
-                appApi.setVisibility('ResidentApp', false);
+                appApi.setVisibility(Storage.get("selfClientName"), false);
                 resolve(true)
               });
             }

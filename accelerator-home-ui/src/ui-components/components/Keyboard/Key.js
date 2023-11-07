@@ -76,7 +76,7 @@ export default class Key extends Button {
   get _sizes() {
     return this.styles.sizes
       ? { ...this.styles.sizes, ...this.sizes }
-      : { small: 50, medium: 110, large: 273, xlarge: 718, ...this.sizes }; // actualize values 50,110,212,350 ; 50,110,212,750
+      : { small: 50, medium: 110, large: 273, xlarge: 718, done_size: 340, ...this.sizes }; // actualize values 50,110,212,350 ; 50,110,212,750
   }
 
   _handleEnter() {

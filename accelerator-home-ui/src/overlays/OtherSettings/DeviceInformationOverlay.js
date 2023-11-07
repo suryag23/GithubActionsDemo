@@ -21,11 +21,11 @@
  import { CONFIG } from '../../Config/Config'
  import AppApi from '../../api/AppApi.js';
  import NetworkApi from '../../api/NetworkApi'
- 
+ import FireBoltApi from '../../api/firebolt/FireBoltApi';
  /**
   * Class for Video and Audio screen.
   */
- 
+
  export default class DeviceInformationScreen extends Lightning.Component {
      static _template() {
          return {
@@ -126,7 +126,7 @@
                             y: 225,
                             mountY: 0.5,
                             text: {
-                                text: `City: N/A , Country: N/A `,
+                                text: `CountryCode:`,
                                 textColor: COLORS.titleColor,
                                 fontFace: CONFIG.language.font,
                                 fontSize: 25,
@@ -194,7 +194,7 @@
                             y: 540,
                             mountY: 0.5,
                             text: {
-                                text: `UI Version: ${Settings.get('platform', 'version')}, Build Version: , Timestamp: `,
+                                text: `UI Version: ${Settings.get('platform', 'version')}, Build Version: , Firebolt API Version: `,
                                 textColor: COLORS.titleColor,
                                 fontFace: CONFIG.language.font,
                                 fontSize: 25,
@@ -245,24 +245,61 @@
             }
          }
      }
- 
+
      _init() {
          this._network = new NetworkApi();
          this.appApi = new AppApi();
      }
- 
+
      _focus() {
- 
+
          this._setState('DeviceInformationScreen')
          this.appApi.getSerialNumber().then(result => {
              this.tag("SerialNumber.Value").text.text = `${result.serialNumber}`;
          })
- 
-         this.appApi.getSystemVersions().then(res => {
-             this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.stbVersion} \nTime Stamp - ${res.stbTimestamp} `
-         })
-             .catch(err => { console.error(`error while getting the system versions`) })
- 
+
+        if ("ResidentApp" === Storage.get("selfClientName")) {
+            this.appApi.getSystemVersions().then(res => {
+                this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.stbVersion} \nTime Stamp - ${res.stbTimestamp} `
+            }).catch(err => {
+                console.error(`error while getting the system versions`)
+            })
+            this._network.isConnectedToInternet().then((result) => {
+                if (result.connectedToInternet === true) {
+                    this.appApi.getLocation().then(result => {
+                        console.log("getLocation from device info " + JSON.stringify(result))
+                        let locationInfo = ""
+                        if (result.city.length !== 0) {
+                            locationInfo = "City: " + result.city
+                        }
+                        else {
+                            locationInfo = "City: N/A "
+                        }
+                        if (result.country.length !== 0) {
+                            locationInfo += ", Country: " + result.country;
+                        }
+                        else {
+                            locationInfo += ", Country: N/A "
+                        }
+                        this.tag('Location.Value').text.text = `${locationInfo}`
+                    })
+                }
+                else {
+                    this.tag('Location.Value').text.text = `City: N/A, Country: N/A`
+                }
+            })
+        } else {
+            FireBoltApi.get().deviceinfo.getversion().then(res => {
+                console.log(`build verion${res.firmware.readable} Firebolt API Version - ${res.api.readable}`)
+                this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.firmware.readable} \nFirebolt API Version - ${res.api.readable} `
+            }).catch(err => {
+                console.error(`error while getting the system versions from Firebolt.getversion API`)
+            })
+            FireBoltApi.get().localization.countryCode().then(res=>{
+                this.tag('Location.Value').text.text = `CountryCode: ${res}`;
+            })
+        }
+
          this.appApi.getDRMS().then(result => {
              console.log('from device info supported drms ' + JSON.stringify(result))
              let drms = ""
@@ -280,37 +317,13 @@
              });
              this.tag('SupportedDRM.Value').text.text = `${drms.substring(0, drms.length - 1)}`
          })
-         this._network.isConnectedToInternet().then((result) => {
-             if (result.connectedToInternet === true) {
-                 this.appApi.getLocation().then(result => {
-                     console.log("getLocation from device info " + JSON.stringify(result))
-                     let locationInfo = ""
-                     if (result.city.length !== 0) {
-                         locationInfo = "City: " + result.city
-                     }
-                     else {
-                         locationInfo = "City: N/A "
-                     }
-                     if (result.country.length !== 0) {
-                         locationInfo += ", Country: " + result.country;
-                     }
-                     else {
-                         locationInfo += ", Country: N/A "
-                     }
-                     this.tag('Location.Value').text.text = `${locationInfo}`
-                 })
-             }
-             else {
-                 this.tag('Location.Value').text.text = `City: N/A, Country: N/A`
-             }
-         })
- 
+
          this.appApi.getDeviceIdentification().then(result => {
              console.log('from device Information screen getDeviceIdentification: ' + JSON.stringify(result))
              this.tag('ChipSet.Value').text.text = `${result.chipset}`
              // this.tag('FirmwareVersions.Value').text.text = `${result.firmwareversion}`
          })
- 
+
          let self = this;
          if (Storage.get('Netflix_ESN')) {
              self.tag('AppVersions.Value').text.text = `Youtube: NA\nAmazon Prime: NA\nNetflix ESN: ${Storage.get('Netflix_ESN')}`
@@ -352,16 +365,16 @@
                      console.error(`Netflix : error while getting netflix plugin status ie. `, JSON.stringify(err))
                  })
          }
- 
- 
+
+
          this.appApi.registerChangeLocation()
      }
- 
+
      set netflixESN(v) {
          console.log(`setting netflix ESN value to ${v}`);
          this.tag('AppVersions.Value').text.text = v;
      }
- 
+
      _handleDown() {
          if (this.tag("DeviceInfoContents").y > -200) {
              this.tag("DeviceInfoContents").y -= 20;
@@ -372,5 +385,5 @@
              this.tag("DeviceInfoContents").y += 20;
          }
      }
- 
+
  }

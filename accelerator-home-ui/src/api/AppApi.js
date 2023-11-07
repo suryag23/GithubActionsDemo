@@ -371,7 +371,7 @@ export default class AppApi {
   clearCache() {
     return new Promise((resolve, reject) => {
       thunder
-        .call('ResidentApp', 'delete', { path: ".cache" })
+        .call(Storage.get("selfClientName"), 'delete', { path: ".cache" })
         .then(result => {
           resolve(result)
         })
@@ -660,7 +660,7 @@ export default class AppApi {
         }).catch(err => {
           console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back")
           thunder.call('org.rdk.RDKShell', 'kill', { "client": callsign });
-          this.launchResidentApp();
+          this.launchResidentApp(Storage.get("selfClientName"));
           Storage.set("appSwitchingInProgress", false);
           Router.navigate(Storage.get("lastVisitedRoute"));
           reject(err)
@@ -746,7 +746,7 @@ export default class AppApi {
 
           //destroying the app incase it's stuck in launching | if taking care of ResidentApp as callsign, make sure to prevent destroying it
           thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
-          this.launchResidentApp();
+          this.launchResidentApp(Storage.get("selfClientName"));
           Storage.set("appSwitchingInProgress", false);
           Router.navigate(Storage.get("lastVisitedRoute"));
           reject(err)
@@ -774,7 +774,7 @@ export default class AppApi {
       new HDMIApi().stopHDMIInput()
       Storage.set("_currentInputMode", {});
       if (!exitInBackground) { //means resident App needs to be launched
-        this.launchResidentApp();
+        this.launchResidentApp(Storage.get("selfClientName"));
       }
       return Promise.resolve(true);
       //check for hdmi scenario
@@ -801,7 +801,7 @@ export default class AppApi {
     }
 
     if (!exitInBackground) { //means resident App needs to be launched
-      this.launchResidentApp();
+      this.launchResidentApp(Storage.get("selfClientName"));
     }
 
     //to hide the current app
@@ -858,24 +858,24 @@ export default class AppApi {
    * Function to launch ResidentApp explicitly(incase of special scenarios)
    * Prefer using launchApp and exitApp for ALL app launch and exit scenarios.
    */
-  async launchResidentApp() {
-    console.log("AppAPI launchResidentApp got Called: setting visibility, focus and moving to front the ResidentApp")
+  async launchResidentApp(client = "ResidentApp", callsign = "ResidentApp") {
+    console.log("AppAPI launchResidentApp got Called: setting visibility, focus and moving to front the client: " + client)
     await thunder.call("org.rdk.RDKShell", "moveToFront", {
-      "client": "ResidentApp",
-      "callsign": "ResidentApp"
+      "client": client,
+      "callsign": callsign
     }).catch(err => {
       console.error("AppAPI failed to moveToFront : ResidentApp ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front")
     })
 
     await thunder.call("org.rdk.RDKShell", "setFocus", {
-      "client": "ResidentApp",
-      "callsign": "ResidentApp"
+      "client": client,
+      "callsign": callsign
     }).catch(err => {
       console.error("AppAPI failed to setFocus : ResidentApp ERROR: ", JSON.stringify(err))
     })
 
     await thunder.call("org.rdk.RDKShell", "setVisibility", {
-      "client": "ResidentApp",
+      "client": client,
       "visible": true
     }).catch(err => {
       console.error("AppAPI failed to setVisibility : ResidentApp ERROR: ", JSON.stringify(err))
@@ -992,7 +992,7 @@ export default class AppApi {
       thunder
         .call('org.rdk.RDKShell', 'launch', {
           callsign: childCallsign,
-          type: 'ResidentApp',
+          type: Storage.get("selfClientName"),
           uri: url,
         })
         .then((res) => {
@@ -1012,7 +1012,7 @@ export default class AppApi {
       thunder
         .call('org.rdk.RDKShell', 'launch', {
           callsign: childCallsign,
-          type: 'ResidentApp',
+          type: Storage.get("selfClientName"),
           uri: url,
         })
         .then(res => {

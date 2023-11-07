@@ -31,5 +31,13 @@ export var showCaseApps = [
       uri: 'https://lightningjs.io/tmdb/#splash',
       url: '/images/lightningApps/tmbd.png',
       appIdentifier: 's:1'
+    },
+    {
+      displayName: 'FCA',
+      applicationType: 'FireboltApp',
+      appId : "comcast.test.firecert",
+      intent : { "action": "home", "context": { "source": "device" } } ,
+      url: '/images/lightningApps/fb_cert.png',
+      appIdentifier: 's:2'
     }
   ]

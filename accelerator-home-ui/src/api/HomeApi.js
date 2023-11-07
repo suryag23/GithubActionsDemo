@@ -245,20 +245,23 @@ export default class HomeApi {
   }
   async checkAppCompatability (items)  {
     for(let i=0;i<items.length;i++) {
-     let callsign = items[i].applicationType
-     if(items[i].applicationType !== '') {
-       if(items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
-         callsign = "Cobalt"
-       }
 
-       await appApi.getPluginStatus(callsign).then(res => {
-       }).catch(err => {
-           console.log("Error:",err)
-           items.splice(i,1)
-           i--
-         })
+      let callsign = items[i].applicationType
+        if(items[i].applicationType !== '') {
+          if ((items[i].applicationType === "FireboltApp") && (Storage.get("selfClientName") === "FireboltMainApp-refui")) {
+            callsign = "HtmlApp";
+          }
+          else if(items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
+            callsign = "Cobalt"
+            }
+        await appApi.getPluginStatus(callsign).then(res => {
+                }).catch(err => {
+                    console.log("Error:",err)
+                    items.splice(i,1)
+                    i--
+                  })
+            }
+  }
+      return items
      }
-    }
-    return items
-   }
-}
+  }

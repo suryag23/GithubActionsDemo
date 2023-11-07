@@ -699,7 +699,7 @@ export const KEYBOARD_FORMATS = {
       ['4', '5', '6'],
       ['7', '8', '9'],
       ['Delete', '0', 'Clear'],
-      [{ label: 'Done', size: 'large' }]
+      [{ label: 'Done', size: 'done_size' }]
     ]
   }
 };

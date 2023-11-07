@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils, Router, Language } from '@lightningjs/sdk'
+import { Lightning, Utils, Router, Storage, Language } from '@lightningjs/sdk'
 import BluetoothApi from './../api/BluetoothApi'
 import HomeApi from '../api/HomeApi'
 import AppApi from '../api/AppApi'
@@ -455,7 +455,7 @@ export default class SplashScreen extends Lightning.Component {
         }
         _handleEnter() {
           if (this.tag('UISwitch.UIList').element._item.title != 'DEFAULT') {
-            this.appApi.launchResident(this.tag('UISwitch.UIList').element._item.uri, 'ResidentApp').catch(err => { })
+            this.appApi.launchResident(this.tag('UISwitch.UIList').element._item.uri, Storage.get("selfClientName")).catch(err => { })
           } else {
             if (this.remotePaired == false) this._setState('AutoRemotePair')
             else if (this.hasInternet == false) this._setState('ConnectivityScreen')

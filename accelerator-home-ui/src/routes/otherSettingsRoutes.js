@@ -31,6 +31,9 @@ import TimeZone from '../screens/OtherSettingsScreens/TimeZone'
 import TimeItems from '../items/TimeItems'
 import FactoryResetConfirmationScreen from '../screens/OtherSettingsScreens/FactoryResetConfirmationScreen'
 import SreenSaverScreen from '../screens/ScreenSaverTimer'
+import SecurityPinScreen from '../api/firebolt/provider/SecurityPinScreen'
+import KeyboardScreen from '../api/firebolt/provider/KeyboardScreen'
+import AcknowledgeScreen from '../api/firebolt/provider/AcknowledgeScreen'
 
 
 
@@ -60,6 +63,18 @@ export default {
       path: 'settings/other/privacy',
       component: PrivacyScreen,
       widgets: ['Menu', 'Volume', "AppCarousel"]
+    },
+    {
+      path: "settings/other/SecurityPinScreen",
+      component: SecurityPinScreen,
+    },
+    {
+      path: "settings/other/KeyboardScreen",
+      component: KeyboardScreen,
+    },
+    {
+      path: "settings/other/AcknowledgeScreen",
+      component: AcknowledgeScreen,
     },
 
     {

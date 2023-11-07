@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning } from '@lightningjs/sdk'
+ import { Lightning, Storage } from '@lightningjs/sdk'
  import LanguageItem from '../../items/LanguageItem'
  import { availableLanguages } from '../../Config/Config'
  import AppApi from '../../api/AppApi';
@@ -67,15 +67,15 @@
        }
      })
      appApi.deactivateResidentApp(loader)
-     appApi.setVisibility('ResidentApp', true);
+     appApi.setVisibility(Storage.get("selfClientName"), true);
      thunder.call('org.rdk.RDKShell', 'moveToFront', {
-       client: 'ResidentApp'
+       client: Storage.get("selfClientName")
      }).then(result => {
        console.log('ResidentApp moveToFront Success');
      });
      thunder
        .call('org.rdk.RDKShell', 'setFocus', {
-         client: 'ResidentApp'
+         client: Storage.get("selfClientName")
        })
        .then(result => {
          console.log('ResidentApp moveToFront Success');
@@ -111,7 +111,7 @@
              let notification_url = location.origin + path + url
              console.log(notification_url)
              appApi.launchResident(notification_url, loader).catch(err => { })
-             appApi.setVisibility('ResidentApp', false)
+             appApi.setVisibility(Storage.get("selfClientName"), false)
              location.reload();
            }
          }

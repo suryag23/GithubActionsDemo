@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Router, Language } from '@lightningjs/sdk'
+import { Lightning, Router, Language, Storage } from '@lightningjs/sdk'
 import { CONFIG } from '../../Config/Config'
 import LanguageItem from '../../items/LanguageItem'
 import { availableLanguages } from '../../Config/Config'
@@ -153,7 +153,7 @@ export default class LanguageScreen extends Lightning.Component {
             let notification_url = location.origin + path + url
             console.log(notification_url)
             appApi.launchResident(notification_url, loader).catch(err => { })
-            appApi.setVisibility('ResidentApp', false)
+            appApi.setVisibility(Storage.get("selfClientName"), false)
             location.reload();
           }
         }

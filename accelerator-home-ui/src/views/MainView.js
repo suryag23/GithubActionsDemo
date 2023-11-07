@@ -28,6 +28,7 @@ import GracenoteItem from '../items/GracenoteItem.js'
 import { List } from '@lightningjs/ui'
 import HDMIApi from '../api/HDMIApi.js'
 import Network from '../api/NetworkApi.js'
+import FireBoltApi from '../api/firebolt/FireBoltApi.js'
 
 /** Class for main view component in home UI */
 export default class MainView extends Lightning.Component {
@@ -388,7 +389,7 @@ export default class MainView extends Lightning.Component {
           this.fireAncestors("$hideImage",0);
           console.log('onSignalChanged ', JSON.stringify(notification))
           if (notification.signalStatus !== 'stableSignal') {
-            this.appApi.setVisibility('ResidentApp', true)
+            this.appApi.setVisibility(Storage.get("selfClientName"), true)
             this.widgets.fail.notify({ title: this.tag('Inputs.Slider').items[this.tag('Inputs.Slider').index].data.displayName, msg: Language.translate("Input disconnected") })
             Router.focusWidget('Fail')
           }
@@ -786,7 +787,7 @@ export default class MainView extends Lightning.Component {
               Storage.set('applicationType', 'HDMI');
               const currentInput = this.tag('Inputs.Slider').items[this.tag('Inputs.Slider').index].data
               Storage.set("_currentInputMode", { id: currentInput.id, locator: currentInput.locator });
-              this.appApi.setVisibility('ResidentApp', false);
+              this.appApi.setVisibility(Storage.get("selfClientName"), false);
             })
             .catch(err => {
               console.log('failed', err)
@@ -1020,14 +1021,26 @@ export default class MainView extends Lightning.Component {
         async _handleEnter() {
           let applicationType = this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.applicationType;
           let appIdentifier = this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.appIdentifier;
+          let appId = this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.appId;
+          let intent = this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.intent;
           let params = {
             url: this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.uri,
             launchLocation: "mainView",
             appIdentifier:appIdentifier
           }
-          this.appApi.launchApp(applicationType,params).catch(err => {
-            console.log("ApplaunchError: ", JSON.stringify(err), err)
-          });
+          if(applicationType=="FireboltApp")
+          {
+            FireBoltApi.get().discovery.launch(appId,intent).then(res=>{
+              console.log(res)
+              // HOME key press won't bring back RefUI.
+              Storage.set("applicationType", "FireboltApp")
+            })
+          }
+          else{
+            this.appApi.launchApp(applicationType,params).catch(err => {
+              console.log("ApplaunchError: ", JSON.stringify(err), err)
+            });
+          }
         }
       },
 
