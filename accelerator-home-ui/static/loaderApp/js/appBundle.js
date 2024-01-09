@@ -2,7 +2,7 @@
  * App version: 1.0.0
  * SDK version: 4.8.1
  * CLI version: 2.7.2
- * 
+ *
  * Generated: Thu, 24 Feb 2022 06:39:45 GMT
  */
 

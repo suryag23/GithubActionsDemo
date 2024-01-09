@@ -21,31 +21,18 @@ import { imageListInfo } from '../../static/data/ImageListInfo'
 import { musicListInfo } from '../../static/data/MusicListInfo'
 import { videoListInfo } from '../../static/data/VideoListInfo'
 import { UsbInnerFolderListInfo } from '../../static/data/UsbInnerFolderListInfo'
+import { CONFIG } from '../Config/Config'
 
+let thunder = ThunderJS(CONFIG.thunderConfig)
 
-const config = {
-    host: '127.0.0.1',
-    port: 9998,
-    versions: {
-        default: 2,
-        Controller: 1,
-        UsbAccess: 2,
-    }
-}
-let thunder = ThunderJS(config)
 /**
  * Class that contains functions which commuicates with thunder API's
  */
-
-
-
 export default class UsbApi {
 
     /**
     *  Function to activate USB Access Plugin
     */
-
-
     activate() {
         return new Promise((resolve, reject) => {
             const systemcCallsign = 'org.rdk.UsbAccess'
@@ -62,8 +49,6 @@ export default class UsbApi {
     /**
     *  Function to deactivate USB Access Plugin
     */
-
-
     deactivate() {
         return new Promise((resolve, reject) => {
             const systemcCallsign = 'org.rdk.UsbAccess'
@@ -76,9 +61,6 @@ export default class UsbApi {
                 })
         })
     }
-
-
-
 
     /**
     *  Function to create link for USB content
@@ -196,14 +178,13 @@ export default class UsbApi {
         });
     }
 
-
     getUsbContentList(result) {
         this.destroy()
         let cwd = this.usbLink;
         if (arguments[1]) {
             cwd = cwd + '/' + arguments[1];
         }
-        // to add support for more formats, extension can be added same as below 
+        // to add support for more formats, extension can be added same as below
         let extensionForImage = ['.png', '.jpg', '.PNG', '.jpeg', '.JPEG', '.jpg', '.JPG'];
         let extensionForVideo = ['.mp4', '.MP4', '.mov', '.MOV', '.avi', '.AVI', '.m3u8', '.M3U8', '.mpeg2', '.MPEG2'];
         let extensionForAudio = ['.mp3', '.mpeg', '.MP3', '.MPEG'];
@@ -226,7 +207,6 @@ export default class UsbApi {
                     return device
                 }
             }
-
         });
 
         this._discoveredC.filter(device => {
@@ -274,6 +254,5 @@ export default class UsbApi {
             }
         })
     }
-
 }
 

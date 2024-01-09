@@ -20,20 +20,20 @@ import FBTDeviceInfo from "./FBTDeviceInfo";
 import FBTLifecycle from "./FBTLifecycle";
 import FBTDiscovery from "./FBTDiscovery";
 import FBTLocalization from "./FBTLocalization"
+
 let instance = null
 export default class FireBoltApi {
-    constructor()
-    {
-        this.deviceinfo =new FBTDeviceInfo();
-        this.lifecycle = new FBTLifecycle();
-        this.discovery = new FBTDiscovery();
-        this.localization = new FBTLocalization();
-    }
-   /**
-   *
-   * @returns {FireBoltApi}
-   */
-  static get () {
+  constructor() {
+    this.deviceinfo = new FBTDeviceInfo();
+    this.lifecycle = new FBTLifecycle();
+    this.discovery = new FBTDiscovery();
+    this.localization = new FBTLocalization();
+  }
+  /**
+  *
+  * @returns {FireBoltApi}
+  */
+  static get() {
     if (instance == null) {
       instance = new FireBoltApi()
     }

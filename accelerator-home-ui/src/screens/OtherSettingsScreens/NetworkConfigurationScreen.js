@@ -20,13 +20,9 @@ import { Lightning, Utils, Language, Router } from '@lightningjs/sdk'
 import SettingsMainItem from '../../items/SettingsMainItem'
 import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
-import NetworkApi from '../../api/NetworkApi'
-/**
-  * Class for Other Network Config Screen.
-  */
+import Network from '../../api/NetworkApi'
 
 export default class NetworkConfigurationScreen extends Lightning.Component {
-
     pageTransition() {
         return 'left'
     }
@@ -142,16 +138,19 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
         }
     }
 
-    _firstEnable() {
+    _active() {
         this._setState('NetworkInfo')
-        let _currentInterface = "" //getDefaultInterface
         let _currentIPSettings = {}
         let _newIPSettings = {}
-        this._network = new NetworkApi()
 
-        this._network.getDefaultInterface().then(interfaceName => {
-            _currentInterface = interfaceName
+        Network.get().getDefaultInterface().then(interfaceName => {
+            this.$NetworkInterfaceText(interfaceName)
         })
+
+        this.onDefaultIfaceChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onDefaultInterfaceChanged', data => {
+            this.$NetworkInterfaceText(data.newInterfaceName)
+            this.tag('TestInternetAccess.Title').text.text = Language.translate('Test Internet Access: ')
+        });
 
         _newIPSettings = _currentIPSettings
         _newIPSettings.ipversion = "IPV6" // this fails, need to verify how to set proper ip settings
@@ -162,12 +161,11 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
             actions: [{ p: 'rotation', v: { sm: 0, 0: 0, 1: 2 * Math.PI } }]
         });
     }
+    _inactive() {
+        this.onDefaultIfaceChangedCB.dispose();
+    }
     _focus() {
         this._setState(this.state) //can be used on init as well
-
-        this._network.getDefaultInterface().then(interfaceName => {
-            this.$NetworkInterfaceText(interfaceName)
-        })
     }
     _unfocus() {
         this.tag('TestInternetAccess.Title').text.text = Language.translate('Test Internet Access: ')
@@ -179,7 +177,7 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
 
     _handleBack() {
         if(!Router.isNavigating()){
-        Router.navigate('settings')
+            Router.navigate('settings')
         }
     }
     _onChanged() {
@@ -200,9 +198,8 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
                 }
                 _handleEnter() {
                     if(!Router.isNavigating()){
-                    Router.navigate('settings/network/info')
+                        Router.navigate('settings/network/info')
                     }
-
                 }
             },
             class NetworkInterface extends this {
@@ -217,7 +214,6 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
                 }
                 _handleDown() {
                     this._setState('TestInternetAccess')
-
                 }
                 _handleEnter() {
                     if (!Router.isNavigating()) {
@@ -238,22 +234,19 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
                 _handleDown() {
                     // this._setState('NetworkInfo')
                 }
-                _handleEnter() {
+                async _handleEnter() {
                     this.loadingAnimation.start()
                     this.tag('TestInternetAccess.Loader').visible = true
-                    this._network.isConnectedToInternet().then(result => {
+                    await Network.get().isConnectedToInternet().then(result => {
                         var connectionStatus = Language.translate("Internet Access: ")
                         if (result) {
                             connectionStatus += Language.translate("Connected")
                         } else {
-                            connectionStatus += Language.translate("Not Connected")
+                            connectionStatus += Language.translate("Disconnected")
                         }
-
-                        setTimeout(() => {
-                            this.tag('TestInternetAccess.Loader').visible = false
-                            this.tag('TestInternetAccess.Title').text.text = connectionStatus
-                            this.loadingAnimation.stop()
-                        }, 2000)
+                        this.tag('TestInternetAccess.Loader').visible = false
+                        this.tag('TestInternetAccess.Title').text.text = connectionStatus
+                        this.loadingAnimation.stop()
                     })
                 }
             },
@@ -271,7 +264,7 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
                     this._setState('NetworkInfo')
                 }
                 _handleEnter() {
-
+                    // Nothing to do here.
                 }
             },
         ]

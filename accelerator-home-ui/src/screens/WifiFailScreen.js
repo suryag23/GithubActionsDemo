@@ -79,7 +79,6 @@ export default class WifiFailScreen extends Lightning.Component {
         this.tag('Pairing').text = error
     }
 
-
     _handleEnter() {
         this.fireAncestors("$removeFailScreen")
     }

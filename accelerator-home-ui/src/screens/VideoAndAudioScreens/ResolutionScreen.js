@@ -16,16 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router, Utils, Storage, Language } from '@lightningjs/sdk'
+import { Lightning, Router, Utils, Storage, Language, Settings } from '@lightningjs/sdk'
 import VideoAndAudioItem from '../../items/VideoAndAudioItem'
 import AppApi from '../../api/AppApi'
 import thunderJS from 'ThunderJS';
+import { CONFIG } from '../../Config/Config';
 
-const thunder = thunderJS({
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1,
-})
+const thunder = thunderJS(CONFIG.thunderConfig)
 
 /**
  * Class for Resolution Screen.

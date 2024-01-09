@@ -17,6 +17,27 @@
  * limitations under the License.
  **/
 import ThunderJS from 'ThunderJS'
+import { CONFIG } from '../Config/Config'
+
+export const WiFiErrorMessages = {
+  0: 'SSID_CHANGED - The SSID of the network changed',
+  1: 'CONNECTION_LOST - The connection to the network was lost',
+  2: 'CONNECTION_FAILED - The connection failed for an unknown reason',
+  3: 'CONNECTION_INTERRUPTED - The connection was interrupted',
+  4: 'INVALID_CREDENTIALS - The connection failed due to invalid credentials',
+  5: 'NO_SSID - The SSID does not exist',
+  6: 'UNKNOWN - Any other error.'
+}
+
+export const WiFiStateMessages = {
+  0: 'Uninstalled or system error',
+  1: 'Interface disabled',
+  2: 'Disconnected',
+  3: 'Pairing',
+  4: 'Connecting',
+  5: 'Connected',
+  6: 'Failed',
+}
 
 export const WiFiState = {
   UNINSTALLED: 0,
@@ -28,342 +49,310 @@ export const WiFiState = {
   FAILED: 6,
 }
 
+export const WiFiError = {
+  SSID_CHANGED: 0,
+  CONNECTION_LOST: 1,
+  CONNECTION_FAILED: 2,
+  CONNECTION_INTERRUPTED: 3,
+  INVALID_CREDENTIALS: 4,
+  NO_SSID: 5,
+  UNKNOWN: 6,
+}
+
+export const WiFiSecurityModes = {
+  "NET_WIFI_SECURITY_NONE": 0,
+  "NET_WIFI_SECURITY_WEP_64": 1,
+  "NET_WIFI_SECURITY_WEP_128": 2,
+  "NET_WIFI_SECURITY_WPA_PSK_TKIP": 3,
+  "NET_WIFI_SECURITY_WPA_PSK_AES": 4,
+  "NET_WIFI_SECURITY_WPA2_PSK_TKIP": 5,
+  "NET_WIFI_SECURITY_WPA2_PSK_AES": 6,
+  "NET_WIFI_SECURITY_WPA_ENTERPRISE_TKIP": 7,
+  "NET_WIFI_SECURITY_WPA_ENTERPRISE_AES": 8,
+  "NET_WIFI_SECURITY_WPA2_ENTERPRISE_TKIP": 9,
+  "NET_WIFI_SECURITY_WPA2_ENTERPRISE_AES": 10,
+  "NET_WIFI_SECURITY_WPA_WPA2_PSK": 11,
+  "NET_WIFI_SECURITY_WPA_WPA2_ENTERPRISE": 12,
+  "NET_WIFI_SECURITY_WPA3_PSK_AES": 13,
+  "NET_WIFI_SECURITY_WPA3_SAE": 14
+}
+
+let instance = null
+
 export default class Wifi {
   constructor() {
-    this._events = new Map()
-    const config = {
-      host: '127.0.0.1',
-      port: 9998,
-    }
-    this._thunder = ThunderJS(config)
+    this.thunder = ThunderJS(CONFIG.thunderConfig)
     this.callsign = 'org.rdk.Wifi'
+    this.INFO = console.info
+    this.LOG = console.log
+    this.ERR = console.error
   }
 
-  /**
-   * Function to activate the wifi plugin.
-   */
+  static get() {
+    if (instance == null) {
+      instance = new Wifi()
+      // Vital plugins; always keep activated.
+      instance.activate();
+    }
+    return instance
+  }
+
   activate() {
     return new Promise((resolve, reject) => {
-
-      this._thunder
-        .call('Controller', 'activate', { callsign: this.callsign })
-        .then(result => {
-
-          this.getCurrentState().then(state => {
-            if (state === WiFiState.DISABLED) {
-              this.setEnabled(true)
-            }
-            if (state === WiFiState.CONNECTED) {
-              this.setInterface('WIFI', true).then(res => {
-                if (res.success) {
-                  this.setDefaultInterface('WIFI', true)
-                }
-              })
-            }
-          })
-
-          this._thunder.on(this.callsign, 'onWIFIStateChanged', notification => {
-            if (this._events.has('onWIFIStateChanged')) {
-              this._events.get('onWIFIStateChanged')(notification)
-            }
-          })
-          this._thunder.on(this.callsign, 'onError', notification => {
-            if (this._events.has('onError')) {
-              this._events.get('onError')(notification)
-            }
-          })
-
-          this._thunder.on(this.callsign, 'onAvailableSSIDs', notification => {
-            if (notification.moreData === false) {
-              this.stopScan()
-              notification.ssids = notification.ssids.filter(
-                (item, pos) => notification.ssids.findIndex(e => e.ssid === item.ssid) === pos
-              )
-              if (this._events.has('onAvailableSSIDs')) {
-                this._events.get('onAvailableSSIDs')(notification)
-              }
-            }
-          })
-
-          resolve(result)
-        })
-        .catch(err => {
-          console.error(`Wifi activation failed: ${err}`)
-          reject(err)
-        })
+      this.LOG(this.callsign + " activate")
+      this.thunder.call('Controller', 'activate', { callsign: this.callsign }).then(result => {
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " activate error: " + err)
+        reject(err)
+      })
     })
   }
 
-  /**
-   *Register events and event listeners.
-   * @param {string} eventId
-   * @param {function} callback
-   *
-   */
-  registerEvent(eventId, callback) {
-    this._events.set(eventId, callback)
-  }
-
-  /**
-   * Deactivates wifi plugin.
-   */
   deactivate() {
-    this._events = new Map()
-  }
-
-  /**
-   * Returns connected SSIDs
-   */
-  getConnectedSSID() {
     return new Promise((resolve, reject) => {
-      this._thunder
-        .call(this.callsign, 'getConnectedSSID')
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error(`getConnectedSSID fail: ${err}`)
-          reject(err)
-        })
+      this.LOG(this.callsign + " deactivate")
+      this.thunder.call('Controller', 'deactivate', { callsign: this.callsign }).then(result => {
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " deactivate error: " + err)
+        reject(err)
+      })
     })
   }
 
-  /**
-   * Start scanning for available wifi.
-   */
-  discoverSSIDs() {
+  cancelWPSPairing() {
     return new Promise((resolve, reject) => {
-      this._thunder
-        .call(this.callsign, 'startScan', { incremental: false, ssid: '', frequency: '' })
-        .then(result => {
-          //console.log('startScan success')
-          resolve(result)
-        })
-        .catch(err => {
-          console.error(`startScan fail: ${err}`)
-          reject(err)
-        })
+      this.LOG(this.callsign + " cancelWPSPairing")
+      this.thunder.call(this.callsign, 'cancelWPSPairing').then(result => {
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + ": cancelWPSPairing error:" + JSON.stringify(err))
+        reject(err)
+      })
     })
   }
 
-  /**
-   * Stops scanning for networks.
-   */
-  stopScan() {
+  clearSSID() {
     return new Promise((resolve, reject) => {
-      this._thunder
-        .call(this.callsign, 'stopScan')
-        .then(result => {
-          //console.log('stopScan success')
-          resolve(result)
-        })
-        .catch(err => {
-          console.error(`stopScan fail: ${err}`)
-          reject(err)
-        })
+      this.LOG(this.callsign + " clearSSID")
+      this.thunder.call(this.callsign, 'clearSSID').then(result => {
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + ": clearSSID error:" + JSON.stringify(err))
+        reject(err)
+      })
     })
   }
 
-  /**
-   * Function to connect to an SSID
-   * @param {object} device
-   * @param {string} passphrase
-   */
-   connect(device, passphrase) {
-    let params ={}
-    if(device && passphrase){
-      params={
-        ssid: device.ssid,
-        passphrase: passphrase,
-        securityMode: device.security,
-      }
+  connect(useSaved = false, networkInfo, passphrase = "") {
+    let params = {}
+    if (!useSaved) { // saveSSID was never called earlier. Need proper params.
+      params.ssid = networkInfo.ssid
+      if (networkInfo.hasOwnProperty("security")) params.securityMode = networkInfo.security
+      if (passphrase.length) params.passphrase = passphrase
     }
     return new Promise((resolve, reject) => {
-      this.disconnect().then(() => {
-        this._thunder
-          .call(this.callsign, 'connect', params)
-          .then(result => {
-            this.setInterface('WIFI', true).then(res => {
-              if (res.success) {
-                this.setDefaultInterface('WIFI', true)
-              }
-            })
-            resolve(result)
-          })
-          .catch(err => {
-            console.error(`Connection failed: ${err}`)
-            reject(err)
-          })
+      this.LOG(this.callsign + " connect with params: " + JSON.stringify(params))
+      this.thunder.call(this.callsign, 'connect', params).then(result => {
+        resolve(result.success)
+      }).catch(err => {
+        this.ERR(this.callsign + ": connect error:" + JSON.stringify(err))
+        reject(err)
       })
     })
   }
 
-  /**
-   * Function to disconnect from the SSID.
-   */
   disconnect() {
     return new Promise((resolve, reject) => {
-      this._thunder.call(this.callsign, 'disconnect')
-        .then(result => {
-          console.log('WiFi disconnected: ' + JSON.stringify(result))
-          this.setInterface('ETHERNET', true).then(res => {
-            if (res.success) {
-              this.setDefaultInterface('ETHERNET', true)
-            }
-          })
-          resolve(result)
-        })
-        .catch(err => {
-          console.error(`Can't disconnect WiFi: ${err}`)
-          reject(false)
-        })
+      this.LOG(this.callsign + " disconnect")
+      this.thunder.call(this.callsign, 'disconnect').then(result => {
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + ": disconnect error:" + JSON.stringify(err))
+        reject(err)
+      })
     })
   }
 
-  /**
-   * Returns current state of the Wi-Fi plugin.
-   */
+  getConnectedSSID() {
+    return new Promise((resolve, reject) => {
+      this.thunder.call(this.callsign, 'getConnectedSSID').then(result => {
+        this.LOG(this.callsign + " getConnectedSSID result:" + JSON.stringify(result))
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " getConnectedSSID error: " + err)
+        reject(err)
+      })
+    })
+  }
+
   getCurrentState() {
     return new Promise((resolve, reject) => {
-      this._thunder
-        .call(this.callsign, 'getCurrentState')
-        .then(result => {
-          console.log(`WiFi state: ${result.state}`)
-          resolve(result.state)
-        })
-        .catch(err => {
-          console.error(`Can't get WiFi state: ${err}`)
-          reject(err)
-        })
+      this.thunder.call(this.callsign, 'getCurrentState').then(result => {
+        this.LOG(this.callsign + " getCurrentState result:" + result)
+        resolve(result.success ? result.state : 0) // 0 is UNINSTALLED
+      }).catch(err => {
+        this.ERR(this.callsign + " getCurrentState error: " + err)
+        reject(err)
+      })
     })
   }
 
-  /**
-   * Enables/Disables the Wi-Fi.
-   * @param {bool} bool
-   */
-  setEnabled(bool) {
+  getPairedSSID() {
     return new Promise((resolve, reject) => {
-      this._thunder
-        .call(this.callsign, 'setEnabled', { enable: bool })
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          reject(err)
-        })
+      this.thunder.call(this.callsign, 'getPairedSSID').then(result => {
+        this.LOG(this.callsign + " getPairedSSID result:" + result)
+        if (result.success) resolve(result.ssid)
+        reject(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " getPairedSSID error: " + err)
+        reject(err)
+      })
     })
   }
 
-  /**
-   * Function to get paired SSID.
-   */
-  getPaired() {
+  getPairedSSIDInfo() {
     return new Promise((resolve, reject) => {
-      this._thunder
-        .call(this.callsign, 'getPairedSSID', {})
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error(`Can't get paired: ${err}`)
-          reject(err)
-        })
-    })
-  }
-  getDefaultInterface() {
-    return new Promise((resolve, reject) => {
-      this._thunder
-        .call('org.rdk.Network', 'getDefaultInterface', {})
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          reject(err)
-        })
-    })
-  }
-  getInterfaces() {
-    return new Promise((resolve, reject) => {
-      this._thunder
-        .call('org.rdk.Network', 'getInterfaces')
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.log('Failed to get Interfaces')
-        })
-    })
-  }
-  setInterface(inter, bool) {
-    return new Promise((resolve, reject) => {
-      this._thunder
-        .call('org.rdk.Network', 'setInterfaceEnabled', {
-          interface: inter,
-          persist: true,
-          enabled: bool,
-        })
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error('SetInterface Error', JSON.stringify(err))
-        })
-    })
-  }
-  setDefaultInterface(interfaceName, bool) {
-    return new Promise((resolve, reject) => {
-      this._thunder
-        .call('org.rdk.Network', 'setDefaultInterface', {
-          interface: interfaceName,
-          persist: bool,
-        })
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error('SetDefaultInterface Error', JSON.stringify(err))
-        })
+      this.thunder.call(this.callsign, 'getPairedSSIDInfo').then(result => {
+        this.LOG(this.callsign + " getPairedSSIDInfo result:" + result)
+        if (result.success) resolve(result)
+        reject(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " getPairedSSIDInfo error: " + err)
+        reject(err)
+      })
     })
   }
 
-  saveSSID(ssid, password, securityMode) {
-    console.log("SAVESSID")
+  getSupportedSecurityModes() {
     return new Promise((resolve, reject) => {
-      this._thunder
-      .call(this.callsign, 'saveSSID', { 
+      this.thunder.call(this.callsign, 'getSupportedSecurityModes').then(result => {
+        this.LOG(this.callsign + " getSupportedSecurityModes result:" + result)
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " getSupportedSecurityModes error: " + err)
+        reject(err)
+      })
+    })
+  }
+
+  initiateWPSPairing(method = "PIN", wps_pin = "") { // SERIALIZED_PIN/PIN/PBC
+    return new Promise((resolve, reject) => {
+      let params = { method: method }
+      if (method == "PIN") {
+        params.wps_pin = wps_pin
+      }
+      this.thunder.call(this.callsign, 'initiateWPSPairing', params).then(result => {
+        this.LOG(this.callsign + " initiateWPSPairing result:" + result)
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " initiateWPSPairing error: " + err)
+        reject(err)
+      })
+    })
+  }
+
+  isPaired() {
+    return new Promise((resolve, reject) => {
+      this.thunder.call(this.callsign, 'isPaired').then(result => {
+        this.LOG(this.callsign + " isPaired result:" + result)
+        if (result.success) resolve(result.result)
+        reject(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " isPaired error: " + err)
+        reject(err)
+      })
+    })
+  }
+
+  isSignalThresholdChangeEnabled() {
+    return new Promise((resolve, reject) => {
+      this.thunder.call(this.callsign, 'isSignalThresholdChangeEnabled').then(result => {
+        this.LOG(this.callsign + " isSignalThresholdChangeEnabled result:" + result)
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " isSignalThresholdChangeEnabled error: " + err)
+        reject(err)
+      })
+    })
+  }
+
+  saveSSID(ssid, passphrase, securityMode) {
+    return new Promise((resolve, reject) => {
+      this.thunder.call(this.callsign, 'saveSSID', {
         ssid: ssid,
-        passphrase: password,
+        passphrase: passphrase,
         securityMode: securityMode
-      })
-      .then(result => {
+      }).then(result => {
+        this.LOG(this.callsign + " saveSSID result:" + result)
         resolve(result)
-      })
-      .catch(err => {
-        console.error('SaveSSID Error', JSON.stringify(err))
+      }).catch(err => {
+        this.ERR(this.callsign + " saveSSID error: " + err)
+        reject(err)
       })
     })
   }
 
-  clearSSID(){
-    console.log("CLEARSSID")
+  setEnabled(enable = true) {
     return new Promise((resolve, reject) => {
-      this._thunder
-      .call(this.callsign, 'clearSSID')
-      .then(result => {
-        resolve(result)
-      })
-      .catch(err => {
-        console.log('Error in clear ssid')
+      this.thunder.call(this.callsign, 'setEnabled', { enable: enable }).then(result => {
+        this.LOG(this.callsign + " setEnabled result:" + result)
+        resolve(result.success)
+      }).catch(err => {
+        this.ERR(this.callsign + " setEnabled error: " + err)
+        reject(err)
       })
     })
   }
 
-  SaveSSIDKey(value1) {
+  setSignalThresholdChangeEnabled(enabled = true, interval = 2000) {
     return new Promise((resolve, reject) => {
-      this._thunder
+      this.thunder.call(this.callsign, 'setSignalThresholdChangeEnabled', { enabled: enabled, interval: interval }).then(result => {
+        this.LOG(this.callsign + " setSignalThresholdChangeEnabled result:" + result)
+        resolve(result.success)
+      }).catch(err => {
+        this.ERR(this.callsign + " setSignalThresholdChangeEnabled error: " + err)
+        reject(err)
+      })
+    })
+  }
+
+  startScan(incremental = false, ssid = "", frequency = "") { // frequence: 2.5 or 5.0
+    return new Promise((resolve, reject) => {
+      let params = { incremental: incremental }
+      if (ssid.length) params.ssid = ssid
+      if (frequency.length) params.frequency = frequency
+      this.LOG(this.callsign + " startScan params:" + params)
+      this.thunder.call(this.callsign, 'startScan', params).then(result => {
+        this.LOG(this.callsign + " startScan result:" + result)
+        resolve(result)
+      }).catch(err => {
+        this.ERR(this.callsign + " startScan error: " + err)
+        reject(err)
+      })
+    })
+  }
+
+  stopScan() {
+    return new Promise((resolve, reject) => {
+      this.thunder.call(this.callsign, 'stopScan').then(result => {
+        this.LOG(this.callsign + " stopScan result:" + result)
+        resolve(result.success)
+      }).catch(err => {
+        this.ERR(this.callsign + " stopScan error: " + err)
+        reject(err)
+      })
+    })
+  }
+
+  /*************** TODO: Move to PersistentStore abstraction ***************/
+
+  SaveSSIDKey(value1, namespace = "wifi") {
+    return new Promise((resolve, reject) => {
+      this.thunder
         .call('org.rdk.PersistentStore', 'setValue', {
-          namespace: "wifi",
+          namespace: namespace,
           key: "SSID",
           value: value1
         })
@@ -376,11 +365,11 @@ export default class Wifi {
         })
     })
   }
-  //get SSID value from Persistence Store
-  getSSIDKey() {
+
+  getSSIDKey(namespace = "wifi") {
     return new Promise((resolve) => {
-      this._thunder
-        .call('org.rdk.PersistentStore', 'getValue', { namespace: 'wifi', key: 'SSID' })
+      this.thunder
+        .call('org.rdk.PersistentStore', 'getValue', { namespace: namespace, key: 'SSID' })
         .then(result => {
           resolve(result.value)
         })
@@ -389,34 +378,17 @@ export default class Wifi {
         })
     })
   }
-  deleteNameSpace(){
+
+  deleteNameSpace(namespace = "wifi") {
     return new Promise((resolve, reject) => {
-      this._thunder
-        .call('org.rdk.PersistentStore', 'deleteNamespace', {namespace: "wifi"})
+      this.thunder
+        .call('org.rdk.PersistentStore', 'deleteNamespace', { namespace: namespace })
         .then(result => {
           resolve(result.success)
         })
         .catch(err => {
           console.error('delete namespace failed', err)
           reject()
-        })
-    })
-  }
-
-  activateOnError() {
-    return new Promise((resolve, reject) => {
-      this._thunder
-        .call('Controller', 'activate', { callsign: this.callsign }).then(result => {
-          this._thunder.on(this.callsign, 'onError', notification => {
-            if (this._events.has('onError')) {
-              this._events.get('onError')(notification)
-            }
-          })
-          resolve(result)
-        })
-        .catch(err => {
-          console.error(`Wifi activation failed: ${err}`)
-          reject(err)
         })
     })
   }

@@ -17,12 +17,9 @@
  * limitations under the License.
  **/
 import ThunderJS from "ThunderJS";
-const config = {
-  host: "127.0.0.1",
-  port: 9998,
-  default: 1,
-};
-const thunder = ThunderJS(config);
+import { CONFIG } from '../Config/Config'
+
+const thunder = ThunderJS(CONFIG.thunderConfig)
 let playerID = -1; //set to -1 to indicate nothing is currently playing
 
 let customServiceList = []; //list containing all channel details

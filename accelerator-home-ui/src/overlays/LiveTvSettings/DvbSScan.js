@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils, Language } from "@lightningjs/sdk";
+ import { Lightning, Utils, Language, Settings } from "@lightningjs/sdk";
  import { COLORS } from "../../colors/Colors";
  import SettingsMainItem from "../../items/SettingsMainItem";
  import { CONFIG } from "../../Config/Config";
@@ -31,12 +31,7 @@
 
  const dtvApi = new DTVApi();
 
- const config = {
-   host: "127.0.0.1",
-   port: 9998,
-   default: 1,
- };
- const thunder = ThunderJS(config);
+ const thunder = ThunderJS(CONFIG.thunderConfig);
 
  /**
   * Class for DVB Scan screen.

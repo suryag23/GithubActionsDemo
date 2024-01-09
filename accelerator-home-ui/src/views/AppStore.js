@@ -75,12 +75,12 @@ export default class AppStore extends Lightning.Component {
         const Catalog = await getAppCatalogInfo()
         const options = ['My Apps', 'App Catalog', 'Manage Apps']
         this.tag('Options').add(options.map((element, idx) => {
-                return {
-                    type: OptionsItem,
-                    element: element,
-                    w: OptionsItem.width,
-                    idx
-                }
+            return {
+                type: OptionsItem,
+                element: element,
+                w: OptionsItem.width,
+                idx
+            }
         }));
         this.options = {
             0: async () => {
@@ -102,14 +102,12 @@ export default class AppStore extends Lightning.Component {
             },
         }
         const installedApps = await getInstalledDACApps()
-        if(Object.keys(installedApps).length === 0)
-        {
+        if (Object.keys(installedApps).length === 0) {
             this.tag('Options').setIndex(1)
             this.options[1]()
             this._setState('Catalog')
         }
-        else
-        {
+        else {
             this.options[0]()
             this._setState('Apps')
         }

@@ -18,6 +18,7 @@
  **/
 
 import ThunderJS from "ThunderJS";
+import { CONFIG } from '../Config/Config'
 
 /**
  * Class for ControlSettings thunder plugin apis.
@@ -25,16 +26,7 @@ import ThunderJS from "ThunderJS";
 
 export default class PictureSettingsApi {
   constructor() {
-    const config = {
-      host: "127.0.0.1",
-      port: 9998,
-      versions: {
-        default: 2,
-        Controller: 1,
-        ControlSettings: 2
-      }
-    };
-    this._thunder = ThunderJS(config);
+    this._thunder = ThunderJS(CONFIG.thunderConfig);
     this._events = new Map();
     this.callsign = "org.rdk.tv.ControlSettings";
     this.settingsOptions = [
@@ -50,13 +42,11 @@ export default class PictureSettingsApi {
           "game",
           "sports"
         ]
-        // value: ["DemoValue(Api Fail)"] //#forTesting
       },
       {
         id: "_colorTemp",
         name: "Color Temperature",
         value: ["Standard", "Warm", "Cold", "User Defined"]
-        // value: ["DemoValue(Api Fail)"] //#forTesting
       },
       { id: "_backlight", name: "Backlight", value: "0" },
       { id: "_brightness", name: "Brightness", value: "0" },
@@ -131,7 +121,6 @@ export default class PictureSettingsApi {
     console.log("getSupportedPictureModes got called")
 
     return new Promise((resolve,reject) => {
-      // resolve(true) //#forTesting
       this._thunder.call(this.callsign, "getSupportedPictureModes").then(result => {
         console.log("getSupportedPictureModes Result: ",JSON.stringify(result))
         if (result.success) {
@@ -139,7 +128,6 @@ export default class PictureSettingsApi {
           resolve(true)
         }
       }).catch(err => {
-        // this.settingsOptions[0].value=["tempval1", "tempval2"]  //#forTesting
         console.log("getSupportedPictureModes Error: ",JSON.stringify(err))
         reject(err)
       })
@@ -150,7 +138,6 @@ export default class PictureSettingsApi {
     console.log("getSupportedColorTemps got called")
 
     return new Promise((resolve,reject) => {
-      // resolve(true) //#forTesting
       this._thunder.call(this.callsign, "getColorTemperature").then(result => {
         console.log("Log from getSupportedColorTemps API: ", JSON.stringify(result))
         if (result.success) {
@@ -159,7 +146,6 @@ export default class PictureSettingsApi {
         }
       }).catch(err => {
         console.log("Error from getSupportedColorTemps API: ", JSON.stringify(err))
-        // this.settingsOptions[1].value=["tempval1", "tempval2"]  //#forTesting
         reject(err)
       })
     })
@@ -167,7 +153,6 @@ export default class PictureSettingsApi {
 
   getPictureMode() {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.getItem("_pictureMode")) //#forTesting
       this._thunder
         .call(this.callsign, "getPictureMode")
         .then(result => {
@@ -181,7 +166,6 @@ export default class PictureSettingsApi {
 
   setPictureMode(value) {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.setItem("_pictureMode",value)) //#forTesting 
       this._thunder
         .call(this.callsign, "setPictureMode", {
           "pictureMode": value
@@ -195,10 +179,8 @@ export default class PictureSettingsApi {
     });
   }
 
-
   getColorTemperature() {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.getItem("_colorTemp")) //#forTesting 
       this._thunder
         .call(this.callsign, "getColorTemperature")
         .then(result => {
@@ -212,7 +194,6 @@ export default class PictureSettingsApi {
 
   setColorTemperature(value) {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.setItem("_colorTemp",value)) //#forTesting 
       this._thunder
         .call(this.callsign, "setColorTemperature", {
           "colorTemp": value
@@ -226,12 +207,8 @@ export default class PictureSettingsApi {
     });
   }
 
-
-
-
   getBrightness() {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.getItem("_brightness")) //#forTesting 
       this._thunder
         .call(this.callsign, "getBrightness")
         .then(result => {
@@ -245,7 +222,6 @@ export default class PictureSettingsApi {
 
   setBrightness(value) {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.setItem("_brightness",`${value}`)) //#forTesting 
       this._thunder
         .call(this.callsign, "setBrightness", {
           "brightness": `${value}`
@@ -261,7 +237,6 @@ export default class PictureSettingsApi {
 
   getContrast() {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.getItem("_contrast")) //#forTesting 
       this._thunder
         .call(this.callsign, "getContrast")
         .then(result => {
@@ -275,7 +250,6 @@ export default class PictureSettingsApi {
 
   setContrast(value) {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.setItem("_contrast",`${value}`)) //#forTesting 
       this._thunder
         .call(this.callsign, "setContrast", {
           "contrast": `${value}`
@@ -291,7 +265,6 @@ export default class PictureSettingsApi {
 
   getSharpness() {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.getItem("_sharpness")) //#forTesting 
       this._thunder
         .call(this.callsign, "getSharpness")
         .then(result => {
@@ -305,7 +278,6 @@ export default class PictureSettingsApi {
 
   setSharpness(value) {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.setItem("_sharpness",`${value}`)) //#forTesting 
       this._thunder
         .call(this.callsign, "setSharpness", {
           "sharpness": `${value}`
@@ -321,7 +293,6 @@ export default class PictureSettingsApi {
 
   getSaturation() {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.getItem("_saturation")) //#forTesting 
       this._thunder
         .call(this.callsign, "getSaturation")
         .then(result => {
@@ -335,7 +306,6 @@ export default class PictureSettingsApi {
 
   setSaturation(value) {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.setItem("_saturation",`${value}`)) //#forTesting 
       this._thunder
         .call(this.callsign, "setSaturation", {
           "saturation": `${value}`
@@ -351,7 +321,6 @@ export default class PictureSettingsApi {
 
   getBacklight() {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.getItem("_backlight")) //#forTesting 
       this._thunder
         .call(this.callsign, "getBacklight")
         .then(result => {
@@ -365,7 +334,6 @@ export default class PictureSettingsApi {
 
   setBacklight(value) {
     return new Promise((resolve, reject) => {
-      // resolve(localStorage.setItem("_backlight",`${value}`)) //#forTesting 
       this._thunder
         .call(this.callsign, "setBacklight", {
           "backlight": `${value}`
@@ -378,6 +346,4 @@ export default class PictureSettingsApi {
         });
     });
   }
-
-
 }

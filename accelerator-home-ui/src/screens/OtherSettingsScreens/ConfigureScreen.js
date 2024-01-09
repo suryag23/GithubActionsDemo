@@ -24,7 +24,7 @@
  /**
    * Class for Other Settings Screen.
    */
- 
+
  export default class ConfigureScreen extends Lightning.Component {
      static _template() {
          return {
@@ -138,10 +138,14 @@
              }
          }
      }
- 
+
      _init() {
 
      }
+
+    _active() {
+        console.warn(new Date().toISOString() +" from: ConfigureScreen.js")
+    }
 
      _focus() {
          this._setState('DHCP');
@@ -242,5 +246,5 @@
          ]
      }
 
- 
+
  }

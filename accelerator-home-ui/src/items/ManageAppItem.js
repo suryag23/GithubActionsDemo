@@ -20,7 +20,7 @@
 import { Lightning, Utils, Storage, Language } from "@lightningjs/sdk";
 import { CONFIG } from "../Config/Config";
 import StatusProgress from '../overlays/StatusProgress'
-import { uninstallDACApp,fetchAppIcon,fetchLocalAppIcon } from '../api/DACApi'
+import { uninstallDACApp, fetchAppIcon, fetchLocalAppIcon } from '../api/DACApi'
 
 export default class ManageAppItem extends Lightning.Component {
     static _template() {
@@ -49,10 +49,9 @@ export default class ManageAppItem extends Lightning.Component {
                     x: this.width / 2,
                     y: this.height / 2,
                     text: {
-                        text: Language.translate("Uninstalling App")+"..",
+                        text: Language.translate("Uninstalling App") + "..",
                         fontFace: CONFIG.language.font,
                         fontSize: 30,
-
                     },
                 },
             },
@@ -66,22 +65,22 @@ export default class ManageAppItem extends Lightning.Component {
                 },
             },
             StatusProgress: {
-                type: StatusProgress, x:50, y: 80, w: 200,
+                type: StatusProgress, x: 50, y: 80, w: 200,
             },
         }
     }
 
     set info(data) {
         this.data = data
-       if(!data.hasOwnProperty('icon'))
+        if (!data.hasOwnProperty('icon'))
             data.icon = "/images/apps/DACApp_455_255.png";
-       if (data.icon.startsWith('/images')) {
+        if (data.icon.startsWith('/images')) {
             this.tag('Image').patch({
-            src: Utils.asset(data.icon),
+                src: Utils.asset(data.icon),
             });
         } else {
-           this.tag('Image').patch({
-           src: data.icon,
+            this.tag('Image').patch({
+                src: data.icon,
             });
         }
         this.tag('Text').text.text = data.installed[0].appName
@@ -95,34 +94,39 @@ export default class ManageAppItem extends Lightning.Component {
         return 168
     }
 
-    async $fireDACOperationFinished(success, msg)  {
+    async $fireDACOperationFinished(success, msg) {
         if (this._app.isUnInstalling) {
-           this._app.isInstalled = !success
-           this._app.isUnInstalling = false
-           let temp= await this.displayLabel().then((res)=>{
-            setTimeout(()=> {
-                this.fireAncestors('$refreshManagedApps')
-            },500)
-           });
-           if (!success) {
-              this.tag('StatusProgress').setProgress(1.0, 'Error: '+ msg)
-           }
+            this._app.isInstalled = !success
+            this._app.isUnInstalling = false
+            let temp = await this.displayLabel().then((res) => {
+                setTimeout(() => {
+                    this.fireAncestors('$refreshManagedApps')
+                }, 500)
+            });
+            if (!success) {
+                this.tag('StatusProgress').setProgress(1.0, 'Error: ' + msg)
+            }
         }
-      }
+    }
 
-    displayLabel()
-    {
-        return new Promise((resolve,reject)=>{
-            this.tag("OverlayText").text.text=Language.translate("App Uninstalled")
-            this.tag("Overlay").alpha=0.7
-            this.tag("OverlayText").alpha=1
-            this.tag("Overlay").setSmooth('alpha', 0, {duration: 5})
+    displayLabel() {
+        return new Promise((resolve, reject) => {
+            this.tag("OverlayText").text.text = Language.translate("App Uninstalled")
+            this.tag("Overlay").alpha = 0.7
+            this.tag("OverlayText").alpha = 1
+            this.tag("Overlay").setSmooth('alpha', 0, { duration: 5 })
             resolve();
         });
     }
 
     async myfireUNINSTALL() {
         this._app.isUnInstalling = await uninstallDACApp(this._app, this.tag('StatusProgress'))
+        if (!this._app.isUnInstalling && this._app.hasOwnProperty("errorCode")) {
+            this.tag("OverlayText").text.text = Language.translate("Status") + ':' + this._app.errorCode;
+            this.tag("Overlay").alpha = 0.7
+            this.tag("OverlayText").alpha = 1
+            this.tag("Overlay").setSmooth('alpha', 0, { duration: 5 })
+        }
     }
 
     async _init() {
@@ -132,18 +136,15 @@ export default class ManageAppItem extends Lightning.Component {
         this._app.isInstalling = false
         this._app.isUnInstalling = false
         this._buttonIndex = 0;
-        if(Storage.get("CloudAppStore"))
-        {
-            let icon=await fetchAppIcon(this.data.id,this.data.installed[0].version)
+        if (Storage.get("CloudAppStore")) {
+            let icon = await fetchAppIcon(this.data.id, this.data.installed[0].version)
             this.tag('Image').patch({
                 src: icon,
             });
         }
-        else
-        {
-            let icon=await fetchLocalAppIcon(this.data.id)
-            if(icon!==undefined)
-            {
+        else {
+            let icon = await fetchLocalAppIcon(this.data.id)
+            if (icon !== undefined) {
                 this.tag('Image').patch({
                     src: Utils.asset(icon),
                 });
@@ -168,7 +169,7 @@ export default class ManageAppItem extends Lightning.Component {
         this._app.id = this.data.id
         this._app.name = this.data.installed[0].appName
         this._app.version = this.data.installed[0].version
-        this._app.type= this.data.type
+        this._app.type = this.data.type
         this.myfireUNINSTALL()
     }
 }

@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Registry, Router, Utils, Language } from '@lightningjs/sdk'
+import { Lightning, Registry, Router, Utils, Language, Settings } from '@lightningjs/sdk'
 import { CONFIG } from '../../Config/Config'
 import AppApi from '../../api/AppApi';
 import BluetoothApi from '../../api/BluetoothApi';
@@ -26,12 +26,7 @@ import RCApi from '../../api/RemoteControl';
 
 var appApi = new AppApi();
 var bluetoothApi = new BluetoothApi();
-const config = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1,
-}
-const _thunder = ThunderJS(config)
+const _thunder = ThunderJS(CONFIG.thunderConfig)
 
 export default class BluetoothScreen extends Lightning.Component {
     static _template() {
@@ -162,43 +157,43 @@ export default class BluetoothScreen extends Lightning.Component {
                                         //console.log("disable")
                                         bluetoothApi.deactivateBluetooth().then(deactivateBluetooth => {
                                             console.log("SplashBluetoothScreen DeactivatedBluetooth", deactivateBluetooth)
-                                            if (Router.getActiveHash() === "splash/bluetooth"){
+                                            if (Router.getActiveHash() === "splash/bluetooth") {
                                                 Router.navigate('splash/language')
                                             }
                                         })
 
                                     })
+                                        .catch(err => {
+                                            console.error(`SplashBluetoothScreen cant stopscan device : ${JSON.stringify(err)}`)
+                                        })
+                                })
                                     .catch(err => {
-                                        console.error(`SplashBluetoothScreen cant stopscan device : ${JSON.stringify(err)}`)
+                                        console.error(`SplashBluetoothScreen cant getpaired device : ${JSON.stringify(err)}`)
                                     })
-                                })
+                            })
                                 .catch(err => {
-                                    console.error(`SplashBluetoothScreen cant getpaired device : ${JSON.stringify(err)}`)
+                                    console.error(`SplashBluetoothScreen Can't getconnected device : ${JSON.stringify(err)}`)
                                 })
-                            })
+                        })
                             .catch(err => {
-                                console.error(`SplashBluetoothScreen Can't getconnected device : ${JSON.stringify(err)}`)
+                                console.error(`SplashBluetoothScreen Can't pair device : ${JSON.stringify(err)}`)
                             })
-                        })
-                        .catch(err => {
-                            console.error(`SplashBluetoothScreen Can't pair device : ${JSON.stringify(err)}`)
-                        })
                     })
                 })
             })
-            .catch(err => {
-                console.error(`Can't scan enable : ${JSON.stringify(err)}`)
-            })
+                .catch(err => {
+                    console.error(`Can't scan enable : ${JSON.stringify(err)}`)
+                })
         })
     }
 
     onStatusCB(cbData) {
-        console.log("BluetoothScreen cbData:", JSON.stringify(cbData));
+        //console.log("BluetoothScreen cbData:", JSON.stringify(cbData));
         // getStatus response has 'success' property; notification payload does not have that.
-        if ((cbData !== undefined) && (cbData.hasOwnProperty("success")?cbData.success:true)) {
+        if ((cbData !== undefined) && (cbData.hasOwnProperty("success") ? cbData.success : true)) {
             if (cbData.status.remoteData.length) {
-                console.log("BluetoothScreen rcPairingApis RemoteData Length ", cbData.status.remoteData.length)
-                cbData.status.remoteData.map(item=>{
+                //console.log("BluetoothScreen rcPairingApis RemoteData Length ", cbData.status.remoteData.length)
+                cbData.status.remoteData.map(item => {
                     this.tag('Info').text.text = `paired with device ${item.name}`
                     // Do not clear this.RCTimeout if need to run this in background to reconnect on loss.
                     // if (this.RCTimeout) {
@@ -216,7 +211,7 @@ export default class BluetoothScreen extends Lightning.Component {
                     }
                 })
             } else {
-                switch(cbData.status.pairingState) {
+                switch (cbData.status.pairingState) {
                     case "IDLE":
                     case "FAILED":
                         RCApi.get().startPairing(30);
@@ -234,8 +229,8 @@ export default class BluetoothScreen extends Lightning.Component {
             });
         }
         _thunder.on('org.rdk.RemoteControl', 'onStatus', data => { this.onStatusCB(data) });
-        this.RCTimeout = Registry.setTimeout(()=>{
-            RCApi.get().getNetStatus().then(result => {this.onStatusCB(result);});
+        this.RCTimeout = Registry.setTimeout(() => {
+            RCApi.get().getNetStatus().then(result => { this.onStatusCB(result); });
         }, 5, true);
     }
 
@@ -277,7 +272,7 @@ export default class BluetoothScreen extends Lightning.Component {
         this.timeInterval = Registry.setInterval(() => {
             if (this.timeout > 0) { --this.timeout }
             else { this.timeout = 30; }
-            this.tag('Timer').text.text = this.timeout >= 10 ?`0:${this.timeout}`:`0:0${this.timeout}`
+            this.tag('Timer').text.text = this.timeout >= 10 ? `0:${this.timeout}` : `0:0${this.timeout}`
             if (this.timeout === 0) this._setState('StartPairing')
         }, 1000)
     }
@@ -343,7 +338,7 @@ export default class BluetoothScreen extends Lightning.Component {
                     this.tag('Buttons.StartPairing').alpha = 1
                     this._focus()
                 }
-                _focus(){
+                _focus() {
                     this.tag('Buttons.StartPairing').patch({
                         color: CONFIG.theme.hex
                     })

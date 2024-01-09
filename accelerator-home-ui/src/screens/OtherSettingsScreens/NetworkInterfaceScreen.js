@@ -20,13 +20,10 @@ import { Lightning, Router, Utils } from '@lightningjs/sdk'
 import SettingsMainItem from '../../items/SettingsMainItem'
 import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
-import Wifi from '../../api/WifiApi'
+import Network from '../../api/NetworkApi'
 import { Language } from '@lightningjs/sdk';
-import ThunderJS from 'ThunderJS'
 
-const wifi = new Wifi()
 export default class NetworkInterfaceScreen extends Lightning.Component {
-
     _construct() {
         this.LoadingIcon = Utils.asset('images/settings/Loading.png')
     }
@@ -79,7 +76,7 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
                     Loader: {
                         h: 45,
                         w: 45,
-                        x: 175,
+                        x: 500,
                         mountX: 1,
                         y: 45,
                         mountY: 0.5,
@@ -92,19 +89,12 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
     }
 
     _focus() {
+        console.warn(new Date().toISOString() +" from: NetworkInterfaceScreen.js")
         this._setState('WiFi');
     }
 
-    _init() {
-        const config = {
-            host: '127.0.0.1',
-            port: 9998,
-            default: 1,
-        };
-        this._thunder = ThunderJS(config)
-        const systemcCallsign = 'org.rdk.Network'
-        const eventName = 'onDefaultInterfaceChanged'
-        const listener = this._thunder.on(systemcCallsign, eventName, (notification) => {
+    _active() {
+        this.onDefaultInterfaceChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onDefaultInterfaceChanged', (notification) => {
             console.log('onDefaultInterfaceChanged notification from networkInterfaceScreen: ', notification)
             if (notification.newInterfaceName === "ETHERNET") {
                 this.loadingAnimation.stop()
@@ -119,7 +109,13 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
                 this.tag('Ethernet.Loader').visible = false
                 this.tag('Ethernet.Title').text.text = 'Ethernet'
             }
-        })
+        });
+        this.onConnectionStatusChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onConnectionStatusChanged', (notification) => {
+            console.log('onConnectionStatusChanged notification from networkInterfaceScreen: ', notification)
+            if (notification.interface === "ETHERNET") {
+                this.tag('Ethernet.Title').text.text = 'Ethernet: ' + Language.translate(notification.status.toLowerCase())
+            }
+        });
 
         this.loadingAnimation = this.tag('Ethernet.Loader').animation({
             duration: 3, repeat: -1, stopMethod: 'immediate', stopDelay: 0.2,
@@ -127,6 +123,11 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
         });
 
         this.tag('Ethernet.Loader').src = this.LoadingIcon
+    }
+
+    _inactive() {
+        this.onDefaultInterfaceChangedCB.dispose()
+        this.onConnectionStatusChangedCB.dispose()
     }
 
     _firstActive() {
@@ -144,26 +145,9 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
         this.tag('NetworkInterfaceScreenContents').visible = true
     }
 
-    setEthernetInterface() {
-        wifi.getInterfaces().then(res => {
-            res.interfaces.forEach(element => {
-                if (element.interface === "ETHERNET" && element.connected) {
-                    wifi.setInterface('ETHERNET', true).then(result => {
-                        if (result.success) {
-                            wifi.setDefaultInterface('ETHERNET', true)
-                            this.tag('Ethernet.Title').text.text = 'Ethernet'
-                            this.tag('Ethernet.Loader').visible = true
-                            this.loadingAnimation.start()
-                        }
-                    })
-                }
-            });
-        })
-    }
-
     _handleBack() {
         if(!Router.isNavigating()){
-        Router.navigate('settings/network')
+            Router.navigate('settings/network')
         }
     }
     pageTransition() {
@@ -189,7 +173,6 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
                     if (!Router.isNavigating()) {
                         Router.navigate('settings/network/interface/wifi')
                     }
-
                 }
             },
             class Ethernet extends this {
@@ -199,14 +182,31 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
                 $exit() {
                     this.tag('Ethernet')._unfocus()
                 }
-                _handleEnter() {
-                    wifi.getDefaultInterface().then(res => {
-                        if (res.success) {
-                            if (res.interface !== "ETHERNET") {
-                                this.setEthernetInterface()
-                            }
+                async _handleEnter() {
+                    this.tag('Ethernet.Title').text.text = 'Ethernet :' + Language.translate('Configuring as default')
+                    this.tag('Ethernet.Loader').visible = true
+                    this.loadingAnimation.start()
+                    await Network.get().isInterfaceEnabled("ETHERNET").then(enabled => {
+                        if (!enabled) {
+                            Network.get().setInterfaceEnabled("ETHERNET").then(() => {
+                                Network.get().setDefaultInterface("ETHERNET").then(result => {
+                                    if (result) {
+                                        this.loadingAnimation.stop()
+                                        this.tag('Ethernet.Title').text.text = 'Ethernet'
+                                        this.tag('Ethernet.Loader').visible = false
+                                    }
+                                });
+                            });
+                        } else {
+                            Network.get().setDefaultInterface("ETHERNET").then(result => {
+                                if (result) {
+                                    this.loadingAnimation.stop()
+                                    this.tag('Ethernet.Title').text.text = 'Ethernet'
+                                    this.tag('Ethernet.Loader').visible = false
+                                }
+                            });
                         }
-                    })
+                    });
                 }
                 _handleDown() {
                     // this._setState('WiFi')

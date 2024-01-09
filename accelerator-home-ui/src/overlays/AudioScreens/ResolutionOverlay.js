@@ -16,21 +16,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils, Storage } from '@lightningjs/sdk'
+ import { Lightning, Utils, Storage, Settings } from '@lightningjs/sdk'
  import VideoAndAudioItem from '../../items/VideoAndAudioItem'
  import AppApi from '../../api/AppApi'
  import thunderJS from 'ThunderJS';
- 
- const thunder = thunderJS({
-     host: '127.0.0.1',
-     port: 9998,
-     default: 1,
- })
- 
+ import { CONFIG } from '../../Config/Config'
+
+ const thunder = thunderJS(CONFIG.thunderConfig)
+
  /**
   * Class for Resolution Screen.
   */
- 
+
  export default class ResolutionScreen extends Lightning.Component {
      static _template() {
          return {
@@ -57,12 +54,12 @@
                      src: Utils.asset("images/settings/Loading.png")
                  },
              },
- 
+
          }
      }
- 
- 
- 
+
+
+
      _firstEnable() {
          this.appApi = new AppApi();
          this.appApi.activateDisplaySettings();
@@ -70,7 +67,7 @@
              duration: 3, repeat: -1, stopMethod: 'immediate', stopDelay: 0.2,
              actions: [{ p: 'rotation', v: { sm: 0, 0: 0, 1: 2 * Math.PI } }]
          });
- 
+
         thunder.on('org.rdk.DisplaySettings', 'resolutionPreChange', notification => {
             console.log(new Date().toISOString() +" ResolutionOverlay got resolutionPreChange");
             Storage.set("ResolutionChangeInProgress", true);
@@ -88,13 +85,13 @@
              Storage.set("ResolutionChangeInProgress", false);
         })
      }
- 
+
      _unfocus() {
          if (this.loadingAnimation.isPlaying()) {
              this.loadingAnimation.stop()
          }
      }
- 
+
      _focus() {
          this.loadingAnimation.start()
          let options = []
@@ -128,10 +125,10 @@
                  console.log(`error while fetching the supported resolution ${err}`);
              })
          })
- 
- 
+
+
      }
- 
+
      static _states() {
          return [
              class Options extends this{
@@ -144,9 +141,8 @@
                  _handleUp() {
                      this.tag('List').setPrevious()
                  }
-          
+
              },
          ]
      }
  }
- 

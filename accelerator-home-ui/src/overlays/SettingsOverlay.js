@@ -16,174 +16,169 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils, Language, Router, Storage } from "@lightningjs/sdk";
- import { COLORS } from "../colors/Colors";
- import SettingsMainItem from "../items/SettingsMainItem";
- import { CONFIG } from "../Config/Config";
- import DTVApi from "../api/DTVApi";
- import AppApi from "../api/AppApi";
- import AudioScreenOverlay from './AudioScreens/AudioScreenOverlay'
- import VideoScreenOverlay from './AudioScreens/VideoScreenOverlay';
- import NetworkConfigurationOverlay from "./NetworkScreens/NetworkConfigurationOverlay";
- import BluetoothScreenOverlay from './NetworkScreens/BluetoothScreenOverlay'
- import LiveTvSettings from './LiveTvSettings/LiveTvSettingsOverlay'
- import ThunderJS from 'ThunderJS';
- import OtherSettingsScreen from "./OtherSettings/OtherSettingsOverlay";
+import { Lightning, Utils, Language, Router, Storage, Settings } from "@lightningjs/sdk";
+import { COLORS } from "../colors/Colors";
+import SettingsMainItem from "../items/SettingsMainItem";
+import { CONFIG } from "../Config/Config";
+import DTVApi from "../api/DTVApi";
+import AppApi from "../api/AppApi";
+import AudioScreenOverlay from './AudioScreens/AudioScreenOverlay'
+import VideoScreenOverlay from './AudioScreens/VideoScreenOverlay';
+import NetworkConfigurationOverlay from "./NetworkScreens/NetworkConfigurationOverlay";
+import BluetoothScreenOverlay from './NetworkScreens/BluetoothScreenOverlay'
+import LiveTvSettings from './LiveTvSettings/LiveTvSettingsOverlay'
+import ThunderJS from 'ThunderJS';
+import OtherSettingsScreen from "./OtherSettings/OtherSettingsOverlay";
 
- const config = {
-  host: '127.0.0.1',
-  port: 9998,
-  default: 1,
-};
-var thunder = ThunderJS(config);
- /**
-  * Class for settings screen.
-  */
- export default class SettingsOverlay extends Lightning.Component {
-   static _template() {
-     return {
-       Wrapper:{
-         rect: true,
-         color: 0xcc000000,
-         w: 1920,
-         h: 1080,
-         visible:false,
-         BreadCrumbs: {
-           x: 200,
-           y: 184,
-           text: {
-             fontSize: 40,
-             text: Language.translate("settings"),
-             textColor: CONFIG.theme.hex,
-             fontStyle: "bolder",
-             fontFace: CONFIG.language.font,
-             wordWrapWidth: 1720,
-             maxLines: 1,
-           },
-         },
-         SettingsScreenContents: {
-           x: 200,
-           y: 275,
-           NetworkConfiguration: {
-             type: SettingsMainItem,
-             Title: {
-               x: 10,
-               y: 45,
-               mountY: 0.5,
-               text: {
-                 text: Language.translate("Network Configuration"),
-                 textColor: COLORS.titleColor,
-                 fontFace: CONFIG.language.font,
-                 fontSize: 25,
-               },
-             },
-             Button: {
-               h: 45,
-               w: 45,
-               x: 1600,
-               mountX: 1,
-               y: 45,
-               mountY: 0.5,
-               src: Utils.asset("images/settings/Arrow.png"),
-             },
-           },
-           Bluetooth: {
-             y: 90,
-             type: SettingsMainItem,
-             Title: {
-               x: 10,
-               y: 45,
-               mountY: 0.5,
-               text: {
-                 text: Language.translate("Pair Remote Control"),
-                 textColor: COLORS.titleColor,
-                 fontFace: CONFIG.language.font,
-                 fontSize: 25,
-               },
-             },
-             Button: {
-               h: 45,
-               w: 45,
-               x: 1600,
-               mountX: 1,
-               y: 45,
-               mountY: 0.5,
-               src: Utils.asset("images/settings/Arrow.png"),
-             },
-           },
-           Video: {
-             y: 180,
-             type: SettingsMainItem,
-             Title: {
-               x: 10,
-               y: 45,
-               mountY: 0.5,
-               text: {
-                 text: Language.translate("Video"),
-                 textColor: COLORS.titleColor,
-                 fontFace: CONFIG.language.font,
-                 fontSize: 25,
-               },
-             },
-             Button: {
-               h: 45,
-               w: 45,
-               x: 1600,
-               mountX: 1,
-               y: 45,
-               mountY: 0.5,
-               src: Utils.asset("images/settings/Arrow.png"),
-             },
-           },
-           Audio: {
-             y: 270,
-             type: SettingsMainItem,
-             Title: {
-               x: 10,
-               y: 45,
-               mountY: 0.5,
-               text: {
-                 text: Language.translate("Audio"),
-                 textColor: COLORS.titleColor,
-                 fontFace: CONFIG.language.font,
-                 fontSize: 25,
-               },
-             },
-             Button: {
-               h: 45,
-               w: 45,
-               x: 1600,
-               mountX: 1,
-               y: 45,
-               mountY: 0.5,
-               src: Utils.asset("images/settings/Arrow.png"),
-             },
-           },
-           OtherSettings: {
-             y: 360,
-             type: SettingsMainItem,
-             Title: {
-               x: 10,
-               y: 45,
-               mountY: 0.5,
-               text: {
-                 text: Language.translate("Other Settings"),
-                 textColor: COLORS.titleColor,
-                 fontFace: CONFIG.language.font,
-                 fontSize: 25,
-               },
-             },
-             Button: {
-               h: 45,
-               w: 45,
-               x: 1600,
-               mountX: 1,
-               y: 45,
-               mountY: 0.5,
-               src: Utils.asset("images/settings/Arrow.png"),
-             },
-           },
-           NFRStatus: {
+var thunder = ThunderJS(CONFIG.thunderConfig);
+/**
+ * Class for settings screen.
+ */
+export default class SettingsOverlay extends Lightning.Component {
+  static _template() {
+    return {
+      Wrapper: {
+        rect: true,
+        color: 0xcc000000,
+        w: 1920,
+        h: 1080,
+        visible: false,
+        BreadCrumbs: {
+          x: 200,
+          y: 184,
+          text: {
+            fontSize: 40,
+            text: Language.translate("settings"),
+            textColor: CONFIG.theme.hex,
+            fontStyle: "bolder",
+            fontFace: CONFIG.language.font,
+            wordWrapWidth: 1720,
+            maxLines: 1,
+          },
+        },
+        SettingsScreenContents: {
+          x: 200,
+          y: 275,
+          NetworkConfiguration: {
+            type: SettingsMainItem,
+            Title: {
+              x: 10,
+              y: 45,
+              mountY: 0.5,
+              text: {
+                text: Language.translate("Network Configuration"),
+                textColor: COLORS.titleColor,
+                fontFace: CONFIG.language.font,
+                fontSize: 25,
+              },
+            },
+            Button: {
+              h: 45,
+              w: 45,
+              x: 1600,
+              mountX: 1,
+              y: 45,
+              mountY: 0.5,
+              src: Utils.asset("images/settings/Arrow.png"),
+            },
+          },
+          Bluetooth: {
+            y: 90,
+            type: SettingsMainItem,
+            Title: {
+              x: 10,
+              y: 45,
+              mountY: 0.5,
+              text: {
+                text: Language.translate("Pair Remote Control"),
+                textColor: COLORS.titleColor,
+                fontFace: CONFIG.language.font,
+                fontSize: 25,
+              },
+            },
+            Button: {
+              h: 45,
+              w: 45,
+              x: 1600,
+              mountX: 1,
+              y: 45,
+              mountY: 0.5,
+              src: Utils.asset("images/settings/Arrow.png"),
+            },
+          },
+          Video: {
+            y: 180,
+            type: SettingsMainItem,
+            Title: {
+              x: 10,
+              y: 45,
+              mountY: 0.5,
+              text: {
+                text: Language.translate("Video"),
+                textColor: COLORS.titleColor,
+                fontFace: CONFIG.language.font,
+                fontSize: 25,
+              },
+            },
+            Button: {
+              h: 45,
+              w: 45,
+              x: 1600,
+              mountX: 1,
+              y: 45,
+              mountY: 0.5,
+              src: Utils.asset("images/settings/Arrow.png"),
+            },
+          },
+          Audio: {
+            y: 270,
+            type: SettingsMainItem,
+            Title: {
+              x: 10,
+              y: 45,
+              mountY: 0.5,
+              text: {
+                text: Language.translate("Audio"),
+                textColor: COLORS.titleColor,
+                fontFace: CONFIG.language.font,
+                fontSize: 25,
+              },
+            },
+            Button: {
+              h: 45,
+              w: 45,
+              x: 1600,
+              mountX: 1,
+              y: 45,
+              mountY: 0.5,
+              src: Utils.asset("images/settings/Arrow.png"),
+            },
+          },
+          OtherSettings: {
+            y: 360,
+            type: SettingsMainItem,
+            Title: {
+              x: 10,
+              y: 45,
+              mountY: 0.5,
+              text: {
+                text: Language.translate("Other Settings"),
+                textColor: COLORS.titleColor,
+                fontFace: CONFIG.language.font,
+                fontSize: 25,
+              },
+            },
+            Button: {
+              h: 45,
+              w: 45,
+              x: 1600,
+              mountX: 1,
+              y: 45,
+              mountY: 0.5,
+              src: Utils.asset("images/settings/Arrow.png"),
+            },
+          },
+          NFRStatus: {
             y: 450,
             type: SettingsMainItem,
             Title: {
@@ -211,66 +206,66 @@ var thunder = ThunderJS(config);
           DTVSettings: {
             alpha: 0.3,
             y: 540,
-             type: SettingsMainItem,
-             Title: {
-               x: 10,
-               y: 45,
-               mountY: 0.5,
-               text: {
-                 text: Language.translate("Live TV"),
-                 textColor: COLORS.titleColor,
-                 fontFace: CONFIG.language.font,
-                 fontSize: 25,
-               },
-             },
-             Button: {
-               h: 45,
-               w: 45,
-               x: 1600,
-               mountX: 1,
-               y: 45,
-               mountY: 0.5,
-               src: Utils.asset("images/settings/Arrow.png"),
-             },
-           },
-         },
-         AudioScreenOverlay:{
+            type: SettingsMainItem,
+            Title: {
+              x: 10,
+              y: 45,
+              mountY: 0.5,
+              text: {
+                text: Language.translate("Live TV"),
+                textColor: COLORS.titleColor,
+                fontFace: CONFIG.language.font,
+                fontSize: 25,
+              },
+            },
+            Button: {
+              h: 45,
+              w: 45,
+              x: 1600,
+              mountX: 1,
+              y: 45,
+              mountY: 0.5,
+              src: Utils.asset("images/settings/Arrow.png"),
+            },
+          },
+        },
+        AudioScreenOverlay: {
           type: AudioScreenOverlay,
           visible: false,
-       },
-       NetworkConfigurationOverlay:{
-        type: NetworkConfigurationOverlay,
-        visible: false,
-       },
-       BluetoothScreenOverlay:{
-        type: BluetoothScreenOverlay,
-        visible: false
-       },
-       LiveTvSettings:{
-        type: LiveTvSettings,
-        visible: false
-       },
-       VideoScreenOverlay:{
-        type: VideoScreenOverlay,
-        visible: false,
-       },
-       OtherSettingsScreen:{
-        type: OtherSettingsScreen,
-        visible: false
-       }
-       }
-     };
-   }
+        },
+        NetworkConfigurationOverlay: {
+          type: NetworkConfigurationOverlay,
+          visible: false,
+        },
+        BluetoothScreenOverlay: {
+          type: BluetoothScreenOverlay,
+          visible: false
+        },
+        LiveTvSettings: {
+          type: LiveTvSettings,
+          visible: false
+        },
+        VideoScreenOverlay: {
+          type: VideoScreenOverlay,
+          visible: false,
+        },
+        OtherSettingsScreen: {
+          type: OtherSettingsScreen,
+          visible: false
+        }
+      }
+    };
+  }
 
-   _focus() {
-     this.tag("Wrapper").visible = true;
-     this._setState("NetworkConfiguration");
-     this.$updatePageTitle("settings"); //use this method as fireancestor from child components to change the page title
-   }
-   _unfocus() {
-     this.tag("Wrapper").visible = false;
-   }
-   _firstActive() {
+  _focus() {
+    this.tag("Wrapper").visible = true;
+    this._setState("NetworkConfiguration");
+    this.$updatePageTitle("settings"); //use this method as fireancestor from child components to change the page title
+  }
+  _unfocus() {
+    this.tag("Wrapper").visible = false;
+  }
+  _firstActive() {
     if (Storage.get("NFRStatus")) {
       console.log(`Netflix : NFRStatus is found to be enabled`)
       this.tag("NFRStatus.Button").src = "static/images/settings/ToggleOnOrange.png"
@@ -279,159 +274,159 @@ var thunder = ThunderJS(config);
       console.log(`Netflix : NFRStatus is found to be disabled`)
       this.tag("NFRStatus.Button").src = "static/images/settings/ToggleOffWhite.png"
     }
-      this.appApi = new AppApi();
-      this.dtvApi = new DTVApi();
-      this.dtvPlugin = false; //plugin availability
-      if (Storage.get("deviceType") != "IpStb") {
-        this.dtvApi.activate().then((res) => {
-          this.dtvPlugin = true;
-          this.tag("DTVSettings").alpha = 1;
-        });
+    this.appApi = new AppApi();
+    this.dtvApi = new DTVApi();
+    this.dtvPlugin = false; //plugin availability
+    if (Storage.get("deviceType") != "IpStb") {
+      this.dtvApi.activate().then((res) => {
+        this.dtvPlugin = true;
+        this.tag("DTVSettings").alpha = 1;
+      });
+    }
+  }
+
+  _handleBack() {
+    console.log("application Type = ", Storage.get("applicationType"));
+    if ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+      if (Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player") {
+        Router.focusPage();
+      } else {
+        Router.focusPage();
+        Router.navigate("menu");
       }
-   }
+    } else {
+      Router.focusPage();
+      this.appApi.visible(Storage.get("selfClientName"), false);
+      this.appApi.setFocus(Storage.get("applicationType"));
+    }
+  }
 
-   _handleBack() {
-     console.log("application Type = ", Storage.get("applicationType"));
-     if (Storage.get("applicationType") === "") {
-       if (Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player") {
-         Router.focusPage();
-       } else {
-         Router.focusPage();
-         Router.navigate("menu");
-       }
-     } else {
-       Router.focusPage();
-       this.appApi.visible("ResidentApp", false);
-       this.appApi.setFocus(Storage.get("applicationType"));
-     }
-   }
+  _handleLeft() {
+    //do nothing
+  }
+  _handleRight() {
+    //do nothing
+  }
+  _handleUp() {
+    //do nothing
+  }
+  _handleDown() {
+    //do nothing
+  }
 
-   _handleLeft() {
-    //do nothing
-   }
-   _handleRight() {
-    //do nothing
-   }
-   _handleUp() {
-    //do nothing
-   }
-   _handleDown() {
-    //do nothing
-   }
-
-   $updatePageTitle(title,alreadyTranslated){
-    console.log("title",title)
-    if(alreadyTranslated) {
+  $updatePageTitle(title, alreadyTranslated) {
+    console.log("title", title)
+    if (alreadyTranslated) {
       this.tag("BreadCrumbs").text.text = title;
-    }else {
+    } else {
       this.tag("BreadCrumbs").text.text = Language.translate(title);
     }
-   }
+  }
 
-   hide() {
+  hide() {
     this.tag('SettingsScreenContents').visible = false
 
- }
+  }
 
- show() {
+  show() {
     this.tag('SettingsScreenContents').visible = true
   }
-  $hideBreadCrum(){
+  $hideBreadCrum() {
     this.tag("BreadCrumbs").visible = false;
   }
-  $showBreadCrum(){
-  this.tag("BreadCrumbs").visible = true;
- }
+  $showBreadCrum() {
+    this.tag("BreadCrumbs").visible = true;
+  }
 
-   static _states() {
-     return [
-       class NetworkConfiguration extends this {
-         $enter() {
-           this.tag("NetworkConfiguration")._focus();
-         }
-         $exit() {
-           this.tag("NetworkConfiguration")._unfocus();
-         }
-         _handleDown() {
-           this._setState("Bluetooth");
-         }
-         _handleEnter() {
+  static _states() {
+    return [
+      class NetworkConfiguration extends this {
+        $enter() {
+          this.tag("NetworkConfiguration")._focus();
+        }
+        $exit() {
+          this.tag("NetworkConfiguration")._unfocus();
+        }
+        _handleDown() {
+          this._setState("Bluetooth");
+        }
+        _handleEnter() {
           this._setState('NetworkConfigurationOverlay')
-         }
-       },
-       class Bluetooth extends this {
-         $enter() {
-           this.tag("Bluetooth")._focus();
-         }
-         $exit() {
-           this.tag("Bluetooth")._unfocus();
-         }
-         _handleUp() {
-           this._setState("NetworkConfiguration");
-         }
-         _handleDown() {
-           this._setState("Video");
-         }
-         _handleLeft() {}
-         _handleEnter() {
+        }
+      },
+      class Bluetooth extends this {
+        $enter() {
+          this.tag("Bluetooth")._focus();
+        }
+        $exit() {
+          this.tag("Bluetooth")._unfocus();
+        }
+        _handleUp() {
+          this._setState("NetworkConfiguration");
+        }
+        _handleDown() {
+          this._setState("Video");
+        }
+        _handleLeft() { }
+        _handleEnter() {
           this._setState("BluetoothScreenOverlay")
-         }
-       },
+        }
+      },
 
-       class Video extends this {
-         $enter() {
-           this.tag("Video")._focus();
-         }
-         $exit() {
-           this.tag("Video")._unfocus();
-         }
-         _handleUp() {
-           this._setState("Bluetooth");
-         }
-         _handleDown() {
-           this._setState("Audio");
-         }
-         _handleEnter() {
+      class Video extends this {
+        $enter() {
+          this.tag("Video")._focus();
+        }
+        $exit() {
+          this.tag("Video")._unfocus();
+        }
+        _handleUp() {
+          this._setState("Bluetooth");
+        }
+        _handleDown() {
+          this._setState("Audio");
+        }
+        _handleEnter() {
           this._setState('VideoScreenOverlay')
-         }
-       },
+        }
+      },
 
-       class Audio extends this {
-         $enter() {
-           this.tag("Audio")._focus();
-         }
-         $exit() {
-           this.tag("Audio")._unfocus();
-         }
-         _handleUp() {
-           this._setState("Video");
-         }
-         _handleEnter() {
+      class Audio extends this {
+        $enter() {
+          this.tag("Audio")._focus();
+        }
+        $exit() {
+          this.tag("Audio")._unfocus();
+        }
+        _handleUp() {
+          this._setState("Video");
+        }
+        _handleEnter() {
           this._setState('AudioScreenOverlay')
-         }
-         _handleDown() {
-           this._setState("OtherSettings");
-         }
-       },
+        }
+        _handleDown() {
+          this._setState("OtherSettings");
+        }
+      },
 
-       class OtherSettings extends this {
-         $enter() {
-           this.tag("OtherSettings")._focus();
-         }
-         $exit() {
-           this.tag("OtherSettings")._unfocus();
-         }
-         _handleUp() {
-           this._setState("Audio");
-         }
-         _handleEnter() {
+      class OtherSettings extends this {
+        $enter() {
+          this.tag("OtherSettings")._focus();
+        }
+        $exit() {
+          this.tag("OtherSettings")._unfocus();
+        }
+        _handleUp() {
+          this._setState("Audio");
+        }
+        _handleEnter() {
           this._setState("OtherSettingsScreen")
-         }
-         _handleDown() {
+        }
+        _handleDown() {
           this._setState("NFRStatus")
         }
-       },
-       class NFRStatus extends this{
+      },
+      class NFRStatus extends this{
         $enter() {
           this.tag('NFRStatus')._focus()
         }
@@ -478,26 +473,26 @@ var thunder = ThunderJS(config);
       },
 
 
-       class DTVSettings extends this {
-         $enter() {
-           this.tag("DTVSettings")._focus();
-         }
-         $exit() {
-           this.tag("DTVSettings")._unfocus();
-         }
-         _handleUp() {
+      class DTVSettings extends this {
+        $enter() {
+          this.tag("DTVSettings")._focus();
+        }
+        $exit() {
+          this.tag("DTVSettings")._unfocus();
+        }
+        _handleUp() {
           this._setState('NFRStatus')
         }
-         _handleEnter() {
-           if (this.dtvPlugin) {
+        _handleEnter() {
+          if (this.dtvPlugin) {
             this._setState("LiveTvSettings")
-           }
-           dtvApi.activate().then(res =>{
-             this.tag('DTVSettings.Title').text.text = 'DTV Settings: Activtion'+ res
-           })
-         }
-       },
-       class AudioScreenOverlay extends this {
+          }
+          dtvApi.activate().then(res => {
+            this.tag('DTVSettings.Title').text.text = 'DTV Settings: Activtion' + res
+          })
+        }
+      },
+      class AudioScreenOverlay extends this {
         $enter() {
           this.hide()
           this.tag('AudioScreenOverlay').visible = true
@@ -509,7 +504,7 @@ var thunder = ThunderJS(config);
         $exit() {
           this.show()
           this.tag('AudioScreenOverlay').visible = false
-         this.$updatePageTitle('Settings')
+          this.$updatePageTitle('Settings')
         }
         _handleBack() {
           this._setState("Audio");
@@ -547,9 +542,9 @@ var thunder = ThunderJS(config);
           this.tag('NetworkConfigurationOverlay').visible = false
           this.$updatePageTitle('Settings')
         }
-       _handleBack(){
-        this._setState("NetworkConfiguration")
-       }
+        _handleBack() {
+          this._setState("NetworkConfiguration")
+        }
       },
       class BluetoothScreenOverlay extends this {
         $enter() {
@@ -605,6 +600,6 @@ var thunder = ThunderJS(config);
           this._setState('DTVSettings')
         }
       },
-     ];
-   }
- }
+    ];
+  }
+}

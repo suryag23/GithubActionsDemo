@@ -17,24 +17,21 @@
  * limitations under the License.
  **/
 
-import { Lightning, Router, Storage, Language } from '@lightningjs/sdk'
+import { Lightning, Router, Storage, Language, Registry } from '@lightningjs/sdk'
 import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
 import SettingsMainItem from '../../items/SettingsMainItem'
-import Wifi from '../../api/WifiApi'
-import NetworkApi from '../../api/NetworkApi'
+import Network from '../../api/NetworkApi'
 import AlexaApi from '../../api/AlexaApi'
-
-const wifi = new Wifi()
-const network = new NetworkApi()
+import AppApi from '../../api/AppApi'
 
 export default class NetworkScreen extends Lightning.Component {
     static _template() {
         return {
-        w: 1920,
-        h: 1080,
-        rect: true,
-        color: 0xff000000,
+            w: 1920,
+            h: 1080,
+            rect: true,
+            color: 0xff000000,
             Network: {
                 x: 960,
                 y: 270,
@@ -98,16 +95,16 @@ export default class NetworkScreen extends Lightning.Component {
                     Skip: {
                         x: 820, y: 250, w: 300, mountX: 0.5, h: 60, rect: true, color: 0xFFFFFFFF,
                         Title: {
-                        x: 150,
-                        y: 30,
-                        mount: 0.5,
-                        text: {
-                            text: Language.translate("Skip"),
-                            fontFace: CONFIG.language.font,
-                            fontSize: 22,
-                            textColor: 0xFF000000,
-                            fontStyle: 'bold'
-                        },
+                            x: 150,
+                            y: 30,
+                            mount: 0.5,
+                            text: {
+                                text: Language.translate("Skip"),
+                                fontFace: CONFIG.language.font,
+                                fontSize: 22,
+                                textColor: 0xFF000000,
+                                fontStyle: 'bold'
+                            },
                         },
                         visible: true
                     },
@@ -116,7 +113,13 @@ export default class NetworkScreen extends Lightning.Component {
         }
     }
 
-    _init() {
+    async _init() {
+        this.appApi = new AppApi();
+        await this.appApi.checkStatus(Network.get().callsign).then(nwPluginStatus => {
+            if (nwPluginStatus[0].state.toLowerCase() !== "activated") {
+                Network.get().activate();
+            }
+        });
     }
 
     pageTransition() {
@@ -124,7 +127,6 @@ export default class NetworkScreen extends Lightning.Component {
     }
 
     _focus() {
-        Storage.set('setup', true)
         this._setState('WiFi')
     }
 
@@ -142,91 +144,96 @@ export default class NetworkScreen extends Lightning.Component {
                 }
                 _handleEnter() {
                     // this._setState('WiFiScreen')
-                    wifi.setInterface('WIFI', true).then(res => {
-                        if (res.success) {
-                            wifi.setDefaultInterface('WIFI', true).then(() => {
-                                Router.navigate('splash/networkList')
+                    Network.get().setInterfaceEnabled('WIFI').then(res => {
+                        if (res) {
+                            Network.get().setDefaultInterface('WIFI').then(() => {
+                                Registry.setTimeout(() => {
+                                    Router.navigate('splash/networkList')
+                                }, (Router.isNavigating() ? 20 : 0));
                             })
                         }
                     })
                     console.log("Wifi")
                 }
             },
-        class Ethernet extends this {
-            $enter() {
-                this.tag('Ethernet')._focus()
-            }
-            $exit() {
-                this.tag('Ethernet')._unfocus()
-            }
-            _handleEnter() {
-                    wifi.setInterface('ETHERNET', true).then(res => {
-                        if (res.success) {
-                        wifi.setDefaultInterface('ETHERNET', true).then(() => {
-                            network.getInterfaces().then(res => {
-                                let eth=res.filter((item) => item.interface=='ETHERNET')
-                                if (eth[0].interface=='ETHERNET' && eth[0].enabled==true && eth[0].connected==true){
-                                    Router.navigate('menu')
-                                }
-                                else if(eth[0].interface=='ETHERNET' && eth[0].connected==false){
-                                    Router.navigate('splash/networkPrompt')
-                                }
+            class Ethernet extends this {
+                $enter() {
+                    this.tag('Ethernet')._focus()
+                }
+                $exit() {
+                    this.tag('Ethernet')._unfocus()
+                }
+                _handleEnter() {
+                    Network.get().setInterfaceEnabled('ETHERNET').then(res => {
+                        if (res) {
+                            Network.get().setDefaultInterface('ETHERNET').then(() => {
+                                Network.get().getInterfaces().then(res => {
+                                    let eth = res.filter((item) => item.interface == 'ETHERNET')
+                                    if (eth[0].interface == 'ETHERNET' && eth[0].enabled == true && eth[0].connected == true) {
+                                        Registry.setTimeout(() => {
+                                            Router.navigate('menu')
+                                        }, (Router.isNavigating() ? 20 : 0));
+                                    }
+                                    else if (eth[0].interface == 'ETHERNET' && eth[0].connected == false) {
+                                        Registry.setTimeout(() => {
+                                            Router.navigate('splash/networkPrompt')
+                                        }, (Router.isNavigating() ? 20 : 0));
+                                    }
+                                })
                             })
-                        })
-                    }
-                })
-            }
-            _handleDown() {
-                this._setState('Skip')
-            }
-            _handleUp() {
-                this._setState('WiFi')
-            }
-        },
-        class Skip extends this{
-            $enter(){
-                this._focus()
-            }
-            _focus() {
-                this.tag('Skip').patch({
-                color: CONFIG.theme.hex
-                })
-                this.tag('Skip.Title').patch({
-                text: {
-                    textColor: 0xFFFFFFFF
-                }
-                })
-            }
-            _unfocus() {
-                this.tag('Skip').patch({
-                color: 0xFFFFFFFF
-                })
-                this.tag('Skip.Title').patch({
-                text: {
-                    textColor: 0xFF000000
-                }
-                })
-            }
-            _handleEnter() {
-                if (AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
-                    network.isConnectedToInternet().then(result => {
-                        if(result)
-                            Router.navigate('AlexaLoginScreen')
-                        else
-                            Router.navigate('menu')
+                        }
                     })
-                } else {
-                    Router.navigate('menu')
+                }
+                _handleDown() {
+                    this._setState('Skip')
+                }
+                _handleUp() {
+                    this._setState('WiFi')
+                }
+            },
+            class Skip extends this{
+                $enter() {
+                    this._focus()
+                }
+                _focus() {
+                    this.tag('Skip').patch({
+                        color: CONFIG.theme.hex
+                    })
+                    this.tag('Skip.Title').patch({
+                        text: {
+                            textColor: 0xFFFFFFFF
+                        }
+                    })
+                }
+                _unfocus() {
+                    this.tag('Skip').patch({
+                        color: 0xFFFFFFFF
+                    })
+                    this.tag('Skip.Title').patch({
+                        text: {
+                            textColor: 0xFF000000
+                        }
+                    })
+                }
+                _handleEnter() {
+                    if (AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
+                        Network.get().isConnectedToInternet().then(result => {
+                            if (result)
+                                Registry.setTimeout(() => { Router.navigate('AlexaLoginScreen') }, (Router.isNavigating() ? 20 : 0));
+                            else
+                                Registry.setTimeout(() => { Router.navigate('menu') }, (Router.isNavigating() ? 20 : 0));
+                        })
+                    } else {
+                        Registry.setTimeout(() => { Router.navigate('menu') }, (Router.isNavigating() ? 20 : 0));
+                    }
+                }
+                _handleUp() {
+                    this._setState('Ethernet')
+                }
+                $exit() {
+                    this._unfocus()
                 }
             }
-            _handleUp() {
-                this._setState('Ethernet')
-            }
-            $exit() {
-                this._unfocus()
-            }
-        }
         ]
     }
-
 }

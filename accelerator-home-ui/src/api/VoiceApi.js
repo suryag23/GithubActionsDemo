@@ -17,16 +17,12 @@
  * limitations under the License.
  **/
 import ThunderJS from 'ThunderJS';
+import { CONFIG } from '../Config/Config'
 
 export default class VoiceApi {
     constructor() {
-      const config = {
-        host: '127.0.0.1',
-        port: 9998,
-        default: 1,
-      };
       this._events = new Map();
-      this.thunder = ThunderJS(config);
+      this.thunder = ThunderJS(CONFIG.thunderConfig);
       this.INFO = function(){};
       this.LOG = function(){};
       this.ERR = console.error;

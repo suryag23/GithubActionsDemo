@@ -16,17 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Registry, Router, Utils, Storage, Language } from '@lightningjs/sdk'
+import { Lightning, Router, Utils, Language, Settings } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import ThunderJS from 'ThunderJS'
 import AlexaApi from '../api/AlexaApi'
 
-const config = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1,
-};
-var thunder = ThunderJS(config);
+var thunder = ThunderJS(CONFIG.thunderConfig);
 
 export default class CodeScreen extends Lightning.Component {
     static _template() {

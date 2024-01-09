@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils, Language, Router } from "@lightningjs/sdk";
+import { Lightning, Utils, Language, Router, Settings } from "@lightningjs/sdk";
 import { COLORS } from "../../colors/Colors";
 import SettingsMainItem from "../../items/SettingsMainItem";
 import { CONFIG } from "../../Config/Config";
@@ -30,13 +30,7 @@ import IntegerInput from "./InputScreens/IntegerInput";
 import ThunderJS from "ThunderJS";
 
 const dtvApi = new DTVApi();
-
-const config = {
-  host: "127.0.0.1",
-  port: 9998,
-  default: 1,
-};
-const thunder = ThunderJS(config);
+const thunder = ThunderJS(CONFIG.thunderConfig);
 const systemcCallsign = "DTV";
 
 /**

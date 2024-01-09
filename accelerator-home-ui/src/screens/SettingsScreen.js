@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils, Language, Router, Storage } from '@lightningjs/sdk'
+import { Lightning, Utils, Language, Router, Storage, Settings } from '@lightningjs/sdk'
 import ThunderJS from 'ThunderJS';
 import { COLORS } from '../colors/Colors'
 import SettingsMainItem from '../items/SettingsMainItem'
@@ -24,12 +24,7 @@ import { CONFIG } from '../Config/Config'
 import DTVApi from '../api/DTVApi';
 import AppApi from '../api/AppApi';
 
-const config = {
-  host: '127.0.0.1',
-  port: 9998,
-  default: 1,
-};
-var thunder = ThunderJS(config);
+var thunder = ThunderJS(CONFIG.thunderConfig);
 
 /**
  * Class for settings screen.

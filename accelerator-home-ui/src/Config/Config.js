@@ -42,16 +42,26 @@ const language = {
     fontSrc: 'Play/Play-Regular.ttf',
     font: 'Play'
   },
-
 }
 
 export const availableLanguages = ['English', 'Spanish'];
 export const availableLanguageCodes = {
-  "English":"en-US",
-  "Spanish":"es-US"
+  "English": "en-US",
+  "Spanish": "es-US"
 }
 
 export var CONFIG = {
   theme: themeOptions['partnerOne'],
-  language: (localStorage.getItem('Language') != null && availableLanguages.includes(localStorage.getItem('Language'))) ? language[localStorage.getItem('Language')] : language['English']
+  language: (localStorage.getItem('Language') != null && availableLanguages.includes(localStorage.getItem('Language'))) ? language[localStorage.getItem('Language')] : language['English'],
+  thunderConfig: {
+    host: '127.0.0.1',
+    port: 9998,
+    versions: {
+      default: 1,
+      'org.rdk.System': 2,
+      ControlSettings: 2,
+      'org.rdk.UsbAccess': 2,
+      'org.rdk.DisplaySettings': 2,
+    }
+  }
 }

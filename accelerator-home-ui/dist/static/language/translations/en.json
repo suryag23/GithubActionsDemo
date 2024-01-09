@@ -119,5 +119,6 @@
   "CONNECTION_INTERRUPTED - The connection was interrupted":"",
   "INVALID_CREDENTIALS - The connection failed due to invalid credentials":"",
   "NO_SSID - The SSID does not exist":"",
-  "UNKNOWN - Any other error":""
+  "UNKNOWN - Any other error":"",
+  "Configuring as default":"Configuring as default"
 }

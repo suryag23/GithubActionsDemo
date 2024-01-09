@@ -61,22 +61,22 @@ export default class LightningPlayerControls extends Lightning.Component {
       Duration: {
         x: 1690,
         y: 125,
-        text: { 
-          text: "00:00:00", 
-          fontFace: CONFIG.language.font, 
+        text: {
+          text: "00:00:00",
+          fontFace: CONFIG.language.font,
           fontSize: 35,
-          textColor: 0xffFFFFFF 
+          textColor: 0xffFFFFFF
         }
       },
       CurrentTime: {
         x: 140, // 140 = 90 + 50 | 50 is approzimately 1/2 of length(in px) of the text "00:00:00" and 90 is padding from left
         y: 60,
         mountX:0.5,
-        text: { 
-          text: "00:00:00", 
-          fontFace: CONFIG.language.font, 
+        text: {
+          text: "00:00:00",
+          fontFace: CONFIG.language.font,
           fontSize: 25,
-          textColor: 0xffFFFFFF 
+          textColor: 0xffFFFFFF
         }
       },
       Buttons: {
@@ -101,7 +101,7 @@ export default class LightningPlayerControls extends Lightning.Component {
     }
   }
 
-  _init() {
+  _activate() {
     /**
      * Variable to store the duration of the video content.
      */

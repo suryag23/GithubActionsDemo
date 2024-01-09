@@ -32,8 +32,6 @@ export default class PasswordSwitch extends Lightning.Component {
         }
         this.isOn = !this.isOn;
         this.fireAncestors('$handleEnter', this.isOn);
-
-
     }
     _init() {
         this.isOn = false;
@@ -45,7 +43,5 @@ export default class PasswordSwitch extends Lightning.Component {
             this.patch({ src: Utils.asset("images/settings/ToggleOffWhite.png") })
             this.fireAncestors('$handleEnter', this.isOn);
         }
-
     }
-
 }

@@ -88,7 +88,7 @@ export default class AppListItem extends Lightning.Component {
       alpha: 1,
       y: -12,
       texture: lng.Tools.getShadowRect(this.w, this.h + 24, 0, 0, 0),
-  });
+    });
   }
 
   /**
@@ -106,7 +106,7 @@ export default class AppListItem extends Lightning.Component {
       zIndex: 0
     })
     this.tag('Shadow').patch({
-        alpha: 0
+      alpha: 0
     });
   }
 }

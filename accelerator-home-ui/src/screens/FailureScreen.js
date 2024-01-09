@@ -16,135 +16,126 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router, Utils, Language, Storage } from '@lightningjs/sdk'
+import { Lightning, Router, Utils, Language, Storage, Settings } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import AlexaApi from '../api/AlexaApi'
 import AppApi from '../api/AppApi';
 import ThunderJS from "ThunderJS";
 
-const config = {
-    host: "127.0.0.1",
-    port: 9998,
-    default: 1,
-};
-var thunder = ThunderJS(config);
+var thunder = ThunderJS(CONFIG.thunderConfig);
 
 export default class FailureScreen extends Lightning.Component {
     static _template() {
         return {
-            Wrapper:{
-            w: 1920,
-            h: 1080,
-            rect: true,
-            color: 0xff000000,
-            Alexa:{
-                x: 1050,
-                y: 250,
-                Logo: {
-                    h: 220,
-                    w: 442,
-                    x: 135,
-                    mountX: 1,
-                    y: 200,
-                    mountY: 0.5,
-                    src: Utils.asset('/images/apps/AlexaBadge.png'),
-                },
-                Description: {
-                    x: -70,
-                    y: 380,
-                    mount: 0.5,
-                    text: {
-                        text: Language.translate('Alexa something went wrong message'),
-                        fontFace: CONFIG.language.font,
-                        fontSize: 32,
-                        textColor: 0xFFF9F9F9,
-                        fontStyle: 'normal',
-                        wordWrap: true,
-                        wordWrapWidth: 800,
+            Wrapper: {
+                w: 1920,
+                h: 1080,
+                rect: true,
+                color: 0xff000000,
+                Alexa: {
+                    x: 1050,
+                    y: 250,
+                    Logo: {
+                        h: 220,
+                        w: 442,
+                        x: 135,
+                        mountX: 1,
+                        y: 200,
+                        mountY: 0.5,
+                        src: Utils.asset('/images/apps/AlexaBadge.png'),
                     },
-                }
-            },
-            RetryButton: {
-                x: 1700, y: 60, w: 150, mountX: 0.5, h: 60, rect: true, color: 0xFFFFFFFF ,
-                Title: {
-                    x: 75,
-                    y: 30,
-                    mount: 0.5,
-                    text: {
-                        text: Language.translate('Retry'),
-                        fontFace: CONFIG.language.font,
-                        fontSize: 22,
-                        textColor: 0xFF000000,
-                        fontStyle: 'bold'
-                    },
+                    Description: {
+                        x: -70,
+                        y: 380,
+                        mount: 0.5,
+                        text: {
+                            text: Language.translate('Alexa something went wrong message'),
+                            fontFace: CONFIG.language.font,
+                            fontSize: 32,
+                            textColor: 0xFFF9F9F9,
+                            fontStyle: 'normal',
+                            wordWrap: true,
+                            wordWrapWidth: 800,
+                        },
+                    }
                 },
-                visible: true,
-                alpha: 1
-            },
-        }
+                RetryButton: {
+                    x: 1700, y: 60, w: 150, mountX: 0.5, h: 60, rect: true, color: 0xFFFFFFFF,
+                    Title: {
+                        x: 75,
+                        y: 30,
+                        mount: 0.5,
+                        text: {
+                            text: Language.translate('Retry'),
+                            fontFace: CONFIG.language.font,
+                            fontSize: 22,
+                            textColor: 0xFF000000,
+                            fontStyle: 'bold'
+                        },
+                    },
+                    visible: true,
+                    alpha: 1
+                },
+            }
         }
     }
 
-    _init(){
+    _init() {
     }
     _focus() {
         this.appApi = new AppApi();
-        this.currentApp=Storage.get("applicationType")
-            if(this.currentApp!=="")
-            {
-                this.tag('RetryButton.Title').patch({
-                    text: {
-                            text: Language.translate("Dismiss")
-                        }
-                    })
-            }
+        this.currentApp = Storage.get("applicationType")
+        if ((this.currentApp !== "") || (this.currentApp !== Storage.get("selfClientName"))) {
+            this.tag('RetryButton.Title').patch({
+                text: {
+                    text: Language.translate("Dismiss")
+                }
+            })
+        }
         this._setState('RetryButton')
-      }
-      _active(){
+    }
+    _active() {
         this._setState('RetryButton')
-      }
-      static _states() {
-        return[
+    }
+    static _states() {
+        return [
             class RetryButton extends this{
                 $enter() {
                     console.log("setState DoneButton CodeScreen")
-                 this.tag("RetryButton")
-                 this._focus()
-                 this.tag('RetryButton.Title').text.textColor = CONFIG.theme.hex
-
+                    this.tag("RetryButton")
+                    this._focus()
+                    this.tag('RetryButton.Title').text.textColor = CONFIG.theme.hex
                 }
-                _handleEnter(){
-                        if(this.currentApp!=="")
-                        {
-                            AlexaApi.get().resetAVSCredentials().then(()=>{
-                                console.log("avs credentials reseted")
-                            })
-                            console.log("Current app: "+ this.currentApp + ", moving the app to front")
-                            this.appApi.setVisibility("ResidentApp", false);
-                            thunder
+                _handleEnter() {
+                    if ((this.currentApp !== "") || (this.currentApp !== Storage.get("selfClientName"))) {
+                        AlexaApi.get().resetAVSCredentials().then(() => {
+                            console.log("avs credentials reseted")
+                        })
+                        console.log("Current app: " + this.currentApp + ", moving the app to front")
+                        this.appApi.setVisibility(Storage.get("selfClientName"), false);
+                        thunder
                             .call("org.rdk.RDKShell", "moveToFront", {
                                 client: this.currentApp,
                             })
                             .then((result) => {
                                 console.log(this.currentApp, " moveToFront Success");
                                 thunder
-                                .call("org.rdk.RDKShell", "setFocus", {
-                                    client: this.currentApp,
-                                })
-                                .then((result) => {
-                                    console.log(this.currentApp, " setFocus Success");
-                                })
-                                .catch((err) => {
-                                    console.log("Error", err);
-                                });
+                                    .call("org.rdk.RDKShell", "setFocus", {
+                                        client: this.currentApp,
+                                    })
+                                    .then((result) => {
+                                        console.log(this.currentApp, " setFocus Success");
+                                    })
+                                    .catch((err) => {
+                                        console.log("Error", err);
+                                    });
                             });
-                        }
-                        else
-                        {
-                            AlexaApi.get().resetAVSCredentials().then(()=>{
-                                Router.navigate('AlexaLoginScreen');
-                            })
-                        }
+                    }
+                    else {
+                        AlexaApi.get().resetAVSCredentials().then(async () => {
+                            await Router.navigate('AlexaLoginScreen');
+                        })
+                    }
                 }
                 _focus() {
                     this.tag('RetryButton').patch({
@@ -168,7 +159,7 @@ export default class FailureScreen extends Lightning.Component {
                 }
 
                 $exit() {
-                  this._unfocus()
+                    this._unfocus()
                 }
             }
         ]

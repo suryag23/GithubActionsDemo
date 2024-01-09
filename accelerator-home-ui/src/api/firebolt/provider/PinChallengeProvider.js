@@ -16,15 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Router, Storage } from '@lightningjs/sdk'
+import { Router, Storage, Settings } from '@lightningjs/sdk'
 import ThunderJS from 'ThunderJS';
+import { CONFIG } from '../../../Config/Config'
 
-const config = {
-  host: '127.0.0.1',
-  port: 9998,
-  default: 1,
-}
-let thunder = ThunderJS(config)
+let thunder = ThunderJS(CONFIG.thunderConfig)
 
 export default class PinChallengeProvider {
 

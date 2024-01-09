@@ -20,13 +20,13 @@ import { Lightning, Utils, Router, Language } from '@lightningjs/sdk'
 import AppApi from '../../api/AppApi'
 import BluetoothApi from '../../api/BluetoothApi'
 import { CONFIG } from '../../Config/Config'
-import WifiApi from '../../api/WifiApi'
+import WiFi from '../../api/WifiApi'
 import AlexaApi from '../../api/AlexaApi.js';
 import RCApi from '../../api/RemoteControl'
+import Warehouse from '../../api/WarehouseApis.js'
 
 const appApi = new AppApi()
 const _btApi = new BluetoothApi()
-const _wfApi = new WifiApi()
 
 /**
  * Class for Reboot Confirmation Screen.
@@ -129,6 +129,18 @@ export default class RebootConfirmationScreen extends Lightning.Component {
         });
     }
 
+
+    _firstEnable() {
+        this.AppApi.checkStatus(Warehouse.get().callsign).then(resp => {
+            console.log("FactoryReset: warehouse plugin status : ", resp[0].status);
+            if (resp[0].status != 'activated') {
+                Warehouse.get().activate().catch(err => {
+                    console.error("FactoryReset: warehouse plugin activation failed; feature may not work.");
+                });
+            }
+        });
+    }
+
     _handleBack() {
         if(!Router.isNavigating()){
             Router.navigate('settings/advanced/device')
@@ -169,21 +181,18 @@ export default class RebootConfirmationScreen extends Lightning.Component {
             if(monitorstat.length < 0){ console.log("monitorStatus",monitorstat) }
         }
         // warehouse apis
-        let internalReset = await appApi.internalReset().catch(err => { console.error("internalReset",err) });
-        if (internalReset.success != true || internalReset.error) { console.log("internalReset",internalReset) }
-        let isClean =  await appApi.isClean().catch(err => { console.error("isClean",err) });
-        if (isClean.success != true) { console.log("isClean",isClean) }
-        let lightReset = await appApi.lightReset().catch(err => { console.error("lightReset",err)});
-        if (lightReset.success != true || lightReset.error) { console.log("lightReset",lightReset) }
-        let resetDevice = await appApi.resetDevice().catch(err => { console.error("resetDevice",err) });
-        if (resetDevice.success != true || resetDevice.error) { console.log("resetDevice",resetDevice) }
+        await Warehouse.get().internalReset().catch(err => { console.error("internalReset",err) });
+        await Warehouse.get().isClean().catch(err => { console.error("isClean",err) });
+        await Warehouse.get().lightReset().catch(err => { console.error("lightReset",err)});
+        await Warehouse.get().resetDevice().catch(err => { console.error("resetDevice",err) });
+
         let rsactivitytime = await appApi.resetInactivityTime().catch(err => { console.error("resetInactivityTime",err) });
         if (rsactivitytime.success != true) { console.log("rsactivitytime",rsactivitytime) }
         let clearLastDeepSleepReason = await appApi.clearLastDeepSleepReason().catch(err => { console.error("clearLastDeepSleepReason",err) });
         if (clearLastDeepSleepReason.success != true) { console.log("clearLastDeepSleepReason",clearLastDeepSleepReason) }
-        let clearSSID = await _wfApi.clearSSID().catch(err =>  { console.error("clearSSID",err) });
+        let clearSSID = await WiFi.get().clearSSID().catch(err =>  { console.error("clearSSID",err) });
         if (clearSSID.success != true)  { console.log("clearSSID",clearSSID) }
-        let wifidisconnect = await _wfApi.disconnect().catch(err =>{ console.error("wifidisconnect",err) });
+        let wifidisconnect = await WiFi.get().disconnect().catch(err =>{ console.error("wifidisconnect",err) });
         if (wifidisconnect.success != true) { console.log("wifidisconnect",wifidisconnect) }
         await appApi.clearCache().catch(err => { console.error("clearCache error: ", err)})
         await appApi.reboot().then(result => { console.log('device rebooting' + JSON.stringify(result))})

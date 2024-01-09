@@ -19,89 +19,89 @@
 import { Lifecycle } from '@firebolt-js/sdk'
 
 
-export default class FBTLifecycle{
-    constructor(){
+export default class FBTLifecycle {
+    constructor() {
         this._events = new Map();
         Lifecycle.listen('background', value => {
             console.log('Fireboltapi background ' + JSON.stringify(value));
-            if(this._events.has('background')){
+            if (this._events.has('background')) {
                 this._events.get('background')(value)
-                }
-            })
+            }
+        })
         Lifecycle.listen('foreground', value => {
             console.log('Fireboltapi foreground ' + JSON.stringify(value));
-
-            if(this._events.has('foreground')){
-            this._events.get('foreground')(value)
+            if (this._events.has('foreground')) {
+                this._events.get('foreground')(value)
             }
-            })
+        })
         Lifecycle.listen('inactive', value => {
             console.log('Fireboltapi inactive ' + JSON.stringify(value));
-            if(this._events.has('inactive')){
+            if (this._events.has('inactive')) {
                 this._events.get('inactive')(value)
-                }
-            })
+            }
+        })
         Lifecycle.listen('suspended', value => {
             console.log('Fireboltapi suspended ' + JSON.stringify(value));
-            if(this._events.has('suspended')){
+            if (this._events.has('suspended')) {
                 this._events.get('suspended')(value)
-                }
-            })
+            }
+        })
         Lifecycle.listen('unloading', value => {
             console.log('Fireboltapi unloading ' + JSON.stringify(value));
-            if(this._events.has('unloading')){
+            if (this._events.has('unloading')) {
                 this._events.get('unloading')(value)
-                }
-            })
+            }
+        })
     }
 
     registerEvent(eventId, callback) {
         this._events.set(eventId, callback)
-      }
+    }
 
-    close(){
-        return new Promise((resolve,reject)=>{
+    close() {
+        return new Promise((resolve, reject) => {
             Lifecycle.close("remoteButton")
-            .then(success => {
-                console.log(success)
-                resolve(success)
-            })
-        .catch(err => {
-            console.error('firebolt Lifecycle.close error', err)
-            reject(err)
-          })
-        })}
-    finished(){
-        return new Promise((resolve,reject)=>{
+                .then(success => {
+                    console.log(success)
+                    resolve(success)
+                })
+                .catch(err => {
+                    console.error('firebolt Lifecycle.close error', err)
+                    reject(err)
+                })
+        })
+    }
+    finished() {
+        return new Promise((resolve, reject) => {
             Lifecycle.finished()
-            .then(results => {
-                console.log(results)
-                resolve(results)
-            })
-        .catch(err => {
-            console.error('firebolt Lifecycle.finished error', err)
-            reject(err)
-            })
+                .then(results => {
+                    console.log(results)
+                    resolve(results)
+                })
+                .catch(err => {
+                    console.error('firebolt Lifecycle.finished error', err)
+                    reject(err)
+                })
         })
     }
-    ready(){
-        return new Promise((resolve,reject)=>{
+    ready() {
+        return new Promise((resolve, reject) => {
             Lifecycle.ready()
-            .then(result => {
-                console.log("getting result")
-                console.log(result)
-                resolve(result)
+                .then(result => {
+                    console.log("getting result")
+                    console.log(result)
+                    resolve(result)
 
-             })
-        .catch(err => {
-            console.error('firebolt Lifecycle.ready error', err)
-            reject(err)
-            })
+                })
+                .catch(err => {
+                    console.error('firebolt Lifecycle.ready error', err)
+                    reject(err)
+                })
         })
     }
-    state(){
-        return new Promise((resolve,reject)=>{
-            const state =Lifecycle.state()
+    state() {
+        return new Promise((resolve, reject) => {
+            const state = Lifecycle.state()
             console.log(state)
             resolve(state)
 

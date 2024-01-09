@@ -18,17 +18,14 @@
  **/
 
 import ThunderJS from 'ThunderJS';
+import { CONFIG } from '../Config/Config'
+
 /**
  * Class for Xcast thunder plugin apis.
  */
 export default class XcastApi {
   constructor() {
-    const config = {
-      host: '127.0.0.1',
-      port: 9998,
-      default: 1,
-    };
-    this._thunder = ThunderJS(config);
+    this._thunder = ThunderJS(CONFIG.thunderConfig);
     console.log('Xcast constructor');
     this._events = new Map();
   }

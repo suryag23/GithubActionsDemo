@@ -62,7 +62,7 @@ export default class AppCarousel extends Lightning.Component {
   }
   _focus() {
     let self = this
-    console.log("self.homeApi.getAppListInfo()",self.homeApi.getAppListInfo());
+    console.log("self.homeApi.getAppListInfo()", self.homeApi.getAppListInfo());
     self.appApi.isConnectedToInternet()
       .then(result => {
         if (result) {
@@ -84,7 +84,7 @@ export default class AppCarousel extends Lightning.Component {
         self.showcaseApps = self.homeApi.getShowCaseApps()
       }).then(async () => {
         let order = Storage.get("appCarouselOrder")
-        console.log("order",order)
+        console.log("order", order)
         let apps = []
         if (order) {
           let storedApps = order.split(",")
@@ -106,39 +106,39 @@ export default class AppCarousel extends Lightning.Component {
               self.metroApps[index] = -1
             }
           })
-          console.log("APPS ARRAY: ",apps)
-          self.premiumApps.map(papp=>{
-            if(papp!==-1 && papp.uri != "USB"){
+          console.log("APPS ARRAY: ", apps)
+          self.premiumApps.map(papp => {
+            if (papp !== -1 && papp.uri != "USB") {
               apps.push(papp)
             }
           })
 
-          self.metroApps.map(mapp=>{
-            if(mapp!==-1){
+          self.metroApps.map(mapp => {
+            if (mapp !== -1) {
               apps.push(mapp)
             }
           })
 
-          self.showcaseApps.map(sapp=>{
-            if(sapp!==-1){
+          self.showcaseApps.map(sapp => {
+            if (sapp !== -1) {
               apps.push(sapp)
             }
           })
 
         }
         else {
-          self.premiumApps = self.premiumApps.filter((e)=>{
-            if(e.uri == "USB"){
+          self.premiumApps = self.premiumApps.filter((e) => {
+            if (e.uri == "USB") {
               return 0;
             }
-            else{
+            else {
               return e
             }
           })
           apps = [...self.premiumApps, ...self.showcaseApps, ...self.metroApps]
         }
 
-        await this.homeApi.checkAppCompatability(apps).then(res =>{
+        await this.homeApi.checkAppCompatability(apps).then(res => {
           apps = res
         })
 
@@ -167,7 +167,7 @@ export default class AppCarousel extends Lightning.Component {
 
   _handleBack() {
     let self = this;
-    if (Storage.get("applicationType") !== "") { // if a non-resident app is on focus    
+    if (Storage.get("applicationType") !== "" || (Storage.get("applicationType") !== Storage.get("selfClientName"))) { // if a non-resident app is on focus
       let currentApp = Storage.get("applicationType")
       self.appApi.zorder(currentApp)
       self.appApi.setFocus(currentApp)
@@ -197,8 +197,8 @@ export default class AppCarousel extends Lightning.Component {
           let appIdentifier = this.tag('AppList').items[this.tag('AppList').index].data.appIdentifier;
           let params = {
             url: uri,
-            launchLocation: "mainView" , 
-            appIdentifier:appIdentifier
+            launchLocation: "mainView",
+            appIdentifier: appIdentifier
           }
           this.appApi.launchApp(applicationType, params).then(res => {
             Router.focusPage();

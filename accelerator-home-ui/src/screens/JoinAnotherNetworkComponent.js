@@ -21,9 +21,7 @@ import { CONFIG } from '../Config/Config';
 import { Keyboard } from '../ui-components/index'
 import { KEYBOARD_FORMATS } from '../ui-components/components/Keyboard'
 import PasswordSwitch from './PasswordSwitch';
-import Wifi from '../api/WifiApi';
-
-const wifi = new Wifi()
+import WiFi from '../api/WifiApi';
 
 export default class JoinAnotherNetworkComponent extends Lightning.Component {
 
@@ -61,18 +59,20 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
     }
   }
 
-  startConnectForAnotherNetwork(device, passphrase) {
-    wifi.connect({ ssid: device.ssid, security: device.security }, passphrase).then(() => {
-      wifi.saveSSID(device.ssid, passphrase, device.security).then((response) => {
+  async startConnectForAnotherNetwork(device, passphrase) {
+    await WiFi.get().connect(false, { ssid: device.ssid, security: device.security }, passphrase).then(() => {
+      WiFi.get().saveSSID(device.ssid, passphrase, device.security).then((response) => {
         if (response.result === 0 && response.success === true) {
-          wifi.SaveSSIDKey(this._item.ssid).then((persistenceResponse)=>{console.log(persistenceResponse)})
+          WiFi.get().SaveSSIDKey(this._item.ssid).then((persistenceResponse)=>{console.log(persistenceResponse)})
         }
         else if (response.result !== 0) {
-          wifi.clearSSID()
+          WiFi.get().clearSSID()
         }
       })
+      if (!Router.isNavigating()) {
+        Router.back();
+      }
     })
-    Router.back();
   }
 
   static _template() {
@@ -394,7 +394,6 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
           this.prevState = state.prevState
           if (this.prevState === 'EnterSSID') {
             this.element = 'NetworkText'
-
           }
           if (this.prevState === 'EnterPassword') {
             this.element = 'Pwd'

@@ -17,18 +17,14 @@
  * limitations under the License.
  **/
 
-import { Lightning, Storage, Router, Registry } from "@lightningjs/sdk";
+import { Lightning, Storage, Router, Registry, Settings } from "@lightningjs/sdk";
 import AppApi from "../api/AppApi";
 import ThunderJS from "ThunderJS";
 import TvOverlaySettingsScreen from "./components/TvOverlaySettingsScreen";
 import TvOverlayInputScreen from "./components/TvOverlayInputScreen";
+import { CONFIG } from '../Config/Config';
 
-const config = {
-  host: "127.0.0.1",
-  port: 9998,
-  default: 1,
-};
-var thunder = ThunderJS(config);
+var thunder = ThunderJS(CONFIG.thunderConfig);
 
 export default class TvOverlayScreen extends Lightning.Component {
   set params(args) {
@@ -42,10 +38,6 @@ export default class TvOverlayScreen extends Lightning.Component {
       }
     }, 300);
   }
-
-  // _onChanged() {
-  //   this._setState("IdleState");
-  // }
 
   static _template() {
     return {
@@ -63,15 +55,6 @@ export default class TvOverlayScreen extends Lightning.Component {
       },
     };
   }
-
-  //   _getFocused() {
-  //     console.log("getFocused Called")
-  //     if (this._type === "inputs") {
-  //       this._setState("OverlayInputScreen");
-  //     } else if (this._type === "settings") {
-  //       this._setState("OverlaySettingsScreen");
-  //     }
-  //   }
 
   _firstEnable() {
     this.appApi = new AppApi();
@@ -91,15 +74,15 @@ export default class TvOverlayScreen extends Lightning.Component {
     });
   }
 
-  _focus() {}
+  _focus() { }
 
-  $focusOverlay(){
+  $focusOverlay() {
     this.overlayTimeout = Registry.setTimeout(() => {
       this._handleBack();
-    },this.timeoutDuration)
+    }, this.timeoutDuration)
   }
 
-  $unfocusOverlay(){
+  $unfocusOverlay() {
     this.overlayTimeout && Registry.clearTimeout(this.overlayTimeout);
   }
 
@@ -107,7 +90,7 @@ export default class TvOverlayScreen extends Lightning.Component {
     this.overlayTimeout && Registry.clearTimeout(this.overlayTimeout);
     this.overlayTimeout = Registry.setTimeout(() => {
       this._handleBack();
-    },this.timeoutDuration)
+    }, this.timeoutDuration)
   }
 
   $closeOverlay() {
@@ -119,8 +102,8 @@ export default class TvOverlayScreen extends Lightning.Component {
     this._setState("IdleState");
     console.log("currentApp: ", currentApp);
     setTimeout(() => {
-      if (currentApp !== "") {
-        this.appApi.setVisibility("ResidentApp", false);
+      if ((currentApp !== "") || (Storage.get("applicationType") !== Storage.get("selfClientName"))) {
+        this.appApi.setVisibility(Storage.get("selfClientName"), false);
         thunder
           .call("org.rdk.RDKShell", "moveToFront", {
             client: currentApp,
@@ -139,9 +122,9 @@ export default class TvOverlayScreen extends Lightning.Component {
               });
           });
       } else {
-        if(Router.getActiveHash() === "dtvplayer"){ //don't navigate to menu if route is dtvplayer
+        if (Router.getActiveHash() === "dtvplayer") { //don't navigate to menu if route is dtvplayer
           Router.focusPage();
-        } else{
+        } else {
           console.log("else block navigating to menu");
           Router.navigate("menu"); //if user is currently on resident app, might not be needed as user should not be able to get on this screen while on resident app
         }

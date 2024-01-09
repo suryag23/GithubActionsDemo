@@ -17,6 +17,8 @@
  * limitations under the License.
  **/
 import ThunderJS from 'ThunderJS'
+import { CONFIG } from '../Config/Config'
+
 /**
  * Class for Bluetooth thunder plugin apis.
  */
@@ -28,12 +30,7 @@ export default class BluetoothApi {
     this._pairedDevices = []
     this._connectedDevices = []
     this.btStatus = false
-    const config = {
-      host: '127.0.0.1',
-      port: 9998,
-      default: 1,
-    }
-    this._thunder = ThunderJS(config)
+    this._thunder = ThunderJS(CONFIG.thunderConfig)
   }
 
   /**

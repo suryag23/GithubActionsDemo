@@ -21,8 +21,6 @@ import { CONFIG } from '../Config/Config'
 import AppApi from '../api/AppApi'
 import AlexaApi from '../api/AlexaApi.js';
 
-let appApi = new AppApi();
-
 export default class SuccessScreen extends Lightning.Component {
     static _template() {
         return {
@@ -130,9 +128,6 @@ export default class SuccessScreen extends Lightning.Component {
         }
     }
 
-    _init(){
-        this._setState('DoneButton')
-    }
     _focus() {
         Registry.clear();
         this._setState('DoneButton')
@@ -149,7 +144,9 @@ export default class SuccessScreen extends Lightning.Component {
                 }
                 _handleEnter(){
                     AlexaApi.get().enableSmartScreen()
-                    Router.navigate('menu')
+                    Registry.setTimeout(()=>{
+                        Router.navigate('menu')
+                    },(Router.isNavigating()?20:0));
                 }
                 _focus() {
                     this.tag('DoneButton').patch({

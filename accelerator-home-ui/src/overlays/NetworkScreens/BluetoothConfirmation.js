@@ -67,21 +67,20 @@
        BorderBottom: {
          x: 0, y: 300, w: 1558, h: 3, rect: true, mountX: 0.5,
        },
- 
+
      }
    }
- 
+
    set item(item) {
      this.tag('Title').text = item.name
    }
- 
- 
+
+
    _handleEnter() {
      this.fireAncestors('$pressOK')
    }
    _handleBack() {
      this.fireAncestors('$pressOK')
    }
- 
+
  }
- 

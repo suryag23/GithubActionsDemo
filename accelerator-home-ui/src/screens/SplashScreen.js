@@ -292,7 +292,9 @@ export default class SplashScreen extends Lightning.Component {
           myAnimation.start()
         }
         _handleKey() {
-          Router.navigate('home', { path: 'settings' })
+          Registry.setTimeout(()=>{
+            Router.navigate('home', { path: 'settings' })
+          },(Router.isNavigating()?20:0));
         }
       },
       class AutoRemotePair extends this {
@@ -459,7 +461,9 @@ export default class SplashScreen extends Lightning.Component {
           } else {
             if (this.remotePaired == false) this._setState('AutoRemotePair')
             else if (this.hasInternet == false) this._setState('ConnectivityScreen')
-            else Router.navigate('home', { path: 'settings' })
+            else Registry.setTimeout(()=>{
+              Router.navigate('home', { path: 'settings' })
+            },(Router.isNavigating()?20:0));
           }
         }
         $exit() {

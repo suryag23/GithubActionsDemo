@@ -21,18 +21,10 @@ import { Router, Settings, Storage } from '@lightningjs/sdk';
 import HDMIApi from './HDMIApi';
 import NetflixIIDs from "../../static/data/NetflixIIDs.json";
 import HomeApi from './HomeApi';
-import { availableLanguageCodes } from '../Config/Config';
+import { availableLanguageCodes, CONFIG } from '../Config/Config';
 import AlexaApi from './AlexaApi.js';
 
-const config = {
-  host: '127.0.0.1',
-  port: 9998,
-  default: 1,
-  versions: {
-    'org.rdk.System': 2
-  }
-}
-const thunder = ThunderJS(config)
+const thunder = ThunderJS(CONFIG.thunderConfig)
 
 /**
  * Class that contains functions which commuicates with thunder API's
@@ -162,7 +154,7 @@ export default class AppApi {
           resolve(result)
         })
         .catch(err => {
-          console.error("AppAPI Controller plugin '"+plugin+"' status check failed.");
+          console.error("AppAPI Controller plugin '" + plugin + "' status check failed.");
           reject(err)
         })
     })
@@ -408,9 +400,9 @@ export default class AppApi {
 
   async launchApp(callsign, args) {
     Storage.set("appSwitchingInProgress", true);
-    const saveAbleRoutes = ["menu","epg","apps"] //routing back will happen to only these routes, otherwise it will default to #menu when exiting the app.
+    const saveAbleRoutes = ["menu", "epg", "apps"] //routing back will happen to only these routes, otherwise it will default to #menu when exiting the app.
     const lastVisitedRoute = Router.getActiveHash();
-    if(saveAbleRoutes.includes(lastVisitedRoute)){
+    if (saveAbleRoutes.includes(lastVisitedRoute)) {
       Storage.set("lastVisitedRoute", lastVisitedRoute);
     } else {
       Storage.set("lastVisitedRoute", "menu");
@@ -418,11 +410,11 @@ export default class AppApi {
     Router.navigate("applauncher");
     console.log("AppAPI launchApp called with: ", callsign, args);
     if (callsign.startsWith("YouTube")) {
-      Storage.set(callsign+"LaunchLocation", args.launchLocation)
+      Storage.set(callsign + "LaunchLocation", args.launchLocation)
     }
 
-    let url,preventInternetCheck,preventCurrentExit,launchLocation, gracenoteUrl = null;
-    if(args){
+    let url, preventInternetCheck, preventCurrentExit, launchLocation, gracenoteUrl = null;
+    if (args) {
       url = args.url;
       preventInternetCheck = args.preventInternetCheck;
       preventCurrentExit = args.preventCurrentExit;
@@ -439,8 +431,8 @@ export default class AppApi {
       "gracenote": { "YouTube": "launcher", "YouTubeTV": "launcher", "YouTubeKids": "launcher", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
       "alexa": { "YouTube": "voice", "YouTubeTV": "voice", "YouTubeKids": "voice", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
     };
-    if(launchLocation && launchLocationKeyMapping[launchLocation]){
-      if(callsign === "Netflix" || callsign.startsWith("YouTube")){
+    if (launchLocation && launchLocationKeyMapping[launchLocation]) {
+      if (callsign === "Netflix" || callsign.startsWith("YouTube")) {
         /* Gracenote provides shortened url which shall only be deeplinked; do not use for activation. */
         if (launchLocation === "gracenote") {
           gracenoteUrl = url
@@ -449,7 +441,7 @@ export default class AppApi {
       }
     }
 
-    console.log("AppAPI launchApp with callsign: " + callsign +" | url: " + url +" | preventInternetCheck: " + preventInternetCheck + " | preventCurrentExit: " + preventCurrentExit + " | launchLocation: " + launchLocation);
+    console.log("AppAPI launchApp with callsign: " + callsign + " | url: " + url + " | preventInternetCheck: " + preventInternetCheck + " | preventCurrentExit: " + preventCurrentExit + " | launchLocation: " + launchLocation);
 
     let IIDqueryString = "";
     if (callsign === "Netflix") {
@@ -495,12 +487,12 @@ export default class AppApi {
       Router.navigate(Storage.get("lastVisitedRoute"));
       return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device | Error: " + JSON.stringify(err));
     }
-    console.log("AppAPI " +callsign+" : pluginStatus: " + JSON.stringify(pluginStatus) + " pluginState: ", JSON.stringify(pluginState));
+    console.log("AppAPI " + callsign + " : pluginStatus: " + JSON.stringify(pluginStatus) + " pluginState: ", JSON.stringify(pluginState));
 
     if (callsign === "Netflix") {
       if (pluginState === "deactivated" || pluginState === "deactivation") { //netflix cold launch scenario
         console.log(`AppAPI Netflix : ColdLaunch`)
-        if(Router.getActivePage().showSplashImage){
+        if (Router.getActivePage().showSplashImage) {
           Router.getActivePage().showSplashImage(callsign) //to make the splash image for netflix visible
         }
         if (url) {
@@ -542,28 +534,28 @@ export default class AppApi {
     let params = {
       "callsign": callsign,
       "type": callsign,
-      "configuration":{}
+      "configuration": {}
     };
-    if (url && (callsign==="LightningApp" || callsign === "HtmlApp" || callsign === "NativeApp")) { //for lightning/htmlapp url is passed via rdkshell.launch method
+    if (url && (callsign === "LightningApp" || callsign === "HtmlApp" || callsign === "NativeApp")) { //for lightning/htmlapp url is passed via rdkshell.launch method
       params.uri = url
-    } else if(callsign.startsWith("YouTube")){
+    } else if (callsign.startsWith("YouTube")) {
       let language = localStorage.getItem("Language");
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US" //default to english US if language is not available.
       if (gracenoteUrl === null) {
-        url = url ? url : Storage.get(callsign+"DefaultURL");
+        url = url ? url : Storage.get(callsign + "DefaultURL");
       } else {
         /* Gracenote provided url cannot be used for 'Configuring' plugin. Use only to deeplink. */
-        url = Storage.get(callsign+"DefaultURL");
+        url = Storage.get(callsign + "DefaultURL");
       }
-      if(url){
-        if (!url.includes("?")){
+      if (url) {
+        if (!url.includes("?")) {
           url += "?"
         }
         if (!url.includes("inApp=")) {
           if (!url.endsWith("&")) {
             url += "&"
           }
-          url += ((Storage.get("applicationType") === callsign)? "inApp=true":"inApp=false")
+          url += ((Storage.get("applicationType") === callsign) ? "inApp=true" : "inApp=false")
         }
         if (!url.includes("launch=")) {
           if (!url.endsWith("&")) {
@@ -577,31 +569,32 @@ export default class AppApi {
           }
           url += "vs=2" // YT Dev Doc specific to Alexa
         }
-        console.log("AppAPI "+callsign+" is being launched using the url: "+url)
+        console.log("AppAPI " + callsign + " is being launched using the url: " + url)
       }
 
       params.configuration = { //for gracenote cold launch url needs to be re formatted to youtube.com/tv/
         "language": language,
         "url": url,
-        "launchtype":"launch=" + launchLocation
+        "launchtype": "launch=" + launchLocation
       }
       params.type = "Cobalt";
     }
 
-    else if(callsign === "Amazon"){
+    else if (callsign === "Amazon") {
       let language = localStorage.getItem("Language");
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US"
-      params.configuration= { "deviceLanguage" : language};
+      params.configuration = { "deviceLanguage": language };
     }
-    else if(callsign === "Netflix"){
+    else if (callsign === "Netflix") {
       let language = localStorage.getItem("Language");
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US"
-      params.configuration ={"language" : language};
+      params.configuration = { "language": language };
     }
 
-    if (!preventCurrentExit && (currentApp !== "") && (currentApp !== callsign)) { //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack
+    if (!preventCurrentExit && ((currentApp !== "") || (currentApp !== Storage.get("selfClientName"))) && (currentApp !== callsign)) {
+      //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack
       try {
-        console.log("AppAPI calling exitApp with params: " + callsign +" and exitInBackground " + currentApp +" true.")
+        console.log("AppAPI calling exitApp with params: " + callsign + " and exitInBackground " + currentApp + " true.")
         await this.exitApp(currentApp, true)
       }
       catch (err) {
@@ -609,15 +602,15 @@ export default class AppApi {
       }
     }
 
-    if (currentApp === "" && callsign !== "Netflix") { //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack | for netflix keep the splash screen visible till it launches
+    if (((currentApp === "") || (currentApp === Storage.get("selfClientName"))) && callsign !== "Netflix") { //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack | for netflix keep the splash screen visible till it launches
       thunder.call('org.rdk.RDKShell', 'setVisibility', {
-        "client": "ResidentApp",
+        "client": Storage.get("selfClientName"),
         "visible": false,
       })
     }
 
-    if(callsign === "Netflix"){ //special case for netflix to show splash screen
-      params.behind = "ResidentApp" //to make the app launch behind resident app | app will be moved to front after first frame event is triggered
+    if (callsign === "Netflix") { //special case for netflix to show splash screen
+      params.behind = Storage.get("selfClientName") //to make the app launch behind resident app | app will be moved to front after first frame event is triggered
     }
     if (JSON.stringify(params.configuration) === '{}') {
       delete params.configuration;
@@ -634,18 +627,18 @@ export default class AppApi {
             if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
               AlexaApi.get().reportApplicationState(callsign);
             }
-            if(args.appIdentifier){
+            if (args.appIdentifier) {
               let order = Storage.get("appCarouselOrder")
-              if(!order){
-                Storage.set("appCarouselOrder" , "")
+              if (!order) {
+                Storage.set("appCarouselOrder", "")
               } else {
                 let storedApps = order.split(",")
                 let ix = storedApps.indexOf(args.appIdentifier)
-                if(ix != -1){
-                  storedApps.splice(ix , 1)
+                if (ix != -1) {
+                  storedApps.splice(ix, 1)
                 }
                 storedApps.unshift(args.appIdentifier)
-                Storage.set("appCarouselOrder" , storedApps.toString())
+                Storage.set("appCarouselOrder", storedApps.toString())
               }
             }
             Storage.set("applicationType", callsign);
@@ -676,22 +669,22 @@ export default class AppApi {
                 AlexaApi.get().reportApplicationState(callsign);
               }
             }
-            if(args.appIdentifier){
+            if (args.appIdentifier) {
               let order = Storage.get("appCarouselOrder")
-              if(!order){
-                Storage.set("appCarouselOrder" , "")
+              if (!order) {
+                Storage.set("appCarouselOrder", "")
               } else {
                 let storedApps = order.split(",")
                 let ix = storedApps.indexOf(args.appIdentifier)
-                if(ix != -1){
-                  storedApps.splice(ix , 1)
+                if (ix != -1) {
+                  storedApps.splice(ix, 1)
                 }
                 storedApps.unshift(args.appIdentifier)
-                Storage.set("appCarouselOrder" , storedApps.toString())
+                Storage.set("appCarouselOrder", storedApps.toString())
               }
             }
 
-            if(callsign !== "Netflix"){ //if app is not netflix, move it to front(netflix will be moved to front from applauncherScreen.)
+            if (callsign !== "Netflix") { //if app is not netflix, move it to front(netflix will be moved to front from applauncherScreen.)
               thunder.call("org.rdk.RDKShell", "moveToFront", {
                 "client": callsign,
                 "callsign": callsign
@@ -717,7 +710,7 @@ export default class AppApi {
             if (callsign === "Netflix") {
               console.log("AppAPI Netflix launched: hiding residentApp");
               thunder.call('org.rdk.RDKShell', 'setVisibility', {
-                "client": "ResidentApp",
+                "client": Storage.get("selfClientName"),
                 "visible": false,
               }); //if netflix splash screen was launched resident app was kept visible Netflix until app launched.
             }
@@ -729,7 +722,7 @@ export default class AppApi {
               } else if (!url) {
                 url = params.configuration.url;
               }
-              console.log("AppAPI Calling "+callsign+".deeplink with url: " + url);
+              console.log("AppAPI Calling " + callsign + ".deeplink with url: " + url);
               thunder.call(callsign, 'deeplink', url)
             }
             Storage.set("appSwitchingInProgress", false);
@@ -765,8 +758,8 @@ export default class AppApi {
 
   // exit method does not need to launch the previous app.
   async exitApp(callsign, exitInBackground, forceDestroy) { //test the new exit app method
-    if (callsign === "") { //previousApp==="" means it's residentApp | change it to residentApp in cache and here
-      return Promise.reject("AppAPI Can't exit from ResidentApp");
+    if ((callsign === "") || (callsign === Storage.get("selfClientName"))) { //previousApp==="" means it's residentApp | change it to residentApp in cache and here
+      return Promise.reject("AppAPI Can't exit from " + callsign);
     }
 
     if (callsign === "HDMI") {
@@ -785,7 +778,7 @@ export default class AppApi {
     }
 
     let pluginStatus, pluginState;// to check if the plugin is active, resumed, deactivated etc
-    if (callsign != "NativeApp" && !callsign.includes('application/dac.native')) {
+    if (callsign != "NativeApp" && !callsign.includes('application/dac.native') && (callsign != "FireboltApp")) {
       try {
         pluginStatus = await this.getPluginStatus(callsign);
         if (pluginStatus !== undefined) {
@@ -819,7 +812,7 @@ export default class AppApi {
         await thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
         return Promise.resolve(true);
       } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
-        await thunder.call('org.rdk.RDKShell', 'kill', {"client": (callsign.includes('application/dac.native')? callsign.substring(0, callsign.indexOf(';')): callsign)}).then((res) => {
+        await thunder.call('org.rdk.RDKShell', 'kill', { "client": (callsign.includes('application/dac.native') ? callsign.substring(0, callsign.indexOf(';')) : callsign) }).then((res) => {
           console.log("AppAPI RDKShell kill: " + callsign + " RESPONSE: ", JSON.stringify(res))
           return Promise.resolve(true);
         }).catch(err => {
@@ -840,7 +833,7 @@ export default class AppApi {
           return Promise.resolve(true)
         } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
           // DAC Demo WorkAround; TODO: use suspendApplication instead of kill
-          await thunder.call('org.rdk.RDKShell', 'kill', {"client": (callsign.includes('application/dac.native')? callsign.substring(0, callsign.indexOf(';')): callsign)}).catch(err => {
+          await thunder.call('org.rdk.RDKShell', 'kill', { "client": (callsign.includes('application/dac.native') ? callsign.substring(0, callsign.indexOf(';')) : callsign) }).catch(err => {
             console.error("AppAPI Error in kill app: ", callsign, " | trying to destroy the app");
             thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
           })
@@ -858,7 +851,7 @@ export default class AppApi {
    * Function to launch ResidentApp explicitly(incase of special scenarios)
    * Prefer using launchApp and exitApp for ALL app launch and exit scenarios.
    */
-  async launchResidentApp(client = "ResidentApp", callsign = "ResidentApp") {
+  async launchResidentApp(client = Storage.get("selfClientName"), callsign = Storage.get("selfClientName")) {
     console.log("AppAPI launchResidentApp got Called: setting visibility, focus and moving to front the client: " + client)
     await thunder.call("org.rdk.RDKShell", "moveToFront", {
       "client": client,
@@ -881,7 +874,7 @@ export default class AppApi {
       console.error("AppAPI failed to setVisibility : ResidentApp ERROR: ", JSON.stringify(err))
     })
 
-    Storage.set("applicationType", ""); //since it's residentApp aplication type is "" | change application type to ResidentApp
+    Storage.set("applicationType", client);
   }
 
 
@@ -1160,8 +1153,8 @@ export default class AppApi {
   moveToBack(cli) {
     thunder.call('org.rdk.RDKShell', 'moveToBack', { client: cli })
   }
-  setOpacity(cli, opacity){
-    thunder.call('org.rdk.RDKShell', 'setOpacity', { client: cli , opacity: opacity})
+  setOpacity(cli, opacity) {
+    thunder.call('org.rdk.RDKShell', 'setOpacity', { client: cli, opacity: opacity })
   }
 
   /**
@@ -1223,7 +1216,7 @@ export default class AppApi {
           resolve(result)
         })
         .catch(err => {
-          console.log("org.rdk.System: getWakeupReason: Error in getting wake up reason: ",err)
+          console.log("org.rdk.System: getWakeupReason: Error in getting wake up reason: ", err)
           reject(err)
         })
     })
@@ -1551,7 +1544,7 @@ export default class AppApi {
     return new Promise((resolve, reject) => {
       thunder.call('DeviceInfo', 'modelname').then(result => {
         resolve(result.model)
-	    }).catch(err => {
+      }).catch(err => {
         console.error("AppAPI DeviceInfo modelname failed:", err);
         resolve("RDK-VA")
       })
@@ -1718,34 +1711,34 @@ export default class AppApi {
   getNetworkStandbyMode() {
     return new Promise((resolve, reject) => {
       thunder.call('org.rdk.System', 'getNetworkStandbyMode').then(result => {
-          resolve(result)
-        }).catch(err => {
-          console.error("AppAPI getNetworkStandbyMode error:", JSON.stringify(err, 3, null))
-          reject(err)
-        })
+        resolve(result)
+      }).catch(err => {
+        console.error("AppAPI getNetworkStandbyMode error:", JSON.stringify(err, 3, null))
+        reject(err)
+      })
     })
   }
 
   getRFCConfig(rfcParamsList) {
     return new Promise((resolve, reject) => {
       thunder.call('org.rdk.System', 'getRFCConfig', rfcParamsList).then(result => {
-          if (result.success) resolve(result)
-          reject(false)
-        }).catch(err => {
-          console.error("AppAPI getRFCConfig error:", JSON.stringify(err, 3, null))
-          reject(err)
-        })
+        if (result.success) resolve(result)
+        reject(false)
+      }).catch(err => {
+        console.error("AppAPI getRFCConfig error:", JSON.stringify(err, 3, null))
+        reject(err)
+      })
     })
   }
 
   setNetworkStandbyMode(nwStandby = true) {
     return new Promise((resolve, reject) => {
       thunder.call('org.rdk.System', 'setNetworkStandbyMode', { nwStandby: nwStandby }).then(result => {
-          resolve(result.success)
-        }).catch(err => {
-          console.error("AppAPI setNetworkStandbyMode error:", JSON.stringify(err, 3, null))
-          reject(err)
-        })
+        resolve(result.success)
+      }).catch(err => {
+        console.error("AppAPI setNetworkStandbyMode error:", JSON.stringify(err, 3, null))
+        reject(err)
+      })
     })
   }
 
@@ -1753,11 +1746,11 @@ export default class AppApi {
     console.log("AppAPI: setWakeupSrcConfiguration params:", JSON.stringify(params));
     return new Promise((resolve, reject) => {
       thunder.call('org.rdk.System', 'setWakeupSrcConfiguration', params).then(result => {
-          resolve(result.success)
-        }).catch(err => {
-          console.error("AppAPI setWakeupSrcConfiguration error:", JSON.stringify(err, 3, null))
-          reject(err)
-        })
+        resolve(result.success)
+      }).catch(err => {
+        console.error("AppAPI setWakeupSrcConfiguration error:", JSON.stringify(err, 3, null))
+        reject(err)
+      })
     })
   }
 
@@ -1799,7 +1792,7 @@ export default class AppApi {
   //1. Get IP Setting
   getIPSetting(defaultInterface, ipversion = "IPv4") {
     return new Promise((resolve, reject) => {
-      thunder.call('org.rdk.Network', 'getIPSettings', {"interface": defaultInterface, "ipversion": ipversion}).then(result => {
+      thunder.call('org.rdk.Network', 'getIPSettings', { "interface": defaultInterface, "ipversion": ipversion }).then(result => {
         resolve(result)
       }).catch(err => {
         console.error("AppAPI getIPSetting error:", JSON.stringify(err, 3, null))
@@ -1888,11 +1881,11 @@ export default class AppApi {
   getVolumeLevel(port) {
     return new Promise((resolve, reject) => {
       thunder.call('org.rdk.DisplaySettings', 'getVolumeLevel', { audioPort: port }).then(result => {
-          resolve(result)
-        }).catch(err => {
-          console.error('AppAPI getVolumeLevel error:', JSON.stringify(err, 3, null))
-          reject(false)
-        })
+        resolve(result)
+      }).catch(err => {
+        console.error('AppAPI getVolumeLevel error:', JSON.stringify(err, 3, null))
+        reject(false)
+      })
     })
   }
 
@@ -1946,23 +1939,23 @@ export default class AppApi {
         })
     })
   }
- //created only to get the required params
+  //created only to get the required params
   getPluginStatusParams(plugin) {
     return new Promise((resolve, reject) => {
       thunder.call('Controller', `status@${plugin}`)
         .then(result => {
-          console.log("pluginstatus",result)
-          let pluginParams=[result[0].callsign,result[0].state]
+          console.log("pluginstatus", result)
+          let pluginParams = [result[0].callsign, result[0].state]
           resolve(pluginParams)
         })
         .catch(err => {
-          console.error("AppAPI getPluginStatusParams error: ",err)
+          console.error("AppAPI getPluginStatusParams error: ", err)
           reject(err)
         })
     })
   }
-//activate autopairing for stack
-  activateAutoPairing(){
+  //activate autopairing for stack
+  activateAutoPairing() {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.RemoteControl', 'startPairing', {
@@ -1978,8 +1971,8 @@ export default class AppApi {
           resolve(false)
         })
     })
-   }
-   resetBassEnhancer(port) {
+  }
+  resetBassEnhancer(port) {
     console.log("portname", port)
     return new Promise((resolve, reject) => {
       thunder
@@ -1996,7 +1989,7 @@ export default class AppApi {
     })
 
   }
-  resetDialogEnhancement(port){
+  resetDialogEnhancement(port) {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.DisplaySettings', 'resetDialogEnhancement', {
@@ -2012,7 +2005,7 @@ export default class AppApi {
     })
   }
   //resetSurroundVirtualizer
-  resetSurroundVirtualizer(port){
+  resetSurroundVirtualizer(port) {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.DisplaySettings', 'resetSurroundVirtualizer', {
@@ -2028,7 +2021,7 @@ export default class AppApi {
     })
   }
   //resetVolumeLeveller
-  resetVolumeLeveller(port){
+  resetVolumeLeveller(port) {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.DisplaySettings', 'resetVolumeLeveller', {
@@ -2102,8 +2095,8 @@ export default class AppApi {
   monitorStatus(callsign) {
     return new Promise((resolve, reject) => {
       thunder
-        .call('Monitor', 'resetstats',{
-          "callsign" : callsign
+        .call('Monitor', 'resetstats', {
+          "callsign": callsign
         })
         .then(result => {
           resolve(result)
@@ -2115,72 +2108,10 @@ export default class AppApi {
     })
   }
 
-  // warehouse api's
-  internalReset() {
-    return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.Warehouse', 'internalReset',{
-          "passPhrase": "FOR TEST PURPOSES ONLY"
-      })
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error("AppAPI interalReset error:", err)
-          resolve(false)
-        });
-    })
-  }
-
-  isClean() {
-    return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.Warehouse', 'isClean')
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error("AppAPI isClean error:", err)
-          resolve(false)
-        });
-    })
-  }
-
-  lightReset() {
-    return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.Warehouse', 'lightReset')
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error("AppAPI lightReset error:", err)
-          resolve(false)
-        });
-    })
-  }
-
-  resetDevice() {
-    return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.Warehouse', 'resetDevice',{
-          "suppressReboot": false,
-          "resetType": "USERFACTORY"
-      })
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error("AppAPI resetDevice error:", err)
-          resolve(false)
-        });
-    })
-  }
-
   //{ path: ".cache" }
   deletecache(systemcCallsign, path) {
     return new Promise((resolve, reject) => {
-      thunder.call(systemcCallsign,'delete',{path: path})
+      thunder.call(systemcCallsign, 'delete', { path: path })
         .then(result => {
           resolve(result)
         })
@@ -2192,10 +2123,10 @@ export default class AppApi {
   }
 
   // activate controller plugin
-  activateController(callsign){
+  activateController(callsign) {
     return new Promise((resolve, reject) => {
       thunder
-      .call('Controller', 'activate', { callsign: callsign })
+        .call('Controller', 'activate', { callsign: callsign })
         .then(result => {
           resolve(result)
         })
@@ -2218,10 +2149,10 @@ export default class AppApi {
     })
   }
 
-  configStatus(){
-  //controller.1.configuration
-  return new Promise((resolve, reject) => {
-    thunder.call('Controller', 'status').then(res => {
+  configStatus() {
+    //controller.1.configuration
+    return new Promise((resolve, reject) => {
+      thunder.call('Controller', 'status').then(res => {
         //console.log("AppAPI configStatus ",JSON.stringify(res))
         resolve(res)
       }).catch(err => {
@@ -2231,7 +2162,7 @@ export default class AppApi {
     })
   }
 
-  getAvCodeStatus(){
+  getAvCodeStatus() {
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.DeviceDiagnostics', 'getAVDecoderStatus')
@@ -2246,7 +2177,7 @@ export default class AppApi {
   }
 
   SaveTimerValue(value1) {
-    console.log("persistenceSt",value1)
+    console.log("persistenceSt", value1)
     return new Promise((resolve, reject) => {
       thunder
         .call('org.rdk.PersistentStore', 'setValue', {
@@ -2279,7 +2210,7 @@ export default class AppApi {
 
   setUILanguage(updatedLanguage) {
     return new Promise((resolve, reject) => {
-      thunder.call('org.rdk.UserPreferences', 'setUILanguage',{"ui_language": updatedLanguage}).then(result => {
+      thunder.call('org.rdk.UserPreferences', 'setUILanguage', { "ui_language": updatedLanguage }).then(result => {
         resolve(result)
       }).catch(err => {
         resolve(false)
@@ -2289,19 +2220,19 @@ export default class AppApi {
 
   deeplinkToApp(app = undefined, payload = undefined, launchLocation = "voice", namespace = undefined) {
     if (app === undefined || app === "" || payload == undefined) {
-      console.error("AppApi: deeplinkToApp '" + app +"' not possible with payload '" + payload +"'.");
+      console.error("AppApi: deeplinkToApp '" + app + "' not possible with payload '" + payload + "'.");
       resolve(false);
     } else if (app.startsWith("YouTube")) {
-      let url = Storage.get(app+"DefaultURL").toString();
+      let url = Storage.get(app + "DefaultURL").toString();
       url = url.substring(0, url.indexOf('?'));
       if (!url.endsWith("?")) url += "?";
-      url += ((Storage.get("applicationType") === app)?"inApp=true":"inApp=false");
+      url += ((Storage.get("applicationType") === app) ? "inApp=true" : "inApp=false");
       // For the timebeing Alexa alone. Revisit when we have other voice sysyems.
-      url += "&launch=voice" + "&vs=" + ((launchLocation === "alexa")?2:0);
+      url += "&launch=voice" + "&vs=" + ((launchLocation === "alexa") ? 2 : 0);
 
       if (namespace === "ExternalMediaPlayer") {
         // Received sample : {"payload":{"playbackContextToken":"{deeplinkMethodType=PLAY, searchString='cat videos'}"}}
-        url += "&va=" + ((payload.playbackContextToken.includes("deeplinkMethodType=PLAY"))?"play":"search");
+        url += "&va=" + ((payload.playbackContextToken.includes("deeplinkMethodType=PLAY")) ? "play" : "search");
         if (payload.playbackContextToken.includes("deeplinkMethodType")) {
           let searchString = payload.playbackContextToken.replace(/[{}]/g, '').split(',');
           for (let i = 0; i < searchString.length; i++) {
@@ -2313,12 +2244,12 @@ export default class AppApi {
           }
         }
       } else if (namespace === "Alexa.SeekController") {
-        let time = payload.deltaPositionMilliseconds/1000
+        let time = payload.deltaPositionMilliseconds / 1000
         let minutes = Math.abs(parseInt(time / 60))
         let seconds = Math.abs(parseInt(time % 60))
-        url += "&va=" + ((time < 0)?"mediaRewind":"mediaFastForward") + "&vaa=" + minutes + "m" + seconds + "s";
+        url += "&va=" + ((time < 0) ? "mediaRewind" : "mediaFastForward") + "&vaa=" + minutes + "m" + seconds + "s";
       } else if (namespace === "Alexa.PlaybackController") {
-        let playbackOperations = new Set(["Play","Pause","FastForward","Rewind","Shuffle","Repeat"])
+        let playbackOperations = new Set(["Play", "Pause", "FastForward", "Rewind", "Shuffle", "Repeat"])
         if (playbackOperations.has(payload)) {
           url += "&va=media" + payload;
         } else if (payload === "Next" || payload === "Previous") {
@@ -2329,14 +2260,14 @@ export default class AppApi {
       thunder.call(app, 'deeplink', url);
     } else if (app === "Amazon") {
       // TODO: no deeplink format support.
-      console.error("AppApi: deeplinkToApp '" + app +"' not supported.");
+      console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
       resolve(false);
     } else if (app === "Netflix") {
       // TODO: no deeplink format support.
-      console.error("AppApi: deeplinkToApp '" + app +"' not supported.");
+      console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
       resolve(false);
     } else {
-      console.error("AppApi: deeplinkToApp '" + app +"' not supported.");
+      console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
       resolve(false);
     }
   }

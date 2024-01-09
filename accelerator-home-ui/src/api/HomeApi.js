@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 import { Storage } from "@lightningjs/sdk";
-import NetworkApi from "../api/NetworkApi";
+import Network from "../api/NetworkApi";
 import AppApi from "./AppApi";
 import { appListInfo } from "./../../static/data/AppListInfo.js";
 import { tvShowsInfo } from "./../../static/data/TvShowsInfo.js";
@@ -39,16 +39,12 @@ let partnerApps = [];
 let IpAddress1 = "";
 let IpAddress2 = "";
 
-let networkApi = new NetworkApi();
-networkApi
-  .getStbIp()
-  .then((ip) => {
-    IpAddress1 = ip;
-    Storage.set("ipAddress", IpAddress1);
-  })
-  .catch(() => {
-    Storage.set("ipAddress", null);
-  });
+Network.get().getStbIp().then((ip) => {
+  IpAddress1 = ip;
+  Storage.set("ipAddress", IpAddress1);
+}).catch(() => {
+  Storage.set("ipAddress", null);
+});
 
 let appApi = new AppApi();
 appApi.getIP().then((ip) => {
@@ -166,16 +162,12 @@ export default class HomeApi {
   getMovieSubscriptions(id) {
     return new Promise((resolve, reject) => {
       appApi.fetchApiKey().then((res) => {
-        // console.log("Key is: ", res);
-        // console.log("tmsID is :", id);
         try {
-          fetch(
-            "http://feeds.tmsapi.com/v2/movies/" + id + ".xml?api_key=" + res
-          )
-            .then((response) => response.text())
-            .then((res) => {
-              resolve(xml2json(res));
-            });
+          fetch("http://feeds.tmsapi.com/v2/movies/" + id + ".xml?api_key=" + res)
+          .then(response => response.text())
+          .then((res) => {
+            resolve(xml2json(res));
+          });
         } catch (err) {
           console.log("API key not defined");
         }

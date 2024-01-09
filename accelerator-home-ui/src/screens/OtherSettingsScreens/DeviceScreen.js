@@ -21,15 +21,8 @@ import SettingsMainItem from '../../items/SettingsMainItem'
 import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
 import AppApi from '../../api/AppApi';
-import NetworkApi from '../../api/NetworkApi'
-
-
-/**
- * Class for Video and Audio screen.
- */
 
 export default class DeviceScreen extends Lightning.Component {
-
     _onChanged() {
         this.widgets.menu.updateTopPanelText(Language.translate('Settings  Other Settings  Advanced Settings  Device'));
     }
@@ -164,7 +157,6 @@ export default class DeviceScreen extends Lightning.Component {
 
     _init() {
         this._appApi = new AppApi();
-        this._network = new NetworkApi();
         this._setState('Info')
     }
 
@@ -174,7 +166,7 @@ export default class DeviceScreen extends Lightning.Component {
 
     _handleBack() {
         if(!Router.isNavigating()){
-        Router.navigate('settings/advanced')
+            Router.navigate('settings/advanced')
         }
     }
 
@@ -195,7 +187,7 @@ export default class DeviceScreen extends Lightning.Component {
                 }
                 _handleEnter() {
                     if(!Router.isNavigating()){
-                    Router.navigate('settings/advanced/device/info')
+                        Router.navigate('settings/advanced/device/info')
                     }
                 }
             },
@@ -214,7 +206,7 @@ export default class DeviceScreen extends Lightning.Component {
                 }
                 _handleEnter() {
                     if(!Router.isNavigating()){
-                    Router.navigate('settings/advanced/device/timezone')
+                        Router.navigate('settings/advanced/device/timezone')
                     }
                 }
             },
@@ -233,7 +225,7 @@ export default class DeviceScreen extends Lightning.Component {
                 }
                 _handleEnter() {
                     if(!Router.isNavigating()){
-                    Router.navigate('settings/advanced/device/firmware')
+                        Router.navigate('settings/advanced/device/firmware')
                     }
                 }
             },
@@ -252,7 +244,7 @@ export default class DeviceScreen extends Lightning.Component {
                 }
                 _handleEnter() {
                     if(!Router.isNavigating()){
-                    Router.navigate('settings/advanced/device/reboot')
+                        Router.navigate('settings/advanced/device/reboot')
                     }
                 }
             },
@@ -271,12 +263,10 @@ export default class DeviceScreen extends Lightning.Component {
                 }
                 _handleEnter() {
                     if(!Router.isNavigating()){
-                    Router.navigate('settings/advanced/device/factoryReset')
+                        Router.navigate('settings/advanced/device/factoryReset')
                     }
                 }
             },
         ]
     }
-
-
 }

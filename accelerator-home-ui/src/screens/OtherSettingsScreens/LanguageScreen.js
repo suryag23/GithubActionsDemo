@@ -16,19 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Language, Lightning, Router, Storage } from '@lightningjs/sdk'
+import { Language, Lightning, Router, Storage, Settings } from '@lightningjs/sdk'
 import LanguageItem from '../../items/LanguageItem'
-import { availableLanguages, availableLanguageCodes } from '../../Config/Config'
+import { availableLanguages, availableLanguageCodes, CONFIG } from '../../Config/Config'
 import AppApi from '../../api/AppApi';
 import AlexaApi from '../../api/AlexaApi';
 import thunderJS from 'ThunderJS';
 
 const appApi = new AppApi()
-const thunder = thunderJS({
-  host: '127.0.0.1',
-  port: 9998,
-  default: 1,
-})
+const thunder = thunderJS(CONFIG.thunderConfig)
 const loader = 'Loader'
 
 export default class LanguageScreen extends Lightning.Component {
@@ -86,17 +82,17 @@ export default class LanguageScreen extends Lightning.Component {
     thunder.call('org.rdk.RDKShell', 'moveToFront', {
       client: Storage.get("selfClientName")
     }).then(result => {
-      console.log('ResidentApp moveToFront Success');
+      console.log('LanguageScreen: ResidentApp moveToFront Success');
     });
     thunder
       .call('org.rdk.RDKShell', 'setFocus', {
         client: Storage.get("selfClientName")
       })
       .then(result => {
-        console.log('ResidentApp moveToFront Success');
+        console.log('LanguageScreen: ResidentApp moveToFront Success');
       })
       .catch(err => {
-        console.log('Error', err);
+        console.log('LanguageScreen: Error', err);
       });
   }
 
@@ -105,8 +101,8 @@ export default class LanguageScreen extends Lightning.Component {
   }
 
   _handleBack() {
-    if(!Router.isNavigating()){
-    Router.navigate('settings/other')
+    if (!Router.isNavigating()) {
+      Router.navigate('settings/other')
     }
   }
 
@@ -128,17 +124,17 @@ export default class LanguageScreen extends Lightning.Component {
           if (localStorage.getItem('Language') !== availableLanguages[this._Languages.tag('List').index]) {
             localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index])
             let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
-            if(AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") {
+            if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") {
               AlexaApi.get().getAlexaDeviceSettings();
-                thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
-                  if(notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage){
-                    for(let i=0;i<notification.xr_speech_avs.deviceSettings.supportedLocales.length;i++){
-                      if(updatedLanguage===notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()){
-                        AlexaApi.get().updateDeviceLanguageInAlexa(updatedLanguage)
-                      }
+              thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
+                if (notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage) {
+                  for (let i = 0; i < notification.xr_speech_avs.deviceSettings.supportedLocales.length; i++) {
+                    if (updatedLanguage === notification.xr_speech_avs.deviceSettings.supportedLocales[i].toString()) {
+                      AlexaApi.get().updateDeviceLanguageInAlexa(updatedLanguage)
                     }
                   }
-                })
+                }
+              })
             }
             appApi.setUILanguage(updatedLanguage)
             let path = location.pathname.split('index.html')[0]

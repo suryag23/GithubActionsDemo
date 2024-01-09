@@ -11,8 +11,8 @@
     "inspector": false,
     "path": "./static",
     "log": true,
-    "enableAppSuspended":true,
+    "enableAppSuspended": true,
     "showVersion": false,
-    "version": "4.0.5"
+    "version": "4.1.0"
   }
 }

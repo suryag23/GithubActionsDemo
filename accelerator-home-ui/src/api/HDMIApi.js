@@ -18,17 +18,14 @@
  **/
 
 import ThunderJS from 'ThunderJS';
+import { CONFIG } from '../Config/Config'
+
 /**
  * Class for HDMI thunder plugin apis.
  */
 export default class HDMIApi {
     constructor() {
-        const config = {
-            host: '127.0.0.1',
-            port: 9998,
-            default: 1,
-        };
-        this._thunder = ThunderJS(config);
+        this._thunder = ThunderJS(CONFIG.thunderConfig);
         this._events = new Map();
         this.callsign = 'org.rdk.HdmiInput'
 

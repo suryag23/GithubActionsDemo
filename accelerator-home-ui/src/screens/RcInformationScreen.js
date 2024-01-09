@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Language, Router } from '@lightningjs/sdk'
+import { Lightning, Language, Router, Settings } from '@lightningjs/sdk'
 import { COLORS } from './../colors/Colors'
 import { CONFIG } from '../Config/Config'
 import AppApi from '../api/AppApi.js';
@@ -26,12 +26,8 @@ import RCApi from '../api/RemoteControl';
 
 var appApi = new AppApi();
 var bluetoothApi = new BluetoothApi();
-const config = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1,
-}
-const _thunder = ThunderJS(config)
+
+const _thunder = ThunderJS(CONFIG.thunderConfig)
 let onStatusCBhandle = null;
 
 export default class RCInformationScreen extends Lightning.Component {
@@ -229,7 +225,7 @@ export default class RCInformationScreen extends Lightning.Component {
     }
 
     async _active() {
-        await RCApi.get().activate().catch(err=> { console.error("RCInformationScreen error:", err)});
+        await RCApi.get().activate().catch(err => { console.error("RCInformationScreen error:", err) });
         await RCApi.get().getNetStatus().then(result => {
             console.info("RCInformationScreen getNetStatus:", result)
             onStatusCBhandle = _thunder.on('org.rdk.RemoteControl', 'onStatus', data => { this.onStatusCB(data) });
@@ -245,25 +241,25 @@ export default class RCInformationScreen extends Lightning.Component {
 
     onStatusCB(cbData) {
         // getStatus response has 'success' property; notification payload does not have that.
-        if ((cbData !== undefined) && (cbData.hasOwnProperty("success")?cbData.success:true)) {
+        if ((cbData !== undefined) && (cbData.hasOwnProperty("success") ? cbData.success : true)) {
             if (cbData.status.remoteData.length) {
                 console.log("RCInformationScreen rcPairingApis RemoteData Length", cbData.status.remoteData.length)
-                let RemoteName = []; let connectedStatus =[]; let MacAddress =[];
-                let swVersion=[] ;let BatteryPercent =[];
+                let RemoteName = []; let connectedStatus = []; let MacAddress = [];
+                let swVersion = []; let BatteryPercent = [];
 
-                cbData.status.remoteData.map(item=>{
+                cbData.status.remoteData.map(item => {
                     RemoteName.push(item.name)
                 })
-                cbData.status.remoteData.map(item=>{
+                cbData.status.remoteData.map(item => {
                     MacAddress.push(item.macAddress)
                 })
-                cbData.status.remoteData.map(item=>{
+                cbData.status.remoteData.map(item => {
                     swVersion.push(item.swVersion)
                 })
-                cbData.status.remoteData.map(item=>{
+                cbData.status.remoteData.map(item => {
                     BatteryPercent.push(item.batteryPercent)
                 })
-                cbData.status.remoteData.map(item=>{
+                cbData.status.remoteData.map(item => {
                     connectedStatus.push(item.connected)
                 })
                 this.tag("Status.Value").text.text = connectedStatus
@@ -272,8 +268,8 @@ export default class RCInformationScreen extends Lightning.Component {
                 this.tag("BatteryPercent.Value").text.text = BatteryPercent
                 this.tag("RCUName.Value").text.text = RemoteName
             } else {
-                console.log("RCInformationScreen rcPairingApis pairingState: ", cbData.status.pairingState)
-                switch(cbData.status.pairingState) {
+                //console.log("RCInformationScreen rcPairingApis pairingState: ", cbData.status.pairingState)
+                switch (cbData.status.pairingState) {
                     case "IDLE":
                     case "FAILED":
                         RCApi.get().startPairing(30).catch(err => {
@@ -290,7 +286,7 @@ export default class RCInformationScreen extends Lightning.Component {
     }
 
     _handleBack() {
-        if(!Router.isNavigating()){
+        if (!Router.isNavigating()) {
             Router.navigate('settings')
         }
     }

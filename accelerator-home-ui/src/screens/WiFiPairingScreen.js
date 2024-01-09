@@ -16,20 +16,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Language, Lightning, Router } from '@lightningjs/sdk'
+import { Language, Lightning, Registry, Router } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import ConfirmAndCancel from '../items/ConfirmAndCancel'
 import PasswordSwitch from './PasswordSwitch'
 import { Keyboard } from '../ui-components/index'
 import { KEYBOARD_FORMATS } from '../ui-components/components/Keyboard'
-import WifiApi from '../api/WifiApi'
+import WiFi, { WiFiError, WiFiState, WiFiStateMessages } from '../api/WifiApi'
+import Network from '../api/NetworkApi'
 
 export default class WifiPairingScreen extends Lightning.Component {
 
   pageTransition() {
     return 'left'
   }
-
 
   static _template() {
     return {
@@ -54,7 +54,7 @@ export default class WifiPairingScreen extends Lightning.Component {
           w: 300,
           h: 75,
           zIndex: 2,
-          text: { text: Language.translate('Password')+": ", fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
+          text: { text: Language.translate('Password') + ": ", fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
         },
         Pwd: {
           x: 437,
@@ -135,7 +135,9 @@ export default class WifiPairingScreen extends Lightning.Component {
     if (args.wifiItem) {
       this.item(args.wifiItem)
     } else {
-      Router.navigate('settings/network/interface/wifi')
+      Registry.setTimeout(() => {
+        Router.navigate('settings/network/interface/wifi')
+      }, (Router.isNavigating() ? 20 : 0));
     }
   }
 
@@ -173,11 +175,16 @@ export default class WifiPairingScreen extends Lightning.Component {
 
   }
 
-  _init() {
+  _active() {
     this.star = "";
     this.passwd = "";
     this.isOn = false;
-    this._wifi = new WifiApi()
+  }
+
+  _inactive() {
+    if (this.onErrorCB) this.onErrorCB.dispose();
+    if (this.onWIFIStateChangedCB) this.onWIFIStateChangedCB.dispose();
+    if (this.waitToConnectTO) Registry.clearTimeout(this.waitToConnectTO);
   }
 
   pressEnter(option) {
@@ -185,52 +192,61 @@ export default class WifiPairingScreen extends Lightning.Component {
       Router.back()
     } else if (option === 'Connect') {
       if (this._item) {
-        console.log('trying to connect wifi')
-        this._wifi
-          .connect(this._item, '')
-          .then(() => { })
+        WiFi.get().connect(false, this._item, '').then(() => { })
           .catch(err => {
-            console.log('Not able to connect to wifi', JSON.stringify(err))
+            console.error('Not able to connect to wifi', JSON.stringify(err))
           })
       }
       Router.back()
     } else if (option === 'Disconnect') {
-      this._wifi.disconnect().then(() => {
-        Router.back()
+      WiFi.get().disconnect().then(() => {
+        Registry.setTimeout(() => {
+          Router.back()
+        }, (Router.isNavigating() ? 20 : 0));
       })
     }
   }
 
-  // startConnect(password) {
-  //   this._wifi.connect(this._item, password).then(() => {
-  //     Router.back()
-  //   })
-
-  // }
-  startConnect(password) {
-    let flag=0
-    this._wifi.activateOnError()
-    this._wifi.registerEvent('onError', notification => {
-      if(notification.code===0||notification.code===4){
-        this._wifi.deleteNameSpace()
-        flag=1
+  startConnect(password = "") {
+    let flag = 0
+    this.onErrorCB = WiFi.get().thunder.on(WiFi.get().callsign, 'onError', notification => {
+      if (notification.code === WiFiError.INVALID_CREDENTIALS || notification.code === WiFiError.SSID_CHANGED) {
+        console.log("INVALID_CREDENTIALS; deleting WiFi Persistence data.")
+        WiFi.get().clearSSID().then(() => {
+          WiFi.get().deleteNameSpace()
+        });
+        flag = 1
+        this.onErrorCB.dispose()
       }
     })
-    this._wifi.connect(this._item, password).then(() => {
-      this._wifi.saveSSID(this._item.ssid, password, this._item.security).then((response) => {
-        if (response.result === 0 && response.success === true &&flag===0) {
-          this._wifi.SaveSSIDKey(this._item.ssid).then((persistenceResponse)=>{console.log(persistenceResponse)})
-          // console.log(response);
+    this.onWIFIStateChangedCB = WiFi.get().thunder.on(WiFi.get().callsign, 'onWIFIStateChanged', notification => {
+      if (notification.state === WiFiState.CONNECTED) {
+        Network.get().setDefaultInterface("WIFI").then(resp => {
+          console.log("Successfully set WIFI as default interface.")
+        }).catch(err => {
+          console.error("Could not set WIFI as default interface.")
+        });
+        this.onWIFIStateChangedCB.dispose()
+      }
+    })
+    WiFi.get().connect(false, this._item, password).then(() => {
+      WiFi.get().saveSSID(this._item.ssid, password, this._item.security).then((response) => {
+        if (response.result === 0 && response.success === true && flag === 0) {
+          WiFi.get().SaveSSIDKey(this._item.ssid).then((persistenceResponse) => { console.log(persistenceResponse) })
         }
         else if (response.result !== 0) {
-          this._wifi.clearSSID().then((response) => {
-            // console.log(response)
+          WiFi.get().clearSSID().then((response) => {
           })
         }
-      })
-      Router.back()
+      }).then(() => {
+        // Immediate return causes some clash at plugin implementation level resulting not saving/connecting.
+        // https://jira.rdkcentral.com/jira/browse/RDKDEV-924
+        // Fix need to be implemented at network manager level and then can remove this.
+        this.waitToConnectTO = Registry.setTimeout(() => {
+          Router.back()
+        }, 5000);
+      });
     })
-
   }
 
   static _states() {

@@ -21,18 +21,9 @@ import { CONFIG } from '../../Config/Config';
 import { Keyboard } from '../../ui-components/index'
 import { KEYBOARD_FORMATS } from '../../ui-components/components/Keyboard'
 import PasswordSwitch from '../../screens/PasswordSwitch';
-import Wifi from '../../api/WifiApi';
-
-const wifi = new Wifi()
+import WiFi from '../../api/WifiApi';
 
 export default class JoinAnotherNetworkComponent extends Lightning.Component {
-
-  _active() {
-    this.hidePasswd=true
-    this.star = ""
-    this.tag("Keyboard").visible = false
-  }
-
   handleDone() {
     this.tag("Keyboard").visible = false
     let securityCode = this.securityCodes[this.securityCodeIndex].value;
@@ -58,14 +49,13 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
   }
 
   startConnectForAnotherNetwork(device, passphrase) {
-    wifi.connect({ ssid: device.ssid, security: device.security }, passphrase).then(() => {
-      wifi.saveSSID(device.ssid, passphrase, device.security).then((response) => {
+    WiFi.get().connect(false, device, passphrase).then(() => {
+      WiFi.get().saveSSID(device.ssid, passphrase, device.security).then((response) => {
         if (response.result === 0 && response.success === true) {
-          wifi.SaveSSIDKey(this._item.ssid).then((persistenceResponse)=>{console.log(persistenceResponse)})
-// Router.back()
-        }
-        else if (response.result !== 0) {
-          wifi.clearSSID()
+          WiFi.get().SaveSSIDKey(this._item.ssid)
+        } else if (response.result !== 0) {
+          WiFi.get().clearSSID()
+          WiFi.get().deleteNameSpace()
         }
       })
     })
@@ -97,7 +87,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         x: 190,
         y: 176,
         text: {
-          text: Language.translate("Network Name")+": ",
+          text: Language.translate("Network Name") + ": ",
           fontFace: CONFIG.language.font,
           fontSize: 25,
         },
@@ -125,7 +115,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         x: 190,
         y: 246,
         text: {
-          text: Language.translate("Security")+": ",
+          text: Language.translate("Security") + ": ",
           fontFace: CONFIG.language.font,
           fontSize: 25,
         },
@@ -169,7 +159,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         x: 190,
         y: 316,
         text: {
-          text: Language.translate("Password")+":",
+          text: Language.translate("Password") + ":",
           fontFace: CONFIG.language.font,
           fontSize: 25,
         },
@@ -213,7 +203,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         zIndex: 2,
         type: PasswordSwitch,
         mount: 0.5,
-        visible:true
+        visible: true
       },
       ShowPassword: {
         x: 1405,
@@ -222,7 +212,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         h: 75,
         zIndex: 2,
         text: { text: Language.translate('Show Password'), fontSize: 25, fontFace: CONFIG.language.font, textColor: 0xffffffff, textAlign: 'left' },
-        visible:true
+        visible: true
       }
     }
   }
@@ -232,8 +222,8 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
     this.textCollection = { 'EnterSSID': '', 'EnterPassword': '', 'EnterSecurity': '' }
     this.tag('Pwd').text.text = Language.translate("Press OK to enter Password");
     this.tag("NetworkText").text.text = Language.translate("Press OK to enter SSID");
-    this.tag('NetworkText').text.textColor=0xff808080
-    this.tag('Pwd').text.textColor=0xff808080
+    this.tag('NetworkText').text.textColor = 0xff808080
+    this.tag('Pwd').text.textColor = 0xff808080
     this.tag("TypeText").text.text = this.securityCodes[this.securityCodeIndex].name;
 
     if (this.securityCodes[this.securityCodeIndex].value === 0) {
@@ -248,9 +238,8 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
     }
   }
 
-  encrypt()
-  {
-    if(this.prevState==="EnterPassword" && this.hidePasswd)
+  encrypt() {
+    if (this.prevState === "EnterPassword" && this.hidePasswd)
       return true
     else
       return false
@@ -270,9 +259,9 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         }
         _handleEnter() {
           this._setState('Keyboard')
-          this.tag('NetworkText').text.text=this.textCollection['EnterSSID']
-          this.tag('NetworkText').text.textColor=0xffffffff
-          this.tag("Keyboard").visible=true
+          this.tag('NetworkText').text.text = this.textCollection['EnterSSID']
+          this.tag('NetworkText').text.textColor = 0xffffffff
+          this.tag("Keyboard").visible = true
         }
         $exit() {
           this.tag('NetworkBox').texture = Lightning.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
@@ -332,14 +321,14 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         _handleDown() {
           this._setState("EnterSSID");
         }
-        _handleRight(){
+        _handleRight() {
           this._setState("PasswordSwitchState")
         }
         _handleEnter() {
           this.tag("Keyboard").visible = true
           this._setState('Keyboard')
-          this.tag('Pwd').text.text=this.hidePasswd?this.star:this.textCollection['EnterPassword']
-          this.tag('Pwd').text.textColor=0xffffffff
+          this.tag('Pwd').text.text = this.hidePasswd ? this.star : this.textCollection['EnterPassword']
+          this.tag('Pwd').text.textColor = 0xffffffff
         }
         $exit() {
           this.tag('PasswordBox').texture = Lightning.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false);
@@ -348,7 +337,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
       class PasswordSwitchState extends this{
         $enter() {
           this.tag("PasswordBox").texture = Lightning.Tools.getRoundRect(1273, 58, 0, 3, CONFIG.theme.hex, false)
-          this.tag('ShowPassword').text.textColor=CONFIG.theme.hex
+          this.tag('ShowPassword').text.textColor = CONFIG.theme.hex
         }
         _handleDown() {
           this._setState("Keyboard");
@@ -377,7 +366,7 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
 
         $exit() {
           this.tag("PasswordBox").texture = Lightning.Tools.getRoundRect(1273, 58, 0, 3, 0xffffffff, false)
-          this.tag('ShowPassword').text.textColor=0xffffffff
+          this.tag('ShowPassword').text.textColor = 0xffffffff
         }
       },
       class Keyboard extends this{
@@ -399,35 +388,33 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
         }
 
         $onSoftKey({ key }) {
-          if(this.prevState==='PasswordSwitchState')
-          {
-            this.prevState="EnterPassword"
+          if (this.prevState === 'PasswordSwitchState') {
+            this.prevState = "EnterPassword"
           }
-          console.log("Prev state:",this.prevState)
+          console.log("Prev state:", this.prevState)
           if (key === 'Done') {
             this.handleDone();
           } else if (key === 'Clear') {
             this.textCollection[this.prevState] = this.textCollection[this.prevState].substring(0, this.textCollection[this.prevState].length - 1);
-            this.star = (this.prevState==="EnterPassword")?this.star.substring(0, this.star.length - 1):this.star
-            this.tag(this.element).text.text = this.encrypt() ? this.star:this.textCollection[this.prevState];
+            this.star = (this.prevState === "EnterPassword") ? this.star.substring(0, this.star.length - 1) : this.star
+            this.tag(this.element).text.text = this.encrypt() ? this.star : this.textCollection[this.prevState];
           } else if (key === '#@!' || key === 'abc' || key === 'áöû' || key === 'shift') {
             console.log('no saving')
           } else if (key === 'Space') {
             this.textCollection[this.prevState] += ' '
-            this.star += (this.prevState==="EnterPassword")?'\u25CF':this.star
-            this.tag(this.element).text.text = this.encrypt() ? this.star:this.textCollection[this.prevState];
+            this.star += (this.prevState === "EnterPassword") ? '\u25CF' : this.star
+            this.tag(this.element).text.text = this.encrypt() ? this.star : this.textCollection[this.prevState];
           } else if (key === 'Delete') {
             this.textCollection[this.prevState] = ''
-            this.star = (this.prevState==="EnterPassword")?'':this.star
-            this.tag(this.element).text.text = this.encrypt() ? this.star:this.textCollection[this.prevState];
+            this.star = (this.prevState === "EnterPassword") ? '' : this.star
+            this.tag(this.element).text.text = this.encrypt() ? this.star : this.textCollection[this.prevState];
           } else {
             this.textCollection[this.prevState] += key
-            this.star += (this.prevState==="EnterPassword")?'\u25CF':this.star
-            this.tag(this.element).text.text = this.encrypt() ? this.star:this.textCollection[this.prevState];
+            this.star += (this.prevState === "EnterPassword") ? '\u25CF' : this.star
+            this.tag(this.element).text.text = this.encrypt() ? this.star : this.textCollection[this.prevState];
           }
         }
-        _handleUp()
-        {
+        _handleUp() {
           this._setState(this.prevState)
         }
 
@@ -438,13 +425,15 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
     ]
   }
 
-  _init() {
+  _active() {
     this.securityCodeIndex = 0;
     this.pwdUnReachable = true;
-    this.star=''
+    this.star = ""
     this.textCollection = { 'EnterSSID': '', 'EnterPassword': '', 'EnterSecurity': '0' }
     this.securityCodes = [{ name: "Open/None (Unsecure)", value: 0 }, { name: "WEP - Deprecated, not needed", value: 1 }, { name: "WEP", value: 2 }, { name: "WPA Personal TKIP", value: 3 }, { name: "WPA Personal AES", value: 4 }, { name: "WPA2 Personal TKIP", value: 5 }, { name: "WPA2 Personal AES", value: 6 }, { name: "WPA Enterprise TKIP", value: 7 }, { name: "WPA Enterprise AES", value: 8 }, { name: "WPA2 Enterprise TKIP", value: 9 }, { name: "WPA2 Enterprise AES", value: 10 }, { name: "Mixed Personal", value: 11 }, { name: "Mixed Enterprise", value: 12 }, { name: "WPA3 Personal AES", value: 13 }, { name: "WPA3 Personal SAE", value: 14 }]
     this.tag("Pwd").text.text = this.textCollection['EnterPassword']
     this.tag("NetworkText").text.text = this.textCollection['EnterSSID']
+    this.hidePasswd = true
+    this.tag("Keyboard").visible = false
   }
 }

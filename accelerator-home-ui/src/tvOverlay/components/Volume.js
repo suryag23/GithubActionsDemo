@@ -20,15 +20,6 @@
 import { Lightning, Registry, Utils, Storage } from "@lightningjs/sdk";
 import AppApi from "../../api/AppApi";
 import { CONFIG } from "../../Config/Config";
-import ThunderJS from 'ThunderJS';
-
-const config = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1,
-};
-
-var thunder = ThunderJS(config);
 
 export default class Volume extends Lightning.Component {
     static _template() {

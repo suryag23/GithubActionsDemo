@@ -17,19 +17,17 @@
  * limitations under the License.
  **/
 import ThunderJS from 'ThunderJS';
+import { CONFIG } from '../Config/Config'
 
 let instance = null
 
 export default class RCApi {
   constructor() {
-    const config = {
-      host: '127.0.0.1',
-      port: 9998,
-      default: 1,
-    };
-    this.thunder = ThunderJS(config);
-    this.INFO = console.info;
-    this.LOG = console.log;
+    this.thunder = ThunderJS(CONFIG.thunderConfig);
+    // this.INFO = console.info;
+    // this.LOG = console.log;
+    this.INFO = function () { };
+    this.LOG = function () { };
     this.ERR = console.error;
   }
 
@@ -80,7 +78,7 @@ export default class RCApi {
   getNetStatus(netType = 1) {
     return new Promise((resolve, reject) => {
       this.INFO("RCApi: getNetStatus of netType:", netType);
-      this.thunder.call('org.rdk.RemoteControl', 'getNetStatus', {netType: netType}).then(result => {
+      this.thunder.call('org.rdk.RemoteControl', 'getNetStatus', { netType: netType }).then(result => {
         this.INFO("RCApi: getNetStatus result: ", JSON.stringify(result))
         if (result.success) resolve(result);
         reject(false);
@@ -93,9 +91,9 @@ export default class RCApi {
 
   startPairing(timeout = 30, netType = 1) {
     return new Promise((resolve, reject) => {
-      this.INFO("RCApi: startPairing netType "+ netType +" timeout "+timeout);
-      this.thunder.call('org.rdk.RemoteControl', 'startPairing',{netType: netType, timeout:timeout}).then(result => {
-        this.INFO("RCApi: startPairing result: ", JSON.stringify(result))
+      //this.INFO("RCApi: startPairing netType " + netType + " timeout " + timeout);
+      this.thunder.call('org.rdk.RemoteControl', 'startPairing', { netType: netType, timeout: timeout }).then(result => {
+        //this.INFO("RCApi: startPairing result: ", JSON.stringify(result))
         resolve(result.success);
       }).catch(err => {
         this.ERR("RCApi: startPairing error:", err);
@@ -163,22 +161,22 @@ export default class RCApi {
 
   configureWakeupKeys(netType = 1, wakeupConfig = "custom", customKeys = "3,1") {
     return new Promise((resolve, reject) => {
-      this.INFO("RCApi: configureWakeupKeys netType:" +netType+" wakeupConfig:" +wakeupConfig+" customKeys:"+customKeys);
+      this.INFO("RCApi: configureWakeupKeys netType:" + netType + " wakeupConfig:" + wakeupConfig + " customKeys:" + customKeys);
       this.thunder.call('org.rdk.RemoteControl', 'configureWakeupKeys',
-        {netType: netType, wakeupConfig: wakeupConfig, customKeys: customKeys}).then(result => {
-        this.INFO("RCApi: configureWakeupKeys result: ", JSON.stringify(result))
-        resolve(result.success);
-      }).catch(err => {
-        this.ERR("RCApi: configureWakeupKeys error:", err);
-        reject(err);
-      });
+        { netType: netType, wakeupConfig: wakeupConfig, customKeys: customKeys }).then(result => {
+          this.INFO("RCApi: configureWakeupKeys result: ", JSON.stringify(result))
+          resolve(result.success);
+        }).catch(err => {
+          this.ERR("RCApi: configureWakeupKeys error:", err);
+          reject(err);
+        });
     })
   }
 
   findMyRemote(netType = 1, level = "mid") {
     return new Promise((resolve, reject) => {
-      this.INFO("RCApi: findMyRemote netType:"+netType+ " level:"+level);
-      this.thunder.call('org.rdk.RemoteControl', 'findMyRemote', {netType:netType, level:level}).then(result => {
+      this.INFO("RCApi: findMyRemote netType:" + netType + " level:" + level);
+      this.thunder.call('org.rdk.RemoteControl', 'findMyRemote', { netType: netType, level: level }).then(result => {
         this.INFO("RCApi: findMyRemote result: ", JSON.stringify(result))
         resolve(result.success);
       }).catch(err => {

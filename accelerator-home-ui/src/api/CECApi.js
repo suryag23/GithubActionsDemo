@@ -17,13 +17,9 @@
  * limitations under the License.
  **/
 import ThunderJS from 'ThunderJS';
+import { CONFIG } from '../Config/Config'
 
-const config = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1,
-}
-const thunder = ThunderJS(config)
+const thunder = ThunderJS(CONFIG.thunderConfig)
 
 export default class CECApi {
     activate() {

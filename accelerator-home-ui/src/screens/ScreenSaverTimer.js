@@ -16,19 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Language, Lightning, Router, Storage } from '@lightningjs/sdk'
+import { Language, Lightning, Router, Storage, Settings } from '@lightningjs/sdk'
 import SettingsItem from '../items/SettingsItem'
 import AppApi from '../api/AppApi';
 import ThunderJS from 'ThunderJS';
+import { CONFIG } from '../Config/Config'
 
 var appApi = new AppApi();
-const config = {
-    host: '127.0.0.1',
-    port: 9998,
-    default: 1,
-  };
+var thunder = ThunderJS(CONFIG.thunderConfig);
 
-  var thunder = ThunderJS(config);
 export default class SreenSaverScreen extends Lightning.Component {
 
     _onChanged() {

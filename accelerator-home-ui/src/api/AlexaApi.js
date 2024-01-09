@@ -21,13 +21,9 @@ import { Storage } from '@lightningjs/sdk';
 import { AlexaLauncherKeyMap, errorPayload, PlaybackStateReport, VolumePayload, ApplicationStateReporter } from '../Config/AlexaConfig';
 import VoiceApi from './VoiceApi';
 import AppApi from './AppApi';
+import { CONFIG } from '../Config/Config';
 
-const config = {
-  host: '127.0.0.1',
-  port: 9998,
-  default: 1,
-}
-const thunder = ThunderJS(config)
+const thunder = ThunderJS(CONFIG.thunderConfig)
 let instance = null
 
 export default class AlexaApi extends VoiceApi {
@@ -42,33 +38,33 @@ export default class AlexaApi extends VoiceApi {
   isSmartScreenActiavated() {
     let appApi = new AppApi();
     appApi.checkStatus('SmartScreen').then(result => {
-      console.log("AlexaAPI: isSmartScreenActiavated result-", result);
+      console.log("AlexaAPI: isSmartScreenActiavated result-" + JSON.stringify(result[0].state.toLowerCase()));
       switch (result[0].state.toLowerCase()) {
         case "resumed":
         case "activated": break;
         default:
-          return(false);
+          return (false);
       }
       return true;
     }).catch(err => {
       console.error("AlexaAPI: isSmartScreenActiavated error-", err);
-      return(false);
+      return (false);
     });
   }
 
   enableSmartScreen() {
-    thunder.Controller.activate({callsign: 'SmartScreen'}).then(res => {
+    thunder.Controller.activate({ callsign: 'SmartScreen' }).then(res => {
       console.log("AlexaAPI: Activate SmartScreen result: " + res);
     }).catch(err => {
-      console.error("AlexaAPI: Activate SmartScreen ERROR!: ",err)
+      console.error("AlexaAPI: Activate SmartScreen ERROR!: ", err)
     })
   }
 
   disableSmartScreen() {
-    thunder.Controller.deactivate({callsign: 'SmartScreen'}).then(res => {
+    thunder.Controller.deactivate({ callsign: 'SmartScreen' }).then(res => {
       console.log("AlexaAPI: Deactivate SmartScreen result: " + res);
     }).catch(err => {
-      console.error("AlexaAPI: Deactivate SmartScreen ERROR!: ",err)
+      console.error("AlexaAPI: Deactivate SmartScreen ERROR!: ", err)
     })
   }
 
@@ -121,7 +117,7 @@ export default class AlexaApi extends VoiceApi {
   //reportDeviceTimeZone(updatedTimeZone) {
   updateDeviceTimeZoneInAlexa(updatedTimeZone) {
     console.log("updateDeviceTimeZoneInAlexa sending :" + updatedTimeZone)
-    let payload = {"msgPayload":{"DeviceSettings":"Set Device Settings","values":{ "timezone": updatedTimeZone }}}
+    let payload = { "msgPayload": { "DeviceSettings": "Set Device Settings", "values": { "timezone": updatedTimeZone } } }
     this.sendVoiceMessage(payload);
   }
 
@@ -143,7 +139,7 @@ export default class AlexaApi extends VoiceApi {
   }
 
   getAlexaDeviceSettings() {
-    this.sendVoiceMessage({"msgPayload":{"DeviceSettings":"Get Device Settings"}});
+    this.sendVoiceMessage({ "msgPayload": { "DeviceSettings": "Get Device Settings" } });
   }
 
   /**
@@ -152,12 +148,12 @@ export default class AlexaApi extends VoiceApi {
   resetAVSCredentials() {
     return new Promise((resolve) => {
       Storage.set("AlexaVoiceAssitantState", "AlexaAuthPending");
-      thunder.Controller.activate({callsign: 'SmartScreen'}).then(res => {
+      thunder.Controller.activate({ callsign: 'SmartScreen' }).then(res => {
         console.log("AlexaAPI: resetAVSCredentials activating SmartScreen instance.")
       }).catch(err => {
-        console.error("AlexaAPI: resetAVSCredentials activate SmartScreen ERROR!: ",err)
+        console.error("AlexaAPI: resetAVSCredentials activate SmartScreen ERROR!: ", err)
       })
-      this.sendVoiceMessage({"msgPayload":{"event": "ResetAVS"}}).then(result => {
+      this.sendVoiceMessage({ "msgPayload": { "event": "ResetAVS" } }).then(result => {
         resolve(result)
       }).catch(err => {
         resolve(false)
@@ -169,22 +165,22 @@ export default class AlexaApi extends VoiceApi {
    * User can opt out Alexa; could be in Auth state or Some generic Alexa Error after Auth completed.
    * Return respective map so that logic can be drawn based on that.
    */
-  checkAlexaAuthStatus(){
+  checkAlexaAuthStatus() {
     if (Storage.get("AlexaVoiceAssitantState") === undefined || Storage.get("AlexaVoiceAssitantState") === null || Storage.get("AlexaVoiceAssitantState") === "AlexaAuthPending")
       return "AlexaAuthPending"; // Do not handle Alexa Related Errors; only Handle its Auth status.
     else
       return Storage.get("AlexaVoiceAssitantState"); // Return the stored value of AlexaVoiceAssitantState
   }
 
-  setAlexaAuthStatus(newState = false){
+  setAlexaAuthStatus(newState = false) {
     Storage.set("AlexaVoiceAssitantState", newState)
     if (newState === "AlexaUserDenied") {
       this.configureVoice({ "enable": false });
       /* Free up Smartscreen resources */
-      thunder.Controller.deactivate({callsign: 'SmartScreen'}).then(res => {
+      thunder.Controller.deactivate({ callsign: 'SmartScreen' }).then(res => {
         console.log("AlexaAPI: deactivated SmartScreen instance.")
       }).catch(err => {
-        console.error("AlexaAPI: deactivate SmartScreen ERROR!: ",err)
+        console.error("AlexaAPI: deactivate SmartScreen ERROR!: ", err)
       })
     } else {
       this.configureVoice({ "enable": true });
@@ -195,13 +191,13 @@ export default class AlexaApi extends VoiceApi {
   /**
    * To track playback state of Alexa Smartscreen App(AmazonMusic or anything else)
    */
-  checkAlexaSmartscreenAudioPlaybackState(){
+  checkAlexaSmartscreenAudioPlaybackState() {
     if (Storage.get("AlexaSmartscreenAudioPlaybackState") === null || Storage.get("AlexaSmartscreenAudioPlaybackState") === "null")
       return "stopped"; // Assume default state.
     else
       return Storage.get("AlexaSmartscreenAudioPlaybackState");
   }
-  setAlexaSmartscreenAudioPlaybackState(newState = false){
+  setAlexaSmartscreenAudioPlaybackState(newState = false) {
     Storage.set("AlexaSmartscreenAudioPlaybackState", newState)
     console.log("setAlexaSmartscreenAudioPlaybackState with ", newState)
   }
