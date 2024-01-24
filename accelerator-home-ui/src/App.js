@@ -523,7 +523,11 @@ export default class App extends Router.App {
     FireBoltApi.get().lifecycle.registerEvent('foreground', value => {
       console.log("FireBoltApi[foreground] value:" + JSON.stringify(value) + ", launchResidentApp with:" + JSON.stringify(Storage.get("selfClientName")));
       // Ripple launches refui with this rdkshell client name.
-      appApi.launchResidentApp(Storage.get("selfClientName"));
+      appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
+        if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+          AlexaApi.get().reportApplicationState("menu", true);
+        }
+      });
     })
     FireBoltApi.get().lifecycle.registerEvent('background', value => {
       // Ripple changed app states; it will be a 'FireboltApp'
@@ -699,7 +703,11 @@ export default class App extends Router.App {
       // No need to handle this when UI is in Firebolt compatible mode.
       if ((Storage.get("applicationType") === data.client)
         && (Storage.get("selfClientName") === "ResidentApp")) {
-        appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName"));
+        appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
+          if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+            AlexaApi.get().reportApplicationState("menu", true);
+          }
+        });
       }
     });
     thunder.on('org.rdk.RDKShell', 'onLaunched', data => {
@@ -718,12 +726,19 @@ export default class App extends Router.App {
         }
         // Assuming launch is followed by moveToFront & setFocus
         Storage.set("applicationType", data.client);
+        if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+          AlexaApi.get().reportApplicationState(data.client);
+        }
       } else if (data.launchType === "suspend") {
         // No need to handle this here when UI is in Firebolt compatible mode.
         // It will be done at RefUI's 'foreground' event handler.
         if ((Storage.get("applicationType") === data.client)
           && (Storage.get("selfClientName") === "ResidentApp")) {
-          appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName"));
+          appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
+            if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+              AlexaApi.get().reportApplicationState("menu", true);
+            }
+          });
         }
       }
     });
@@ -732,7 +747,11 @@ export default class App extends Router.App {
       // No need to handle this here when UI is in Firebolt compatible mode.
       if ((Storage.get("applicationType") === data.client)
         && (Storage.get("selfClientName") === "ResidentApp")) {
-        appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName"));
+        appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
+          if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+            AlexaApi.get().reportApplicationState("menu", true);
+          }
+        });
       }
     });
     thunder.on('org.rdk.RDKShell', 'onWillDestroy', data => {
@@ -841,7 +860,11 @@ export default class App extends Router.App {
         }
         if (notification.callsign === Storage.get("applicationType")) { //only launch residentApp iff notification is from currentApp
           console.log(notification.callsign + " is in: " + notification.state + " state, and application type in Storage is still: " + Storage.get("applicationType") + " calling launchResidentApp")
-          appApi.launchResidentApp(Storage.get("selfClientName"));
+          appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
+            if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+              AlexaApi.get().reportApplicationState("menu", true);
+            }
+          });
         }
       }
       if (notification && (notification.callsign === 'org.rdk.HdmiCec_2' && notification.state === 'Activated')) {

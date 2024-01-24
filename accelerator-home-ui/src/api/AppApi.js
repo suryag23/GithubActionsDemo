@@ -767,7 +767,11 @@ export default class AppApi {
       new HDMIApi().stopHDMIInput()
       Storage.set("_currentInputMode", {});
       if (!exitInBackground) { //means resident App needs to be launched
-        this.launchResidentApp(Storage.get("selfClientName"));
+        this.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
+          if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+            AlexaApi.get().reportApplicationState("menu", true);
+          }
+        });
       }
       return Promise.resolve(true);
       //check for hdmi scenario
@@ -794,7 +798,11 @@ export default class AppApi {
     }
 
     if (!exitInBackground) { //means resident App needs to be launched
-      this.launchResidentApp(Storage.get("selfClientName"));
+      this.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
+        if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
+          AlexaApi.get().reportApplicationState("menu", true);
+        }
+      });
     }
 
     //to hide the current app

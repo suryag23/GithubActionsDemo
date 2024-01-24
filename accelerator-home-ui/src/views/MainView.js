@@ -300,17 +300,12 @@ export default class MainView extends Lightning.Component {
     this.inputSelect = false //false by default
     this.settingsScreen = false
     this.indexVal = 0
-    const config = {
-      host: '127.0.0.1',
-      port: 9998,
-      default: 1,
-    };
     this.usbApi = new UsbApi();
     this.homeApi = new HomeApi();
     this.xcastApi = new XcastApi();
     this.hdmiApi = new HDMIApi()
     this.appApi = new AppApi()
-    let thunder = ThunderJS(config);
+    let thunder = ThunderJS(CONFIG.thunderConfig);
 
     // for initially showing/hiding usb icon
 
@@ -319,7 +314,7 @@ export default class MainView extends Lightning.Component {
     let metroApps = this.homeApi.getOfflineMetroApps()
     let showcaseApps = this.homeApi.getShowCaseApps()
 
-    await this.homeApi.checkAppCompatability(appItems).then(res =>{
+    await this.homeApi.checkAppCompatability(appItems).then(res => {
       appItems = res
     })
 
@@ -378,15 +373,15 @@ export default class MainView extends Lightning.Component {
     this.hdmiApi.activate()
       .then(() => {
         this.hdmiApi.registerEvent('onDevicesChanged', notification => {
-          this.fireAncestors("$hideImage",0);
+          this.fireAncestors("$hideImage", 0);
           console.log('onDevicesChanged ', JSON.stringify(notification))
         })
         this.hdmiApi.registerEvent('onInputStatusChanged', notification => {
-          this.fireAncestors("$hideImage",0);
+          this.fireAncestors("$hideImage", 0);
           console.log('onInputStatusChanged ', JSON.stringify(notification))
         })
         this.hdmiApi.registerEvent('onSignalChanged', notification => {
-          this.fireAncestors("$hideImage",0);
+          this.fireAncestors("$hideImage", 0);
           console.log('onSignalChanged ', JSON.stringify(notification))
           if (notification.signalStatus !== 'stableSignal') {
             this.appApi.setVisibility(Storage.get("selfClientName"), true)
@@ -395,7 +390,7 @@ export default class MainView extends Lightning.Component {
           }
         })
         this.hdmiApi.registerEvent('videoStreamInfoUpdate', notification => {
-          this.fireAncestors("$hideImage",0);
+          this.fireAncestors("$hideImage", 0);
           console.log('videoStreamInfoUpdate ', JSON.stringify(notification))
         })
         this.inputSelect = true //set the inputSelect to true if the device is tv, here considering hdmiApi is only available on tv
@@ -449,22 +444,21 @@ export default class MainView extends Lightning.Component {
       return listener;
     }
 
-    thunder.on('org.rdk.Network.1', 'onIPAddressStatusChanged', notification => {
+    Network.get()._thunder.on('org.rdk.Network.1', 'onIPAddressStatusChanged', notification => {
       console.log('IP ADDRESS changed', JSON.stringify(notification))
       if (notification.status === 'ACQUIRED') {
         Storage.set('ipAddress', notification.ip4Address)
         metroApps = this.homeApi.getOnlineMetroApps()
       } else {
         Storage.set('ipAddress', null)
-        //this.metroApps = this.homeApi.getMetroInfo()
       }
     })
 
-    await this.homeApi.checkAppCompatability(metroApps).then(res =>{
+    await this.homeApi.checkAppCompatability(metroApps).then(res => {
       this.metroApps = res
     })
 
-    await this.homeApi.checkAppCompatability(showcaseApps).then(res =>{
+    await this.homeApi.checkAppCompatability(showcaseApps).then(res => {
       this.showcaseApps = res
     })
 
@@ -510,7 +504,6 @@ export default class MainView extends Lightning.Component {
   _firstEnable() {
     console.timeEnd('PerformanceTest')
     console.log('Mainview Screen timer end - ', new Date().toUTCString())
-    this.networkApi = new Network();
     this.internetConnectivity = false;
   }
 
@@ -834,6 +827,7 @@ export default class MainView extends Lightning.Component {
           Router.focusWidget('Menu')
         }
         async _handleEnter() {
+          if (Router.isNavigating()) return;
           let applicationType = this.tag('AppList').items[this.tag('AppList').index].data.applicationType;
           let uri = this.tag('AppList').items[this.tag('AppList').index].data.uri;
           let appIdentifier = this.tag('AppList').items[this.tag('AppList').index].data.appIdentifier;
@@ -847,9 +841,9 @@ export default class MainView extends Lightning.Component {
             let params = {
               url: uri,
               launchLocation: "mainView",
-              appIdentifier:appIdentifier
+              appIdentifier: appIdentifier
             }
-            this.appApi.launchApp(applicationType,params).catch(err => {
+            this.appApi.launchApp(applicationType, params).catch(err => {
               console.log("ApplaunchError: ", err)
             });
           }
@@ -895,6 +889,7 @@ export default class MainView extends Lightning.Component {
           }
         }
         async _handleEnter() {
+          if (Router.isNavigating()) return;
           let applicationType = this.tag('MetroApps').items[this.tag('MetroApps').index].data.applicationType;
           let appIdentifier = this.tag('MetroApps').items[this.tag('MetroApps').index].data.appIdentifier;
           let params = {
@@ -902,7 +897,7 @@ export default class MainView extends Lightning.Component {
             launchLocation: "mainView",
             appIdentifier: appIdentifier
           }
-          this.appApi.launchApp(applicationType,params).catch(err => {
+          this.appApi.launchApp(applicationType, params).catch(err => {
             console.log("ApplaunchError: ", JSON.stringify(err), err)
           });
         }
@@ -947,28 +942,30 @@ export default class MainView extends Lightning.Component {
           //}
         }
         async _handleEnter() {
+          if (Router.isNavigating()) return;
           try {
-            this.internetConnectivity = await this.networkApi.isConnectedToInternet();
+            this.internetConnectivity = await Network.get().isConnectedToInternet();
           } catch {
             this.internetConnectivity = false
           }
+          console.log("MainView: internetConnectivity ", JSON.stringify(this.internetConnectivity));
           let displayName = this.tag('TVShows').items[this.tag('TVShows').index].data.displayName
           if (this.internetConnectivity) {
-            if(displayName === "FOG HLS") {
+            if (displayName === "FOG HLS") {
               let params = {
-                url : "http://127.0.0.1:9080/tsb?clientId=FOG_AAMP&recordedUrl=https%3A%2F%2Fcph-p2p-msl.akamaized.net%2Fhls%2Flive%2F2000341%2Ftest%2Fmaster.m3u8",
-               }
-               Router.navigate("player",params)
-            }
-            else if(displayName === "FOG DASH") {
-              let params = {
-                url : "http://127.0.0.1:9080/tsb?clientId=FOG_AAMP&recordedUrl=https%3A%2F%2Flin001-gb-s8-tst-ll.cdn01.skycdp.com%2FSKYNEHD_HD_SUD_SKYUKD_4050_18_0000000000000018163.mpd",
+                url: "http://127.0.0.1:9080/tsb?clientId=FOG_AAMP&recordedUrl=https%3A%2F%2Fcph-p2p-msl.akamaized.net%2Fhls%2Flive%2F2000341%2Ftest%2Fmaster.m3u8",
               }
-              Router.navigate("player",params)
+              Router.navigate("player", params)
+            }
+            else if (displayName === "FOG DASH") {
+              let params = {
+                url: "http://127.0.0.1:9080/tsb?clientId=FOG_AAMP&recordedUrl=https%3A%2F%2Flin001-gb-s8-tst-ll.cdn01.skycdp.com%2FSKYNEHD_HD_SUD_SKYUKD_4050_18_0000000000000018163.mpd",
+              }
+              Router.navigate("player", params)
             }
             else {
-            //this.fireAncestors('$goToPlayer')
-            Router.navigate('player')
+              //this.fireAncestors('$goToPlayer')
+              Router.navigate('player')
             }
           }
         }
@@ -1019,6 +1016,7 @@ export default class MainView extends Lightning.Component {
           }
         }
         async _handleEnter() {
+          if (Router.isNavigating()) return;
           let applicationType = this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.applicationType;
           let appIdentifier = this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.appIdentifier;
           let appId = this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.appId;
@@ -1026,18 +1024,29 @@ export default class MainView extends Lightning.Component {
           let params = {
             url: this.tag('ShowcaseApps').items[this.tag('ShowcaseApps').index].data.uri,
             launchLocation: "mainView",
-            appIdentifier:appIdentifier
+            appIdentifier: appIdentifier
           }
-          if(applicationType=="FireboltApp")
-          {
-            FireBoltApi.get().discovery.launch(appId,intent).then(res=>{
+          if (applicationType == "FireboltApp") {
+            FireBoltApi.get().discovery.launch(appId, intent).then(res => {
               console.log(res)
               // HOME key press won't bring back RefUI.
               Storage.set("applicationType", "FireboltApp")
             })
           }
-          else{
-            this.appApi.launchApp(applicationType,params).catch(err => {
+          else {
+            this.appApi.launchApp(applicationType, params).catch(err => {
+              console.log("ApplaunchError: ", JSON.stringify(err), err)
+            });
+          }
+          if (applicationType == "FireboltApp") {
+            FireBoltApi.get().discovery.launch(appId, intent).then(res => {
+              console.log(res)
+              // HOME key press won't bring back RefUI.
+              Storage.set("applicationType", "FireboltApp")
+            })
+          }
+          else {
+            this.appApi.launchApp(applicationType, params).catch(err => {
               console.log("ApplaunchError: ", JSON.stringify(err), err)
             });
           }
@@ -1081,22 +1090,23 @@ export default class MainView extends Lightning.Component {
           }
         }
         async _handleEnter() {
+          if (Router.isNavigating()) return;
           let applicationType = this.tag('UsbApps').items[this.tag('UsbApps').index].data.applicationType;
           let params = {
             url: this.tag('UsbApps').items[this.tag('UsbApps').index].data.uri,
             launchLocation: "mainView"
           }
-          if(applicationType === "CameraApp") {
+          if (applicationType === "CameraApp") {
             let cameraParams = {
-             cameraUrl : this.tag('UsbApps').items[this.tag('UsbApps').index].data.uri
+              cameraUrl: this.tag('UsbApps').items[this.tag('UsbApps').index].data.uri
             }
-             Router.navigate("camera/player",cameraParams)
-           } else {
-          this.appApi.launchApp(applicationType,params).catch(err => {
-            console.log("ApplaunchError: ", JSON.stringify(err), err)
-          });
+            Router.navigate("camera/player", cameraParams)
+          } else {
+            this.appApi.launchApp(applicationType, params).catch(err => {
+              console.log("ApplaunchError: ", JSON.stringify(err), err)
+            });
+          }
         }
-      }
       },
       class RightArrow extends this {
         //TODO

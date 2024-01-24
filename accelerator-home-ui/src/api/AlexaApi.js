@@ -76,23 +76,31 @@ export default class AlexaApi extends VoiceApi {
     if (focused) { appApi.setFocus("SmartScreen") }
   }
 
-  reportApplicationState(app = "Menu", isRoute = false) {
+  reportApplicationState(app = "menu", isRoute = false) {
     /* retrieve 'app' matching from AlexaLauncherKeyMap. */
+    let appStateReportPayload = ApplicationStateReporter;
+    let isListedApp = false;
     for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
-      if (isRoute && value.hasOwnProperty("route") && (value.route === app)) {
-        ApplicationStateReporter.msgPayload.event.header.value.foregroundApplication.id = key;
+      if (isRoute && value.hasOwnProperty("route") && (value.route === app.toLowerCase())) {
+        appStateReportPayload.msgPayload.event.header.value.foregroundApplication.id = key;
         if (app.toLowerCase() === "menu")
-          ApplicationStateReporter.msgPayload.event.header.value.foregroundApplication.metadata.isHome = true;
+          appStateReportPayload.msgPayload.event.header.value.foregroundApplication.metadata.isHome = true;
+        isListedApp = true;
         break;
       } else if (!isRoute && (value.callsign === app || value.url === app)) {
-        ApplicationStateReporter.msgPayload.event.header.value.foregroundApplication.id = key;
-        ApplicationStateReporter.msgPayload.event.header.value.foregroundApplication.metadata.isHome = false;
+        appStateReportPayload.msgPayload.event.header.value.foregroundApplication.id = key;
+        appStateReportPayload.msgPayload.event.header.value.foregroundApplication.metadata.isHome = false;
+        isListedApp = true;
         break;
       }
     }
-    /* Send the new app state object. */
-    console.log("Sending app statereport to Alexa:", ApplicationStateReporter);
-    this.sendVoiceMessage(ApplicationStateReporter);
+    /* Send the new app state object if its a known app. */
+    if (isListedApp) {
+      console.warn("Sending app statereport to Alexa:" + JSON.stringify(appStateReportPayload));
+      this.sendVoiceMessage(appStateReportPayload);
+    } else {
+      console.error("Alexa reportApplicationState; no match found, won't send state report.");
+    }
   }
 
   reportVolumeState(volumeLevel = undefined, muteStatus = undefined, messageId = undefined) {

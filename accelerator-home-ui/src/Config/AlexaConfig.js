@@ -21,9 +21,9 @@
 //app/shortcuts identifier and callsign map
 export const AlexaLauncherKeyMap = {
     "amzn1.alexa-ask-target.app.70045": {
-      "name": "YouTube",
-      "callsign": "YouTube",
-      "url": "",
+        "name": "YouTube",
+        "callsign": "YouTube",
+        "url": "",
     },
     "amzn1.alexa-ask-target.app.50623": {
         "name": "YouTubeTV",
@@ -36,9 +36,9 @@ export const AlexaLauncherKeyMap = {
         "url": "",
     },
     "amzn1.alexa-ask-target.app.58952": {
-      "name": "CNN go",
-      "callsign": "LightningApp",
-      "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.CNN",
+        "name": "CNN go",
+        "callsign": "LightningApp",
+        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.CNN",
     },
     "amzn1.alexa-ask-target.app.72095": {
         "name": "Prime Video",
@@ -194,7 +194,7 @@ export const AlexaLauncherKeyMap = {
 };
 
 export const errorPayload = {
-    "msgPayload":{
+    "msgPayload": {
         "event": {
             "header": {
                 "namespace": "Alexa",
@@ -203,7 +203,7 @@ export const errorPayload = {
                 "correlationToken": "Opaque correlation token that matches the request",
                 "payloadVersion": "3"
             },
-            "endpoint":{
+            "endpoint": {
                 "endpointId": "Endpoint ID"
             },
             "payload": {
@@ -234,16 +234,16 @@ export const ApplicationStateReporter = {
     "msgPayload": {
         "event": {
             "header": {
-                "namespace":"Alexa.ApplicationStateReporter",
-                "name":"ForegroundApplication",
+                "namespace": "Alexa.ApplicationStateReporter",
+                "name": "ForegroundApplication",
                 "value": {
                     "foregroundApplication": {
-                        "id":"amzn1.alexa-ask-target.app.70045",
-                        "version":"1",
-                        "type":"vsk",
+                        "id": "amzn1.alexa-ask-target.shortcut.33122",
+                        "version": "1",
+                        "type": "vsk",
                         "metadata": {
-                            "categories":["OTHER"],
-                            "isVisible":true,
+                            "categories": ["OTHER"],
+                            "isVisible": true,
                             "isHome": true
                         }
                     }

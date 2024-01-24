@@ -16,25 +16,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Language, Settings, Storage } from '@lightningjs/sdk'
- import { COLORS } from '../../colors/Colors'
- import { CONFIG } from '../../Config/Config'
- import AppApi from '../../api/AppApi.js';
- import NetworkApi from '../../api/NetworkApi'
- import FireBoltApi from '../../api/firebolt/FireBoltApi';
- /**
-  * Class for Video and Audio screen.
-  */
+import { Lightning, Language, Settings, Storage } from '@lightningjs/sdk'
+import { COLORS } from '../../colors/Colors'
+import { CONFIG } from '../../Config/Config'
+import AppApi from '../../api/AppApi.js';
+import NetworkApi from '../../api/NetworkApi'
+import FireBoltApi from '../../api/firebolt/FireBoltApi';
+/**
+ * Class for Video and Audio screen.
+ */
 
- export default class DeviceInformationScreen extends Lightning.Component {
-     static _template() {
-         return {
+export default class DeviceInformationScreen extends Lightning.Component {
+    static _template() {
+        return {
             DeviceInfoWrapper: {
                 w: 1720,
                 h: 810,
                 x: 200,
                 y: 275,
-                clipping:true,
+                clipping: true,
                 DeviceInfoContents: {
                     y: 3,
                     Line1: {
@@ -243,20 +243,20 @@
                     },
                 }
             }
-         }
-     }
+        }
+    }
 
-     _init() {
-         this._network = new NetworkApi();
-         this.appApi = new AppApi();
-     }
+    _init() {
+        this._network = new NetworkApi();
+        this.appApi = new AppApi();
+    }
 
-     _focus() {
+    _focus() {
 
-         this._setState('DeviceInformationScreen')
-         this.appApi.getSerialNumber().then(result => {
-             this.tag("SerialNumber.Value").text.text = `${result.serialNumber}`;
-         })
+        this._setState('DeviceInformationScreen')
+        this.appApi.getSerialNumber().then(result => {
+            this.tag("SerialNumber.Value").text.text = `${result.serialNumber}`;
+        })
 
         if ("ResidentApp" === Storage.get("selfClientName")) {
             this.appApi.getSystemVersions().then(res => {
@@ -295,95 +295,95 @@
             }).catch(err => {
                 console.error(`error while getting the system versions from Firebolt.getversion API`)
             })
-            FireBoltApi.get().localization.countryCode().then(res=>{
+            FireBoltApi.get().localization.countryCode().then(res => {
                 this.tag('Location.Value').text.text = `CountryCode: ${res}`;
             })
         }
 
-         this.appApi.getDRMS().then(result => {
-             console.log('from device info supported drms ' + JSON.stringify(result))
-             let drms = ""
-             result.forEach(element => {
-                 drms += `${element.name} :`
-                 if (element.keysystems) {
-                     drms += "\t"
-                     element.keysystems.forEach(keySystem => {
-                         drms += `${keySystem}, `
-                     })
-                     drms += "\n"
-                 } else {
-                     drms += "\n"
-                 }
-             });
-             this.tag('SupportedDRM.Value').text.text = `${drms.substring(0, drms.length - 1)}`
-         })
+        this.appApi.getDRMS().then(result => {
+            console.log('from device info supported drms ' + JSON.stringify(result))
+            let drms = ""
+            result.forEach(element => {
+                drms += `${element.name} :`
+                if (element.keysystems) {
+                    drms += "\t"
+                    element.keysystems.forEach(keySystem => {
+                        drms += `${keySystem}, `
+                    })
+                    drms += "\n"
+                } else {
+                    drms += "\n"
+                }
+            });
+            this.tag('SupportedDRM.Value').text.text = `${drms.substring(0, drms.length - 1)}`
+        })
 
-         this.appApi.getDeviceIdentification().then(result => {
-             console.log('from device Information screen getDeviceIdentification: ' + JSON.stringify(result))
-             this.tag('ChipSet.Value').text.text = `${result.chipset}`
-             // this.tag('FirmwareVersions.Value').text.text = `${result.firmwareversion}`
-         })
+        this.appApi.getDeviceIdentification().then(result => {
+            console.log('from device Information screen getDeviceIdentification: ' + JSON.stringify(result))
+            this.tag('ChipSet.Value').text.text = `${result.chipset}`
+            // this.tag('FirmwareVersions.Value').text.text = `${result.firmwareversion}`
+        })
 
-         let self = this;
-         if (Storage.get('Netflix_ESN')) {
-             self.tag('AppVersions.Value').text.text = `Youtube: NA\nAmazon Prime: NA\nNetflix ESN: ${Storage.get('Netflix_ESN')}`
-         }
-         else {
-             self.appApi.getPluginStatus('Netflix')
-                 .then(result => {
-                     let sel = self;
-                     console.log(`Netflix : plugin status : `, JSON.stringify(result));
-                     if (result[0].state === 'deactivated' || result[0].state === 'deactivation') {
-                         sel.appApi.launchPremiumAppInSuspendMode("Netflix").then(res => {
-                             console.log("Netflix : netflix launch for esn value in suspend mode returns : ", JSON.stringify(res));
-                             let se = sel;
-                             se.appApi.getNetflixESN()
-                                 .then(res => {
-                                     Storage.set('Netflix_ESN', res)
-                                     console.log(`Netflix : netflix esn call returns : `, JSON.stringify(res));
-                                     se.netflixESN = `YouTube: NA \nAmazon Prime: NA \nNetflix ESN: ${res}`
-                                 })
-                                 .catch(err => {
-                                     console.error(`Netflix : error while getting netflix esn : `, JSON.stringify(err))
-                                 })
-                         }).catch(err => {
-                             console.error(`Netflix : error while launching netflix in suspendMode : `, JSON.stringify(err))
-                         })
-                     }
-                     else {
-                         self.appApi.getNetflixESN()
-                             .then(res => {
-                                 Storage.set('Netflix_ESN', res)
-                                 console.log(`Netflix : netflix esn call returns : `, JSON.stringify(res));
-                                 self.netflixESN = `YouTube: NA \nAmazon Prime: NA \nNetflix ESN: ${res}`;
-                             })
-                             .catch(err => {
-                                 console.error(`Netflix : error while getting netflix esn : `, JSON.stringify(err))
-                             })
-                     }
-                 }).catch(err => {
-                     console.error(`Netflix : error while getting netflix plugin status ie. `, JSON.stringify(err))
-                 })
-         }
+        let self = this;
+        if (Storage.get('Netflix_ESN')) {
+            self.tag('AppVersions.Value').text.text = `Youtube: NA\nAmazon Prime: NA\nNetflix ESN: ${Storage.get('Netflix_ESN')}`
+        }
+        else {
+            self.appApi.getPluginStatus('Netflix')
+                .then(result => {
+                    let sel = self;
+                    console.log(`Netflix : plugin status : `, JSON.stringify(result));
+                    if (result[0].state === 'deactivated' || result[0].state === 'deactivation') {
+                        sel.appApi.launchPremiumAppInSuspendMode("Netflix").then(res => {
+                            console.log("Netflix : netflix launch for esn value in suspend mode returns : ", JSON.stringify(res));
+                            let se = sel;
+                            se.appApi.getNetflixESN()
+                                .then(res => {
+                                    Storage.set('Netflix_ESN', res)
+                                    console.log(`Netflix : netflix esn call returns : `, JSON.stringify(res));
+                                    se.netflixESN = `YouTube: NA \nAmazon Prime: NA \nNetflix ESN: ${res}`
+                                })
+                                .catch(err => {
+                                    console.error(`Netflix : error while getting netflix esn : `, JSON.stringify(err))
+                                })
+                        }).catch(err => {
+                            console.error(`Netflix : error while launching netflix in suspendMode : `, JSON.stringify(err))
+                        })
+                    }
+                    else {
+                        self.appApi.getNetflixESN()
+                            .then(res => {
+                                Storage.set('Netflix_ESN', res)
+                                console.log(`Netflix : netflix esn call returns : `, JSON.stringify(res));
+                                self.netflixESN = `YouTube: NA \nAmazon Prime: NA \nNetflix ESN: ${res}`;
+                            })
+                            .catch(err => {
+                                console.error(`Netflix : error while getting netflix esn : `, JSON.stringify(err))
+                            })
+                    }
+                }).catch(err => {
+                    console.error(`Netflix : error while getting netflix plugin status ie. `, JSON.stringify(err))
+                })
+        }
 
 
-         this.appApi.registerChangeLocation()
-     }
+        this.appApi.registerChangeLocation()
+    }
 
-     set netflixESN(v) {
-         console.log(`setting netflix ESN value to ${v}`);
-         this.tag('AppVersions.Value').text.text = v;
-     }
+    set netflixESN(v) {
+        console.log(`setting netflix ESN value to ${v}`);
+        this.tag('AppVersions.Value').text.text = v;
+    }
 
-     _handleDown() {
-         if (this.tag("DeviceInfoContents").y > -200) {
-             this.tag("DeviceInfoContents").y -= 20;
-         }
-     }
-     _handleUp() {
-         if (this.tag("DeviceInfoContents").y < 3) {
-             this.tag("DeviceInfoContents").y += 20;
-         }
-     }
+    _handleDown() {
+        if (this.tag("DeviceInfoContents").y > -200) {
+            this.tag("DeviceInfoContents").y -= 20;
+        }
+    }
+    _handleUp() {
+        if (this.tag("DeviceInfoContents").y < 3) {
+            this.tag("DeviceInfoContents").y += 20;
+        }
+    }
 
- }
+}
