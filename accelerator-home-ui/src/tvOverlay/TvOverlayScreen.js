@@ -98,24 +98,19 @@ export default class TvOverlayScreen extends Lightning.Component {
   }
 
   _handleBack() {
-    let currentApp = Storage.get("applicationType");
     this._setState("IdleState");
-    console.log("currentApp: ", currentApp);
+    console.log("currentApp: ", Storage.get("applicationType"));
     setTimeout(() => {
-      if ((currentApp !== "") || (Storage.get("applicationType") !== Storage.get("selfClientName"))) {
+      if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
         this.appApi.setVisibility(Storage.get("selfClientName"), false);
         thunder
           .call("org.rdk.RDKShell", "moveToFront", {
-            client: currentApp,
+            client: Storage.get("applicationType"),
           })
           .then((result) => {
-            console.log(currentApp, " moveToFront Success");
             thunder
               .call("org.rdk.RDKShell", "setFocus", {
-                client: currentApp,
-              })
-              .then((result) => {
-                console.log(currentApp, " setFocus Success");
+                client: Storage.get("applicationType"),
               })
               .catch((err) => {
                 console.log("Error", err);

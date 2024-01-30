@@ -99,16 +99,15 @@ export default class AppLauncherScreen extends Lightning.Component {
 
   _handleKey() {
     console.log("AppLauncherScreen is in focus, returning focus to corresponding app")
-    if ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName"))) { //if appLauncher screen is in focus while on residentApp
+    if (Storage.get("applicationType") === Storage.get("selfClientName")) { //if appLauncher screen is in focus while on residentApp
       this.appApi.zorder(Storage.get("selfClientName"));
       this.appApi.setFocus(Storage.get("selfClientName"));
       this.appApi.visible(Storage.get("selfClientName"), true);
       Router.navigate(Storage.get("lastVisitedRoute"));
     } else { //when appLauncher screen is in focus while on other apps
-      let currentApp = Storage.get("applicationType");
-      this.appApi.zorder(currentApp);
-      this.appApi.setFocus(currentApp);
-      this.appApi.visible(currentApp, true);
+      this.appApi.zorder(Storage.get("applicationType"));
+      this.appApi.setFocus(Storage.get("applicationType"));
+      this.appApi.visible(Storage.get("applicationType"), true);
     }
   }
 }

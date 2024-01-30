@@ -81,7 +81,9 @@ export default class App extends Router.App {
       console.log("window.__firebolt.endpoint ", JSON.stringify(window.__firebolt.endpoint));
       Storage.set("selfClientName", "FireboltMainApp-refui");
     }
-    console.log("selfClientName:", Storage.get("selfClientName"))
+    console.log("selfClientName:", Storage.get("selfClientName"));
+    Storage.set("applicationType", Storage.get("selfClientName"));
+    console.log("UI init tracked top most app:", Storage.get("applicationType"));
     Router.startRouter(routes, this);
     Storage.set("ResolutionChangeInProgress", false);
     document.onkeydown = e => {
@@ -182,7 +184,7 @@ export default class App extends Router.App {
       return true
     }
     else if (key.keyCode == Keymap.Inputs_Shortcut && !Router.isNavigating()) { //for inputs overlay
-      if ((Storage.get("applicationType") !== "") || (Storage.get("applicationType") !== Storage.get("selfClientName"))) {
+      if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
         if (Router.getActiveHash() === "tv-overlay/inputs") {
           Router.reload();
         } else {
@@ -214,7 +216,7 @@ export default class App extends Router.App {
       return true
     }
     else if (key.keyCode == Keymap.Picture_Setting_Shortcut && !Router.isNavigating()) { //for video settings overlay
-      if ((Storage.get("applicationType") !== "") || (Storage.get("applicationType") !== Storage.get("selfClientName"))) {
+      if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
         if (Router.getActiveHash() === "tv-overlay/settings") {
           Router.reload();
         } else {
@@ -247,7 +249,7 @@ export default class App extends Router.App {
     }
     else if (key.keyCode == Keymap.Settings_Shortcut && !Router.isNavigating()) {
       console.log(`settings shortcut`)
-      if ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName"))) { //launch settings overlay/page depending on the current route.
+      if (Storage.get("applicationType") === Storage.get("selfClientName")) { //launch settings overlay/page depending on the current route.
         if (Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player") { //player supports settings overlay, so launch it as overlay
           if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "SettingsOverlay") { //currently focused on settings overlay, so hide it
             Router.focusPage();
@@ -318,7 +320,7 @@ export default class App extends Router.App {
       return true
     }
     else if (key.keyCode == Keymap.AppCarousel && !Router.isNavigating()) {
-      if ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName"))) { // if resident app is on focus
+      if (Storage.get("applicationType") === Storage.get("selfClientName")) { // if resident app is on focus
         if (Router.getActiveHash() === "menu") {
           return true;
         }
@@ -332,10 +334,9 @@ export default class App extends Router.App {
         if (Router.getActiveHash() === "applauncher") { //if route is applauncher just focus the overlay widget
           if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "AppCarousel") { //currently focused on settings overlay, so hide it
             Router.focusPage();
-            let currentApp = Storage.get("applicationType")
-            appApi.zorder(currentApp)
-            appApi.setFocus(currentApp)
-            appApi.setVisibility(currentApp, true)
+            appApi.zorder(Storage.get("applicationType"))
+            appApi.setFocus(Storage.get("applicationType"))
+            appApi.setVisibility(Storage.get("applicationType"), true)
           }
           else { //launch the settings overlay
             appApi.zorder(Storage.get("selfClientName"))
@@ -385,7 +386,7 @@ export default class App extends Router.App {
       })
       return true
     } else if (key.keyCode === Keymap.AudioVolumeMute && !Router.isNavigating()) {
-      if ((Storage.get('applicationType') === '') || (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+      if (Storage.get("applicationType") === Storage.get("selfClientName")) {
         this.tag("Volume").onVolumeMute();
       } else {
         console.log("muting on some app")
@@ -404,7 +405,7 @@ export default class App extends Router.App {
       }
       return true
     } else if (key.keyCode == Keymap.AudioVolumeUp && !Router.isNavigating()) {
-      if ((Storage.get('applicationType') === '') || (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+      if (Storage.get("applicationType") === Storage.get("selfClientName")) {
         this.tag("Volume").onVolumeKeyUp();
       } else {
         console.log("muting on some app")
@@ -423,7 +424,7 @@ export default class App extends Router.App {
       }
       return true
     } else if (key.keyCode == Keymap.AudioVolumeDown && !Router.isNavigating()) {
-      if ((Storage.get('applicationType') === '') || (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+      if (Storage.get("applicationType") === Storage.get("selfClientName")) {
         this.tag("Volume").onVolumeKeyDown();
       } else {
         console.log("muting on some app")
@@ -1183,7 +1184,7 @@ export default class App extends Router.App {
               console.log("App enableSmartScreen");
               AlexaApi.get().enableSmartScreen();
             }
-            if ((Router.getActiveHash() === "menu") && ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName")))) {
+            if ((Router.getActiveHash() === "menu") && (Storage.get("applicationType") === Storage.get("selfClientName"))) {
               console.log("Arun: check and route to alexa login page");
               if (Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen" && !Router.isNavigating()) {
                 console.log("Routing to Alexa login page")
@@ -1198,9 +1199,13 @@ export default class App extends Router.App {
               Router.navigate("SuccessScreen")
             } else if ((notification.xr_speech_avs.state === "uninitialized") || (notification.xr_speech_avs.state === "authorizing")) {
               AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending")
-            } else if ((notification.xr_speech_avs.state === "unrecoverable error") && ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName")))) {
+            } else if ((notification.xr_speech_avs.state === "unrecoverable error") && (Storage.get("applicationType") === Storage.get("selfClientName"))) {
               // Could be AUTH token Timeout; refresh it.
-              ((Storage.get("setup") === "true") ? true : false) && Router.navigate("FailureScreen")
+              if (Storage.get("setup") === true) {
+                Router.navigate("FailureScreen");
+              } else {
+                Storage.set("alexaOTPReset", true);
+              }
             }
           } else if (notification.xr_speech_avs.state_reporter === "login" && notification.xr_speech_avs.state === "User request to disable Alexa") {
             // https://jira.rdkcentral.com/jira/browse/RDKDEV-746: SDK abstraction layer sends on SKIP button event.
@@ -1284,7 +1289,7 @@ export default class App extends Router.App {
                   // exits the app if any and navigates to the specific route.
                   Storage.set("appSwitchingInProgress", true);
                   this.jumpToRoute(targetRoute);
-                  Storage.set("applicationType", "");
+                  Storage.set("applicationType", Storage.get("selfClientName"));
                   Storage.set("appSwitchingInProgress", false);
                 }
               } else {
@@ -1324,10 +1329,10 @@ export default class App extends Router.App {
                   replacedText = null;
                   appCallsign = null;
                   launchParams = null;
-                } else if (!entityId.length && (Storage.get("applicationType") != "")) {
+                } else if (!entityId.length && (Storage.get("applicationType") != Storage.get("selfClientName"))) {
                   /* give it to current focused app */
                   console.warn("Alexa.RemoteVideoPlayer: " + Storage.get("applicationType") + " is the focued app; need Voice search integration support to it.");
-                } else if (!entityId.length && (Storage.get("applicationType") == "")) {
+                } else if (!entityId.length && (Storage.get("applicationType") == Storage.get("selfClientName"))) {
                   /* Generic global search without a target app; redirect to Youtube as of now. */
                   let replacedText = payload.searchText.transcribed.trim();
                   let appCallsign = AlexaLauncherKeyMap["amzn1.alexa-ask-target.app.70045"].callsign
@@ -1373,7 +1378,7 @@ export default class App extends Router.App {
               AlexaApi.get().displaySmartScreenOverlay(true)
               AlexaAudioplayerActive = true;
               console.log("App AudioPlayer: Suspending the current app:'" + Storage.get("applicationType") + "'");
-              if (Storage.get("applicationType") != "") {
+              if (Storage.get("applicationType") != Storage.get("selfClientName")) {
                 appApi.exitApp(Storage.get("applicationType"));
               }
             }
@@ -1782,8 +1787,7 @@ export default class App extends Router.App {
           console.log(`activated the rdk shell plugin trying to set the inactivity listener; res = ${JSON.stringify(res)}`);
           thunder.on("org.rdk.RDKShell.1", "onUserInactivity", notification => {
             console.log(`user was inactive`);
-            if (powerState === "ON" &&
-              ((Storage.get('applicationType') == '') || (Storage.get("applicationType") === Storage.get("selfClientName")))) {
+            if (powerState === "ON" && (Storage.get("applicationType") === Storage.get("selfClientName"))) {
               this.standby("STANDBY");
             }
           }, err => {
@@ -1846,7 +1850,7 @@ export default class App extends Router.App {
   }
 
   jumpToRoute(route) {
-    if ((Storage.get('applicationType') != '') || (Storage.get("applicationType") != Storage.get("selfClientName"))) {
+    if (Storage.get("applicationType") != Storage.get("selfClientName")) {
       appApi.exitApp(Storage.get('applicationType')).catch(err => {
         console.log("jumpToRoute err: " + err)
       });

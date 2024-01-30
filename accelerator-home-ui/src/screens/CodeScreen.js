@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router, Utils, Language, Settings } from '@lightningjs/sdk'
+import { Lightning, Router, Utils, Language, Storage } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import ThunderJS from 'ThunderJS'
 import AlexaApi from '../api/AlexaApi'
@@ -78,7 +78,7 @@ export default class CodeScreen extends Lightning.Component {
                         y: 500,
                         mount: 0.5,
                         text: {
-                            text: Language.translate("Loading Code") +"...",
+                            text: Language.translate("Loading Code") + "...",
                             fontFace: CONFIG.language.font,
                             fontSize: 32,
                             textColor: 0xFF00CAFF,
@@ -97,9 +97,12 @@ export default class CodeScreen extends Lightning.Component {
         this._setState('Description')
     }
     _focus() {
-        if(AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied"){
-            thunder.Controller.activate({callsign: "org.rdk.VoiceControl"}).then(res => {
-                //AlexaApi.get().resetAVSCredentials();
+        if (AlexaApi.get().checkAlexaAuthStatus() !== "AlexaUserDenied") {
+            thunder.Controller.activate({ callsign: "org.rdk.VoiceControl" }).then(res => {
+                if (Storage.get("alexaOTPReset")) {
+                    AlexaApi.get().resetAVSCredentials();
+                    Storage.remove("alexaOTPReset");
+                }
                 thunder.on("org.rdk.VoiceControl", 'onServerMessage', notification => {
                     console.log("VoiceControl.onServerMessage Notification: ", notification)
                     this.VoiceControlData = notification
@@ -130,10 +133,10 @@ export default class CodeScreen extends Lightning.Component {
                     }
                 })
             }).catch(err => {
-                console.log("VoiceControl Plugin Activation ERROR!: ",err)
+                console.log("VoiceControl Plugin Activation ERROR!: ", err)
             })
             this._setState('Description')
-       }
+        }
     }
 
     _active() {
@@ -159,7 +162,7 @@ export default class CodeScreen extends Lightning.Component {
                     this._focus()
                 }
                 _handleEnter() {
-                    if(!Router.isNavigating()){
+                    if (!Router.isNavigating()) {
                         Router.navigate('AlexaConfirmationScreen')
                     }
                 }
@@ -191,4 +194,3 @@ export default class CodeScreen extends Lightning.Component {
         ]
     }
 }
-

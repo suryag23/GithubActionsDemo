@@ -3,7 +3,7 @@
  * SDK version: 4.8.3
  * CLI version: 2.13.0
  * 
- * Generated: Wed, 24 Jan 2024 20:38:14 GMT
+ * Generated: Thu, 01 Feb 2024 22:23:34 GMT
  */
 
 var APP_accelerator_home_ui = (function () {
@@ -8289,7 +8289,7 @@ var APP_accelerator_home_ui = (function () {
           "language": language
         };
       }
-      if (!preventCurrentExit && (currentApp !== "" || currentApp !== Storage$1.get("selfClientName")) && currentApp !== callsign) {
+      if (!preventCurrentExit && currentApp !== Storage$1.get("selfClientName") && currentApp !== callsign) {
         //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack
         try {
           console.log("AppAPI calling exitApp with params: " + callsign + " and exitInBackground " + currentApp + " true.");
@@ -8298,7 +8298,7 @@ var APP_accelerator_home_ui = (function () {
           console.error("AppAPI currentApp " + currentApp + " exit failed!: launching new app...");
         }
       }
-      if ((currentApp === "" || currentApp === Storage$1.get("selfClientName")) && callsign !== "Netflix") {
+      if (currentApp === Storage$1.get("selfClientName") && callsign !== "Netflix") {
         //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack | for netflix keep the splash screen visible till it launches
         thunder$m.call('org.rdk.RDKShell', 'setVisibility', {
           "client": Storage$1.get("selfClientName"),
@@ -19600,17 +19600,6 @@ once:   once$1,
             launchLocation: "mainView",
             appIdentifier: appIdentifier
           };
-          if (applicationType == "FireboltApp") {
-            FireBoltApi.get().discovery.launch(appId, intent).then(res => {
-              console.log(res);
-              // HOME key press won't bring back RefUI.
-              Storage$1.set("applicationType", "FireboltApp");
-            });
-          } else {
-            this.appApi.launchApp(applicationType, params).catch(err => {
-              console.log("ApplaunchError: ", JSON.stringify(err), err);
-            });
-          }
           if (applicationType == "FireboltApp") {
             FireBoltApi.get().discovery.launch(appId, intent).then(res => {
               console.log(res);
@@ -37244,7 +37233,7 @@ provide:   provide$1
       console.log('Splash Screen timer end - ', new Date().toUTCString());
     }
     async _focus() {
-      let path = Storage$1.get('setup') === "true" ? 'menu' : 'splash/bluetooth';
+      let path = Storage$1.get('setup') === true ? 'menu' : 'splash/bluetooth';
       var map = {
         37: false,
         38: false,
@@ -39252,7 +39241,7 @@ provide:   provide$1
             if (!result.success) {
               return false;
             } else if (result.success) {
-              if (Storage$1.get("applicationType") === "" || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+              if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
                 thunder$d.call('org.rdk.RDKShell', 'setVisibility', {
                   "client": Storage$1.get("selfClientName"),
                   "visible": false
@@ -39263,7 +39252,7 @@ provide:   provide$1
         }
       });
     } else if (result.success) {
-      if (Storage$1.get("applicationType") === "" || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+      if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
         thunder$d.call('org.rdk.RDKShell', 'setVisibility', {
           "client": Storage$1.get("selfClientName"),
           "visible": false
@@ -39571,26 +39560,29 @@ provide:   provide$1
     return result;
   };
   const getAsmsUrlObj = async () => {
-    let asmsUrl = null,
-      username = null,
-      password = null;
-    let metadata = await getMetadata();
-    await fetch(metadata.configUrl).then(response => response.json()).then(result => {
+    try {
+      let metadata = await getMetadata();
+      let response = await fetch(metadata.configUrl);
+      let result = await response.json();
       if (result.hasOwnProperty("appstore-catalog")) {
-        asmsUrl = result["appstore-catalog"].url + "/apps";
-        if (result.hasOwnProperty("user")) username = result["appstore-catalog"].authentication.user;
-        if (result.hasOwnProperty("password")) password = result["appstore-catalog"].authentication.password;
+        const appstoreCatalog = result['appstore-catalog'];
+        const asmsUrl = appstoreCatalog.url + "/apps" || null;
+        const authentication = appstoreCatalog.authentication || {};
+        const username = authentication.user || null;
+        const password = authentication.password || null;
+        return {
+          url: asmsUrl,
+          username: username,
+          password: password
+        };
       } else {
-        console.error("getAsmsUrlObj Don't have ASMS URL");
+        console.error("getAsmsUrlObj: Don't have ASMS URL");
+        throw new Error('getAsmsUrlObj: Failed to parse data');
       }
-    }).catch(err => {
+    } catch (err) {
       console.error("getAsmsUrlObj FETCH error: ", err);
-    });
-    return {
-      url: asmsUrl,
-      username: username,
-      password: password
-    };
+      throw new Error('getAsmsUrlObj: Failed to parse data: ' + err);
+    }
   };
   const getFirmareVer = async () => {
     const firmwareVer = await getMetadata().then(metadata => {
@@ -44116,20 +44108,16 @@ provide:   provide$1
       this._handleBack();
     }
     _handleBack() {
-      let currentApp = Storage$1.get("applicationType");
       this._setState("IdleState");
-      console.log("currentApp: ", currentApp);
+      console.log("currentApp: ", Storage$1.get("applicationType"));
       setTimeout(() => {
-        if (currentApp !== "" || Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
+        if (Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
           this.appApi.setVisibility(Storage$1.get("selfClientName"), false);
           thunder$b.call("org.rdk.RDKShell", "moveToFront", {
-            client: currentApp
+            client: Storage$1.get("applicationType")
           }).then(result => {
-            console.log(currentApp, " moveToFront Success");
             thunder$b.call("org.rdk.RDKShell", "setFocus", {
-              client: currentApp
-            }).then(result => {
-              console.log(currentApp, " setFocus Success");
+              client: Storage$1.get("applicationType")
             }).catch(err => {
               console.log("Error", err);
             });
@@ -45390,7 +45378,7 @@ provide:   provide$1
     }
     _handleKey() {
       console.log("AppLauncherScreen is in focus, returning focus to corresponding app");
-      if (Storage$1.get("applicationType") === "" || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+      if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
         //if appLauncher screen is in focus while on residentApp
         this.appApi.zorder(Storage$1.get("selfClientName"));
         this.appApi.setFocus(Storage$1.get("selfClientName"));
@@ -45398,10 +45386,9 @@ provide:   provide$1
         Router.navigate(Storage$1.get("lastVisitedRoute"));
       } else {
         //when appLauncher screen is in focus while on other apps
-        let currentApp = Storage$1.get("applicationType");
-        this.appApi.zorder(currentApp);
-        this.appApi.setFocus(currentApp);
-        this.appApi.visible(currentApp, true);
+        this.appApi.zorder(Storage$1.get("applicationType"));
+        this.appApi.setFocus(Storage$1.get("applicationType"));
+        this.appApi.visible(Storage$1.get("applicationType"), true);
       }
     }
   }
@@ -45508,7 +45495,10 @@ provide:   provide$1
         thunder$a.Controller.activate({
           callsign: "org.rdk.VoiceControl"
         }).then(res => {
-          //AlexaApi.get().resetAVSCredentials();
+          if (Storage$1.get("alexaOTPReset")) {
+            AlexaApi.get().resetAVSCredentials();
+            Storage$1.remove("alexaOTPReset");
+          }
           thunder$a.on("org.rdk.VoiceControl", 'onServerMessage', notification => {
             console.log("VoiceControl.onServerMessage Notification: ", notification);
             this.VoiceControlData = notification;
@@ -46058,8 +46048,7 @@ provide:   provide$1
     _init() {}
     _focus() {
       this.appApi = new AppApi();
-      this.currentApp = Storage$1.get("applicationType");
-      if (this.currentApp !== "" || this.currentApp !== Storage$1.get("selfClientName")) {
+      if (Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
         this.tag('RetryButton.Title').patch({
           text: {
             text: Language$1.translate("Dismiss")
@@ -46080,20 +46069,17 @@ provide:   provide$1
           this.tag('RetryButton.Title').text.textColor = CONFIG.theme.hex;
         }
         _handleEnter() {
-          if (this.currentApp !== "" || this.currentApp !== Storage$1.get("selfClientName")) {
+          if (Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
             AlexaApi.get().resetAVSCredentials().then(() => {
               console.log("avs credentials reseted");
             });
-            console.log("Current app: " + this.currentApp + ", moving the app to front");
+            console.log("Current app: " + Storage$1.get("applicationType") + ", moving the app to front");
             this.appApi.setVisibility(Storage$1.get("selfClientName"), false);
             thunder$9.call("org.rdk.RDKShell", "moveToFront", {
-              client: this.currentApp
-            }).then(result => {
-              console.log(this.currentApp, " moveToFront Success");
+              client: Storage$1.get("applicationType")
+            }).then(() => {
               thunder$9.call("org.rdk.RDKShell", "setFocus", {
-                client: this.currentApp
-              }).then(result => {
-                console.log(this.currentApp, " setFocus Success");
+                client: Storage$1.get("applicationType")
               }).catch(err => {
                 console.log("Error", err);
               });
@@ -56573,7 +56559,7 @@ provide:   provide$1
     }
     _handleBack() {
       console.log("application Type = ", Storage$1.get("applicationType"));
-      if (Storage$1.get("applicationType") === "" || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+      if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
         if (Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player") {
           Router.focusPage();
         } else {
@@ -57003,12 +56989,11 @@ provide:   provide$1
     }
     _handleBack() {
       let self = this;
-      if (Storage$1.get("applicationType") !== "" || Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
+      if (Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
         // if a non-resident app is on focus
-        let currentApp = Storage$1.get("applicationType");
-        self.appApi.zorder(currentApp);
-        self.appApi.setFocus(currentApp);
-        self.appApi.setVisibility(currentApp, true);
+        self.appApi.zorder(Storage$1.get("applicationType"));
+        self.appApi.setFocus(Storage$1.get("applicationType"));
+        self.appApi.setVisibility(Storage$1.get("applicationType"), true);
       }
       Router.focusPage();
     }
@@ -57363,6 +57348,8 @@ provide:   provide$1
         Storage$1.set("selfClientName", "FireboltMainApp-refui");
       }
       console.log("selfClientName:", Storage$1.get("selfClientName"));
+      Storage$1.set("applicationType", Storage$1.get("selfClientName"));
+      console.log("UI init tracked top most app:", Storage$1.get("applicationType"));
       Router.startRouter(routes, this);
       Storage$1.set("ResolutionChangeInProgress", false);
       document.onkeydown = e => {
@@ -57458,7 +57445,7 @@ provide:   provide$1
         return true;
       } else if (key.keyCode == keyMap.Inputs_Shortcut && !Router.isNavigating()) {
         //for inputs overlay
-        if (Storage$1.get("applicationType") !== "" || Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
+        if (Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
           if (Router.getActiveHash() === "tv-overlay/inputs") {
             Router.reload();
           } else {
@@ -57487,7 +57474,7 @@ provide:   provide$1
         return true;
       } else if (key.keyCode == keyMap.Picture_Setting_Shortcut && !Router.isNavigating()) {
         //for video settings overlay
-        if (Storage$1.get("applicationType") !== "" || Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
+        if (Storage$1.get("applicationType") !== Storage$1.get("selfClientName")) {
           if (Router.getActiveHash() === "tv-overlay/settings") {
             Router.reload();
           } else {
@@ -57516,7 +57503,7 @@ provide:   provide$1
         return true;
       } else if (key.keyCode == keyMap.Settings_Shortcut && !Router.isNavigating()) {
         console.log("settings shortcut");
-        if (Storage$1.get("applicationType") === "" || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+        if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
           //launch settings overlay/page depending on the current route.
           if (Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player") {
             //player supports settings overlay, so launch it as overlay
@@ -57591,7 +57578,7 @@ provide:   provide$1
         });
         return true;
       } else if (key.keyCode == keyMap.AppCarousel && !Router.isNavigating()) {
-        if (Storage$1.get("applicationType") === "" || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+        if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
           // if resident app is on focus
           if (Router.getActiveHash() === "menu") {
             return true;
@@ -57609,10 +57596,9 @@ provide:   provide$1
             if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "AppCarousel") {
               //currently focused on settings overlay, so hide it
               Router.focusPage();
-              let currentApp = Storage$1.get("applicationType");
-              appApi.zorder(currentApp);
-              appApi.setFocus(currentApp);
-              appApi.setVisibility(currentApp, true);
+              appApi.zorder(Storage$1.get("applicationType"));
+              appApi.setFocus(Storage$1.get("applicationType"));
+              appApi.setVisibility(Storage$1.get("applicationType"), true);
             } else {
               //launch the settings overlay
               appApi.zorder(Storage$1.get("selfClientName"));
@@ -57662,7 +57648,7 @@ provide:   provide$1
         });
         return true;
       } else if (key.keyCode === keyMap.AudioVolumeMute && !Router.isNavigating()) {
-        if (Storage$1.get('applicationType') === '' || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+        if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
           this.tag("Volume").onVolumeMute();
         } else {
           console.log("muting on some app");
@@ -57681,7 +57667,7 @@ provide:   provide$1
         }
         return true;
       } else if (key.keyCode == keyMap.AudioVolumeUp && !Router.isNavigating()) {
-        if (Storage$1.get('applicationType') === '' || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+        if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
           this.tag("Volume").onVolumeKeyUp();
         } else {
           console.log("muting on some app");
@@ -57700,7 +57686,7 @@ provide:   provide$1
         }
         return true;
       } else if (key.keyCode == keyMap.AudioVolumeDown && !Router.isNavigating()) {
-        if (Storage$1.get('applicationType') === '' || Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
+        if (Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
           this.tag("Volume").onVolumeKeyDown();
         } else {
           console.log("muting on some app");
@@ -58439,7 +58425,7 @@ provide:   provide$1
                 console.log("App enableSmartScreen");
                 AlexaApi.get().enableSmartScreen();
               }
-              if (Router.getActiveHash() === "menu" && (Storage$1.get("applicationType") === "" || Storage$1.get("applicationType") === Storage$1.get("selfClientName"))) {
+              if (Router.getActiveHash() === "menu" && Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
                 console.log("Arun: check and route to alexa login page");
                 if (Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen" && !Router.isNavigating()) {
                   console.log("Routing to Alexa login page");
@@ -58454,9 +58440,13 @@ provide:   provide$1
                 Router.navigate("SuccessScreen");
               } else if (notification.xr_speech_avs.state === "uninitialized" || notification.xr_speech_avs.state === "authorizing") {
                 AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending");
-              } else if (notification.xr_speech_avs.state === "unrecoverable error" && (Storage$1.get("applicationType") === "" || Storage$1.get("applicationType") === Storage$1.get("selfClientName"))) {
+              } else if (notification.xr_speech_avs.state === "unrecoverable error" && Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
                 // Could be AUTH token Timeout; refresh it.
-                (Storage$1.get("setup") === "true" ? true : false) && Router.navigate("FailureScreen");
+                if (Storage$1.get("setup") === true) {
+                  Router.navigate("FailureScreen");
+                } else {
+                  Storage$1.set("alexaOTPReset", true);
+                }
               }
             } else if (notification.xr_speech_avs.state_reporter === "login" && notification.xr_speech_avs.state === "User request to disable Alexa") {
               // https://jira.rdkcentral.com/jira/browse/RDKDEV-746: SDK abstraction layer sends on SKIP button event.
@@ -58543,7 +58533,7 @@ provide:   provide$1
                     // exits the app if any and navigates to the specific route.
                     Storage$1.set("appSwitchingInProgress", true);
                     this.jumpToRoute(targetRoute);
-                    Storage$1.set("applicationType", "");
+                    Storage$1.set("applicationType", Storage$1.get("selfClientName"));
                     Storage$1.set("appSwitchingInProgress", false);
                   }
                 } else {
@@ -58584,10 +58574,10 @@ provide:   provide$1
                     replacedText = null;
                     appCallsign = null;
                     launchParams = null;
-                  } else if (!entityId.length && Storage$1.get("applicationType") != "") {
+                  } else if (!entityId.length && Storage$1.get("applicationType") != Storage$1.get("selfClientName")) {
                     /* give it to current focused app */
                     console.warn("Alexa.RemoteVideoPlayer: " + Storage$1.get("applicationType") + " is the focued app; need Voice search integration support to it.");
-                  } else if (!entityId.length && Storage$1.get("applicationType") == "") {
+                  } else if (!entityId.length && Storage$1.get("applicationType") == Storage$1.get("selfClientName")) {
                     /* Generic global search without a target app; redirect to Youtube as of now. */
                     let replacedText = payload.searchText.transcribed.trim();
                     let appCallsign = AlexaLauncherKeyMap["amzn1.alexa-ask-target.app.70045"].callsign;
@@ -58629,7 +58619,7 @@ provide:   provide$1
                 AlexaApi.get().displaySmartScreenOverlay(true);
                 AlexaAudioplayerActive = true;
                 console.log("App AudioPlayer: Suspending the current app:'" + Storage$1.get("applicationType") + "'");
-                if (Storage$1.get("applicationType") != "") {
+                if (Storage$1.get("applicationType") != Storage$1.get("selfClientName")) {
                   appApi.exitApp(Storage$1.get("applicationType"));
                 }
               }
@@ -59020,7 +59010,7 @@ provide:   provide$1
           console.log("activated the rdk shell plugin trying to set the inactivity listener; res = ".concat(JSON.stringify(res)));
           thunder.on("org.rdk.RDKShell.1", "onUserInactivity", notification => {
             console.log("user was inactive");
-            if (powerState === "ON" && (Storage$1.get('applicationType') == '' || Storage$1.get("applicationType") === Storage$1.get("selfClientName"))) {
+            if (powerState === "ON" && Storage$1.get("applicationType") === Storage$1.get("selfClientName")) {
               this.standby("STANDBY");
             }
           }, err => {
@@ -59081,7 +59071,7 @@ provide:   provide$1
       }
     }
     jumpToRoute(route) {
-      if (Storage$1.get('applicationType') != '' || Storage$1.get("applicationType") != Storage$1.get("selfClientName")) {
+      if (Storage$1.get("applicationType") != Storage$1.get("selfClientName")) {
         appApi.exitApp(Storage$1.get('applicationType')).catch(err => {
           console.log("jumpToRoute err: " + err);
         });

@@ -60,7 +60,7 @@ export default class HomeApi {
    */
   getAppListInfo() {
     let appsMetaData = appListInfo;
-    return JSON.parse(JSON.stringify(appsMetaData)) ;
+    return JSON.parse(JSON.stringify(appsMetaData));
   }
 
   /**
@@ -164,10 +164,10 @@ export default class HomeApi {
       appApi.fetchApiKey().then((res) => {
         try {
           fetch("http://feeds.tmsapi.com/v2/movies/" + id + ".xml?api_key=" + res)
-          .then(response => response.text())
-          .then((res) => {
-            resolve(xml2json(res));
-          });
+            .then(response => response.text())
+            .then((res) => {
+              resolve(xml2json(res));
+            });
         } catch (err) {
           console.log("API key not defined");
         }
@@ -218,42 +218,42 @@ export default class HomeApi {
     });
   }
   async checkChannelComapatability(items) {
-    for(let i = 0; i < items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
       let callsign = null
-      if(items[i].dvburi === "OTT"){
-      callsign = items[i].callsign
-      if(items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids"){
-        callsign = "Cobalt"
+      if (items[i].dvburi === "OTT") {
+        callsign = items[i].callsign
+        if (items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids") {
+          callsign = "Cobalt"
+        }
+        await appApi.getPluginStatus(callsign).then(res => {
+        }).catch(err => {
+          console.log("Error:", err)
+          items.splice(i, 1)
+          i--
+        })
       }
-      await appApi.getPluginStatus(callsign).then(res => {
-      }).catch(err => {
-        console.log("Error:",err)
-        items.splice(i,1)
-        i--
-      })
     }
+    return items
   }
-  return items
-  }
-  async checkAppCompatability (items)  {
-    for(let i=0;i<items.length;i++) {
+  async checkAppCompatability(items) {
+    for (let i = 0; i < items.length; i++) {
 
       let callsign = items[i].applicationType
-        if(items[i].applicationType !== '') {
-          if ((items[i].applicationType === "FireboltApp") && (Storage.get("selfClientName") === "FireboltMainApp-refui")) {
-            callsign = "HtmlApp";
-          }
-          else if(items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
-            callsign = "Cobalt"
-            }
+      if (items[i].applicationType !== '') {
+        if ((items[i].applicationType === "FireboltApp") && (Storage.get("selfClientName") === "FireboltMainApp-refui")) {
+          callsign = "HtmlApp";
+        }
+        else if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
+          callsign = "Cobalt"
+        }
         await appApi.getPluginStatus(callsign).then(res => {
-                }).catch(err => {
-                    console.log("Error:",err)
-                    items.splice(i,1)
-                    i--
-                  })
-            }
+        }).catch(err => {
+          console.log("Error:", err)
+          items.splice(i, 1)
+          i--
+        })
+      }
+    }
+    return items
   }
-      return items
-     }
-  }
+}

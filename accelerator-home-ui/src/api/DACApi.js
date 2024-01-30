@@ -266,7 +266,7 @@ export const startDACApp = async (app) => {
           if (!result.success) {
             return false;
           } else if (result.success) {
-            if ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+            if (Storage.get("applicationType") === Storage.get("selfClientName")) {
               thunder.call('org.rdk.RDKShell', 'setVisibility', { "client": Storage.get("selfClientName"), "visible": false })
             }
           }
@@ -274,7 +274,7 @@ export const startDACApp = async (app) => {
       }
     })
   } else if (result.success) {
-    if ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+    if (Storage.get("applicationType") === Storage.get("selfClientName")) {
       thunder.call('org.rdk.RDKShell', 'setVisibility', { "client": Storage.get("selfClientName"), "visible": false })
     }
   } else {
@@ -606,23 +606,26 @@ export const getMetadata = async () => {
 }
 
 export const getAsmsUrlObj = async () => {
-  let asmsUrl = null, username = null, password = null
-  let metadata = await getMetadata();
-  await fetch(metadata.configUrl).then(response => response.json())
-    .then(result => {
-      if (result.hasOwnProperty("appstore-catalog")) {
-        asmsUrl = result["appstore-catalog"].url + "/apps";
-        if (result.hasOwnProperty("user"))
-          username = result["appstore-catalog"].authentication.user;
-        if (result.hasOwnProperty("password"))
-          password = result["appstore-catalog"].authentication.password;
-      } else {
-        console.error("getAsmsUrlObj Don't have ASMS URL")
-      }
-    }).catch(err => {
-      console.error("getAsmsUrlObj FETCH error: ", err);
-    });
-  return { url: asmsUrl, username: username, password: password }
+  try {
+    let metadata = await getMetadata();
+    let response = await fetch(metadata.configUrl);
+    let result = await response.json();
+
+    if (result.hasOwnProperty("appstore-catalog")) {
+      const appstoreCatalog = result['appstore-catalog'];
+      const asmsUrl = appstoreCatalog.url + "/apps" || null;
+      const authentication = appstoreCatalog.authentication || {};
+      const username = authentication.user || null;
+      const password = authentication.password || null;
+      return { url: asmsUrl, username: username, password: password };
+    } else {
+      console.error("getAsmsUrlObj: Don't have ASMS URL");
+      throw new Error('getAsmsUrlObj: Failed to parse data');
+    }
+  } catch (err) {
+    console.error("getAsmsUrlObj FETCH error: ", err);
+    throw new Error('getAsmsUrlObj: Failed to parse data: ' + err);
+  }
 }
 
 export const getFirmareVer = async () => {

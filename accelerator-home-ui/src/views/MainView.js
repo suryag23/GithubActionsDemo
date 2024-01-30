@@ -1038,18 +1038,6 @@ export default class MainView extends Lightning.Component {
               console.log("ApplaunchError: ", JSON.stringify(err), err)
             });
           }
-          if (applicationType == "FireboltApp") {
-            FireBoltApi.get().discovery.launch(appId, intent).then(res => {
-              console.log(res)
-              // HOME key press won't bring back RefUI.
-              Storage.set("applicationType", "FireboltApp")
-            })
-          }
-          else {
-            this.appApi.launchApp(applicationType, params).catch(err => {
-              console.log("ApplaunchError: ", JSON.stringify(err), err)
-            });
-          }
         }
       },
 

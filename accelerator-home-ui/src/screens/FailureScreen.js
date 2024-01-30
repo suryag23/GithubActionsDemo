@@ -84,8 +84,7 @@ export default class FailureScreen extends Lightning.Component {
     }
     _focus() {
         this.appApi = new AppApi();
-        this.currentApp = Storage.get("applicationType")
-        if ((this.currentApp !== "") || (this.currentApp !== Storage.get("selfClientName"))) {
+        if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
             this.tag('RetryButton.Title').patch({
                 text: {
                     text: Language.translate("Dismiss")
@@ -107,24 +106,20 @@ export default class FailureScreen extends Lightning.Component {
                     this.tag('RetryButton.Title').text.textColor = CONFIG.theme.hex
                 }
                 _handleEnter() {
-                    if ((this.currentApp !== "") || (this.currentApp !== Storage.get("selfClientName"))) {
+                    if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
                         AlexaApi.get().resetAVSCredentials().then(() => {
                             console.log("avs credentials reseted")
                         })
-                        console.log("Current app: " + this.currentApp + ", moving the app to front")
+                        console.log("Current app: " + Storage.get("applicationType") + ", moving the app to front")
                         this.appApi.setVisibility(Storage.get("selfClientName"), false);
                         thunder
                             .call("org.rdk.RDKShell", "moveToFront", {
-                                client: this.currentApp,
+                                client: Storage.get("applicationType"),
                             })
-                            .then((result) => {
-                                console.log(this.currentApp, " moveToFront Success");
+                            .then(() => {
                                 thunder
                                     .call("org.rdk.RDKShell", "setFocus", {
-                                        client: this.currentApp,
-                                    })
-                                    .then((result) => {
-                                        console.log(this.currentApp, " setFocus Success");
+                                        client: Storage.get("applicationType"),
                                     })
                                     .catch((err) => {
                                         console.log("Error", err);
@@ -165,4 +160,3 @@ export default class FailureScreen extends Lightning.Component {
         ]
     }
 }
-

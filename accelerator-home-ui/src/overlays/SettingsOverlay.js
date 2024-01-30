@@ -287,7 +287,7 @@ export default class SettingsOverlay extends Lightning.Component {
 
   _handleBack() {
     console.log("application Type = ", Storage.get("applicationType"));
-    if ((Storage.get("applicationType") === "") || (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+    if (Storage.get("applicationType") === Storage.get("selfClientName")) {
       if (Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player") {
         Router.focusPage();
       } else {

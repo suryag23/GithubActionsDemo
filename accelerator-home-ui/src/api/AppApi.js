@@ -591,7 +591,7 @@ export default class AppApi {
       params.configuration = { "language": language };
     }
 
-    if (!preventCurrentExit && ((currentApp !== "") || (currentApp !== Storage.get("selfClientName"))) && (currentApp !== callsign)) {
+    if (!preventCurrentExit && (currentApp !== Storage.get("selfClientName")) && (currentApp !== callsign)) {
       //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack
       try {
         console.log("AppAPI calling exitApp with params: " + callsign + " and exitInBackground " + currentApp + " true.")
@@ -602,7 +602,7 @@ export default class AppApi {
       }
     }
 
-    if (((currentApp === "") || (currentApp === Storage.get("selfClientName"))) && callsign !== "Netflix") { //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack | for netflix keep the splash screen visible till it launches
+    if ((currentApp === Storage.get("selfClientName")) && callsign !== "Netflix") { //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack | for netflix keep the splash screen visible till it launches
       thunder.call('org.rdk.RDKShell', 'setVisibility', {
         "client": Storage.get("selfClientName"),
         "visible": false,

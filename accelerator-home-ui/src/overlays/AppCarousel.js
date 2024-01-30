@@ -167,11 +167,10 @@ export default class AppCarousel extends Lightning.Component {
 
   _handleBack() {
     let self = this;
-    if (Storage.get("applicationType") !== "" || (Storage.get("applicationType") !== Storage.get("selfClientName"))) { // if a non-resident app is on focus
-      let currentApp = Storage.get("applicationType")
-      self.appApi.zorder(currentApp)
-      self.appApi.setFocus(currentApp)
-      self.appApi.setVisibility(currentApp, true)
+    if (Storage.get("applicationType") !== Storage.get("selfClientName")) { // if a non-resident app is on focus
+      self.appApi.zorder(Storage.get("applicationType"))
+      self.appApi.setFocus(Storage.get("applicationType"))
+      self.appApi.setVisibility(Storage.get("applicationType"), true)
     }
     Router.focusPage();
   }
