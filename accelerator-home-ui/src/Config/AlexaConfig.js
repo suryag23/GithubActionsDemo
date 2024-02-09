@@ -35,11 +35,6 @@ export const AlexaLauncherKeyMap = {
         "callsign": "YouTubeKids",
         "url": "",
     },
-    "amzn1.alexa-ask-target.app.58952": {
-        "name": "CNN go",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.CNN",
-    },
     "amzn1.alexa-ask-target.app.72095": {
         "name": "Prime Video",
         "callsign": "Amazon",
@@ -71,56 +66,6 @@ export const AlexaLauncherKeyMap = {
         "name": "Amazon Music",
         "callsign": "SmartScreen",
         "url": "",
-    },
-    "amzn1.alexa-ask-target.app.96247": {
-        "name": "The Weather Network",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.WeatherNetwork",
-    },
-    "amzn1.alexa-ask-target.app.48144": {
-        "name": "Euronews",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Euronews",
-    },
-    "amzn1.alexa-ask-target.app.54002": {
-        "name": "AccuWeather - Weather for Life",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.AccuWeather",
-    },
-    "amzn1.alexa-ask-target.app.58518": {
-        "name": "Al Jazeera",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Aljazeera",
-    },
-    "amzn1.alexa-ask-target.app.41915": {
-        "name": "Radioline",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Radioline",
-    },
-    "amzn1.alexa-ask-target.app.45441": {
-        "name": "Wallstreet Journal",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.WallStreetJournal",
-    },
-    "amzn1.alexa-ask-target.app.47328": {
-        "name": "Radio by MyTuner",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.appgeneration.mytuner",
-    },
-    "amzn1.alexa-ask-target.app.79431": {
-        "name": "Tastemade TV",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.metrological.app.Tastemade",
-    },
-    "amzn1.alexa-ask-target.app.16283": {
-        "name": "Bloomberg TV+",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.bloomberg.metrological.x1",
-    },
-    "amzn1.alexa-ask-target.app.79143": {
-        "name": "Free Games by PlayWorks",
-        "callsign": "LightningApp",
-        "url": "https://widgets.metrological.com/lightning/rdk/d431ce8577be56e82630650bf701c57d#app:com.playworks.pwkids",
     },
     //shortcuts
     "amzn1.alexa-ask-target.shortcut.33122": {
