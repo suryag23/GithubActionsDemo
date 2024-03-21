@@ -97,12 +97,12 @@ export default class SreenSaverScreen extends Lightning.Component {
         })
         this.tag('List').getElement(index).tag('Tick').visible = true
         this._setState('Options')
-       // this.setTimerValue(this.timerValue);
+        // this.setTimerValue(this.timerValue);
     }
 
-    async _focus(){
+    async _focus() {
         let FocusedValue = await appApi.getTimerValue();
-        console.log("focusedValue",FocusedValue);
+        console.log("focusedValue", FocusedValue);
         this.options = [
             { value: 'Off', tick: true },
             { value: '5 Minutes', tick: false },
@@ -116,10 +116,10 @@ export default class SreenSaverScreen extends Lightning.Component {
         }
         let index = 0;
         this.tag('List').items = this.options.map((item, id) => {
-                if (item.value.startsWith(FocusedValue)){
-                    index = id;
-                }
-          return {
+            if (item.value.startsWith(FocusedValue)) {
+                index = id;
+            }
+            return {
                 w: 1920 - 300,
                 h: 90,
                 type: SettingsItem,
@@ -131,37 +131,37 @@ export default class SreenSaverScreen extends Lightning.Component {
     }
 
     _handleBack() {
-        if(!Router.isNavigating()){
+        if (!Router.isNavigating()) {
             Router.navigate('settings/other')
         }
     }
 
-    setTimerValue(time){
-        if(time === "Off"){
+    setTimerValue(time) {
+        if (time === "Off") {
             appApi.enabledisableinactivityReporting(false).then(resp => console.log(resp))
             Storage.remove('ScreenSaverTimeoutInterval')
         }
-        else{
+        else {
             // 10
             appApi.enabledisableinactivityReporting(true).then(resp => {
-                 appApi.setInactivityInterval(parseInt(time)).then(res => {
+                appApi.setInactivityInterval(parseInt(time)).then(res => {
                     console.log("setinactivityres", res)
-                     Storage.set('ScreenSaverTimeoutInterval', time)
-                     console.log(`successfully set the timer to ${time} minutes`)
-                     thunder.on('org.rdk.RDKShell', 'onUserInactivity', notification => {
+                    Storage.set('ScreenSaverTimeoutInterval', time)
+                    console.log(`successfully set the timer to ${time} minutes`)
+                    thunder.on('org.rdk.RDKShell', 'onUserInactivity', notification => {
                         console.log("UserInactivityStatusNotification: ", JSON.stringify(notification))
-                        appApi.getAvCodeStatus().then(result =>{
-                          console.log("Avdecoder", result.avDecoderStatus);
-                          if((result.avDecoderStatus === "IDLE" || result.avDecoderStatus === "PAUSE") && Storage.get("applicationType") === ""){
-                            this.fireAncestors("$hideImage", 1);
-                          }
+                        appApi.getAvCodeStatus().then(result => {
+                            console.log("Avdecoder", result.avDecoderStatus);
+                            if ((result.avDecoderStatus === "IDLE" || result.avDecoderStatus === "PAUSE") && Storage.get("applicationType") === "") {
+                                this.fireAncestors("$hideImage", 1);
+                            }
                         })
-                      })
-                   }).catch(err => {
-                     console.error(`error while setting the timer`)
-                   });
-                })
-            }
+                    })
+                }).catch(err => {
+                    console.error(`error while setting the timer`)
+                });
+            })
+        }
     }
 
     static _states() {
@@ -182,8 +182,8 @@ export default class SreenSaverScreen extends Lightning.Component {
                     });
                     this.tag('List').element.tag('Tick').visible = true
                     this.timerValue = this.options[this.tag('List').index].value//10 minutes
-                    this.timerValue = this.timerValue === "Off" ? "Off" : this.timerValue.substring(0,2) // 10
-                    console.log("TimerValue",this.timerValue)
+                    this.timerValue = this.timerValue === "Off" ? "Off" : this.timerValue.substring(0, 2) // 10
+                    console.log("TimerValue", this.timerValue)
                     appApi.SaveTimerValue(this.timerValue);// storing in persistence store
                     this.setTimerValue(this.timerValue);// enable and setinactivity process
                     this.fireAncestors('$screenSaverTime', this.options[this.tag('List').index].value)

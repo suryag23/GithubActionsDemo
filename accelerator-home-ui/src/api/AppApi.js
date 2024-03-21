@@ -2211,7 +2211,7 @@ export default class AppApi {
           resolve(result.value)
         })
         .catch(err => {
-          resolve('')
+          resolve("Off")
         })
     })
   }
