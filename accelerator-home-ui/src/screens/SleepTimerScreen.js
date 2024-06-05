@@ -79,17 +79,17 @@ export default class SleepTimerScreen extends Lightning.Component {
             }
         })
         this.tag('List').getElement(index).tag('Tick').visible = true
-        this.fireAncestors('$registerInactivityMonitoringEvents').then(res => {
+        this.fireAncestors('$registerInactivityMonitoringEvents').then(() => {
             this.fireAncestors('$resetSleepTimer', timeoutInterval);
         }).catch(err => {
-            console.error(`error while registering the inactivity monitoring event`)
+            console.error('error while registering the inactivity monitoring event' + JSON.stringify(err))
         })
 
         this._setState('Options')
     }
 
     _handleBack() {
-        if(!Router.isNavigating()){
+        if (!Router.isNavigating()) {
             Router.navigate('settings/other')
         }
     }

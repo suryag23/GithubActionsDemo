@@ -18,6 +18,7 @@
  **/
 import ThunderJS from 'ThunderJS';
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk';
 
 let instance = null
 
@@ -44,6 +45,7 @@ export default class Warehouse {
         resolve(true)
       }).catch(err => {
         this.ERR(this.callsign + " activate error: " + err)
+        Metrics.error(Metrics.ErrorType.OTHER,"WarehouseApiError", "Error in Thunder controller warehouseApi activate "+JSON.stringify(err), false, null)
         reject(err)
       });
     });
@@ -56,6 +58,7 @@ export default class Warehouse {
         resolve(true)
       }).catch(err => {
         this.ERR(this.callsign + " deactivate error: " + err)
+        Metrics.error(Metrics.ErrorType.OTHER,"WarehouseApiError", "Error in Thunder controller warehouseApi deactivate "+JSON.stringify(err), false, null)
         reject(err)
       });
     });
@@ -69,6 +72,7 @@ export default class Warehouse {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + " executeHardwareTest error: " + err)
+        Metrics.error(Metrics.ErrorType.OTHER,"WarehouseApiError", "Error while Thunder warehouseApi executeHardwareTest "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -82,6 +86,7 @@ export default class Warehouse {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + " internalReset error: " + err)
+        Metrics.error(Metrics.ErrorType.OTHER,"WarehouseApiError", "Error while Thunder warehouseApi internalReset "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -95,6 +100,7 @@ export default class Warehouse {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + " isClean error: " + err)
+        Metrics.error(Metrics.ErrorType.OTHER,"WarehouseApiError", "Error while Thunder warehouseApi isClean "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -108,6 +114,7 @@ export default class Warehouse {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + " lightReset error: " + err)
+        Metrics.error(Metrics.ErrorType.OTHER,"WarehouseApiError", "Error while Thunder warehouseApi lightReset "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -123,6 +130,7 @@ export default class Warehouse {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + " resetDevice error: " + err)
+        Metrics.error(Metrics.ErrorType.OTHER,"WarehouseApiError", "Error while Thunder warehouseApi resetDevice "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -136,6 +144,7 @@ export default class Warehouse {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + " setFrontPanelState error: " + err)
+        Metrics.error(Metrics.ErrorType.OTHER,"WarehouseApiError", "Error while Thunder warehouseApi setFrontPanelState "+JSON.stringify(err), false, null)
         reject(err)
       })
     })

@@ -18,7 +18,7 @@
  **/
 
 import { Lightning, Router, Language, Storage } from '@lightningjs/sdk'
-import { CONFIG } from '../../Config/Config'
+import { CONFIG, GLOBALS } from '../../Config/Config'
 import LanguageItem from '../../items/LanguageItem'
 import { availableLanguages } from '../../Config/Config'
 import AppApi from '../../api/AppApi'
@@ -146,14 +146,17 @@ export default class LanguageScreen extends Lightning.Component {
           }
         }
         _handleEnter() {
-          if (localStorage.getItem('Language') !== availableLanguages[this._Languages.tag('List').index]) {
-            localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index])
+          //need to verify
+          if (Language.get() !== availableLanguages[this._Languages.tag('List').index]) {
+            if ("ResidentApp" !== GLOBALS.selfClientName) {
+              FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log(`language set successfully`))
+            }
             let path = location.pathname.split('index.html')[0]
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html"
             let notification_url = location.origin + path + url
             console.log(notification_url)
             appApi.launchResident(notification_url, loader).catch(err => { })
-            appApi.setVisibility(Storage.get("selfClientName"), false)
+            appApi.setVisibility(GLOBALS.selfClientName, false)
             location.reload();
           }
         }

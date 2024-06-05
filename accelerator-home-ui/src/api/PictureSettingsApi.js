@@ -19,6 +19,7 @@
 
 import ThunderJS from "ThunderJS";
 import { CONFIG } from '../Config/Config'
+import {Metrics} from "@firebolt-js/sdk"
 
 /**
  * Class for ControlSettings thunder plugin apis.
@@ -81,6 +82,7 @@ export default class PictureSettingsApi {
             "Failed to activate tv.ControlSettings plugin: ",
             JSON.stringify(err)
           );
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error while Thunder Controller TvControlSettings activate "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -94,6 +96,7 @@ export default class PictureSettingsApi {
         resolve(result)
       }).catch(err => {
         console.log(`Error from getSettingsValue API for ${settingsName} : ${JSON.stringify(err)}`)
+        Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getSettings "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -107,6 +110,7 @@ export default class PictureSettingsApi {
         resolve(result)
       }).catch(err => {
         console.log(`Error from setSettingsValue API for ${settingsName} and value : ${value} | Error: ${JSON.stringify(err)}`)
+        Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings setSettings "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -129,6 +133,7 @@ export default class PictureSettingsApi {
         }
       }).catch(err => {
         console.log("getSupportedPictureModes Error: ",JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getSupportedPictureModes "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -146,6 +151,7 @@ export default class PictureSettingsApi {
         }
       }).catch(err => {
         console.log("Error from getSupportedColorTemps API: ", JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getColorTemperature "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -159,6 +165,7 @@ export default class PictureSettingsApi {
           resolve(result.pictureMode);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getPictureMode "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -174,6 +181,7 @@ export default class PictureSettingsApi {
           resolve(result);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings setPictureMode "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -187,6 +195,7 @@ export default class PictureSettingsApi {
           resolve(result.ColorTemperature.Selected);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getColorTemperature "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -202,6 +211,7 @@ export default class PictureSettingsApi {
           resolve(result);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings setColorTemperature "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -215,6 +225,7 @@ export default class PictureSettingsApi {
           resolve(result.Brightness.Setting);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getBrightness "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -230,6 +241,7 @@ export default class PictureSettingsApi {
           resolve(result);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings setBrightness "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -243,6 +255,7 @@ export default class PictureSettingsApi {
           resolve(result.Contrast.Setting);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getContrast "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -258,6 +271,7 @@ export default class PictureSettingsApi {
           resolve(result);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings setContrast "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -271,6 +285,7 @@ export default class PictureSettingsApi {
           resolve(result.Sharpness.Setting);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getSharpness "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -286,6 +301,7 @@ export default class PictureSettingsApi {
           resolve(result);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings setSharpness "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -299,6 +315,7 @@ export default class PictureSettingsApi {
           resolve(result.Saturation.Setting);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getSaturation "+ JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -314,6 +331,7 @@ export default class PictureSettingsApi {
           resolve(result);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings setSaturation "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -327,6 +345,7 @@ export default class PictureSettingsApi {
           resolve(result.Backlight.Setting);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings getBacklight "+JSON.stringify(err), false, null)
           reject(err);
         });
     });
@@ -342,6 +361,7 @@ export default class PictureSettingsApi {
           resolve(result);
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"PictureSettingsApiError", "Error in Thunder TvControlSettings setBacklight "+JSON.stringify(err), false, null)
           reject(err);
         });
     });

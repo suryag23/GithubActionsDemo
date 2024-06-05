@@ -18,8 +18,9 @@
  **/
 import { Lightning, Utils, Router, Language, Registry } from '@lightningjs/sdk'
 import AppApi from '../api/AppApi'
-import { CONFIG } from '../Config/Config'
+import { CONFIG, GLOBALS } from '../Config/Config'
 import Keymap from '../Config/Keymap'
+import FireBoltApi from '../api/firebolt/FireBoltApi'
 
 
 /** Class for top panel in home UI */
@@ -95,9 +96,15 @@ export default class TopPanel extends Lightning.Component {
     this.zone = null // declaring this variable to keep track of zone changes
     this.appApi = new AppApi()
 
-    this.appApi.getZone().then((res) => {
-      this.updateZone(res)
-    })
+    if ("ResidentApp" === GLOBALS.selfClientName) {
+      this.appApi.getZone().then((res) => {
+        this.updateZone(res)
+      })
+    }else {
+      FireBoltApi.get().localization.getTimeZone().then(timezone=>{
+        this.updateZone(timezone)
+      })
+    }
 
     this.zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   }

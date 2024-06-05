@@ -20,6 +20,7 @@ import { Lightning, Router } from '@lightningjs/sdk'
 import LightningPlayerControls from './LightningPlayerControl';
 import { CONFIG } from '../Config/Config';
 import ChannelOverlay from './ChannelOverlay';
+import {Metrics} from'@firebolt-js/sdk'
 
 let player = null
 let position = null
@@ -57,6 +58,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
       this.setVideoRect(0, 0, 1920, 1080)
     } catch (error) {
       console.error('Playback Failed ' + error)
+      Metrics.error(Metrics.ErrorType.MEDIA,"PlaybackError", "Playback Failed"+JSON.stringify(error), false, null)
     }
   }
 
@@ -120,7 +122,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
             nextTrack: 'nextTrack',
             prevTrack: 'prevTrack',
             seekFwd: 'seekFwd',
-            seekRwd:'seekRwd'
+            seekRwd: 'seekRwd'
           },
         },
       },
@@ -281,6 +283,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
       this.playerState = this.playerStatesEnum.idle
     } catch (error) {
       console.error('AAMPMediaPlayer is not defined')
+      Metrics.error(Metrics.ErrorType.MEDIA,"PlaybackError", "AAMPMediaPlayer is not defined" +JSON.stringify(error), false, null)
     }
   }
 
@@ -340,19 +343,20 @@ export default class AAMPVideoPlayer extends Lightning.Component {
       this.setVideoRect(0, 0, 1920, 1080)
     } catch (error) {
       console.error('Playback Failed ' + error)
+      Metrics.error(Metrics.ErrorType.MEDIA,"PlaybackError", "Playback Failed "+JSON.stringify(error), false, null)
     }
   }
 
   seekFwd() {
-    player.seek(position+10)
+    player.seek(position + 10)
   }
 
   seekRwd() {
-    player.seek(position-10)
+    player.seek(position - 10)
   }
 
   voiceSeek(time) {
-    player.seek(position+time)
+    player.seek(position + time)
   }
 
   nextTrack() {
@@ -370,6 +374,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
         this.setVideoRect(0, 0, 1920, 1080)
       } catch (error) {
         console.error('Playback Failed ' + error)
+        Metrics.error(Metrics.ErrorType.MEDIA,"PlaybackError", 'Playback Failed ' + JSON.stringify(error), false, null)
       }
     }
   }
@@ -389,6 +394,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
         this.setVideoRect(0, 0, 1920, 1080)
       } catch (error) {
         console.error('Playback Failed ' + error)
+        Metrics.error(Metrics.ErrorType.MEDIA,"PlaybackError", 'Playback Failed '+JSON.stringify(error), false, null)
       }
     }
   }
@@ -520,8 +526,7 @@ export default class AAMPVideoPlayer extends Lightning.Component {
       this.tag('ChannelName').visible = false
       this.tag('PlayerControls').showNextPrevious()
     }
-    if(this.data==undefined || this.data.length<=1)
-    {
+    if (this.data == undefined || this.data.length <= 1) {
       this.tag('PlayerControls').hideNextPrevious()
     }
   }

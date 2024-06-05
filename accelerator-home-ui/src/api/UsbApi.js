@@ -22,6 +22,7 @@ import { musicListInfo } from '../../static/data/MusicListInfo'
 import { videoListInfo } from '../../static/data/VideoListInfo'
 import { UsbInnerFolderListInfo } from '../../static/data/UsbInnerFolderListInfo'
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk'
 
 let thunder = ThunderJS(CONFIG.thunderConfig)
 
@@ -41,6 +42,7 @@ export default class UsbApi {
                     resolve(res)
                 }).catch(err => {
                     console.log('UsbAccess Plugin Activation Failed: ' + err)
+                    Metrics.error(Metrics.ErrorType.OTHER,"UsbApiError", "Error while Thunder Controller usbAccess activate "+JSON.stringify(err), false, null)
                     reject(err)
                 })
         })
@@ -57,6 +59,7 @@ export default class UsbApi {
                     resolve(res)
                 }).catch(err => {
                     console.log('UsbAccess Plugin Deactivation Failed: ' + err)
+                    Metrics.error(Metrics.ErrorType.OTHER,"UsbApiError",  "Error while Thunder Controller usbAccess deactivate "+JSON.stringify(err), false, null)
                     reject(err)
                 })
         })
@@ -66,13 +69,17 @@ export default class UsbApi {
     *  Function to create link for USB content
     */
     clearLink() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const systemcCallsign = 'org.rdk.UsbAccess'
             thunder
                 .call(systemcCallsign, 'clearLink')
                 .then(result => {
                     resolve(result)
-                }).catch(err => { resolve(false) })
+                }).catch(err => {
+                    console.error('UsbAccess Plugin ClearLink Failed: ' + JSON.stringify(err))
+                    Metrics.error(Metrics.ErrorType.OTHER,"UsbApiError",  "Error in Thunder usbAccess clearLink "+JSON.stringify(err), false, null)
+                    resolve(false)
+                })
         })
     }
 
@@ -80,13 +87,17 @@ export default class UsbApi {
     *  Function to create link for USB content
     */
     createLink() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const systemcCallsign = 'org.rdk.UsbAccess'
             thunder
                 .call(systemcCallsign, 'createLink')
                 .then(result => {
                     resolve(result)
-                }).catch(err => { resolve(false) })
+                }).catch(err => {
+                    console.error('UsbAccess Plugin CreateLink Failed: ' + JSON.stringify(err))
+                    Metrics.error(Metrics.ErrorType.OTHER,"UsbApiError", "Error in Thunder usbAccess createLink "+JSON.stringify(err), false, null)
+                    resolve(false)
+                })
         })
     }
 
@@ -95,23 +106,31 @@ export default class UsbApi {
     */
     getUsbFileList() {
         if (arguments.length === 0) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 const systemcCallsign = 'org.rdk.UsbAccess'
                 thunder
                     .call(systemcCallsign, 'getFileList')
                     .then(result => {
                         resolve(result.contents)
-                    }).catch(err => { resolve(false) })
+                    }).catch(err => {
+                        console.error('UsbAccess Plugin getFileList Failed: ' + JSON.stringify(err))
+                        Metrics.error(Metrics.ErrorType.OTHER,"UsbApiError", "Error in Thunder usbAccess getFileList "+JSON.stringify(err), false, null)
+                        resolve(false)
+                    })
             })
         } else {
 
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 const systemcCallsign = 'org.rdk.UsbAccess'
                 thunder
                     .call(systemcCallsign, 'getFileList', { "path": arguments[0] })
                     .then(result => {
                         resolve(result.contents)
-                    }).catch(err => { resolve(false) })
+                    }).catch(err => {
+                        console.error('UsbAccess Plugin getFileList Failed: ' + JSON.stringify(err))
+                        Metrics.error(Metrics.ErrorType.OTHER,"UsbApiError", "Error in Thunder usbAccess getFileList "+JSON.stringify(err), false, null)
+                        resolve(false)
+                    })
             })
 
         }
@@ -123,7 +142,7 @@ export default class UsbApi {
         let self = this;
         return new Promise((resolve, reject) => {
             self.clearLink().then(
-                result => {
+                () => {
                     self.createLink().then(
                         res => {
                             if (res.success) {
@@ -174,6 +193,7 @@ export default class UsbApi {
                 .catch(err => {
                     reject(err)
                     console.error(`Error while getting the mounted device ${JSON.stringify(err)}`);
+                    Metrics.error(Metrics.ErrorType.OTHER,"UsbApiError", "Error in Thunder usbAccess getMounted "+JSON.stringify(err), false, null)
                 });
         });
     }
@@ -255,4 +275,3 @@ export default class UsbApi {
         })
     }
 }
-

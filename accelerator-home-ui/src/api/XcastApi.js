@@ -19,6 +19,7 @@
 
 import ThunderJS from 'ThunderJS';
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk';
 
 /**
  * Class for Xcast thunder plugin apis.
@@ -82,11 +83,13 @@ export default class XcastApi {
             })
             .catch(err => {
               console.error('Enabling failure', err);
+              Metrics.error(Metrics.ErrorType.OTHER,"XcastApiError", "Error in Thunder Xcast enable  " + JSON.stringify(err), false, null)
               reject('Xcast enabling failed', err);
             });
         })
         .catch(err => {
           console.error('Activation failure', err);
+          Metrics.error(Metrics.ErrorType.OTHER,"XcastApiError", "Error in Thunder Controller Xcast activate "+JSON.stringify(err), false, null)
           reject('Xcast activation failed', err);
         });
     });
@@ -100,6 +103,7 @@ export default class XcastApi {
         })
         .catch(err => {
           console.log('Xdial error', err)
+          Metrics.error(Metrics.ErrorType.OTHER,"XcastApiError", "Error while fetching Thunder Xcast enable status"+JSON.stringify(err), false, null)
           reject(err)
         })
     })
@@ -112,22 +116,27 @@ export default class XcastApi {
         })
         .catch(err => {
           console.log('Xdial getFriendlyName error', err);
+          Metrics.error(Metrics.ErrorType.OTHER,"XcastApiError", "Error while getting Thunder Xcast FriendlyName "+JSON.stringify(err), false, null)
           reject(err)
         })
     })
   }
   setFriendlyName(name) {
-    return new Promise((resolve, reject) => {
-      this._thunder.call('org.rdk.Xcast', 'setFriendlyName', {friendlyname: name}).then(result => {
-        console.log("Xcast setFriendlyName: "+ name +" result: ",JSON.stringify(result))
+    return new Promise((resolve) => {
+      this._thunder.call('org.rdk.Xcast', 'setFriendlyName', { friendlyname: name }).then(result => {
+        console.log("Xcast setFriendlyName: " + name + " result: ", JSON.stringify(result))
         resolve(result);
-      }).catch(err => { console.error(err); resolve(false); });
+      }).catch(err => { 
+        console.error(err); resolve(false); 
+        Metrics.error(Metrics.ErrorType.OTHER,"XcastApiError", "Error while setting Thunder Xcast FriendlyName "+JSON.stringify(err), false, null)
+      });
     }).then(val => {
       console.log("The resolved value is:", val);
     })
-    .catch(error =>{
-      console.error("An error occurred:", error);
-    });
+      .catch(error => {
+        Metrics.error(Metrics.ErrorType.OTHER,"XcastApiError", "An error occurred: "+JSON.stringify(err), false, null)
+        console.error("An error occurred:", error);
+      });
   }
   /**
    *
@@ -143,12 +152,13 @@ export default class XcastApi {
    * Function to deactivate the Xcast plugin.
    */
   deactivate() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._thunder.call('org.rdk.Xcast', 'setEnabled', { enabled: false })
         .then(res => {
           resolve(res.success)
         })
         .catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER,"XcastApiError", "Error while setting Thunder Xcast enable "+JSON.stringify(err), false, null)
           console.log('Failed to close Xcast', err)
         })
     })
@@ -158,16 +168,19 @@ export default class XcastApi {
    * Function to notify the state of the app.
    */
   onApplicationStateChanged(params) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._thunder.call('org.rdk.Xcast.1', 'onApplicationStateChanged', params).then(result => {
         //console.log("XCastAPI onApplicationStateChanged Updating: "+ JSON.stringify(params) +" result: ",JSON.stringify(result))
         resolve(result);
-      }).catch(err => { console.error(err); resolve(false); });
+      }).catch(err => { 
+        console.error(err); resolve(false);
+        Metrics.error(Metrics.ErrorType.OTHER,"XcastApiError", "Error in Thunder Xcast.1 onApplicationStateChange "+JSON.stringify(err), false, null)
+      });
     });
   }
 
   static supportedApps() {
-    let xcastApps = { AmazonInstantVideo: 'Amazon', YouTube: 'YouTube', NetflixApp: 'Netflix' ,YouTubeKids:"YouTubeKids" , YouTubeTV:"YouTubeTV"};
+    let xcastApps = { AmazonInstantVideo: 'Amazon', YouTube: 'YouTube', NetflixApp: 'Netflix', YouTubeKids: "YouTubeKids", YouTubeTV: "YouTubeTV" };
     return xcastApps;
   }
 }

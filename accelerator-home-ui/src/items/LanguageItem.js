@@ -68,7 +68,7 @@ export default class LanguageItem extends SettingsItem {
         h: 32.5,
         src: Utils.asset('images/settings/Tick.png'),
         color: 0xffffffff,
-        visible: localStorage.getItem('Language') === item ? true : (item === 'English' && localStorage.getItem('Language') === null) ? true : false
+        visible: Language.get() === item ? true : (item === 'en' && Language.get() === null) ? true : false
       },
 
       Left: {

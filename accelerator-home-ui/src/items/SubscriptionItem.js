@@ -160,10 +160,12 @@ export default class SubscriptionItem extends Lightning.Component {
       console.log(this._item.url);
       let params = {
         url: this._item.url,
-        launchLocation: "gracenote" ,
+        launchLocation: "gracenote",
         appIdentifier: 'n:3'
       }
-      appApi.launchApp("YouTube", params).catch((err) => {});
+      appApi.launchApp("YouTube", params).catch((err) => {
+        console.log("Error in launching YouTube", JSON.stringify(err))
+      });
     }
   }
   _handleRight() {

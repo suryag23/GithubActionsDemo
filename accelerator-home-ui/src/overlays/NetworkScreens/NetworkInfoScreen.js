@@ -21,12 +21,9 @@ import { Lightning, Language } from '@lightningjs/sdk'
 import SettingsMainItem from '../../items/SettingsMainItem'
 import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
-import AppApi from '../../api/AppApi';
 import Network from '../../api/NetworkApi';
 import WiFi from '../../api/WifiApi';
 
-let appApi = new AppApi();
-var defaultInterface = "";
 var currentInterface = [];
 
 export default class NetworkInfo extends Lightning.Component {
@@ -254,16 +251,16 @@ export default class NetworkInfo extends Lightning.Component {
     }
 
     _active() {
-        this.onInterfaceStatusChangedCB = Network.get()._thunder.on(Network.get().callsign,'onInterfaceStatusChanged', data => {
+        this.onInterfaceStatusChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onInterfaceStatusChanged', () => {
             this.refreshDetails();
         })
-        this.onConnectionStatusChangedCB = Network.get()._thunder.on(Network.get().callsign,'onConnectionStatusChanged', data => {
+        this.onConnectionStatusChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onConnectionStatusChanged', () => {
             this.refreshDetails();
         })
-        this.onIPAddressStatusChangedCB = Network.get()._thunder.on(Network.get().callsign,'onIPAddressStatusChanged', data => {
+        this.onIPAddressStatusChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onIPAddressStatusChanged', () => {
             this.refreshDetails();
         })
-        this.onDefaultInterfaceChangedCB = Network.get()._thunder.on(Network.get().callsign,'onDefaultInterfaceChanged', data => {
+        this.onDefaultInterfaceChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onDefaultInterfaceChanged', () => {
             this.refreshDetails();
         })
     }

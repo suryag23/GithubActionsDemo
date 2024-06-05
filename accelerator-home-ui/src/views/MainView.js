@@ -21,7 +21,7 @@ import ListItem from '../items/ListItem.js'
 import ThunderJS from 'ThunderJS'
 import AppApi from '../api/AppApi.js'
 import UsbApi from '../api/UsbApi.js'
-import { CONFIG } from '../Config/Config.js'
+import { CONFIG, GLOBALS } from '../Config/Config.js'
 import XcastApi from '../api/XcastApi'
 import HomeApi from '../api/HomeApi.js'
 import GracenoteItem from '../items/GracenoteItem.js'
@@ -311,43 +311,31 @@ export default class MainView extends Lightning.Component {
 
     let appItems = this.homeApi.getAppListInfo()
     let data = this.homeApi.getPartnerAppsInfo()
-    let metroApps = this.homeApi.getOfflineMetroApps()
+    let metroApps = this.homeApi.getOnlineMetroApps()
     let showcaseApps = this.homeApi.getShowCaseApps()
 
     await this.homeApi.checkAppCompatability(appItems).then(res => {
       appItems = res
     })
 
-    await this.appApi.isConnectedToInternet()
-      .then(result => {
-        if (result) {
-          metroApps = this.homeApi.getOnlineMetroApps()
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
 
     let prop_apps = 'applications'
     let prop_displayname = 'displayName'
     let prop_uri = 'uri'
     let prop_apptype = 'applicationType'
-    let prop_url = 'url'
     let appdetails = []
     let appdetails_format = []
     let usbAppsArr = [];
-    let usbApps = 0
     try {
-      if (data != null && JSON.parse(data).hasOwnProperty(prop_apps)) {
+      if (data != null && Object.prototype.hasOwnProperty.call(JSON.parse(data), prop_apps)) {
         appdetails = JSON.parse(data).applications
         for (let i = 0; i < appdetails.length; i++) {
           if (
-            appdetails[i].hasOwnProperty(prop_displayname) &&
-            appdetails[i].hasOwnProperty(prop_uri) &&
-            appdetails[i].hasOwnProperty(prop_apptype)
+            Object.prototype.hasOwnProperty.call(appdetails[i], prop_displayname) &&
+            Object.prototype.hasOwnProperty.call(appdetails[i], prop_uri) &&
+            Object.prototype.hasOwnProperty.call(appdetails[i], prop_apptype)
           ) {
             usbAppsArr.push(appdetails[i])
-            usbApps++
           }
         }
 
@@ -384,7 +372,7 @@ export default class MainView extends Lightning.Component {
           this.fireAncestors("$hideImage", 0);
           console.log('onSignalChanged ', JSON.stringify(notification))
           if (notification.signalStatus !== 'stableSignal') {
-            this.appApi.setVisibility(Storage.get("selfClientName"), true)
+            this.appApi.setVisibility(GLOBALS.selfClientName, true)
             this.widgets.fail.notify({ title: this.tag('Inputs.Slider').items[this.tag('Inputs.Slider').index].data.displayName, msg: Language.translate("Input disconnected") })
             Router.focusWidget('Fail')
           }
@@ -443,15 +431,9 @@ export default class MainView extends Lightning.Component {
 
       return listener;
     }
-
-    Network.get()._thunder.on('org.rdk.Network.1', 'onIPAddressStatusChanged', notification => {
-      console.log('IP ADDRESS changed', JSON.stringify(notification))
-      if (notification.status === 'ACQUIRED') {
-        Storage.set('ipAddress', notification.ip4Address)
-        metroApps = this.homeApi.getOnlineMetroApps()
-      } else {
-        Storage.set('ipAddress', null)
-      }
+    Network.get()._thunder.on('org.rdk.Network.1', 'onInternetStatusChange', notification => {
+      console.log('on InternetStatus Change', JSON.stringify(notification))
+      this.refreshSecondRow()
     })
 
     await this.homeApi.checkAppCompatability(metroApps).then(res => {
@@ -470,17 +452,17 @@ export default class MainView extends Lightning.Component {
 
   _firstActive() {
     if (!Storage.get('UsbMedia')) {
-      this.usbApi.activate().then(res => {
+      this.usbApi.activate().then(() => {
         Storage.set('UsbMedia', 'ON')
         this.fireAncestors('$registerUsbMount')
       })
     } else if (Storage.get('UsbMedia') === 'ON') {
-      this.usbApi.activate().then(res => {
+      this.usbApi.activate().then(() => {
         this.fireAncestors('$registerUsbMount')
       })
     } else if (Storage.get('UsbMedia') === 'OFF') {
       // deactivate usb Plugin here
-      this.usbApi.deactivate().then((res) => {
+      this.usbApi.deactivate().then(() => {
         console.log(`disabled the Usb Plugin`);
       }).catch(err => {
         console.error(`error while disabling the usb plugin = ${err}`)
@@ -514,10 +496,12 @@ export default class MainView extends Lightning.Component {
       }
     })
   }
-
+  refreshSecondRow() {
+    this.metroApps = this.homeApi.getOnlineMetroApps()
+  }
   refreshFirstRow() {
     if (Storage.get('UsbMedia') === 'ON') {
-      this.usbApi.activate().then(res => {
+      this.usbApi.activate().then(() => {
         this.usbApi.getMountedDevices().then(result => {
           if (result.mounted.length === 1) {
             this.appItems = this.firstRowItems
@@ -530,7 +514,7 @@ export default class MainView extends Lightning.Component {
       this.appItems = this.tempRow
     } else {
       Storage.set('UsbMedia', 'ON')
-      this.usbApi.activate().then(res => {
+      this.usbApi.activate().then(() => {
         this.usbApi.getMountedDevices().then(result => {
           if (result.mounted.length === 1) {
             this.appItems = this.firstRowItems
@@ -775,12 +759,12 @@ export default class MainView extends Lightning.Component {
         _handleEnter() {
           console.log(this.tag('Inputs.Slider').items[this.tag('Inputs.Slider').index].data)
           this.hdmiApi.setHDMIInput(this.tag('Inputs.Slider').items[this.tag('Inputs.Slider').index].data)
-            .then(res => {
+            .then(() => {
               console.log('completed')
-              Storage.set('applicationType', 'HDMI');
+              GLOBALS.topmostApp = 'HDMI';
               const currentInput = this.tag('Inputs.Slider').items[this.tag('Inputs.Slider').index].data
               Storage.set("_currentInputMode", { id: currentInput.id, locator: currentInput.locator });
-              this.appApi.setVisibility(Storage.get("selfClientName"), false);
+              this.appApi.setVisibility(GLOBALS.selfClientName, false);
             })
             .catch(err => {
               console.log('failed', err)
@@ -897,9 +881,21 @@ export default class MainView extends Lightning.Component {
             launchLocation: "mainView",
             appIdentifier: appIdentifier
           }
-          this.appApi.launchApp(applicationType, params).catch(err => {
-            console.log("ApplaunchError: ", JSON.stringify(err), err)
-          });
+          await Network.get().isConnectedToInternet()
+            .then(result => {
+              if (result) {
+                this.appApi.launchApp(applicationType, params).catch(err => {
+                  console.log("ApplaunchError: ", JSON.stringify(err), err)
+                });
+              }
+              else {
+                this.widgets.fail.notify({ title: 'Network State', msg: 'Offline'})
+                Router.focusWidget('Fail')
+              }
+            })
+            .catch(err => {
+              console.log(err)
+            })
         }
       },
       class TVShows extends this {
@@ -1029,8 +1025,7 @@ export default class MainView extends Lightning.Component {
           if (applicationType == "FireboltApp") {
             FireBoltApi.get().discovery.launch(appId, intent).then(res => {
               console.log(res)
-              // HOME key press won't bring back RefUI.
-              Storage.set("applicationType", "FireboltApp")
+              GLOBALS.topmostApp = "FireboltApp";
             })
           }
           else {

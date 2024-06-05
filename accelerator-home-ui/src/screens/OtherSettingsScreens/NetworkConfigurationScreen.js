@@ -21,6 +21,7 @@ import SettingsMainItem from '../../items/SettingsMainItem'
 import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
 import Network from '../../api/NetworkApi'
+import { Metrics } from '@firebolt-js/sdk'
 
 export default class NetworkConfigurationScreen extends Lightning.Component {
     pageTransition() {
@@ -150,6 +151,7 @@ export default class NetworkConfigurationScreen extends Lightning.Component {
         this.onDefaultIfaceChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onDefaultInterfaceChanged', data => {
             this.$NetworkInterfaceText(data.newInterfaceName)
             this.tag('TestInternetAccess.Title').text.text = Language.translate('Test Internet Access: ')
+            Metrics.action("user", "User changed the network interface", null)
         });
 
         _newIPSettings = _currentIPSettings

@@ -21,7 +21,7 @@ import BluetoothApi from './../api/BluetoothApi'
 import HomeApi from '../api/HomeApi'
 import AppApi from '../api/AppApi'
 import Item from './../items/item'
-import { CONFIG } from '../Config/Config'
+import { CONFIG, GLOBALS } from '../Config/Config'
 import Keymap from '../Config/Keymap'
 
 /**
@@ -158,7 +158,6 @@ export default class SplashScreen extends Lightning.Component {
       .then(() => this._bt.getConnectedDevices())
       .then(() => {
         let paired = this._bt.pairedDevices
-        let connected = this._bt.connectedDevices
 
         if (paired.length > 0) {
           this.remotePaired = true
@@ -256,7 +255,7 @@ export default class SplashScreen extends Lightning.Component {
             stopMethod: 'immediate',
             actions: [{ p: 'alpha', v: { 0: 1, 1: 0 } }],
           })
-          myAnimation.on('finish', p => {
+          myAnimation.on('finish', () => {
             if (this.player) this.player.stop()
           })
           myAnimation.start()
@@ -292,9 +291,9 @@ export default class SplashScreen extends Lightning.Component {
           myAnimation.start()
         }
         _handleKey() {
-          Registry.setTimeout(()=>{
+          Registry.setTimeout(() => {
             Router.navigate('home', { path: 'settings' })
-          },(Router.isNavigating()?20:0));
+          }, (Router.isNavigating() ? 20 : 0));
         }
       },
       class AutoRemotePair extends this {
@@ -312,7 +311,7 @@ export default class SplashScreen extends Lightning.Component {
           let timer = setTimeout(() => {
             if (!connected)
               this.tag('AutoRemotePair.Description').text =
-                Language.translate('Please put the remote in pairing mode')+", "+ Language.translate('No device found')
+                Language.translate('Please put the remote in pairing mode') + ", " + Language.translate('No device found')
             setTimeout(() => {
               if (this.hasInternet == false) this._setState('ConnectivityScreen')
               else Router.navigate('home', { path: 'settings' })
@@ -320,7 +319,7 @@ export default class SplashScreen extends Lightning.Component {
           }, 10000)
           let error = () => {
             this.tag('AutoRemotePair.Description').text =
-              Language.translate('Please put the remote in pairing mode')+", "+Language.translate('No device found')
+              Language.translate('Please put the remote in pairing mode') + ", " + Language.translate('No device found')
             setTimeout(() => {
               if (this.hasInternet == false) this._setState('ConnectivityScreen')
               else Router.navigate('home', { path: 'settings' })
@@ -329,7 +328,7 @@ export default class SplashScreen extends Lightning.Component {
           myAnimation.start()
           setTimeout(() => {
             this.tag('AutoRemotePair.Description').text =
-            Language.translate('Please put the remote in pairing mode')+", "+ Language.translate("Scanning")+'...'
+              Language.translate('Please put the remote in pairing mode') + ", " + Language.translate("Scanning") + '...'
             const rotateAnimation = this.tag('AutoRemotePair.LoadingIcon').animation({
               duration: 1,
               repeat: -1,
@@ -457,13 +456,15 @@ export default class SplashScreen extends Lightning.Component {
         }
         _handleEnter() {
           if (this.tag('UISwitch.UIList').element._item.title != 'DEFAULT') {
-            this.appApi.launchResident(this.tag('UISwitch.UIList').element._item.uri, Storage.get("selfClientName")).catch(err => { })
+            this.appApi.launchResident(this.tag('UISwitch.UIList').element._item.uri, GLOBALS.selfClientName).catch(err => {
+              console.log(JSON.stringify(err));
+            })
           } else {
             if (this.remotePaired == false) this._setState('AutoRemotePair')
             else if (this.hasInternet == false) this._setState('ConnectivityScreen')
-            else Registry.setTimeout(()=>{
+            else Registry.setTimeout(() => {
               Router.navigate('home', { path: 'settings' })
-            },(Router.isNavigating()?20:0));
+            }, (Router.isNavigating() ? 20 : 0));
           }
         }
         $exit() {

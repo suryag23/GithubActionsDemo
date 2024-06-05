@@ -115,8 +115,8 @@ export default class Volume extends Lightning.Component {
         this.volTimeout = Registry.setTimeout(() => {
             this.unfocus()
         }, 2000)
-        if (this.setMute(((requestedState != undefined)?requestedState:!this.mute))) {
-            this._updateIcon(((requestedState != undefined)?requestedState:!this.mute))
+        if (this.setMute(((requestedState != undefined) ? requestedState : !this.mute))) {
+            this._updateIcon(((requestedState != undefined) ? requestedState : !this.mute))
         }
     }
 
@@ -154,7 +154,7 @@ export default class Volume extends Lightning.Component {
         return true;
     }
 
-    getMuteStatus = async (val) => {
+    getMuteStatus = async () => {
         let audioport = await this.getAudioPorts()
         for (let i = 0; i < audioport.length; i++) {
             if ((Storage.get("deviceType") == "tv" && audioport[i].startsWith("SPEAKER")) ||
@@ -200,20 +200,24 @@ export default class Volume extends Lightning.Component {
 
     getAudioPorts() {
         return new Promise((resolve, reject) => {
-        this.appApi.getConnectedAudioPorts().then(res => {
-            resolve(res.connectedAudioPorts)
-        })}).catch(err => {
-            console.error('Volume getConnectedAudioPorts error:', JSON.stringify(err, 3, null))
-            reject(false)
+            this.appApi.getConnectedAudioPorts().then(res => {
+                resolve(res.connectedAudioPorts)
+            }).catch(err => {
+                console.error('Volume getConnectedAudioPorts error:', JSON.stringify(err, 3, null))
+                reject(false)
+            })
         })
     }
 
-    updateIcon(audioport){
-        return new Promise((resolve,reject)=> {
+    updateIcon(audioport) {
+        return new Promise((resolve, reject) => {
             this.appApi.getMuted(audioport).then(result => {
                 this.mute = result.muted;
                 this._updateIcon(this.mute);
                 resolve(true)
+            }).catch(err => {
+                console.error('Volume updateIcon error:', JSON.stringify(err, 3, null))
+                reject(false)
             });
         })
     }

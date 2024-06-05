@@ -72,7 +72,7 @@ export default class ManageAppItem extends Lightning.Component {
 
     set info(data) {
         this.data = data
-        if (!data.hasOwnProperty('icon'))
+        if (!Object.prototype.hasOwnProperty.call(data, 'icon'))
             data.icon = "/images/apps/DACApp_455_255.png";
         if (data.icon.startsWith('/images')) {
             this.tag('Image').patch({
@@ -98,7 +98,7 @@ export default class ManageAppItem extends Lightning.Component {
         if (this._app.isUnInstalling) {
             this._app.isInstalled = !success
             this._app.isUnInstalling = false
-            let temp = await this.displayLabel().then((res) => {
+            await this.displayLabel().then(() => {
                 setTimeout(() => {
                     this.fireAncestors('$refreshManagedApps')
                 }, 500)
@@ -110,7 +110,7 @@ export default class ManageAppItem extends Lightning.Component {
     }
 
     displayLabel() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.tag("OverlayText").text.text = Language.translate("App Uninstalled")
             this.tag("Overlay").alpha = 0.7
             this.tag("OverlayText").alpha = 1
@@ -121,7 +121,7 @@ export default class ManageAppItem extends Lightning.Component {
 
     async myfireUNINSTALL() {
         this._app.isUnInstalling = await uninstallDACApp(this._app, this.tag('StatusProgress'))
-        if (!this._app.isUnInstalling && this._app.hasOwnProperty("errorCode")) {
+        if (!this._app.isUnInstalling && ("errorCode" in this._app)) {
             this.tag("OverlayText").text.text = Language.translate("Status") + ':' + this._app.errorCode;
             this.tag("Overlay").alpha = 0.7
             this.tag("OverlayText").alpha = 1
@@ -173,4 +173,3 @@ export default class ManageAppItem extends Lightning.Component {
         this.myfireUNINSTALL()
     }
 }
-

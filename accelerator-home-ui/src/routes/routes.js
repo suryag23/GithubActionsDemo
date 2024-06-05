@@ -47,6 +47,8 @@ import CameraStreamingScreen from '../screens/CameraStreamingScreen'
 import CameraStreamingScreenExitConfirmationScreen from '../screens/CameraStreamingScreenExitConfirmationScreen'
 import AlexaApi from '../api/AlexaApi.js'
 import { Storage } from '@lightningjs/sdk'
+import { Metrics } from '@firebolt-js/sdk'
+import { GLOBALS } from '../Config/Config.js'
 
 let api = null
 
@@ -73,7 +75,7 @@ export default {
     {
       path: 'settings',
       component: SettingsScreen,
-      widgets: ['Menu', 'Volume' , "AppCarousel"],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'failscreen',
@@ -82,17 +84,17 @@ export default {
     {
       path: 'videoplayer',
       component: LightningPlayerControls,
-      widgets: ['Volume' , "AppCarousel", "VideoInfoChange"]
+      widgets: ['Volume', "AppCarousel", "VideoInfoChange"]
     },
     {
       path: 'usb',
       component: UsbAppsScreen,
-      widgets: ['Menu', 'Volume' , "AppCarousel"],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'epg',
       component: EPGScreen,
-      widgets: ['Menu', 'Volume' , "AppCarousel"],
+      widgets: ['Menu', 'Volume', "AppCarousel"],
     },
     {
       path: 'apps',
@@ -102,12 +104,12 @@ export default {
     {
       path: 'usb/player',
       component: AAMPVideoPlayer,
-      widgets: ['Volume',"SettingsOverlay", "AppCarousel"]
+      widgets: ['Volume', "SettingsOverlay", "AppCarousel"]
     },
     {
       path: 'usb/image',
       component: ImageViewer,
-      widgets: ['Volume' , "AppCarousel" ]
+      widgets: ['Volume', "AppCarousel"]
     },
     {
       path: 'image',
@@ -131,7 +133,7 @@ export default {
         }
         return Promise.resolve()
       },
-      widgets: ['Menu', 'Fail', 'Volume', "AppCarousel","VideoInfoChange"],
+      widgets: ['Menu', 'Fail', 'Volume', "AppCarousel", "VideoInfoChange"],
     },
     {
       path: 'tv-overlay/:type',
@@ -143,12 +145,12 @@ export default {
     {
       path: 'applauncher',
       component: AppLauncherScreen,
-      widgets: ['Volume','SettingsOverlay', "AppCarousel"] //other overlays needs to be added to improve ovelay functionality.
+      widgets: ['Volume', 'SettingsOverlay', "AppCarousel"] //other overlays needs to be added to improve ovelay functionality.
     },
     {
       path: 'player',
       component: AAMPVideoPlayer,
-      widgets: ['Volume',"SettingsOverlay", "AppCarousel"]
+      widgets: ['Volume', "SettingsOverlay", "AppCarousel"]
     },
     {
       path: 'camera/player',
@@ -160,9 +162,9 @@ export default {
       component: CameraStreamingScreenExitConfirmationScreen,
     },
     {
-      path:'dtvplayer',
+      path: 'dtvplayer',
       component: DTVPlayer,
-      widgets: ['Volume', 'TvOverlays', 'ChannelOverlay',"SettingsOverlay", "AppCarousel"]
+      widgets: ['Volume', 'TvOverlays', 'ChannelOverlay', "SettingsOverlay", "AppCarousel"]
     },
     {
       path: '!',
@@ -194,9 +196,15 @@ export default {
     }
   ],
   afterEachRoute: (request) => {
-    if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-      AlexaApi.get().reportApplicationState(request.hash, true);
+    console.log("Routed to:" + JSON.stringify(request.hash));
+    if ("ResidentApp" !== GLOBALS.selfClientName) {
+      Metrics.page(request.hash)
+      .then(success => {
+        console.log("successfully routed to page  ==>", request.hash)
+      })
+      .catch(err => console.log("error in metrics.page", err))
     }
+    AlexaApi.get().reportApplicationState(request.hash, true);
     if (request.hash === "menu") {
       /* To prevent the onboarding screen appearing next time. */
       Storage.set("setup", true);

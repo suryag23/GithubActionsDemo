@@ -31,28 +31,29 @@ const themeOptions = {
   },
 }
 
-const language = {
-  English: {
+export const languages = {
+  en: {
     id: 'en',
     fontSrc: 'Play/Play-Regular.ttf',
     font: 'Play'
   },
-  Spanish: {
-    id: 'sp',
+  es: {
+    id: 'es',
     fontSrc: 'Play/Play-Regular.ttf',
     font: 'Play'
   },
 }
 
-export const availableLanguages = ['English', 'Spanish'];
+
+export const availableLanguages = ['en', 'es'];
 export const availableLanguageCodes = {
-  "English": "en-US",
-  "Spanish": "es-US"
+  "en": "en-US",
+  "es": "es-US"
 }
 
 export var CONFIG = {
   theme: themeOptions['partnerOne'],
-  language: (localStorage.getItem('Language') != null && availableLanguages.includes(localStorage.getItem('Language'))) ? language[localStorage.getItem('Language')] : language['English'],
+  language:localStorage.getItem('Language') != null ? localStorage.getItem('Language') :'en',
   thunderConfig: {
     host: '127.0.0.1',
     port: 9998,
@@ -63,5 +64,20 @@ export var CONFIG = {
       'org.rdk.UsbAccess': 2,
       'org.rdk.DisplaySettings': 2,
     }
+  }
+}
+
+export const GLOBALS = {
+  _constantselfClientName: window.__firebolt && window.__firebolt.endpoint !== undefined ? "FireboltMainApp-refui" : "ResidentApp",
+  get selfClientName() {
+    return this._constantselfClientName;
+  },
+  _currentTopMostApp: localStorage.getItem('topmostApp') || (window.__firebolt && window.__firebolt.endpoint !== undefined ? "FireboltMainApp-refui" : "ResidentApp"),
+  get topmostApp() {
+    return this._currentTopMostApp;
+  },
+  set topmostApp(value) {
+    this._currentTopMostApp = value;
+    console.log('Setting current topmostApp as:' + this._currentTopMostApp);
   }
 }

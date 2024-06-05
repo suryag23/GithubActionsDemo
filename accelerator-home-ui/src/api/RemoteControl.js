@@ -18,6 +18,7 @@
  **/
 import ThunderJS from 'ThunderJS';
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk';
 
 let instance = null
 
@@ -41,10 +42,11 @@ export default class RCApi {
   activate() {
     return new Promise((resolve, reject) => {
       this.INFO("RCApi: activate.");
-      this.thunder.Controller.activate({ callsign: 'org.rdk.RemoteControl' }).then(result => {
+      this.thunder.Controller.activate({ callsign: 'org.rdk.RemoteControl' }).then(() => {
         resolve(true);
       }).catch(err => {
         this.ERR('RCApi: Error Activation ', err);
+        Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "Error while Thunder Controller RemoteControl activate "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -52,11 +54,12 @@ export default class RCApi {
 
   deactivate() {
     return new Promise((resolve, reject) => {
-      this.thunder.Controller.deactivate({ callsign: 'org.rdk.RemoteControl' }).then(res => {
+      this.thunder.Controller.deactivate({ callsign: 'org.rdk.RemoteControl' }).then(() => {
         this.INFO("RCApi: deactivated org.rdk.RemoteControl")
         resolve(true)
       }).catch(err => {
         this.ERR('RCApi: Error deactivation ', err)
+        Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "Error while Thunder Controller RemoteControl deactivate "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -70,6 +73,7 @@ export default class RCApi {
         resolve(result);
       }).catch(err => {
         this.ERR("RCApi: getApiVersionNumber error:", err);
+        Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "Error in Thunder RemoteControl getApiVersionNumber "+JSON.stringify(err), false, null)
         reject(err);
       });
     })
@@ -84,6 +88,7 @@ export default class RCApi {
         reject(false);
       }).catch(err => {
         this.ERR("RCApi: getNetStatus error:", err);
+        Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "Error in Thunder RemoteControl getNetStatus "+JSON.stringify(err), false, null)
         reject(err);
       });
     })
@@ -97,6 +102,7 @@ export default class RCApi {
         resolve(result.success);
       }).catch(err => {
         this.ERR("RCApi: startPairing error:", err);
+        Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "Error in Thunder RemoteControl startPairing "+JSON.stringify(err), false, null)
         reject(err);
       });
       resolve(true);
@@ -106,6 +112,7 @@ export default class RCApi {
   initializeIRDB() {
     return new Promise((resolve, reject) => {
       /*TODO: implement when requirement comes.*/
+      Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "NotImplemented", false, null)
       reject("NotImplemented")
     });
   }
@@ -113,6 +120,7 @@ export default class RCApi {
   clearIRCodes() {
     return new Promise((resolve, reject) => {
       /*TODO: implement when requirement comes.*/
+      Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "NotImplemented", false, null)
       reject("NotImplemented")
     });
   }
@@ -120,6 +128,7 @@ export default class RCApi {
   setIRCode() {
     return new Promise((resolve, reject) => {
       /*TODO: implement when requirement comes.*/
+      Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "NotImplemented", false, null)
       reject("NotImplemented")
     });
   }
@@ -127,6 +136,7 @@ export default class RCApi {
   getIRCodesByAutoLookup() {
     return new Promise((resolve, reject) => {
       /*TODO: implement when requirement comes.*/
+      Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "NotImplemented", false, null)
       reject("NotImplemented")
     });
   }
@@ -134,6 +144,7 @@ export default class RCApi {
   getIRCodesByNames() {
     return new Promise((resolve, reject) => {
       /*TODO: implement when requirement comes.*/
+      Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "NotImplemented", false, null)
       reject("NotImplemented")
     });
   }
@@ -141,6 +152,7 @@ export default class RCApi {
   getIRDBManufacturers() {
     return new Promise((resolve, reject) => {
       /*TODO: implement when requirement comes.*/
+      Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "NotImplemented", false, null)
       reject("NotImplemented")
     });
   }
@@ -148,6 +160,7 @@ export default class RCApi {
   getIRDBModels() {
     return new Promise((resolve, reject) => {
       /*TODO: implement when requirement comes.*/
+      Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "NotImplemented", false, null)
       reject("NotImplemented")
     });
   }
@@ -155,6 +168,7 @@ export default class RCApi {
   getLastKeypressSource() {
     return new Promise((resolve, reject) => {
       /*TODO: implement when requirement comes.*/
+      Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "NotImplemented", false, null)
       reject("NotImplemented")
     });
   }
@@ -168,6 +182,7 @@ export default class RCApi {
           resolve(result.success);
         }).catch(err => {
           this.ERR("RCApi: configureWakeupKeys error:", err);
+          Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "Error in Thunder RemoteControl configureWakeupKeys "+JSON.stringify(err), false, null)
           reject(err);
         });
     })
@@ -181,6 +196,7 @@ export default class RCApi {
         resolve(result.success);
       }).catch(err => {
         this.ERR("RCApi: findMyRemote error:", err);
+        Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError", "Error in Thunder RemoteControl findMyRemote "+JSON.stringify(err), false, null)
         reject(err);
       });
     })
@@ -194,6 +210,7 @@ export default class RCApi {
         resolve(result.success);
       }).catch(err => {
         this.ERR("RCApi: factoryReset error:", err);
+        Metrics.error(Metrics.ErrorType.OTHER,"RemoteControlApiError",  "Error in Thunder RemoteControl factoryReset "+JSON.stringify(err), false, null)
         reject(err);
       });
     })

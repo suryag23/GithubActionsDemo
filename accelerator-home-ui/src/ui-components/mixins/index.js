@@ -26,7 +26,7 @@ const patchTransitions = (element, transitions) => {
   if (!element._transitions) {
     element.transitions = transitions;
     return;
-  };
+  }
 
   for (let key in transitions) {
     if (!element._transitions[key]) {
@@ -35,7 +35,7 @@ const patchTransitions = (element, transitions) => {
   }
 };
 
-const collectChildren = (children, result=[]) => {
+const collectChildren = (children, result = []) => {
   if (children && children.length) {
     result.push(...children);
     return collectChildren(children.flatMap(child => child.children), result);

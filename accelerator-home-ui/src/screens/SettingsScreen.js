@@ -16,13 +16,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils, Language, Router, Storage, Settings } from '@lightningjs/sdk'
+import { Lightning, Utils, Language, Router, Storage } from '@lightningjs/sdk'
 import ThunderJS from 'ThunderJS';
 import { COLORS } from '../colors/Colors'
 import SettingsMainItem from '../items/SettingsMainItem'
 import { CONFIG } from '../Config/Config'
 import DTVApi from '../api/DTVApi';
 import AppApi from '../api/AppApi';
+import { Metrics } from '@firebolt-js/sdk';
 
 var thunder = ThunderJS(CONFIG.thunderConfig);
 
@@ -248,7 +249,6 @@ export default class SettingsScreen extends Lightning.Component {
   }
 
   _init() {
-    let self = this;
     this.appApi = new AppApi();
     this._setState('NetworkConfiguration')
   }
@@ -269,7 +269,7 @@ export default class SettingsScreen extends Lightning.Component {
     this.dtvApi = new DTVApi();
     this.dtvPlugin = false; //plugin availability
     if (Storage.get("deviceType") != "IpStb") {
-      this.dtvApi.activate().then((res) => {
+      this.dtvApi.activate().then(() => {
         this.dtvPlugin = true;
         this.tag("DTVSettings").alpha = 1;
       })
@@ -277,7 +277,7 @@ export default class SettingsScreen extends Lightning.Component {
   }
 
   _handleBack() {
-    if(!Router.isNavigating()){
+    if (!Router.isNavigating()) {
       Router.navigate('menu')
     }
   }
@@ -295,8 +295,8 @@ export default class SettingsScreen extends Lightning.Component {
           this._setState('Bluetooth')
         }
         _handleEnter() {
-          if(!Router.isNavigating()){
-          Router.navigate('settings/network')
+          if (!Router.isNavigating()) {
+            Router.navigate('settings/network')
           }
         }
       },
@@ -316,8 +316,8 @@ export default class SettingsScreen extends Lightning.Component {
         _handleLeft() {
         }
         _handleEnter() {
-          if(!Router.isNavigating()){
-          Router.navigate('settings/bluetooth')
+          if (!Router.isNavigating()) {
+            Router.navigate('settings/bluetooth')
           }
         }
       },
@@ -336,8 +336,8 @@ export default class SettingsScreen extends Lightning.Component {
           this._setState('Audio')
         }
         _handleEnter() {
-          if(!Router.isNavigating()){
-          Router.navigate('settings/video')
+          if (!Router.isNavigating()) {
+            Router.navigate('settings/video')
           }
         }
 
@@ -354,8 +354,8 @@ export default class SettingsScreen extends Lightning.Component {
           this._setState('Video')
         }
         _handleEnter() {
-          if(!Router.isNavigating()){
-          Router.navigate('settings/audio')
+          if (!Router.isNavigating()) {
+            Router.navigate('settings/audio')
           }
         }
         _handleDown() {
@@ -374,8 +374,8 @@ export default class SettingsScreen extends Lightning.Component {
           this._setState('Audio')
         }
         _handleEnter() {
-          if(!Router.isNavigating()){
-          Router.navigate('settings/other')
+          if (!Router.isNavigating()) {
+            Router.navigate('settings/other')
           }
         }
         _handleDown() {
@@ -408,6 +408,7 @@ export default class SettingsScreen extends Lightning.Component {
             }).catch(nerr => {
               console.error(`Netflix : error while updating nfrstatus`)
               console.error(nerr)
+              Metrics.error(Metrics.ErrorType.OTHER, 'PluginError', "Thunder Netflix.1 nfrstatus disabling error"+JSON.stringify(nerr), false, null)
             })
 
           }
@@ -420,6 +421,7 @@ export default class SettingsScreen extends Lightning.Component {
             }).catch(nerr => {
               console.error(`Netflix : error while updating nfrstatus `)
               console.error(nerr)
+              Metrics.error(Metrics.ErrorType.OTHER, 'PluginError', "Thunder Netflix.1 nfrstatus enabling error"+JSON.stringify(nerr), false, null)
             })
 
           }
@@ -453,13 +455,13 @@ export default class SettingsScreen extends Lightning.Component {
         _handleUp() {
           this._setState('NFRStatus')
         }
-        _handleDown(){
+        _handleDown() {
           if (this.dtvPlugin) {
             this._setState('DTVSettings')
           }
         }
         _handleEnter() {
-          if(!Router.isNavigating()){
+          if (!Router.isNavigating()) {
             Router.navigate('settings/bluetooth/RCVolumeInfoScreen')
           }
         }

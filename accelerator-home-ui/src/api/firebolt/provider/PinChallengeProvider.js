@@ -16,9 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Router, Storage, Settings } from '@lightningjs/sdk'
+import { Router, Storage } from '@lightningjs/sdk'
 import ThunderJS from 'ThunderJS';
-import { CONFIG } from '../../../Config/Config'
+import { CONFIG, GLOBALS } from '../../../Config/Config'
+import { Metrics } from '@firebolt-js/sdk';
 
 let thunder = ThunderJS(CONFIG.thunderConfig)
 
@@ -28,20 +29,20 @@ export default class PinChallengeProvider {
     if (!challenge) return
     console.log('Got challenge ' + JSON.stringify(challenge), "challenge")
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.showChallengeUi(challenge, resolve)
       session.focus()
     })
   }
 
   showChallengeUi(challenge, responder) {
-    console.log("Displaying showChallengeUi with: " + Storage.get("selfClientName"))
-    new Promise(async (resolve, reject) => {
-      let message=challenge.requestor.name + ' is requesting that you enter your ' + challenge.pinSpace + ' pin.'
-      let params={message:message, challenge:challenge, responder}
-      thunder.call('org.rdk.RDKShell', 'setVisibility', {client: Storage.get("selfClientName"), visible:true}).then(() => {
-        Router.navigate('settings/other/SecurityPinScreen',params)
-      })
+    console.log("Displaying showChallengeUi with: " + GLOBALS.selfClientName)
+    new Promise(async (resolve) => {
+      let message = challenge.requestor.name + ' is requesting that you enter your ' + challenge.pinSpace + ' pin.'
+      let params = { message: message, challenge: challenge, responder }
+      thunder.call('org.rdk.RDKShell', 'setVisibility', { client: GLOBALS.selfClientName, visible: true }).then(() => {
+        Router.navigate('settings/other/SecurityPinScreen', params)
+      }).catch(err => Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Thunder RDKShell set visibility error "+err, true, null))
       resolve(true)
     })
   }

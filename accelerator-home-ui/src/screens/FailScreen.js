@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Language, Lightning, Router } from "@lightningjs/sdk";
+import { Language,Registry, Lightning, Router } from "@lightningjs/sdk";
 import { CONFIG } from '../Config/Config'
 
 const errorTitle = 'Error Title'
@@ -29,6 +29,12 @@ export default class Failscreen extends Lightning.Component {
             this.tag('FailScreen.Title').text.text = args.title
             this.tag('FailScreen.Message').text.text = Language.translate(args.msg)
         }
+        if(args.count){
+            this.timeout = args.count;
+            }
+            else{
+                this.timeout =5
+            }
     }
 
     pageTransition() {
@@ -37,9 +43,6 @@ export default class Failscreen extends Lightning.Component {
 
     _focus() {
         this.alpha = 1
-        setTimeout(function () {
-            Router.focusPage()
-         }, 20000);
     }
 
     _unfocus() {
@@ -81,17 +84,17 @@ export default class Failscreen extends Lightning.Component {
                     },
                 },
                 RectangleDefault: {
-                    x: 0, y: 200, w: 200, mountX: 0.5, h: 50, rect: true, color: CONFIG.theme.hex,
-                    Ok: {
+                    x: 0, y: 200, w: 200, mountX: 0.5, h: 50, rect: true,color: 0x000000,
+                    Timer: {
                         x: 100,
                         y: 25,
                         mount: 0.5,
                         text: {
-                            text: Language.translate("OK"),
+                            text: "",
                             fontFace: CONFIG.language.font,
-                            fontSize: 22,
+                            fontSize: 25,
                         },
-                    }
+                    },
                 },
                 BorderBottom: {
                     x: 0, y: 300, w: 1558, h: 3, rect: true, mountX: 0.5,
@@ -105,9 +108,25 @@ export default class Failscreen extends Lightning.Component {
         this.tag('Pairing').text = error
     }
 
-
-    _handleEnter() {
-        Router.focusPage()
+    _active() {
+        this.tag('Timer').text.text =""
+        this.initTimer()
+    }
+    initTimer() {
+        this.timeInterval = Registry.setInterval(() => {
+            this.tag('Timer').text.text = this.timeout >= 10 ? `0:${this.timeout}` : `0:0${this.timeout}`
+            if (this.timeout > 0) {
+                --this.timeout
+            }
+            else {
+                Router.focusPage()
+            }
+        }, 1000)
+    }
+    _inactive() {
+        if (this.timeInterval) {
+            Registry.clearInterval(this.timeInterval)
+        }
     }
     _handleBack() {
         Router.focusPage()

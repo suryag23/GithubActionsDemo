@@ -1,8 +1,9 @@
 import { Language, Lightning, Utils } from "@lightningjs/sdk";
 import AppApi from "../../api/AppApi";
-import { CONFIG } from "../../Config/Config";
+import { CONFIG, GLOBALS } from "../../Config/Config";
 import TimeOverlayItems from "../../items/TimeOverlayItems";
 import TimeZoneOverlayItem from "../../items/TimeZoneOverlayItem";
+import FireBoltApi from "../../api/firebolt/FireBoltApi";
 
 export default class TimeZone extends Lightning.Component {
     /**
@@ -78,7 +79,12 @@ export default class TimeZone extends Lightning.Component {
         this.appApi = new AppApi()
         this.resp = await this.appApi.fetchTimeZone()
         let data = []
-        this.zone = await this.appApi.getZone()
+        if ("ResidentApp" === GLOBALS.selfClientName) {
+            this.zone = await this.appApi.getZone()
+        }else {
+            this.zone = await FireBoltApi.get().localization.getTimeZone()
+        }
+
         try {
             console.log(this.resp, this.zone)
             delete this.resp.Etc

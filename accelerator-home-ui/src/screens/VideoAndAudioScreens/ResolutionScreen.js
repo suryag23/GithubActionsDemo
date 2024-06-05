@@ -20,7 +20,8 @@ import { Lightning, Router, Utils, Storage, Language, Settings } from '@lightnin
 import VideoAndAudioItem from '../../items/VideoAndAudioItem'
 import AppApi from '../../api/AppApi'
 import thunderJS from 'ThunderJS';
-import { CONFIG } from '../../Config/Config';
+import { CONFIG, GLOBALS } from '../../Config/Config';
+import FireBoltApi from '../../api/firebolt/FireBoltApi';
 
 const thunder = thunderJS(CONFIG.thunderConfig)
 
@@ -142,8 +143,6 @@ export default class ResolutionScreen extends Lightning.Component {
                 console.log(`error while fetching the supported resolution ${err}`);
             })
         })
-
-
     }
 
     static _states() {

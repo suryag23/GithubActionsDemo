@@ -16,12 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Storage, Settings } from '@lightningjs/sdk'
+import { Language, Lightning } from '@lightningjs/sdk'
 import LanguageItem from '../../items/LanguageItem'
 import { availableLanguages } from '../../Config/Config'
 import AppApi from '../../api/AppApi';
 import thunderJS from 'ThunderJS';
-import { CONFIG } from '../../Config/Config'
+import { CONFIG, GLOBALS } from '../../Config/Config'
+import { Metrics } from '@firebolt-js/sdk';
 
 const appApi = new AppApi()
 const thunder = thunderJS(CONFIG.thunderConfig)
@@ -64,21 +65,22 @@ export default class LanguageScreen extends Lightning.Component {
       }
     })
     appApi.deactivateResidentApp(loader)
-    appApi.setVisibility(Storage.get("selfClientName"), true);
+    appApi.setVisibility(GLOBALS.selfClientName, true);
     thunder.call('org.rdk.RDKShell', 'moveToFront', {
-      client: Storage.get("selfClientName")
-    }).then(result => {
+      client: GLOBALS.selfClientName
+    }).then(() => {
       console.log('LanguageScreenOverlay: ResidentApp moveToFront Success');
     });
     thunder
       .call('org.rdk.RDKShell', 'setFocus', {
-        client: Storage.get("selfClientName")
+        client: GLOBALS.selfClientName
       })
-      .then(result => {
+      .then(() => {
         console.log('LanguageScreenOverlay: ResidentApp moveToFront Success');
       })
       .catch(err => {
         console.log('LanguageScreenOverlay: Error', err);
+        Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Thunder RDKShell Failed to moveToFront "+JSON.stringify(err), false, null)
       });
   }
 
@@ -101,14 +103,22 @@ export default class LanguageScreen extends Lightning.Component {
           this._navigate('up')
         }
         _handleEnter() {
-          if (localStorage.getItem('Language') !== availableLanguages[this._Languages.tag('List').index]) {
-            localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index])
+          //need to verify
+          if (Language.get() !== availableLanguages[this._Languages.tag('List').index]) {
+            if ("ResidentApp" !== GLOBALS.selfClientName) {
+              FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log(`language set successfully`))
+            } else {
+              appApi.setUILanguage(updatedLanguage)
+            }
+            localStorage.setItem('Language',availableLanguages[this._Languages.tag('List').index])
             let path = location.pathname.split('index.html')[0]
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html"
             let notification_url = location.origin + path + url
             console.log(notification_url)
-            appApi.launchResident(notification_url, loader).catch(err => { })
-            appApi.setVisibility(Storage.get("selfClientName"), false)
+            appApi.launchResident(notification_url, loader).catch(err => {
+              console.log("Error launchResident: " + JSON.stringify(err))
+            })
+            appApi.setVisibility(GLOBALS.selfClientName, false)
             location.reload();
           }
         }

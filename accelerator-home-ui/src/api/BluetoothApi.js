@@ -18,6 +18,7 @@
  **/
 import ThunderJS from 'ThunderJS'
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk'
 
 /**
  * Class for Bluetooth thunder plugin apis.
@@ -37,42 +38,44 @@ export default class BluetoothApi {
    * Function to activate the Bluetooth plugin
    */
 
- btactivate() {
-  return new Promise((resolve, reject) => {
-    this.callsign = 'org.rdk.Bluetooth'
-    this._thunder
-      .call('Controller', 'activate', { callsign: this.callsign })
-      .then(result => {
-        resolve(true)
-      }).catch(err => {
-        reject(err)
-      })
-  })
-}
+  btactivate() {
+    return new Promise((resolve, reject) => {
+      this.callsign = 'org.rdk.Bluetooth'
+      this._thunder
+        .call('Controller', 'activate', { callsign: this.callsign })
+        .then(() => {
+          resolve(true)
+        }).catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Controller Bluetooth activate "+JSON.stringify(err), false, null)
+          reject(err)
+        })
+    })
+  }
 
-deactivateBluetooth(){
-  return new Promise((resolve, reject) => {
-    this.callsign = 'org.rdk.Bluetooth'
-    this._thunder
-      .call('Controller', 'deactivate', { callsign: this.callsign })
-      .then(result => {
-        resolve(true)
-      }).catch(err => {
-        reject(err)
-      })
-  })
-}
+  deactivateBluetooth() {
+    return new Promise((resolve, reject) => {
+      this.callsign = 'org.rdk.Bluetooth'
+      this._thunder
+        .call('Controller', 'deactivate', { callsign: this.callsign })
+        .then(() => {
+          resolve(true)
+        }).catch(err => {
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Controller Bluetooth deactivate "+JSON.stringify(err), false, null)
+          reject(err)
+        })
+    })
+  }
 
   activate() {
     return new Promise((resolve, reject) => {
       this.callsign = 'org.rdk.Bluetooth'
       this._thunder
         .call('Controller', 'activate', { callsign: this.callsign })
-        .then(result => {
+        .then(() => {
           this.btStatus = true
           this._thunder.on(this.callsign, 'onDiscoveredDevice', notification => {
             // this.getDiscoveredDevices().then(() => {
-              this._events.get('onDiscoveredDevice')(notification)
+            this._events.get('onDiscoveredDevice')(notification)
             // })
           })
           this._thunder.on(this.callsign, 'onStatusChanged', notification => {
@@ -105,6 +108,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('Activation failure', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Controller Bluetooth activate "+JSON.stringify(err), false, null)
           reject('Bluetooth activation failed', err)
         })
     })
@@ -131,7 +135,7 @@ deactivateBluetooth(){
    * Function to disable the Bluetooth stack.
    */
   disable() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._thunder
         .call('org.rdk.Bluetooth', 'disable')
         .then(result => {
@@ -140,6 +144,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error(`Can't disable : ${JSON.stringify(err)}`)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth disable "+JSON.stringify(err), false, null)
         })
     })
   }
@@ -157,6 +162,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error(`Can't enable : ${JSON.stringify(err)}`)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth enable "+JSON.stringify(err), false, null)
           reject()
         })
     })
@@ -181,6 +187,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('Error', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth startScan "+JSON.stringify(err), false, null)
           reject()
         })
     })
@@ -202,6 +209,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('Error', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth startScan "+JSON.stringify(err), false, null)
           reject(err)
         })
     })
@@ -220,6 +228,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('Error', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth stopScan "+JSON.stringify(err), false, null)
           reject()
         })
     })
@@ -229,7 +238,7 @@ deactivateBluetooth(){
    * Function returns the discovered Bluetooth devices.
    */
   getDiscoveredDevices() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._thunder
         .call('org.rdk.Bluetooth', 'getDiscoveredDevices')
         .then(result => {
@@ -238,6 +247,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error(`Can't get discovered devices : ${JSON.stringify(err)}`)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth getDiscoveredDevices "+JSON.stringify(err), false, null)
         })
     })
   }
@@ -258,6 +268,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error(`Can't get paired devices : ${err}`)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth getPairedDevices "+JSON.stringify(err), false, null)
           reject(false)
         })
     })
@@ -279,6 +290,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error(`Can't get connected devices : ${err}`)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth getConnectedDevices "+JSON.stringify(err), false, null)
           reject()
         })
     })
@@ -307,6 +319,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('Connection failed', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth connect "+JSON.stringify(err), false, null)
           reject()
         })
     })
@@ -330,6 +343,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('disconnect failed', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth disconnect "+JSON.stringify(err), false, null)
           reject()
         })
     })
@@ -340,7 +354,7 @@ deactivateBluetooth(){
    * @param {number} deviceId
    */
   unpair(deviceId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._thunder
         .call('org.rdk.Bluetooth', 'unpair', { deviceID: deviceId })
         .then(result => {
@@ -349,6 +363,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('unpair failed', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth unpair "+JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -368,6 +383,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('Error on pairing', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth pair "+JSON.stringify(err), false, null)
           reject()
         })
     })
@@ -393,6 +409,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error('Error on respondToEvent', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth respondToEvent "+JSON.stringify(err), false, null)
           reject()
         })
     })
@@ -402,7 +419,7 @@ deactivateBluetooth(){
    * Function to get the discoverable name of the Bluetooth plugin.
    */
   getName() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this._thunder.call('org.rdk.Bluetooth', 'getName').then(result => {
         resolve(result.name)
       })
@@ -421,6 +438,7 @@ deactivateBluetooth(){
         })
         .catch(err => {
           console.error(`Can't get connected devices : ${err}`)
+          Metrics.error(Metrics.ErrorType.OTHER, "BluetoothError", "Error while Thunder Bluetooth setAudioStream "+JSON.stringify(err), false, null)
           reject()
         })
     })

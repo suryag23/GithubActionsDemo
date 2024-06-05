@@ -18,7 +18,7 @@
  **/
 import { Lightning, Language, Settings, Storage } from '@lightningjs/sdk'
 import { COLORS } from '../../colors/Colors'
-import { CONFIG } from '../../Config/Config'
+import { CONFIG, GLOBALS } from '../../Config/Config'
 import AppApi from '../../api/AppApi.js';
 import NetworkApi from '../../api/NetworkApi'
 import FireBoltApi from '../../api/firebolt/FireBoltApi';
@@ -258,11 +258,11 @@ export default class DeviceInformationScreen extends Lightning.Component {
             this.tag("SerialNumber.Value").text.text = `${result.serialNumber}`;
         })
 
-        if ("ResidentApp" === Storage.get("selfClientName")) {
+        if ("ResidentApp" === GLOBALS.selfClientName) {
             this.appApi.getSystemVersions().then(res => {
                 this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.stbVersion} \nTime Stamp - ${res.stbTimestamp} `
             }).catch(err => {
-                console.error(`error while getting the system versions`)
+                console.error(`error while getting the system versions` + JSON.stringify(err))
             })
             this._network.isConnectedToInternet().then((result) => {
                 if (result.connectedToInternet === true) {
@@ -293,7 +293,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
                 console.log(`build verion${res.firmware.readable} Firebolt API Version - ${res.api.readable}`)
                 this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.firmware.readable} \nFirebolt API Version - ${res.api.readable} `
             }).catch(err => {
-                console.error(`error while getting the system versions from Firebolt.getversion API`)
+                console.error(`error while getting the system versions from Firebolt.getversion API` + JSON.stringify(err))
             })
             FireBoltApi.get().localization.countryCode().then(res => {
                 this.tag('Location.Value').text.text = `CountryCode: ${res}`;

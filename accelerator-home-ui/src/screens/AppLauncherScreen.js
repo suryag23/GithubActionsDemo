@@ -20,7 +20,8 @@
 import { Lightning, Registry, Router, Storage, Utils, Settings } from "@lightningjs/sdk";
 import ThunderJS from "ThunderJS";
 import AppApi from "../api/AppApi";
-import { CONFIG } from '../Config/Config'
+import { CONFIG, GLOBALS } from '../Config/Config'
+import { Metrics } from "@firebolt-js/sdk";
 
 //applauncher screen "will" be responsible for handling all overlays as widget and splash screens for apps(if required) | currently only handles settings overlay widget
 export default class AppLauncherScreen extends Lightning.Component {
@@ -81,6 +82,7 @@ export default class AppLauncherScreen extends Lightning.Component {
       "callsign": callsign
     }).catch(err => {
       console.error("failed to moveToFront : ", callsign, " ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front")
+      Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Thunder RDKShell failed to moveToFront"+JSON.stringify(err), false, null)
     })
   }
 
@@ -99,15 +101,15 @@ export default class AppLauncherScreen extends Lightning.Component {
 
   _handleKey() {
     console.log("AppLauncherScreen is in focus, returning focus to corresponding app")
-    if (Storage.get("applicationType") === Storage.get("selfClientName")) { //if appLauncher screen is in focus while on residentApp
-      this.appApi.zorder(Storage.get("selfClientName"));
-      this.appApi.setFocus(Storage.get("selfClientName"));
-      this.appApi.visible(Storage.get("selfClientName"), true);
+    if (GLOBALS.topmostApp === GLOBALS.selfClientName) { //if appLauncher screen is in focus while on residentApp
+      this.appApi.zorder(GLOBALS.selfClientName);
+      this.appApi.setFocus(GLOBALS.selfClientName);
+      this.appApi.visible(GLOBALS.selfClientName, true);
       Router.navigate(Storage.get("lastVisitedRoute"));
     } else { //when appLauncher screen is in focus while on other apps
-      this.appApi.zorder(Storage.get("applicationType"));
-      this.appApi.setFocus(Storage.get("applicationType"));
-      this.appApi.visible(Storage.get("applicationType"), true);
+      this.appApi.zorder(GLOBALS.topmostApp);
+      this.appApi.setFocus(GLOBALS.topmostApp);
+      this.appApi.visible(GLOBALS.topmostApp, true);
     }
   }
 }

@@ -40,7 +40,7 @@ export default class TvOverlayInputItem extends Lightning.Component {
         w: 1720,
         h: 90,
         Loader: {
-          zIndex:10,
+          zIndex: 10,
           h: 45,
           w: 45,
           x: 1720,
@@ -140,19 +140,19 @@ export default class TvOverlayInputItem extends Lightning.Component {
         .then((res) => {
           console.log("getHDMIDevices from input Item: ", JSON.stringify(res));
           if (res.length > 0) {
-            res.map((item, index) => {
+            res.map((item) => {
               if (item.id === this.uniqID.id) {
                 if (item.connected === "true") {
                   //to check if the current item is connected
                   this.hdmiApi
                     .setHDMIInput(item)
-                    .then((res) => {
+                    .then(() => {
                       console.log("input set to: ", JSON.stringify(item));
                       //to stop the loader and show tickmark
                       setTimeout(() => {
                         this.loadingAnimation.stop();
                         this.tag("Item.Loader").visible = false;
-                        Storage.set("_currentInputMode", {id:item.id, locator:item.locator});
+                        Storage.set("_currentInputMode", { id: item.id, locator: item.locator });
                         this.fireAncestors("$getInputs"); //getInputs will fetch the inputs from api,
                       }, minLoaderDuration);
                     })

@@ -3,15 +3,15 @@
     "default": "en",
     "names": {
       "en": "English",
-      "sp": "Spain"
+      "es": "Spanish"
     },
     "map": {
       "en-US": "en",
       "en-IN": "en",
       "en-GB": "en",
-      "es-ES": "sp"
+      "es-ES": "es"
     }
   },
   "en": "language/translations/en.json",
-  "sp": "language/translations/sp.json"
+  "es": "language/translations/es.json"
 }

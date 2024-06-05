@@ -36,11 +36,27 @@ export default class ListItem extends Lightning.Component {
         Image: {
         },
         Info: {},
+        DefaultImage : {
+         src : Utils.asset('/images/metroApps/offline.png'),
+         alpha :0,
+        }
       },
     }
   }
 
   _init() {
+    this.tag('Image').on('txError', () => {
+    this.tag('DefaultImage') .patch({
+      x : this.x,
+      y : this.y,
+      w : this.w,
+      h : this.h,
+      alpha : 1
+    })
+      })
+    this.tag('Image').on('txLoaded', () => {
+      this.tag('DefaultImage').alpha = 0
+        })
     this.tag('Shadow').patch({
       color: CONFIG.theme.hex,
       rect: true,
@@ -102,6 +118,16 @@ export default class ListItem extends Lightning.Component {
    * Function to change properties of item during focus.
    */
   _focus() {
+    if (this.tag('DefaultImage').alpha) {
+      this.tag('DefaultImage').patch({
+        x: this.x,
+        y: this.y,
+        w: this.w,
+        h: this.h,
+        zIndex: 1,
+        scale: this.focus,
+      })
+    }
     this.tag('Image').patch({
       x: this.x,
       y: this.y,
@@ -126,6 +152,14 @@ export default class ListItem extends Lightning.Component {
    * Function to change properties of item during unfocus.
    */
   _unfocus() {
+    if (this.tag('DefaultImage').alpha) {
+      this.tag('DefaultImage').patch({
+        w: this.w,
+        h: this.h,
+        scale: this.unfocus,
+        zIndex: 0
+      })
+    }
     this.tag('Image').patch({
       w: this.w,
       h: this.h,

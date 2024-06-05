@@ -17,12 +17,13 @@
  * limitations under the License.
  **/
 
-import { Lightning, Storage, Router, Registry, Settings } from "@lightningjs/sdk";
+import { Lightning, Storage, Router, Registry } from "@lightningjs/sdk";
 import AppApi from "../api/AppApi";
 import ThunderJS from "ThunderJS";
 import TvOverlaySettingsScreen from "./components/TvOverlaySettingsScreen";
 import TvOverlayInputScreen from "./components/TvOverlayInputScreen";
-import { CONFIG } from '../Config/Config';
+import { CONFIG, GLOBALS } from '../Config/Config';
+import { Metrics } from "@firebolt-js/sdk";
 
 var thunder = ThunderJS(CONFIG.thunderConfig);
 
@@ -99,21 +100,22 @@ export default class TvOverlayScreen extends Lightning.Component {
 
   _handleBack() {
     this._setState("IdleState");
-    console.log("currentApp: ", Storage.get("applicationType"));
+    console.log("currentApp: ", GLOBALS.topmostApp);
     setTimeout(() => {
-      if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
-        this.appApi.setVisibility(Storage.get("selfClientName"), false);
+      if (GLOBALS.topmostApp !== GLOBALS.selfClientName) {
+        this.appApi.setVisibility(GLOBALS.selfClientName, false);
         thunder
           .call("org.rdk.RDKShell", "moveToFront", {
-            client: Storage.get("applicationType"),
+            client: GLOBALS.topmostApp,
           })
-          .then((result) => {
+          .then(() => {
             thunder
               .call("org.rdk.RDKShell", "setFocus", {
-                client: Storage.get("applicationType"),
+                client: GLOBALS.topmostApp,
               })
               .catch((err) => {
                 console.log("Error", err);
+                Metrics.error(Metrics.ErrorType.OTHER, 'pluginError', `Thunder RDKShell setfocus error ${JSON.stringify(err)}`, false, null)
               });
           });
       } else {

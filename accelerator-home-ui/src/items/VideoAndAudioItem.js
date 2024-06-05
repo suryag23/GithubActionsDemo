@@ -64,7 +64,7 @@ export default class VideoAndAudioItem extends Lightning.Component {
   _handleEnter() {
     if (this.videoElement === true) {
       this.appApi.setResolution(this._item).catch(err => {
-        console.log(`there was an error while setting the resolution.`);
+        console.log(`there was an error while setting the resolution.` + JSON.stringify(err));
       });
     }
     else {

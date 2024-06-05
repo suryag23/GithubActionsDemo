@@ -26,8 +26,6 @@ import { UsbInnerFolderListInfo } from "../../static/data/UsbInnerFolderListInfo
 import UsbListItem from '../items/UsbListItem.js'
 import LightningPlayerControls from "../MediaPlayer/LightningPlayerControl"
 
-
-let isAudio = false;
 var usbApi = new UsbApi();
 
 export default class UsbAppsScreen extends Lightning.Component {
@@ -227,17 +225,17 @@ export default class UsbAppsScreen extends Lightning.Component {
   }
 
   _handleBack() {
-    if(!(this.cwd.length === 0)){
+    if (!(this.cwd.length === 0)) {
       let clone = [...this.cwd]
       clone.pop();
       let cwdname = clone.join("/");
-      usbApi.cd(cwdname).then(res => {
-      this.cwd.pop();
-      this.loadData();
+      usbApi.cd(cwdname).then(() => {
+        this.cwd.pop();
+        this.loadData();
       }).catch(err => {
-      console.error(`error while getting the usb contents; error = ${JSON.stringify(err)}`);
+        console.error(`error while getting the usb contents; error = ${JSON.stringify(err)}`);
       });
-    }else{
+    } else {
       Router.navigate('menu');
     }
   }
@@ -305,7 +303,7 @@ export default class UsbAppsScreen extends Lightning.Component {
             url: this.tag('Row1').element.data.uri,
             currentIndex: this.tag('Row1').element.idx,
             list: this.tag('Row1').items,
-            isUSB:true
+            isUSB: true
           })
         }
         _handleLeft() {
@@ -340,7 +338,7 @@ export default class UsbAppsScreen extends Lightning.Component {
             isAudio: true,
             list: this.tag('Row2').items,
             currentIndex: this.tag('Row2').element.idx,
-            isUSB:true
+            isUSB: true
           })
         }
         _handleRight() {
@@ -424,7 +422,7 @@ export default class UsbAppsScreen extends Lightning.Component {
         _handleEnter() {
           //do something after folder click.
           let dname = this.cwd.join("/") + "/" + this.tag('Row4').element.data.displayName;
-          usbApi.cd(dname).then(res => {
+          usbApi.cd(dname).then(() => {
 
             this.cwd.push(this.tag('Row4').element.data.displayName);
             // console.log(`loading the data from the directory ${this.cwd}
@@ -467,7 +465,7 @@ export default class UsbAppsScreen extends Lightning.Component {
   set params(args) {
     this.currentIndex = args.currentIndex
     this.thisDir = args.cwd
-}
+  }
 
   set Row1Items(items) {
     this.tag('Row1').items = items.map((info, idx) => {
@@ -620,22 +618,22 @@ export default class UsbAppsScreen extends Lightning.Component {
   }
 
   _focus() {
-    if (this.thisDir){
-      if( this.thisDir.length>0){
+    if (this.thisDir) {
+      if (this.thisDir.length > 0) {
         this.cwd = [...this.thisDir];
         let dname = this.cwd.join("/")
-          usbApi.cd(dname).then(res => {
-            this.loadData();
-            this._setState(this.traversableRows[this.index]+`.${this.currentIndex}`)//focus on first element
-          }).catch(err => {
-            console.error(`error while getting the usb contents; error = ${JSON.stringify(err)}`);
-          });
+        usbApi.cd(dname).then(() => {
+          this.loadData();
+          this._setState(this.traversableRows[this.index] + `.${this.currentIndex}`)//focus on first element
+        }).catch(err => {
+          console.error(`error while getting the usb contents; error = ${JSON.stringify(err)}`);
+        });
       }
-    }else{
+    } else {
       this.index = 0;
       this.traversableRows = [];
       this.cwd = [];
-      usbApi.retrieUsb().then(res => {
+      usbApi.retrieUsb().then(() => {
         this.loadData();
         this._setState(this.traversableRows[this.index])
       }).catch(err => {

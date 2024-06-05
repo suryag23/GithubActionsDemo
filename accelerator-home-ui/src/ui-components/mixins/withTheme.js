@@ -25,7 +25,7 @@ export default function withTheme(Base, theme) {
 
   return class extends Base {
     static get name() { return Base.name }
-    static get theme() { return _theme };
+    static get theme() { return _theme }
     get theme() { return _theme }
   }
 }

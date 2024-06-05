@@ -112,7 +112,7 @@ export function clone(target, object) {
 
   for (let key in object) {
     const value = object[key];
-    if (target.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(target, key)) {
       _clone[key] = getMergeValue(key, target, object);
     } else {
       _clone[key] = value;

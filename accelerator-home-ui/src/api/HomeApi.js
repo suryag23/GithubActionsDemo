@@ -19,6 +19,7 @@
 import { Storage } from "@lightningjs/sdk";
 import Network from "../api/NetworkApi";
 import AppApi from "./AppApi";
+import { GLOBALS } from "../Config/Config.js";
 import { appListInfo } from "./../../static/data/AppListInfo.js";
 import { tvShowsInfo } from "./../../static/data/TvShowsInfo.js";
 import { settingsInfo } from "./../../static/data/SettingsInfo.js";
@@ -29,7 +30,9 @@ import { uiInfo } from "./../../static/data/UIInfo";
 import { metroAppsInfo } from "./../../static/data/MetroAppsInfo.js";
 import { metroAppsInfoOffline } from "./../../static/data/MetroAppsInfoOffline.js";
 import { showCaseApps } from "../../static/data/LightningShowcase";
+import { Metrics } from "@firebolt-js/sdk";
 import xml2json from "@hendt/xml2json";
+import PersistentStoreApi from "./PersistentStore.js";
 
 let partnerApps = [];
 
@@ -124,9 +127,6 @@ export default class HomeApi {
     return metroAppsMetaData;
   }
 
-  getOfflineMetroApps() {
-    return JSON.parse(JSON.stringify(metroAppsInfoOffline));
-  }
 
   getOnlineMetroApps() {
     return JSON.parse(JSON.stringify(metroAppsInfo));
@@ -160,60 +160,82 @@ export default class HomeApi {
   }
 
   getMovieSubscriptions(id) {
-    return new Promise((resolve, reject) => {
-      appApi.fetchApiKey().then((res) => {
-        try {
-          fetch("http://feeds.tmsapi.com/v2/movies/" + id + ".xml?api_key=" + res)
-            .then(response => response.text())
-            .then((res) => {
-              resolve(xml2json(res));
-            });
-        } catch (err) {
-          console.log("API key not defined");
+    return new Promise((resolve) => {
+      PersistentStoreApi.get().getValue('gracenote', 'apiKey').then((res) => {
+        if (res && res.value && res.value !== undefined && res.value !== "") {
+          try {
+            fetch("http://feeds.tmsapi.com/v2/movies/" + id + ".xml?api_key=" + res.value)
+              .then(response => response.text())
+              .then((res) => {
+                resolve(xml2json(res));
+              });
+          } catch (err) {
+            console.log("API key not defined." + JSON.stringify(err));
+            Metrics.error(Metrics.ErrorType.OTHER,"ApiError", JSON.stringify(err), false, null)
+          }
         }
+      }).catch((err) => {
+        console.log("Gracenote Info not found." + JSON.stringify(err));
       });
     });
   }
 
   getAPIKey() {
-    return new Promise((resolve, reject) => {
-      appApi.fetchApiKey().then((res) => {
-        let [day, month, year] = [
-          new Date().getUTCDate(),
-          new Date().getUTCMonth(),
-          new Date().getUTCFullYear(),
-        ];
-        month += 1;
-        day = day.toString();
-        month = month.toString();
-        //fetch date time from the thunder plugins and pass it to the url
-        try {
-          fetch("http://data.tmsapi.com/v1.1/movies/airings?lineupId=USA-TX42500-X&startDateTime=" + year + "-" + month + "-" + day + "T08%3A00Z&includeAdult=false&imageSize=Lg&imageAspectTV=16x9&imageText=true&api_key=" + res)
-            .then((response) => response.json())
-            .then((response) => {
-              const ids = response.map((id) => id.program.rootId);
-              const filtered = response.filter(
-                ({ program }, index) => !ids.includes(program.rootId, index + 1)
-              );
-              resolve({
-                key: res,
-                data: filtered.slice(0, 20),
+    return new Promise((resolve) => {
+      PersistentStoreApi.get().getValue('gracenote', 'apiKey').then((res) => {
+        if (res && res.value && res.value !== undefined && res.value !== "") {
+          let [day, month, year] = [
+            new Date().getUTCDate(),
+            new Date().getUTCMonth(),
+            new Date().getUTCFullYear(),
+          ];
+          month += 1;
+          day = day.toString();
+          month = month.toString();
+          //fetch date time from the thunder plugins and pass it to the url
+          try {
+            fetch("http://data.tmsapi.com/v1.1/movies/airings?lineupId=USA-TX42500-X&startDateTime=" + year + "-" + month + "-" + day + "T08%3A00Z&includeAdult=false&imageSize=Lg&imageAspectTV=16x9&imageText=true&api_key=" + res.value)
+              .then((response) => response.json())
+              .then((response) => {
+                const ids = response.map((id) => id.program.rootId);
+                const filtered = response.filter(
+                  ({ program }, index) => !ids.includes(program.rootId, index + 1)
+                );
+                resolve({
+                  key: res.value,
+                  data: filtered.slice(0, 20),
+                });
+              })
+              .catch((err) => {
+                console.log("Gracenote: Incorrect API key or no data available" + JSON.stringify(err));
+                Metrics.error(Metrics.ErrorType.OTHER,"ApiError", JSON.stringify(err), false, null)
+                resolve({
+                  key: res.value,
+                  data: [],
+                });
               });
-            })
-            .catch((err) => {
-              console.log("Incorrect API key or no data available");
-              resolve({
-                key: res,
-                data: [],
-              });
+          } catch (err) {
+            console.error("Gracenote fetch failed." + JSON.stringify(err));
+            Metrics.error(Metrics.ErrorType.OTHER,"ApiError", JSON.stringify(err), false, null)
+            resolve({
+              key: res.value,
+              data: [],
             });
-        } catch (err) {
-          console.log("API key not defined");
+          }
+        } else {
+          console.error("Gracenote apiKey is invalid in PersistentStore.");
+          Metrics.error(Metrics.ErrorType.OTHER,"ApiError", JSON.stringify(err), false, null)
           resolve({
-            key: res,
+            key: "",
             data: [],
           });
         }
+      }).catch((err) => {
+        console.error("Gracenote apiKey not found in PersistentStore." + JSON.stringify(err));
+        resolve({
+          key: "",
+          data: [],
+        });
       });
     });
   }
@@ -225,8 +247,7 @@ export default class HomeApi {
         if (items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids") {
           callsign = "Cobalt"
         }
-        await appApi.getPluginStatus(callsign).then(res => {
-        }).catch(err => {
+        await appApi.getPluginStatus(callsign).catch(err => {
           console.log("Error:", err)
           items.splice(i, 1)
           i--
@@ -240,14 +261,13 @@ export default class HomeApi {
 
       let callsign = items[i].applicationType
       if (items[i].applicationType !== '') {
-        if ((items[i].applicationType === "FireboltApp") && (Storage.get("selfClientName") === "FireboltMainApp-refui")) {
+        if ((items[i].applicationType === "FireboltApp") && (GLOBALS.selfClientName === "FireboltMainApp-refui")) {
           callsign = "HtmlApp";
         }
         else if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
           callsign = "Cobalt"
         }
-        await appApi.getPluginStatus(callsign).then(res => {
-        }).catch(err => {
+        await appApi.getPluginStatus(callsign).catch(err => {
           console.log("Error:", err)
           items.splice(i, 1)
           i--

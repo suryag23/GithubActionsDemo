@@ -24,7 +24,7 @@ export default function withStyles(Base, styles, theme) {
 
   return class extends Base {
     static get name() { return Base.name }
-    static get styles() { return _styles };
+    static get styles() { return _styles }
     get styles() { return _styles }
   }
 }

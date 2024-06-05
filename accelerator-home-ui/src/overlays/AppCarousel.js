@@ -3,7 +3,7 @@ import ListItem from "../items/ListItem";
 import { List } from '@lightningjs/ui'
 import HomeApi from "../api/HomeApi";
 import AppApi from "../api/AppApi";
-
+import { GLOBALS } from "../Config/Config.js";
 
 export default class AppCarousel extends Lightning.Component {
 
@@ -60,96 +60,78 @@ export default class AppCarousel extends Lightning.Component {
 
     ]
   }
-  _focus() {
+  async _focus() {
     let self = this
     console.log("self.homeApi.getAppListInfo()", self.homeApi.getAppListInfo());
-    self.appApi.isConnectedToInternet()
-      .then(result => {
-        if (result) {
-          self.metroApps = self.homeApi.getOnlineMetroApps()
-          self.premiumApps = self.homeApi.getAppListInfo()
-          self.showcaseApps = self.homeApi.getShowCaseApps()
+    self.metroApps = self.homeApi.getOnlineMetroApps()
+    self.premiumApps = self.homeApi.getAppListInfo()
+    self.showcaseApps = self.homeApi.getShowCaseApps()
+    let order = Storage.get("appCarouselOrder")
+    console.log("order", order)
+    let apps = []
+    if (order) {
+      let storedApps = order.split(",")
+      storedApps.map(appIdentifier => {
+        let index;
+        if (appIdentifier.startsWith("s")) { // showcase apps
+          index = appIdentifier.split(":")[1]
+          apps.push(self.showcaseApps[index])
+          self.showcaseApps[index] = -1
+        }
+        else if (appIdentifier.startsWith("n")) { // native apps
+          index = appIdentifier.split(":")[1]
+          apps.push(self.premiumApps[index])
+          self.premiumApps[index] = -1
+        }
+        else if (appIdentifier.startsWith("m")) { // metro apps
+          index = appIdentifier.split(":")[1]
+          apps.push(self.metroApps[index])
+          self.metroApps[index] = -1
+        }
+      })
+      console.log("APPS ARRAY: ", apps)
+      self.premiumApps.map(papp => {
+        if (papp !== -1 && papp.uri != "USB") {
+          apps.push(papp)
+        }
+      })
+
+      self.metroApps.map(mapp => {
+        if (mapp !== -1) {
+          apps.push(mapp)
+        }
+      })
+
+      self.showcaseApps.map(sapp => {
+        if (sapp !== -1) {
+          apps.push(sapp)
+        }
+      })
+
+    }
+    else {
+      self.premiumApps = self.premiumApps.filter((e) => {
+        if (e.uri == "USB") {
+          return 0;
         }
         else {
-          self.metroApps = self.homeApi.getOfflineMetroApps()
-          self.premiumApps = self.homeApi.getAppListInfo()
-          self.showcaseApps = self.homeApi.getShowCaseApps()
+          return e
         }
-
       })
-      .catch(err => {
-        console.log(err)
-        self.metroApps = self.homeApi.getOfflineMetroApps()
-        self.premiumApps = self.homeApi.getAppListInfo()
-        self.showcaseApps = self.homeApi.getShowCaseApps()
-      }).then(async () => {
-        let order = Storage.get("appCarouselOrder")
-        console.log("order", order)
-        let apps = []
-        if (order) {
-          let storedApps = order.split(",")
-          storedApps.map(appIdentifier => {
-            let index;
-            if (appIdentifier.startsWith("s")) { // showcase apps
-              index = appIdentifier.split(":")[1]
-              apps.push(self.showcaseApps[index])
-              self.showcaseApps[index] = -1
-            }
-            else if (appIdentifier.startsWith("n")) { // native apps
-              index = appIdentifier.split(":")[1]
-              apps.push(self.premiumApps[index])
-              self.premiumApps[index] = -1
-            }
-            else if (appIdentifier.startsWith("m")) { // metro apps
-              index = appIdentifier.split(":")[1]
-              apps.push(self.metroApps[index])
-              self.metroApps[index] = -1
-            }
-          })
-          console.log("APPS ARRAY: ", apps)
-          self.premiumApps.map(papp => {
-            if (papp !== -1 && papp.uri != "USB") {
-              apps.push(papp)
-            }
-          })
+      apps = [...self.premiumApps, ...self.showcaseApps, ...self.metroApps]
+    }
 
-          self.metroApps.map(mapp => {
-            if (mapp !== -1) {
-              apps.push(mapp)
-            }
-          })
+    await this.homeApi.checkAppCompatability(apps).then(res => {
+      apps = res
+    })
 
-          self.showcaseApps.map(sapp => {
-            if (sapp !== -1) {
-              apps.push(sapp)
-            }
-          })
-
-        }
-        else {
-          self.premiumApps = self.premiumApps.filter((e) => {
-            if (e.uri == "USB") {
-              return 0;
-            }
-            else {
-              return e
-            }
-          })
-          apps = [...self.premiumApps, ...self.showcaseApps, ...self.metroApps]
-        }
-
-        await this.homeApi.checkAppCompatability(apps).then(res => {
-          apps = res
-        })
-
-        this.appItems = apps
-        self._setState("AppList.0")
-        this.patch({
-          smooth: {
-            y: 0
-          }
-        })
-      })
+    this.appItems = apps
+    self._setState("AppList.0")
+    this.patch({
+      smooth: {
+        y: 0
+      }
+    })
 
   }
 
@@ -167,10 +149,10 @@ export default class AppCarousel extends Lightning.Component {
 
   _handleBack() {
     let self = this;
-    if (Storage.get("applicationType") !== Storage.get("selfClientName")) { // if a non-resident app is on focus
-      self.appApi.zorder(Storage.get("applicationType"))
-      self.appApi.setFocus(Storage.get("applicationType"))
-      self.appApi.setVisibility(Storage.get("applicationType"), true)
+    if (GLOBALS.topmostApp !== GLOBALS.selfClientName) { // if a non-resident app is on focus
+      self.appApi.zorder(GLOBALS.topmostApp)
+      self.appApi.setFocus(GLOBALS.topmostApp)
+      self.appApi.setVisibility(GLOBALS.topmostApp, true)
     }
     Router.focusPage();
   }
@@ -199,7 +181,7 @@ export default class AppCarousel extends Lightning.Component {
             launchLocation: "mainView",
             appIdentifier: appIdentifier
           }
-          this.appApi.launchApp(applicationType, params).then(res => {
+          this.appApi.launchApp(applicationType, params).then(() => {
             Router.focusPage();
           }).catch(err => {
             console.log("ApplaunchError: ", err)

@@ -18,7 +18,7 @@
  **/
 import { Lightning, Language, Router, Settings, Storage } from '@lightningjs/sdk'
 import { COLORS } from '../../colors/Colors'
-import { CONFIG } from '../../Config/Config'
+import { CONFIG, GLOBALS } from '../../Config/Config'
 import AppApi from '../../api/AppApi.js';
 import NetworkApi from '../../api/NetworkApi'
 import FireBoltApi from '../../api/firebolt/FireBoltApi';
@@ -267,7 +267,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
             this.tag("SerialNumber.Value").text.text = `${result.serialNumber}`;
         })
 
-        if ("ResidentApp" === Storage.get("selfClientName")) {
+        if ("ResidentApp" === GLOBALS.selfClientName) {
             this.appApi.getSystemVersions().then(res => {
                 this.tag('FirmwareVersions.Value').text.text = `UI Version - ${Settings.get('platform', 'version')} \nBuild Version - ${res.stbVersion} \nTime Stamp - ${res.stbTimestamp} `
             }).catch(err => {
@@ -305,7 +305,7 @@ export default class DeviceInformationScreen extends Lightning.Component {
             }).catch(err => {
                 console.error(`error while getting the system versions from Firebolt.getversion API`)
             })
-            FireBoltApi.get().localization.countryCode().then(res=>{
+            FireBoltApi.get().localization.countryCode().then(res => {
                 this.tag('Location.Value').text.text = `CountryCode: ${res}`;
             })
         }
@@ -387,8 +387,8 @@ export default class DeviceInformationScreen extends Lightning.Component {
     }
 
     _handleBack() {
-        if(!Router.isNavigating()){
-        Router.navigate('settings/advanced/device')
+        if (!Router.isNavigating()) {
+            Router.navigate('settings/advanced/device')
         }
     }
 

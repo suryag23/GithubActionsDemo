@@ -22,8 +22,9 @@ import ConfirmAndCancel from '../items/ConfirmAndCancel'
 import PasswordSwitch from './PasswordSwitch'
 import { Keyboard } from '../ui-components/index'
 import { KEYBOARD_FORMATS } from '../ui-components/components/Keyboard'
-import WiFi, { WiFiError, WiFiState, WiFiStateMessages } from '../api/WifiApi'
+import WiFi, { WiFiError, WiFiState } from '../api/WifiApi'
 import Network from '../api/NetworkApi'
+import PersistentStoreApi from '../api/PersistentStore'
 
 export default class WifiPairingScreen extends Lightning.Component {
 
@@ -213,7 +214,7 @@ export default class WifiPairingScreen extends Lightning.Component {
       if (notification.code === WiFiError.INVALID_CREDENTIALS || notification.code === WiFiError.SSID_CHANGED) {
         console.log("INVALID_CREDENTIALS; deleting WiFi Persistence data.")
         WiFi.get().clearSSID().then(() => {
-          WiFi.get().deleteNameSpace()
+          PersistentStoreApi.get().deleteNamespace('wifi')
         });
         flag = 1
         this.onErrorCB.dispose()
@@ -221,10 +222,10 @@ export default class WifiPairingScreen extends Lightning.Component {
     })
     this.onWIFIStateChangedCB = WiFi.get().thunder.on(WiFi.get().callsign, 'onWIFIStateChanged', notification => {
       if (notification.state === WiFiState.CONNECTED) {
-        Network.get().setDefaultInterface("WIFI").then(resp => {
+        Network.get().setDefaultInterface("WIFI").then(() => {
           console.log("Successfully set WIFI as default interface.")
         }).catch(err => {
-          console.error("Could not set WIFI as default interface.")
+          console.error("Could not set WIFI as default interface." + JSON.stringify(err))
         });
         this.onWIFIStateChangedCB.dispose()
       }
@@ -232,11 +233,10 @@ export default class WifiPairingScreen extends Lightning.Component {
     WiFi.get().connect(false, this._item, password).then(() => {
       WiFi.get().saveSSID(this._item.ssid, password, this._item.security).then((response) => {
         if (response.result === 0 && response.success === true && flag === 0) {
-          WiFi.get().SaveSSIDKey(this._item.ssid).then((persistenceResponse) => { console.log(persistenceResponse) })
+          PersistentStoreApi.get().setValue('wifi', 'SSID', this._item.ssid)
         }
         else if (response.result !== 0) {
-          WiFi.get().clearSSID().then((response) => {
-          })
+          WiFi.get().clearSSID();
         }
       }).then(() => {
         // Immediate return causes some clash at plugin implementation level resulting not saving/connecting.

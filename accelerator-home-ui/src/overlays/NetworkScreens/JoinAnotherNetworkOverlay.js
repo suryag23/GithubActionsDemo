@@ -16,12 +16,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Language, Lightning, Router, Utils } from '@lightningjs/sdk'
+import { Language, Lightning, Utils } from '@lightningjs/sdk'
 import { CONFIG } from '../../Config/Config';
 import { Keyboard } from '../../ui-components/index'
 import { KEYBOARD_FORMATS } from '../../ui-components/components/Keyboard'
 import PasswordSwitch from '../../screens/PasswordSwitch';
 import WiFi from '../../api/WifiApi';
+import PersistentStoreApi from '../../api/PersistentStore';
 
 export default class JoinAnotherNetworkComponent extends Lightning.Component {
   handleDone() {
@@ -52,10 +53,10 @@ export default class JoinAnotherNetworkComponent extends Lightning.Component {
     WiFi.get().connect(false, device, passphrase).then(() => {
       WiFi.get().saveSSID(device.ssid, passphrase, device.security).then((response) => {
         if (response.result === 0 && response.success === true) {
-          WiFi.get().SaveSSIDKey(this._item.ssid)
+          PersistentStoreApi.get().setValue('wifi', 'SSID', this._item.ssid)
         } else if (response.result !== 0) {
           WiFi.get().clearSSID()
-          WiFi.get().deleteNameSpace()
+          PersistentStoreApi.get().deleteNamespace('wifi')
         }
       })
     })

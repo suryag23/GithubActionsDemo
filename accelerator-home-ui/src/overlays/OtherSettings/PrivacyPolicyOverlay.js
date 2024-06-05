@@ -16,12 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Language, Lightning } from '@lightningjs/sdk'
- import { COLORS } from '../../colors/Colors'
- import { CONFIG } from '../../Config/Config'
-import { Label } from '@lightningjs/ui-components'
+import { Language, Lightning } from '@lightningjs/sdk'
+import { COLORS } from '../../colors/Colors'
+import { CONFIG } from '../../Config/Config'
 
- const _privacyPolicy = `Privacy
+const _privacyPolicy = `Privacy
   Welcome to RDKCentral.com, a website owned and operated by RDK Management, LLC (“RDK Management,” “we,” or “us”). This privacy policy discloses the privacy practices for this website only, including an explanation of:
 
   the categories of personally identifiable information about you that may be collected and how that information is used;
@@ -108,12 +107,12 @@ import { Label } from '@lightningjs/ui-components'
 
   Address:  1701 JFK Boulevard, Philadelphia, PA 19103 U.S.A`
 
- export default class PrivacyPolicyScreen extends Lightning.Component {
-     static _template() {
+export default class PrivacyPolicyScreen extends Lightning.Component {
+    static _template() {
         return {
-            PrivacyPolicyScreenContents:{
-                h:810,
-                w:1720,
+            PrivacyPolicyScreenContents: {
+                h: 810,
+                w: 1720,
                 x: 200,
                 y: 270,
                 clipping: true,
@@ -145,17 +144,17 @@ import { Label } from '@lightningjs/ui-components'
                 }
             }
         }
-     }
+    }
 
-     _handleDown() {
-         if (this.tag("PrivacyPolicy").y > -2400) {
-             this.tag("PrivacyPolicy").y -= 35;
-         }
-     }
+    _handleDown() {
+        if (this.tag("PrivacyPolicy").y > -2400) {
+            this.tag("PrivacyPolicy").y -= 35;
+        }
+    }
 
-     _handleUp() {
-         if (this.tag("PrivacyPolicy").y <= 3) {
-             this.tag("PrivacyPolicy").y += 35;
-         }
-     }
- }
+    _handleUp() {
+        if (this.tag("PrivacyPolicy").y <= 3) {
+            this.tag("PrivacyPolicy").y += 35;
+        }
+    }
+}

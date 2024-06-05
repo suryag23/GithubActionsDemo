@@ -17,63 +17,138 @@
  * limitations under the License.
  **/
 
-import { Localization } from '@firebolt-js/sdk'
+import { Localization, Metrics } from '@firebolt-js/manage-sdk'
 
-export default class FBTLocalization{
-    additionalInfo()
-    {
+export default class FBTLocalization {
+
+    listen(event){
         return new Promise((resolve,reject)=>{
-        Localization.additionalInfo()
-        .then(info => {
-            console.log(info)
-            resolve(info)
-        })
+            Localization.listen(event, value => {
+                console.log("Firebolt listening to ",JSON.stringify(value))
+                resolve(value)
+                })
         .catch(err => {
-            console.error('firebolt Localization.additionalInfo error', err)
+            console.error('firebolt listen error', err)
+            Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
             reject(err)
-          })
-        })
-    }
-    countryCode()
-    {
-        return new Promise((resolve,reject)=>{
-        Localization.countryCode()
-        .then(code => {
-            console.log(code)
-            resolve(code)
-        })
-        .catch(err => {
-            console.error('firebolt Localization.countryCode error', err)
-            reject(err)
-          })
-        })
-    }
-    locality()
-    {
-        return new Promise((resolve,reject)=>{
-        Localization.locality()
-        .then(locality => {
-            console.log(locality)
-        })
-        .catch(err => {
-            console.error('firebolt Localization.locality error', err)
-            reject(err)
-          })
-        })
-    }
-    latlon()
-    {
-        return new Promise((resolve,reject)=>{
-        Localization.latlon()
-        .then(latlong => {
-            console.log(latlong)
-            resolve(latlon)
-        })
-        .catch(err => {
-            console.error('firebolt Localization.latlon error', err)
-            reject(err)
-          })
+            })
         })
     }
 
+    additionalInfo() {
+        return new Promise((resolve, reject) => {
+            Localization.additionalInfo()
+                .then(info => {
+                    console.log(info)
+                    resolve(info)
+                })
+                .catch(err => {
+                    console.error('firebolt Localization.additionalInfo error', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
+                    reject(err)
+                })
+        })
+    }
+    countryCode() {
+        return new Promise((resolve, reject) => {
+            Localization.countryCode()
+                .then(code => {
+                    console.log(code)
+                    resolve(code)
+                })
+                .catch(err => {
+                    console.error('firebolt Localization.countryCode error', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
+                    reject(err)
+                })
+        })
+    }
+    locality() {
+        return new Promise((resolve, reject) => {
+            Localization.locality()
+                .then(locality => {
+                    console.log(locality)
+                })
+                .catch(err => {
+                    console.error('firebolt Localization.locality error', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
+                    reject(err)
+                })
+        })
+    }
+    latlon() {
+        return new Promise((resolve, reject) => {
+            Localization.latlon()
+                .then(latlong => {
+                    console.log(latlong)
+                    resolve(latlong)
+                })
+                .catch(err => {
+                    console.error('firebolt Localization.latlon error', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
+                    reject(err)
+                })
+        })
+    }
+
+    language() {
+        return new Promise((resolve,reject)=>{
+            Localization.language()
+                .then(lang => {
+                    console.log('Localization.language :'+ lang)
+                    resolve(lang)
+                })
+                .catch(err => {
+                    console.error('firebolt Localization.language error :', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
+                    reject (err)
+                })
+        })
+    }
+
+    setlanguage(lang){
+        return new Promise((resolve,reject)=>{
+            Localization.language(lang)
+                .then(lang => {
+                    console.log('Localization.language :'+ lang)
+                    resolve(lang)
+                })
+                .catch(err => {
+                    console.error('firebolt Localization.language error :', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
+                    reject (err)
+                })
+        })
+
+    }
+
+    setTimeZone(zone){
+        return new Promise((resolve,reject)=>{
+            Localization.timeZone(zone)
+                .then(zone => {
+                    console.log('set Localization.timeZone :'+ zone)
+                    resolve(zone)
+                })
+                .catch(err => {
+                    console.error('firebolt set Localization.timeZone error :', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
+                    reject (err)
+                })
+        })
+    }
+
+    getTimeZone(){
+        return new Promise((resolve,reject)=>{
+            Localization.timeZone()
+                .then(zone => {
+                    console.log('get Localization.timeZone :'+ zone)
+                    resolve(zone)
+                })
+                .catch(err => {
+                    console.error('firebolt get Localization.timeZone error :', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LocalizationError", err, false, null)
+                    reject (err)
+                })
+        })
+    }
 }

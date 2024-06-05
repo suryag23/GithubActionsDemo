@@ -17,12 +17,14 @@
  * limitations under the License.
  **/
 import ThunderJS from 'ThunderJS';
-import { Router, Settings, Storage } from '@lightningjs/sdk';
+import { Language, Router, Settings, Storage } from '@lightningjs/sdk';
 import HDMIApi from './HDMIApi';
 import NetflixIIDs from "../../static/data/NetflixIIDs.json";
 import HomeApi from './HomeApi';
-import { availableLanguageCodes, CONFIG } from '../Config/Config';
+import { availableLanguageCodes, CONFIG, GLOBALS } from '../Config/Config.js';
 import AlexaApi from './AlexaApi.js';
+import { Metrics } from '@firebolt-js/sdk';
+import Network from './NetworkApi.js';
 
 const thunder = ThunderJS(CONFIG.thunderConfig)
 
@@ -53,52 +55,19 @@ export default class AppApi {
         })
         .catch(err => {
           console.error('AppAPI Cannot fetch time zone', err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system getTimeZones"+err, false, null)
           resolve({})
         })
     })
   }
 
-  isConnectedToInternet() {
-    return new Promise((resolve, reject) => {
-      let header = new Headers();
-      header.append('pragma', 'no-cache');
-      header.append('cache-control', 'no-cache');
-
-      fetch("https://example.com/index.html", { method: 'GET', headers: header, }).then(res => {
-        if (res.status >= 200 && res.status <= 300) {
-          console.log("AppAPI Connected to internet");
-          resolve(true)
-        } else {
-          console.log("AppAPI No Internet Available");
-          resolve(false)
-        }
-      }).catch(err => {
-        console.error("AppAPI Internet Check failed: No Internet Available");
-        resolve(false); //fail of fetch method needs to be considered as no internet
-      })
-    })
-  }
-
-  fetchApiKey() {
-    return new Promise((resolve) => {
-      thunder
-        .call('org.rdk.PersistentStore', 'getValue', { namespace: 'gracenote', key: 'apiKey' })
-        .then(result => {
-          resolve(result.value)
-        })
-        .catch(err => {
-          console.error("AppAPI PersistentStore getValue gracenote apiKey failed.");
-          resolve('')
-        })
-    })
-  }
 
   /**
    * Function to launch Html app.
    * @param {String} url url of app.
    */
   getIP() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.Controller.activate({ callsign: 'org.rdk.System' })
         .then(() => {
           thunder
@@ -107,12 +76,14 @@ export default class AppApi {
               resolve(result.success)
             })
             .catch(err => {
-              console.error("AppAPI System getDeviceInfo estb_ip failed.");
+              console.error("AppAPI System getDeviceInfo estb_ip failed." + JSON.stringify(err));
+              Metrics.error(Metrics.ErrorType.NETWORK, "Network Error", "Error in Thunder system getDeviceInfo"+JSON.stringify(err), false, null)
               resolve(false)
             })
         })
         .catch(err => {
-          console.error("AppAPI activate System failed.");
+          console.error("AppAPI activate System failed." + JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.NETWORK, "Network Error", "Error in Thunder system activation "+JSON.stringify(err), false, null)
         })
     })
   }
@@ -120,13 +91,14 @@ export default class AppApi {
   *  Function to get timeZone
   */
   getZone() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call('org.rdk.System', 'getTimeZoneDST')
         .then(result => {
           resolve(result.timeZone)
         })
         .catch(err => {
-          console.error('AppAPI System plugin getTimeZoneDST failed.');
+          console.error('AppAPI System plugin getTimeZoneDST failed.' + JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system getTimeZoneDST"+JSON.stringify(err), false, null)
           resolve(undefined)
         })
     })
@@ -134,16 +106,20 @@ export default class AppApi {
 
   setZone(zone) {
     console.log(zone)
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'setTimeZoneDST', { timeZone: zone })
         .then(result => {
           resolve(result.success)
         }).catch(err => {
-          console.error("AppAPI System plugin setTimeZoneDST failed.");
+          console.error("AppAPI System plugin setTimeZoneDST failed." + JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system setTimeZoneDSt"+JSON.stringify(err), false, null)
           resolve(false)
         })
-    }).catch(err => { })
+    }).catch(err => {
+      Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system setTimeZoneDST "+JSON.stringify(err), false, null)
+      console.error("AppAPI activate System failed." + JSON.stringify(err));
+    })
   }
 
 
@@ -155,6 +131,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI Controller plugin '" + plugin + "' status check failed.");
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system status "+JSON.stringify(err), false, null)
           reject(err)
         })
     })
@@ -165,7 +142,7 @@ export default class AppApi {
    * Function to get resolution of the display screen.
    */
   getResolution() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'getCurrentResolution', {
           "videoDisplay": "HDMI0"
@@ -174,7 +151,8 @@ export default class AppApi {
           resolve(result.resolution)
         })
         .catch(err => {
-          console.error("AppAPI DisplaySettings plugin getCurrentResolution failed.");
+          console.error("AppAPI DisplaySettings plugin getCurrentResolution failed." + JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "ApiError", "Error in Thunder displaySettings getCurrentResolution "+JSON.stringify(err), false, null)
           resolve('NA')
         });
     })
@@ -182,17 +160,21 @@ export default class AppApi {
   }
 
   activateDisplaySettings() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const systemcCallsign = "org.rdk.DisplaySettings"
       thunder.Controller.activate({ callsign: systemcCallsign })
         .then(res => {
+          resolve(res)
         })
-        .catch(err => { console.error(`AppAPI activate DisplaySettings failed.`) })
+        .catch(err => { 
+          console.error('AppAPI activate DisplaySettings failed.' + JSON.stringify(err)) 
+          Metrics.error(Metrics.ErrorType.OTHER, "ApiError", 'Error while Thunder Controller displaysettings activate '+JSON.stringify(err), false, null) // change from here on monday 
+        })
     });
   }
 
   getSupportedResolutions() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.Controller.activate({ callsign: 'org.rdk.DisplaySettings' })
         .then(() => {
           thunder
@@ -201,12 +183,14 @@ export default class AppApi {
               resolve(result.supportedResolutions)
             })
             .catch(err => {
-              console.error("AppAPI DisplaySettings getSupportedResolutions failed.");
+              console.error("AppAPI DisplaySettings getSupportedResolutions failed." + JSON.stringify(err));
+              Metrics.error(Metrics.ErrorType.OTHER, "ApiError", "Error in Thunder displaySettings getSupportedResolutions "+JSON.stringify(err), false, null)
               resolve(false)
             })
         })
         .catch(err => {
           console.error('AppAPI activate DisplaySettings Error', JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "ApiError", 'Error while Thunder Controller displaysettings activate '+JSON.stringify(err), false, null)
         })
     })
   }
@@ -215,7 +199,7 @@ export default class AppApi {
    * Function to set the display resolution.
    */
   setResolution(res) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.Controller.activate({ callsign: 'org.rdk.DisplaySettings' })
         .then(() => {
           thunder
@@ -228,12 +212,14 @@ export default class AppApi {
               resolve(result.success)
             })
             .catch(err => {
-              console.error("AppAPI DisplaySettings setCurrentResolution failed.");
+              console.error("AppAPI DisplaySettings setCurrentResolution failed." + JSON.stringify(err));
+              Metrics.error(Metrics.ErrorType.OTHER, "ApiError", 'Error in Thunder displaysettings setCurrentResolution '+JSON.stringify(err), false, null)
               resolve(false)
             })
         })
         .catch(err => {
           console.error('AppAPI activate DisplaySettings Error', JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "ApiError", 'Error while Thunder Controller displaysettings activate '+JSON.stringify(err), false, null)
         })
     })
   }
@@ -242,7 +228,7 @@ export default class AppApi {
    * Function to get HDCP Status.
    */
   getHDCPStatus() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.Controller.activate({ callsign: 'org.rdk.HdcpProfile' })
         .then(() => {
           thunder
@@ -252,12 +238,14 @@ export default class AppApi {
               resolve(result.HDCPStatus)
             })
             .catch(err => {
-              console.error("AppAPI HdcpProfile getHDCPStatus failed.");
+              console.error("AppAPI HdcpProfile getHDCPStatus failed." + JSON.stringify(err));
+              Metrics.error(Metrics.ErrorType.OTHER, "HDCPError", 'Error in Thunder HdcpProfile getHDCPStatus '+ JSON.stringify(err), false, null)
               resolve(false)
             })
         })
         .catch(err => {
           console.error('AppAPI activate HdcpProfile ', JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "HDCPError", 'Error while Thunder Controller HdcpProfile activate '+JSON.stringify(err), false, null)
         })
     })
   }
@@ -266,7 +254,7 @@ export default class AppApi {
    * Function to get TV HDR Support.
    */
   getTvHDRSupport() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.Controller.activate({ callsign: 'org.rdk.DisplaySettings' })
         .then(() => {
           thunder
@@ -276,11 +264,14 @@ export default class AppApi {
               resolve(result)
             })
             .catch(err => {
+              console.error("AppAPI DisplaySettings getTvHDRSupport failed." + JSON.stringify(err));
+              Metrics.error(Metrics.ErrorType.OTHER, "ApiError", 'Error in Thunder DisplaySettings getTvHDRSupport '+ JSON.stringify(err), false, null)
               resolve(false)
             })
         })
         .catch(err => {
           console.error('AppAPI activate DisplaySettings Error', JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "ApiError", 'Error while Thunder Controller DisplaySettings activate '+JSON.stringify(err), false, null)
         })
     })
   }
@@ -289,7 +280,7 @@ export default class AppApi {
    * Function to get settop box HDR Support.
    */
   getSettopHDRSupport() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.Controller.activate({ callsign: 'org.rdk.DisplaySettings' })
         .then(() => {
           thunder
@@ -300,11 +291,13 @@ export default class AppApi {
             })
             .catch(err => {
               console.error('AppAPI DisplaySettings getSettopHDRSupport failed ', JSON.stringify(err));
+              Metrics.error(Metrics.ErrorType.OTHER, "PluginError",'Error in Thunder DisplaySettings getSettopHDRSupport '+ JSON.stringify(err), false, null)
               resolve(false)
             })
         })
         .catch(err => {
           console.error('AppAPI activate DisplaySettings Error', JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", 'Error while Thunder Controller DisplaySettings activate '+ JSON.stringify(err), false, null)
         })
     })
   }
@@ -313,7 +306,7 @@ export default class AppApi {
    * Function to get HDR Format in use.
    */
   getHDRSetting() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.Controller.activate({ callsign: 'DisplayInfo' })
         .then(() => {
           thunder
@@ -324,11 +317,13 @@ export default class AppApi {
             })
             .catch(err => {
               console.error("AppAPI DisplayInfo hdrsetting failed : " + JSON.stringify(err));
+              Metrics.error(Metrics.ErrorType.OTHER, "PluginError", 'Error in fetching Thunder DisplayInfo hdrsetting '+ JSON.stringify(err), false, null)
               resolve(false)
             })
         })
         .catch(err => {
           console.log('AppAPI activate DisplayInfo Error', JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError",'Error while Thunder Controller DisplayInfo activate '+ JSON.stringify(err), false, null)
         })
     })
   }
@@ -337,7 +332,7 @@ export default class AppApi {
    * Function to get DRMs.
    */
   getDRMS() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.Controller.activate({ callsign: 'OCDM' })
         .then(() => {
           thunder
@@ -347,12 +342,14 @@ export default class AppApi {
               resolve(result)
             })
             .catch(err => {
-              console.error("AppAPI OCDM drms failed.");
+              console.error("AppAPI OCDM drms failed." + JSON.stringify(err));
+              Metrics.error(Metrics.ErrorType.OTHER, "OCDMError", 'Error in fetching Thunder OCDM drms '+ JSON.stringify(err), false, null)
               resolve(false)
             })
         })
         .catch(err => {
           console.error('AppAPI activate OCDM error:', JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "OCDMError", 'Error while Thunder Controller OCDM activate '+JSON.stringify(err), false, null)
         })
     })
   }
@@ -361,21 +358,22 @@ export default class AppApi {
    * Function to clear cache.
    */
   clearCache() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
-        .call(Storage.get("selfClientName"), 'delete', { path: ".cache" })
+        .call(GLOBALS.selfClientName, 'delete', { path: ".cache" })
         .then(result => {
           resolve(result)
         })
         .catch(err => {
           console.error("AppAPI ResidentApp delete cache failed.");
+          Metrics.error(Metrics.ErrorType.OTHER, "Cache failure", JSON.stringify(err), false, null)
           resolve(err)
         })
     })
   }
 
   async getAvailableTypes() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call('org.rdk.RDKShell', 'getAvailableTypes', {}).then(result => {
         // Include NativeApp as well as its not being included from backend.
         if (!result.types.includes("NativeApp")) result.types.push("NativeApp");
@@ -383,6 +381,7 @@ export default class AppApi {
         resolve(result.types)
       }).catch(err => {
         console.error("AppAPI ResidentApp delete cache failed.", err);
+        Metrics.error(Metrics.ErrorType.OTHER, "Cache failure", 'Error in fetching Thunder RDKShell getAvailableTypes '+  JSON.stringify(err), false, null)
         resolve(false)
       })
     })
@@ -465,7 +464,7 @@ export default class AppApi {
     }
 
     if (!preventInternetCheck) {
-      let internet = await this.isConnectedToInternet();
+      let internet = await Network.get().isConnectedToInternet();
       if (!internet) {
         Storage.set("appSwitchingInProgress", false);
         Router.navigate(Storage.get("lastVisitedRoute"));
@@ -473,7 +472,7 @@ export default class AppApi {
       }
     }
 
-    const currentApp = Storage.get("applicationType"); //get it from stack if required. | current app ==="" means residentApp
+    const currentApp = GLOBALS.topmostApp; //get it from stack if required. | current app ==="" means residentApp
 
     let pluginStatus, pluginState;// to check if the plugin is active, resumed, deactivated etc
     try {
@@ -518,6 +517,7 @@ export default class AppApi {
             await thunder.call("Netflix", "systemcommand", { command: url + IIDqueryString });
           } catch (err) {
             console.error("AppAPI Netflix systemcommand error: ", err);
+            Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in fetching Thunder Netflix systemcommand "+JSON.stringify(err), false, null)
           }
         }
         else {
@@ -526,6 +526,7 @@ export default class AppApi {
             await thunder.call("Netflix", "systemcommand", { command: IIDqueryString });
           } catch (err) {
             console.error("AppAPI Netflix systemcommand error: ", err);
+            Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in fetching Thunder Netflix systemcommand "+JSON.stringify(err), false, null)
           }
         }
       }
@@ -539,7 +540,7 @@ export default class AppApi {
     if (url && (callsign === "LightningApp" || callsign === "HtmlApp" || callsign === "NativeApp")) { //for lightning/htmlapp url is passed via rdkshell.launch method
       params.uri = url
     } else if (callsign.startsWith("YouTube")) {
-      let language = localStorage.getItem("Language");
+      let language = Language.get()
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US" //default to english US if language is not available.
       if (gracenoteUrl === null) {
         url = url ? url : Storage.get(callsign + "DefaultURL");
@@ -555,7 +556,7 @@ export default class AppApi {
           if (!url.endsWith("&")) {
             url += "&"
           }
-          url += ((Storage.get("applicationType") === callsign) ? "inApp=true" : "inApp=false")
+          url += ((GLOBALS.topmostApp === callsign) ? "inApp=true" : "inApp=false")
         }
         if (!url.includes("launch=")) {
           if (!url.endsWith("&")) {
@@ -581,17 +582,17 @@ export default class AppApi {
     }
 
     else if (callsign === "Amazon") {
-      let language = localStorage.getItem("Language");
+      let language = Language.get();
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US"
       params.configuration = { "deviceLanguage": language };
     }
     else if (callsign === "Netflix") {
-      let language = localStorage.getItem("Language");
+      let language = Language.get();
       language = availableLanguageCodes[language] ? availableLanguageCodes[language] : "en-US"
       params.configuration = { "language": language };
     }
 
-    if (!preventCurrentExit && (currentApp !== Storage.get("selfClientName")) && (currentApp !== callsign)) {
+    if (!preventCurrentExit && (currentApp !== GLOBALS.selfClientName) && (currentApp !== callsign)) {
       //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack
       try {
         console.log("AppAPI calling exitApp with params: " + callsign + " and exitInBackground " + currentApp + " true.")
@@ -599,18 +600,19 @@ export default class AppApi {
       }
       catch (err) {
         console.error("AppAPI currentApp " + currentApp + " exit failed!: launching new app...")
+        Metrics.error(Metrics.ErrorType.OTHER, "AppError",`exit failed! for ${currentApp} with ${JSON.stringify(err)}.So launching new app...`, false, null)
       }
     }
 
-    if ((currentApp === Storage.get("selfClientName")) && callsign !== "Netflix") { //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack | for netflix keep the splash screen visible till it launches
+    if ((currentApp === GLOBALS.selfClientName) && callsign !== "Netflix") { //currentApp==="" means currently on residentApp | make currentApp = "residentApp" in the cache and stack | for netflix keep the splash screen visible till it launches
       thunder.call('org.rdk.RDKShell', 'setVisibility', {
-        "client": Storage.get("selfClientName"),
+        "client": GLOBALS.selfClientName,
         "visible": false,
       })
     }
 
     if (callsign === "Netflix") { //special case for netflix to show splash screen
-      params.behind = Storage.get("selfClientName") //to make the app launch behind resident app | app will be moved to front after first frame event is triggered
+      params.behind = GLOBALS.selfClientName //to make the app launch behind resident app | app will be moved to front after first frame event is triggered
     }
     if (JSON.stringify(params.configuration) === '{}') {
       delete params.configuration;
@@ -624,9 +626,7 @@ export default class AppApi {
         thunder.call("org.rdk.RDKShell", "launchApplication", params).then(res => {
           console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
           if (res.success) {
-            if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-              AlexaApi.get().reportApplicationState(callsign);
-            }
+            AlexaApi.get().reportApplicationState(callsign);
             if (args.appIdentifier) {
               let order = Storage.get("appCarouselOrder")
               if (!order) {
@@ -641,20 +641,22 @@ export default class AppApi {
                 Storage.set("appCarouselOrder", storedApps.toString())
               }
             }
-            Storage.set("applicationType", callsign);
+            GLOBALS.topmostApp = callsign;
             Storage.set("appSwitchingInProgress", false);
             resolve(res);
           } else {
             console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res))
             Storage.set("appSwitchingInProgress", false);
             Router.navigate(Storage.get("lastVisitedRoute"));
+            Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell launchApplication " +JSON.stringify(res), false, null)
             reject(res)
           }
         }).catch(err => {
           console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back")
           thunder.call('org.rdk.RDKShell', 'kill', { "client": callsign });
-          this.launchResidentApp(Storage.get("selfClientName"));
+          this.launchResidentApp(GLOBALS.selfClientName);
           Storage.set("appSwitchingInProgress", false);
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell launchApplication " +JSON.stringify(err), false, null)
           Router.navigate(Storage.get("lastVisitedRoute"));
           reject(err)
         })
@@ -662,12 +664,10 @@ export default class AppApi {
         thunder.call("org.rdk.RDKShell", "launch", params).then(res => {
           console.log(`AppAPI ${callsign} : Launch results in ${JSON.stringify(res)}`)
           if (res.success) {
-            if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-              if ((callsign === "HtmlApp") || (callsign === "LightningApp")) {
-                AlexaApi.get().reportApplicationState(url);
-              } else {
-                AlexaApi.get().reportApplicationState(callsign);
-              }
+            if ((callsign === "HtmlApp") || (callsign === "LightningApp")) {
+              AlexaApi.get().reportApplicationState(url);
+            } else {
+              AlexaApi.get().reportApplicationState(callsign);
             }
             if (args.appIdentifier) {
               let order = Storage.get("appCarouselOrder")
@@ -690,6 +690,7 @@ export default class AppApi {
                 "callsign": callsign
               }).catch(err => {
                 console.error("AppAPI failed to moveToFront : ", callsign, " ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front")
+                Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell moveToFront " +JSON.stringify(err), false, null)
               })
             }
 
@@ -698,6 +699,7 @@ export default class AppApi {
               "callsign": callsign
             }).catch(err => {
               console.error("AppAPI failed to setFocus : ", callsign, " ERROR: ", JSON.stringify(err))
+              Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Error in Thunder RDKShell setFocus " +JSON.stringify(err), false, null)
             })
 
             thunder.call("org.rdk.RDKShell", "setVisibility", {
@@ -705,12 +707,13 @@ export default class AppApi {
               "visible": true
             }).catch(err => {
               console.error("AppAPI failed to setVisibility : ", callsign, " ERROR: ", JSON.stringify(err))
+              Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell setVisibility " +JSON.stringify(err), false, null)
             })
 
             if (callsign === "Netflix") {
               console.log("AppAPI Netflix launched: hiding residentApp");
               thunder.call('org.rdk.RDKShell', 'setVisibility', {
-                "client": Storage.get("selfClientName"),
+                "client": GLOBALS.selfClientName,
                 "visible": false,
               }); //if netflix splash screen was launched resident app was kept visible Netflix until app launched.
             }
@@ -726,20 +729,22 @@ export default class AppApi {
               thunder.call(callsign, 'deeplink', url)
             }
             Storage.set("appSwitchingInProgress", false);
-            Storage.set("applicationType", callsign);
+            GLOBALS.topmostApp = callsign;
             resolve(res);
           } else {
             console.error("AppAPI failed to launchApp(success false) : ", callsign, " ERROR: ", JSON.stringify(res))
             Storage.set("appSwitchingInProgress", false);
             Router.navigate(Storage.get("lastVisitedRoute"));
+            Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell launch " +JSON.stringify(err), false, null)
             reject(res)
           }
         }).catch(err => {
           console.error("AppAPI failed to launchApp: ", callsign, " ERROR: ", JSON.stringify(err), " | Launching residentApp back")
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell launch " +JSON.stringify(err), false, null)
 
           //destroying the app incase it's stuck in launching | if taking care of ResidentApp as callsign, make sure to prevent destroying it
           thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
-          this.launchResidentApp(Storage.get("selfClientName"));
+          this.launchResidentApp(GLOBALS.selfClientName);
           Storage.set("appSwitchingInProgress", false);
           Router.navigate(Storage.get("lastVisitedRoute"));
           reject(err)
@@ -758,7 +763,7 @@ export default class AppApi {
 
   // exit method does not need to launch the previous app.
   async exitApp(callsign, exitInBackground, forceDestroy) { //test the new exit app method
-    if ((callsign === "") || (callsign === Storage.get("selfClientName"))) { //previousApp==="" means it's residentApp | change it to residentApp in cache and here
+    if ((callsign === "") || (callsign === GLOBALS.selfClientName)) { //previousApp==="" means it's residentApp | change it to residentApp in cache and here
       return Promise.reject("AppAPI Can't exit from " + callsign);
     }
 
@@ -767,10 +772,8 @@ export default class AppApi {
       new HDMIApi().stopHDMIInput()
       Storage.set("_currentInputMode", {});
       if (!exitInBackground) { //means resident App needs to be launched
-        this.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
-          if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-            AlexaApi.get().reportApplicationState("menu", true);
-          }
+        this.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+          AlexaApi.get().reportApplicationState("menu", true);
         });
       }
       return Promise.resolve(true);
@@ -794,14 +797,13 @@ export default class AppApi {
         }
       } catch (err) {
         return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device | Error: " + JSON.stringify(err));
+        
       }
     }
 
     if (!exitInBackground) { //means resident App needs to be launched
-      this.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
-        if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-          AlexaApi.get().reportApplicationState("menu", true);
-        }
+      this.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+        AlexaApi.get().reportApplicationState("menu", true);
       });
     }
 
@@ -812,6 +814,7 @@ export default class AppApi {
       "visible": false
     }).catch(err => {
       console.error("AppAPI failed to setVisibility : " + callsign + " ERROR: ", JSON.stringify(err))
+      Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell setVisibility " +JSON.stringify(err), false, null)
     })
 
     if (forceDestroy) {
@@ -825,6 +828,7 @@ export default class AppApi {
           return Promise.resolve(true);
         }).catch(err => {
           console.error("AppAPI RDKShell kill: " + callsign + " ERROR: ", JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell kill " +JSON.stringify(err), false, null)
           return Promise.resolve(false);
         });
       }
@@ -835,14 +839,16 @@ export default class AppApi {
       if (Settings.get("platform", "enableAppSuspended")) {
         if (pluginState != undefined) { // App is a Plugin
           await thunder.call('org.rdk.RDKShell', 'suspend', { "callsign": callsign }).catch(err => {
-            console.error("AppAPI Error in suspending app: ", callsign, " | trying to destroy the app");
+            console.error("AppAPI Error in suspending app: ", callsign, " | trying to destroy the app" + JSON.stringify(err));
+            Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell suspend " +JSON.stringify(err), false, null)
             thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
           })
           return Promise.resolve(true)
         } else if (callsign === "NativeApp" || callsign.includes('application/dac.native')) {
           // DAC Demo WorkAround; TODO: use suspendApplication instead of kill
           await thunder.call('org.rdk.RDKShell', 'kill', { "client": (callsign.includes('application/dac.native') ? callsign.substring(0, callsign.indexOf(';')) : callsign) }).catch(err => {
-            console.error("AppAPI Error in kill app: ", callsign, " | trying to destroy the app");
+            console.error("AppAPI Error in kill app: ", callsign, " | trying to destroy the app" + JSON.stringify(err));
+            Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell kill " +JSON.stringify(err), false, null)
             thunder.call('org.rdk.RDKShell', 'destroy', { "callsign": callsign });
           })
           return Promise.resolve(true)
@@ -859,13 +865,14 @@ export default class AppApi {
    * Function to launch ResidentApp explicitly(incase of special scenarios)
    * Prefer using launchApp and exitApp for ALL app launch and exit scenarios.
    */
-  async launchResidentApp(client = Storage.get("selfClientName"), callsign = Storage.get("selfClientName")) {
+  async launchResidentApp(client = GLOBALS.selfClientName, callsign = GLOBALS.selfClientName) {
     console.log("AppAPI launchResidentApp got Called: setting visibility, focus and moving to front the client: " + client)
     await thunder.call("org.rdk.RDKShell", "moveToFront", {
       "client": client,
       "callsign": callsign
     }).catch(err => {
       console.error("AppAPI failed to moveToFront : ResidentApp ERROR: ", JSON.stringify(err), " | fail reason can be since app is already in front")
+      Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell moveToFront " +JSON.stringify(err), false, null)
     })
 
     await thunder.call("org.rdk.RDKShell", "setFocus", {
@@ -873,6 +880,7 @@ export default class AppApi {
       "callsign": callsign
     }).catch(err => {
       console.error("AppAPI failed to setFocus : ResidentApp ERROR: ", JSON.stringify(err))
+      Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell setFocus " +JSON.stringify(err), false, null)
     })
 
     await thunder.call("org.rdk.RDKShell", "setVisibility", {
@@ -880,9 +888,10 @@ export default class AppApi {
       "visible": true
     }).catch(err => {
       console.error("AppAPI failed to setVisibility : ResidentApp ERROR: ", JSON.stringify(err))
+      Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell setVisibility " +JSON.stringify(err), false, null)
     })
 
-    Storage.set("applicationType", client);
+    GLOBALS.topmostApp = client;
   }
 
 
@@ -895,7 +904,7 @@ export default class AppApi {
     console.log("AppAPI homedata: ", data);
     try {
       data = await JSON.parse(data);
-      if (data != null && data.hasOwnProperty("netflix-iid-file-path")) {
+      if (data != null && Object.prototype.hasOwnProperty.call(data, "netflix-iid-file-path")) {
         let url = data["netflix-iid-file-path"]
         console.log(`AppAPI Netflix : requested to fetch iids from `, url)
         const fetchResponse = await fetch(url);
@@ -907,6 +916,7 @@ export default class AppApi {
       }
     } catch (err) {
       console.error("AppAPI Error in fetching iid data from specified path, returning defaultIIDs | Error:", err);
+      Metrics.error(Metrics.ErrorType.OTHER, "Apperror", "AppAPI Error in fetching iid data from specified path"+JSON.stringify(err), false, null)
       return defaultIIDs;
     }
   }
@@ -941,6 +951,7 @@ export default class AppApi {
           else {
             console.log(`AppAPI Amazon : error while launching amazon :`, err);
           }
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError","Error in Thunder RDKShell launch " +JSON.stringify(err), false, null)
           reject(false)
         });
     })
@@ -967,8 +978,8 @@ export default class AppApi {
           }
           this.setVisibility(childCallsign, true)
           this.zorder(childCallsign)
-          Storage.set("applicationType", childCallsign)
-          console.log(`AppAPI launchPremiumApp the current application Type : `, Storage.get("applicationType"));
+          GLOBALS.topmostApp = childCallsign;
+          console.log(`AppAPI launchPremiumApp the current application Type : `, GLOBALS.topmostApp);
           resolve(true)
         })
         .catch(err => {
@@ -978,6 +989,7 @@ export default class AppApi {
           else {
             console.error(`AppAPI launchPremiumApp : error while launching amazon :`, err);
           }
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell launch " +JSON.stringify(err), false, null)
           reject(false)
         });
     })
@@ -993,7 +1005,7 @@ export default class AppApi {
       thunder
         .call('org.rdk.RDKShell', 'launch', {
           callsign: childCallsign,
-          type: Storage.get("selfClientName"),
+          type: GLOBALS.selfClientName,
           uri: url,
         })
         .then((res) => {
@@ -1002,18 +1014,19 @@ export default class AppApi {
         })
         .catch(err => {
           console.error('AppAPI launchResident error: ' + JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell launch " +JSON.stringify(err), false, null)
           reject(false)
         })
     })
   }
 
   launchOverlay(url, client) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const childCallsign = client
       thunder
         .call('org.rdk.RDKShell', 'launch', {
           callsign: childCallsign,
-          type: Storage.get("selfClientName"),
+          type: GLOBALS.selfClientName,
           uri: url,
         })
         .then(res => {
@@ -1025,6 +1038,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI launchOverlay : error ", JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell launch " +JSON.stringify(err), false, null)
           reject(err)
         })
     })
@@ -1034,12 +1048,13 @@ export default class AppApi {
    * Function to suspend Netflix/Amazon Prime app.
    */
   suspendPremiumApp(appName) {
-    return new Promise((resolve, reject) => {
-      thunder.call('org.rdk.RDKShell', 'suspend', { callsign: appName }).then(res => {
+    return new Promise((resolve) => {
+      thunder.call('org.rdk.RDKShell', 'suspend', { callsign: appName }).then(() => {
         resolve(true);
       })
         .catch(err => {
           console.error("AppAPI suspendPremiumApp error: ", JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell suspend " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1068,6 +1083,7 @@ export default class AppApi {
       })
     } catch (e) {
       console.error('AppAPI Failed to register statechange event' + e)
+      Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error while Thunder Controller stateChange " +JSON.stringify(e), false, null)
     }
   }
 
@@ -1098,11 +1114,12 @@ export default class AppApi {
       })
       if (visible) {
         thunder.call('org.rdk.RDKShell', 'setFocus', { client: client })
-          .then(res => {
+          .then(() => {
             resolve(true)
           })
           .catch(err => {
             console.error('AppAPI Set focus error', JSON.stringify(err))
+            Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell setVisibility " +JSON.stringify(err), false, null)
             reject(false)
           })
       }
@@ -1110,7 +1127,7 @@ export default class AppApi {
   }
 
   visible(client, visible) {
-    return new Promise((resolve, reject) => {
+    return new Promise(() => {
       thunder.call('org.rdk.RDKShell', 'setVisibility', {
         client: client,
         visible: visible,
@@ -1129,6 +1146,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI error in getting sound mode:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder RDKShell enableInactivityReporting " +JSON.stringify(err), false, null)
           reject(err)
         });
     })
@@ -1144,7 +1162,8 @@ export default class AppApi {
           resolve(result)
         })
         .catch(err => {
-          console.error("AppAPI RDKShell setInactivityInterval error.");
+          console.error("AppAPI RDKShell setInactivityInterval error." + JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Error in Thunder RDKShell setInactivityInterval " +JSON.stringify(err), false, null)
           reject(false)
         });
     })
@@ -1180,16 +1199,18 @@ export default class AppApi {
           console.log(`AppAPI ${appName} : updating configuration with object ${res} results in ${resp}`)
           resolve(true);
         }).catch((err) => {
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", `Error in Thunder ${plugin} ${method} ${JSON.stringify(err)}`, false, null)
           reject(err); //resolve(true)
         });
       }).catch((err) => {
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError", `Error in Thunder ${plugin} ${method} ${JSON.stringify(err)}`, false, null)
         reject(err);
       });
     })
   }
 
   setPowerState(value) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'setPowerState', { "powerState": value, "standbyReason": "ResidentApp User Requested" })
         .then(result => {
@@ -1197,6 +1218,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI System setPowerState failed: ", JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "PowerStateFailure", "Error in Thunder System setPowerState " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1211,6 +1233,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI System getPowerState failed: ", JSON.stringify(err));
+          Metrics.error(Metrics.ErrorType.OTHER, "PowerStateFailure", "Error in Thunder System getPowerState " +JSON.stringify(err), false, null)
           reject(err)
         })
     })
@@ -1225,6 +1248,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.log("org.rdk.System: getWakeupReason: Error in getting wake up reason: ", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PowerStateFailure", "Error in Thunder System getWakeupReason " +JSON.stringify(err), false, null)
           reject(err)
         })
     })
@@ -1239,13 +1263,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error('AppAPI activate DisplaySettings error: ', JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "AppError", "Error while Thunder Controller displaySettings activate " +JSON.stringify(err), false, null)
           reject(err)
         })
     })
   }
 
   getSoundMode() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'getSoundMode', {
           "audioPort": "HDMI0"
@@ -1255,6 +1280,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings getSoundMode error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DisplaySettings getSoundMode " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1263,7 +1289,7 @@ export default class AppApi {
   setSoundMode(mode) {
     mode = mode.startsWith("AUTO") ? "AUTO" : mode
     console.log("mode", mode)
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'setSoundMode', {
           "audioPort": "HDMI0",
@@ -1275,6 +1301,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings setSoundMode error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DisplaySettings setSoundMode " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1291,6 +1318,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings getSupportedAudioModes error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Error in Thunder DisplaySettings getSupportedAudioModes " +JSON.stringify(err), false, null)
           reject(false)
         })
     })
@@ -1298,7 +1326,7 @@ export default class AppApi {
 
   //Enable or disable the specified audio port based on the input audio port ID.
   setEnableAudioPort(port) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'setEnableAudioPort', {
           "audioPort": port, "enable": true
@@ -1308,13 +1336,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings setEnableAudioPort error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DisplaySettings setEnableAudioPort " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   getDRCMode() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'getDRCMode', { "audioPort": "HDMI0" })
         .then(result => {
@@ -1322,13 +1351,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings getDRCMode error:", JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DisplaySettings getDRCMode " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   setDRCMode(DRCNum) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'setDRCMode', {
           "DRCMode": DRCNum
@@ -1338,13 +1368,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings setDRCMode error:", JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Error in Thunder DisplaySettings setDRCMode " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   getZoomSetting() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'getZoomSetting')
         .then(result => {
@@ -1352,13 +1383,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings getZoomSetting error:", JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Error in Thunder DisplaySettings getZoomSetting " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   setZoomSetting(zoom) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'setZoomSetting', { "zoomSetting": zoom })
         .then(result => {
@@ -1366,13 +1398,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings setZoomSetting error:", JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DisplaySettings setZoomSetting " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   getEnableAudioPort(audioPort) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'getEnableAudioPort', { "audioPort": audioPort })
         .then(result => {
@@ -1380,13 +1413,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings getEnableAudioPort error:", JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DisplaySettings getEnableAudioPort " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   getSupportedAudioPorts() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'getSupportedAudioPorts')
         .then(result => {
@@ -1394,6 +1428,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI DisplaySettings getSupportedAudioPorts error:", JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DisplaySettings getSupportedAudioPorts " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1407,7 +1442,7 @@ export default class AppApi {
 
   //Start a speech
   ttsSpeak() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.TextToSpeech', 'speak', {
           "text": "speech_1"
@@ -1417,6 +1452,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI TextToSpeech speak error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder TextToSpeech Speak " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1424,7 +1460,7 @@ export default class AppApi {
 
   //Resume a speech
   ttsResume() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.TextToSpeech', 'resume', {
           "speechid": 1
@@ -1434,6 +1470,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI TextToSpeech resume error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder TextToSpeech resume " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1441,7 +1478,7 @@ export default class AppApi {
 
   //Pause a speech
   ttsPause() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.TextToSpeech', 'pause', {
           "speechid": 1
@@ -1451,6 +1488,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI TextToSpeech pause error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder TextToSpeech pause " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1458,7 +1496,7 @@ export default class AppApi {
 
   // 2. TTS Options
   ttsGetListVoices() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.TextToSpeech', 'listvoices', {
           "language": "en-US"
@@ -1468,6 +1506,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI TextToSpeech listvoices error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder TextToSpeech listVoices " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1475,7 +1514,7 @@ export default class AppApi {
 
   // 3. Sync Location
   syncLocation() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('LocationSync', 'sync')
         .then(result => {
@@ -1483,13 +1522,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI LocationSync sync error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder LocationSync sync " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   getLocation() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('LocationSync', 'location')
         .then(result => {
@@ -1497,6 +1537,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI LocationSync location error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder LocationSync location " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1505,7 +1546,7 @@ export default class AppApi {
 
   //Get Firmware Update Info
   getFirmwareUpdateInfo() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'getFirmwareUpdateInfo')
         .then(result => {
@@ -1513,6 +1554,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI System getFirmwareUpdateInfo error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system getFirmwareUpdateInfo " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1520,7 +1562,7 @@ export default class AppApi {
 
   // Get Firmware Update State
   getFirmwareUpdateState() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'getFirmwareUpdateState')
         .then(result => {
@@ -1528,6 +1570,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error(" AppAPI System getFirmwareUpdateState error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system getFirmwareUpdateState " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1535,7 +1578,7 @@ export default class AppApi {
 
   // Get Firmware download info
   getDownloadFirmwareInfo() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'getDownloadedFirmwareInfo')
         .then(result => {
@@ -1543,28 +1586,31 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI System getDownloadedFirmwareInfo error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system getDownloadedFirmwareInfo " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   getModelName() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call('DeviceInfo', 'modelname').then(result => {
         resolve(result.model)
       }).catch(err => {
         console.error("AppAPI DeviceInfo modelname failed:", err);
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DeviceInfo modelname " +JSON.stringify(err), false, null)
         resolve("RDK-VA")
       })
     })
   }
 
   getSerialNumber() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call('DeviceInfo', 'serialnumber').then(result => {
         resolve(result.serialnumber)
       }).catch(err => {
         console.error("AppAPI DeviceInfo serialnumber error:", JSON.stringify(err, 3, null));
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DeviceInfo serialnumber " +JSON.stringify(err), false, null)
         resolve('0123456789')
       })
     })
@@ -1572,7 +1618,7 @@ export default class AppApi {
 
   //Get system versions
   getSystemVersions() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'getSystemVersions')
         .then(result => {
@@ -1581,6 +1627,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI System getSystemVersions error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system getSystemVersions " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1588,7 +1635,7 @@ export default class AppApi {
 
   //Update firmware
   updateFirmware() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'updateFirmware')
         .then(result => {
@@ -1596,6 +1643,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI System updateFirmware error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system updateFirmware " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1603,7 +1651,7 @@ export default class AppApi {
 
   //Get download percentage
   getFirmwareDownloadPercent() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'getFirmwareDownloadPercent')
         .then(result => {
@@ -1611,6 +1659,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI getFirmwareDownloadPercent error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system getFirmwareDownloadPercent " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1618,7 +1667,7 @@ export default class AppApi {
 
   // device Identification
   getDeviceIdentification() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('DeviceIdentification', 'deviceidentification')
         .then(result => {
@@ -1626,6 +1675,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI getDeviceIdentification error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DeviceIdentification deviceidentification " + JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1633,7 +1683,7 @@ export default class AppApi {
 
   // 5. Device Info
   systeminfo() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('DeviceInfo', 'systeminfo')
         .then(result => {
@@ -1641,13 +1691,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI systeminfo error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DeviceInfo systeminfo " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   deviceType() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('DeviceInfo', 'devicetype')
         .then(result => {
@@ -1655,6 +1706,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI devicetype error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder DeviceInfo devicetype " + JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1662,7 +1714,7 @@ export default class AppApi {
 
   // 6. Reboot
   reboot() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'reboot', {
           "rebootReason": "FIRMWARE_FAILURE"
@@ -1672,6 +1724,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI reboot error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Error in Thunder system reboot " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1688,13 +1741,14 @@ export default class AppApi {
 
   // get prefered standby mode
   getPreferredStandbyMode() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'getPreferredStandbyMode').then(result => {
           resolve(result)
         })
         .catch(err => {
           console.error("AppAPI getPreferredStandbyMode error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.NETWORK, "PluginError", "Error in Thunder system getPreferredStandbyMode " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1702,7 +1756,7 @@ export default class AppApi {
 
   setPreferredStandbyMode(standbyMode) {
     console.log("setPreferredStandbyMode called : " + standbyMode)
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.System', 'setPreferredStandbyMode', {
           "standbyMode": standbyMode
@@ -1711,6 +1765,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI setPreferredStandbyMode error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.NETWORK, "PluginError", "Error in Thunder system setPreferredStandbyMode " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1722,6 +1777,7 @@ export default class AppApi {
         resolve(result)
       }).catch(err => {
         console.error("AppAPI getNetworkStandbyMode error:", JSON.stringify(err, 3, null))
+        Metrics.error(Metrics.ErrorType.NETWORK, "PluginError", "Error in Thunder system getNetworkStandbyMode " +JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -1734,6 +1790,7 @@ export default class AppApi {
         reject(false)
       }).catch(err => {
         console.error("AppAPI getRFCConfig error:", JSON.stringify(err, 3, null))
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system getRFCConfig " +JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -1745,6 +1802,7 @@ export default class AppApi {
         resolve(result.success)
       }).catch(err => {
         console.error("AppAPI setNetworkStandbyMode error:", JSON.stringify(err, 3, null))
+        Metrics.error(Metrics.ErrorType.NETWORK, "NetworkError","Error in Thunder system setNetworkStandbyMode " +JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -1757,6 +1815,7 @@ export default class AppApi {
         resolve(result.success)
       }).catch(err => {
         console.error("AppAPI setWakeupSrcConfiguration error:", JSON.stringify(err, 3, null))
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder system setWakeupSrcConfiguration " +JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -1765,12 +1824,13 @@ export default class AppApi {
   registerChangeLocation() {
     thunder
       .call('Controller', 'activate', { callsign: "LocationSync" })
-      .then(result => {
+      .then(() => {
         thunder.on("LocationSync", "locationchange", notification => {
           console.log("AppAPI locationchange notification :", notification);
         })
       }).catch(err => {
         console.error(err)
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder locationchange of LocationSync " +JSON.stringify(err), false, null)
       })
   }
 
@@ -1788,7 +1848,7 @@ export default class AppApi {
           params.state = 'suspended';
         } else {
           params.state = 'stopped'
-        };
+        }
       }
     }
     await thunder
@@ -1799,11 +1859,12 @@ export default class AppApi {
 
   //1. Get IP Setting
   getIPSetting(defaultInterface, ipversion = "IPv4") {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call('org.rdk.Network', 'getIPSettings', { "interface": defaultInterface, "ipversion": ipversion }).then(result => {
         resolve(result)
       }).catch(err => {
         console.error("AppAPI getIPSetting error:", JSON.stringify(err, 3, null))
+        Metrics.error(Metrics.ErrorType.NETWORK, "NetworkError", "Error in Thunder getIPSettings of Network " +JSON.stringify(err), false, null)
         resolve(false)
       })
     })
@@ -1811,7 +1872,7 @@ export default class AppApi {
 
   //2. Get default interface
   getDefaultInterface() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.Network', 'getDefaultInterface')
         .then(result => {
@@ -1819,6 +1880,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI getDefaultInterface error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.NETWORK, "NetworkError", "Error in Thunder getDefaultInterface of Network " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1826,7 +1888,7 @@ export default class AppApi {
 
   //3. Is interface enabled
   isInterfaceEnabled() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.Network', 'isInterfaceEnabled', {
           "interface": "WIFI"
@@ -1836,6 +1898,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI isInterfaceEnabled error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.NETWORK, "NetworkError", "Error in Thunder isInterfaceEnabled of Network " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1843,7 +1906,7 @@ export default class AppApi {
 
   //4. Get interfaces
   getInterfaces() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.Network', 'getInterfaces')
         .then(result => {
@@ -1851,6 +1914,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI getInterfaces error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.NETWORK, "NetworkError", "Error in Thunder getInterfaces of Network " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1858,7 +1922,7 @@ export default class AppApi {
 
   //5. getConnectedSSID
   getConnectedSSID() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.Wifi', 'getConnectedSSID')
         .then(result => {
@@ -1866,6 +1930,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI getConnectedSSID error:", JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.NETWORK, "NetworkError", "Error in Thunder getConnectedSSID of WIFI " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1881,6 +1946,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error('AppAPI getConnectedAudioPorts error:', JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError",  "Error in Thunder getConnectedAudioPorts of DisplaySettings " +JSON.stringify(err), false, null)
           reject(false)
         })
     })
@@ -1892,6 +1958,7 @@ export default class AppApi {
         resolve(result)
       }).catch(err => {
         console.error('AppAPI getVolumeLevel error:', JSON.stringify(err, 3, null))
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError",  "Error in Thunder getVolumeLevel of DisplaySettings " +JSON.stringify(err), false, null)
         reject(false)
       })
     })
@@ -1908,13 +1975,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error('AppAPI getMuted error:', JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError",  "Error in Thunder getMuted of DisplaySettings " +JSON.stringify(err), false, null)
           reject(false)
         })
     })
   }
 
   setVolumeLevel(port, volume) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'setVolumeLevel', {
           audioPort: port,
@@ -1926,13 +1994,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error('AppAPI setVolumeLevel error:', JSON.stringify(err))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError",  "Error in Thunder setVolumeLevel of DisplaySettings " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
 
   audio_mute(audio_source, value) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'setMuted', {
           audioPort: audio_source,
@@ -1943,6 +2012,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error('AppAPI audio_mute setMuted error:', JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError",  "Error in Thunder setMuted of DisplaySettings " +JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -1958,13 +2028,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI getPluginStatusParams error: ", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError",  `Error in fetching Thunder status@${plugin} of Thunder Controller ${JSON.stringify(err)}`, false, null)
           reject(err)
         })
     })
   }
   //activate autopairing for stack
   activateAutoPairing() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.RemoteControl', 'startPairing', {
           "netType": '1',
@@ -1976,13 +2047,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error('AppAPI activateAutoPairing error:', JSON.stringify(err, 3, null))
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in fetching Thunder startPairing of RemoteControl "+JSON.stringify(err), false, null)
           resolve(false)
         })
     })
   }
   resetBassEnhancer(port) {
     console.log("portname", port)
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'resetBassEnhancer', {
           "audioPort": port
@@ -1992,13 +2064,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI resetBassEnhancer error: ", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in fetching Thunder resetBassEnhancer of DisplaySettings "+JSON.stringify(err), false, null)
           resolve(false)
         });
     })
 
   }
   resetDialogEnhancement(port) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'resetDialogEnhancement', {
           "audioPort": port
@@ -2008,13 +2081,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI resetDialogEnhancement error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in fetching Thunder resetDialogEnhancement of DisplaySettings "+JSON.stringify(err), false, null)
           resolve(false)
         });
     })
   }
   //resetSurroundVirtualizer
   resetSurroundVirtualizer(port) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'resetSurroundVirtualizer', {
           "audioPort": port
@@ -2024,13 +2098,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI resetSoundVitualizer error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in fetching Thunder resetSurroundVirtualizer of DisplaySettings "+JSON.stringify(err), false, null)
           resolve(false)
         });
     })
   }
   //resetVolumeLeveller
   resetVolumeLeveller(port) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DisplaySettings', 'resetVolumeLeveller', {
           "audioPort": port
@@ -2040,21 +2115,9 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI resetvolumeLevel error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in fetching Thunder resetVolumeLeveller of DisplaySettings "+JSON.stringify(err), false, null)
           resolve(false)
         });
-    })
-  }
-  flushcache() {
-    return new Promise((resolve) => {
-      thunder
-        .call('org.rdk.PersistentStore', 'flushCache')
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error("AppAPI flushCache error:", err)
-          resolve(false)
-        })
     })
   }
   //resetInactivityTime
@@ -2067,6 +2130,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI resetInactivityTime error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in fetching Thunder resetInactivityTime of RDKShell "+JSON.stringify(err), false, null)
           resolve(false)
         })
     })
@@ -2082,26 +2146,14 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI clearLastDeepSleepReason error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder clearLastDeepSleepReason of system "+JSON.stringify(err), false, null)
           resolve(false)
         })
-    })
-  }
-  getSupportedAudioPorts() {
-    return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.DisplaySettings', 'getSupportedAudioPorts')
-        .then(result => {
-          resolve(result)
-        })
-        .catch(err => {
-          console.error("AppAPI getSupportedAudioPorts error:", err)
-          resolve(false)
-        });
     })
   }
 
   monitorStatus(callsign) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('Monitor', 'resetstats', {
           "callsign": callsign
@@ -2111,6 +2163,7 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI monitorStatus error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", "Error in Thunder fetching resetstats of Monitor "+JSON.stringify(err), false, null)
           resolve(false)
         });
     })
@@ -2118,13 +2171,14 @@ export default class AppApi {
 
   //{ path: ".cache" }
   deletecache(systemcCallsign, path) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call(systemcCallsign, 'delete', { path: path })
         .then(result => {
           resolve(result)
         })
         .catch(err => {
           console.error("AppAPI deletecache error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER,  "PluginError", `Error in Thunder delete of ${systemcCallsign} ${JSON.stringify(err)}`, false, null)
           resolve(false)
         });
     })
@@ -2132,7 +2186,7 @@ export default class AppApi {
 
   // activate controller plugin
   activateController(callsign) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('Controller', 'activate', { callsign: callsign })
         .then(result => {
@@ -2140,18 +2194,20 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI activateController error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", `Error while Thunder Controller activate ${callsign} ${JSON.stringify(err)}`,false, null)
           resolve(false)
         });
     })
   }
 
   checkStatus(plugin) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call('Controller', 'status@' + plugin).then(res => {
         //console.log("AppAPI checkStatus ", JSON.stringify(res))
         resolve(res)
       }).catch(err => {
         console.error("AppAPI checkStatus error:", err)
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError",  `Error while Thunder Controller fetching status@${plugin} ${JSON.stringify(err)}`, false, null)
         resolve(false)
       });
     })
@@ -2159,19 +2215,20 @@ export default class AppApi {
 
   configStatus() {
     //controller.1.configuration
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call('Controller', 'status').then(res => {
         //console.log("AppAPI configStatus ",JSON.stringify(res))
         resolve(res)
       }).catch(err => {
         console.error("AppAPI configStatus error:", err)
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError",`Error while Thunder Controller fetching status ${JSON.stringify(err)}`, false, null)
         resolve(false)
       });
     })
   }
 
   getAvCodeStatus() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder
         .call('org.rdk.DeviceDiagnostics', 'getAVDecoderStatus')
         .then(result => {
@@ -2179,104 +2236,92 @@ export default class AppApi {
         })
         .catch(err => {
           console.error("AppAPI getAvCodeStatus error:", err)
+          Metrics.error(Metrics.ErrorType.OTHER, "PluginError", 'Error in Thunder fetching getAVDecoderStatus of DeviceDiagnostics' +JSON.stringify(err), false, null)
           resolve(false)
         });
     })
   }
 
-  SaveTimerValue(value1) {
-    console.log("persistenceSt", value1)
-    return new Promise((resolve, reject) => {
-      thunder
-        .call('org.rdk.PersistentStore', 'setValue', {
-          namespace: "ScreenSaverTime",
-          key: "timerValue",
-          value: value1
-        })
-        .then(result => {
-          resolve(result.success)
-        })
-        .catch(err => {
-          console.error('AppAPI SaveTimerValue ScreenSaverTime failed:', err)
-          reject()
-        })
-    })
-  }
-
-  getTimerValue() {
-    return new Promise((resolve) => {
-      thunder
-        .call('org.rdk.PersistentStore', 'getValue', { namespace: 'ScreenSaverTime', key: 'timerValue' })
-        .then(result => {
-          resolve(result.value)
-        })
-        .catch(err => {
-          resolve("Off")
-        })
-    })
-  }
-
   setUILanguage(updatedLanguage) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       thunder.call('org.rdk.UserPreferences', 'setUILanguage', { "ui_language": updatedLanguage }).then(result => {
         resolve(result)
       }).catch(err => {
+        console.error('AppAPI setUILanguage failed:' + JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError", 'Error in Thunder setUILanguage of UserPreferences' +JSON.stringify(err), false, null)
+        resolve(false)
+      })
+    })
+  }
+  getUILanguage() {
+    return new Promise((resolve) => {
+      thunder.call('org.rdk.UserPreferences', 'getUILanguage').then(result => {
+        resolve(result.ui_language)
+      }).catch(err => {
+        console.error('AppAPI getUILanguage failed:' + JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.OTHER, "PluginError", 'Error in Thunder getUILanguage of UserPreferences' +JSON.stringify(err), false, null)
         resolve(false)
       })
     })
   }
 
   deeplinkToApp(app = undefined, payload = undefined, launchLocation = "voice", namespace = undefined) {
-    if (app === undefined || app === "" || payload == undefined) {
-      console.error("AppApi: deeplinkToApp '" + app + "' not possible with payload '" + payload + "'.");
-      resolve(false);
-    } else if (app.startsWith("YouTube")) {
-      let url = Storage.get(app + "DefaultURL").toString();
-      url = url.substring(0, url.indexOf('?'));
-      if (!url.endsWith("?")) url += "?";
-      url += ((Storage.get("applicationType") === app) ? "inApp=true" : "inApp=false");
-      // For the timebeing Alexa alone. Revisit when we have other voice sysyems.
-      url += "&launch=voice" + "&vs=" + ((launchLocation === "alexa") ? 2 : 0);
+    return new Promise((resolve, reject) => {
+      if (app === undefined || app === "" || payload == undefined) {
+        console.error("AppApi: deeplinkToApp '" + app + "' not possible with payload '" + payload + "'.");
+        Metrics.error(Metrics.ErrorType.OTHER, "AppError", `AppApi: deeplinkToApp ${app} not possible with payload ${payload}`, false, null)
+        resolve(false);
+      } else if (app.startsWith("YouTube")) {
+        let url = Storage.get(app + "DefaultURL").toString();
+        url = url.substring(0, url.indexOf('?'));
+        if (!url.endsWith("?")) url += "?";
+        url += ((GLOBALS.topmostApp === app) ? "inApp=true" : "inApp=false");
+        // For the timebeing Alexa alone. Revisit when we have other voice sysyems.
+        url += "&launch=voice" + "&vs=" + ((launchLocation === "alexa") ? 2 : 0);
 
-      if (namespace === "ExternalMediaPlayer") {
-        // Received sample : {"payload":{"playbackContextToken":"{deeplinkMethodType=PLAY, searchString='cat videos'}"}}
-        url += "&va=" + ((payload.playbackContextToken.includes("deeplinkMethodType=PLAY")) ? "play" : "search");
-        if (payload.playbackContextToken.includes("deeplinkMethodType")) {
-          let searchString = payload.playbackContextToken.replace(/[{}]/g, '').split(',');
-          for (let i = 0; i < searchString.length; i++) {
-            if (searchString[i].includes("searchString")) {
-              let data = searchString[i].split('=').slice(1)[0].replace(/\'/g, '');
-              url += "&vaa=" + encodeURI(data.trim());
-              break;
+        if (namespace === "ExternalMediaPlayer") {
+          // Received sample : {"payload":{"playbackContextToken":"{deeplinkMethodType=PLAY, searchString='cat videos'}"}}
+          url += "&va=" + ((payload.playbackContextToken.includes("deeplinkMethodType=PLAY")) ? "play" : "search");
+          if (payload.playbackContextToken.includes("deeplinkMethodType")) {
+            let searchString = payload.playbackContextToken.replace(/[{}]/g, '').split(',');
+            for (let i = 0; i < searchString.length; i++) {
+              if (searchString[i].includes("searchString")) {
+                let data = searchString[i].split('=').slice(1)[0].replace(/'/g, '');
+                url += "&vaa=" + encodeURI(data.trim());
+                break;
+              }
             }
           }
+        } else if (namespace === "Alexa.SeekController") {
+          let time = payload.deltaPositionMilliseconds / 1000
+          let minutes = Math.abs(parseInt(time / 60))
+          let seconds = Math.abs(parseInt(time % 60))
+          url += "&va=" + ((time < 0) ? "mediaRewind" : "mediaFastForward") + "&vaa=" + minutes + "m" + seconds + "s";
+        } else if (namespace === "Alexa.PlaybackController") {
+          let playbackOperations = new Set(["Play", "Pause", "FastForward", "Rewind", "Shuffle", "Repeat"])
+          if (playbackOperations.has(payload)) {
+            url += "&va=media" + payload;
+          } else if (payload === "Next" || payload === "Previous") {
+            url += "&va=media" + payload + "Video";
+          }
         }
-      } else if (namespace === "Alexa.SeekController") {
-        let time = payload.deltaPositionMilliseconds / 1000
-        let minutes = Math.abs(parseInt(time / 60))
-        let seconds = Math.abs(parseInt(time % 60))
-        url += "&va=" + ((time < 0) ? "mediaRewind" : "mediaFastForward") + "&vaa=" + minutes + "m" + seconds + "s";
-      } else if (namespace === "Alexa.PlaybackController") {
-        let playbackOperations = new Set(["Play", "Pause", "FastForward", "Rewind", "Shuffle", "Repeat"])
-        if (playbackOperations.has(payload)) {
-          url += "&va=media" + payload;
-        } else if (payload === "Next" || payload === "Previous") {
-          url += "&va=media" + payload + "Video";
-        }
+        console.info("AppApi: deeplinkToApp " + app + " url - " + url);
+        thunder.call(app, 'deeplink', url);
+      } else if (app === "Amazon") {
+        // TODO: no deeplink format support.
+        console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
+        Metrics.error(Metrics.ErrorType.OTHER, "AppDeeplinkError", JSON.stringify(err), false, null)
+        reject(false);
+      } else if (app === "Netflix") {
+        // TODO: no deeplink format support.
+        console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
+        Metrics.error(Metrics.ErrorType.OTHER, "AppDeeplinkError", JSON.stringify(err), false, null)
+        reject(false);
+      } else {
+        console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
+        Metrics.error(Metrics.ErrorType.OTHER, "AppDeeplinkError", JSON.stringify(err), false, null)
+        reject(false);
       }
-      console.info("AppApi: deeplinkToApp " + app + " url - " + url);
-      thunder.call(app, 'deeplink', url);
-    } else if (app === "Amazon") {
-      // TODO: no deeplink format support.
-      console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
-      resolve(false);
-    } else if (app === "Netflix") {
-      // TODO: no deeplink format support.
-      console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
-      resolve(false);
-    } else {
-      console.error("AppApi: deeplinkToApp '" + app + "' not supported.");
-      resolve(false);
-    }
+    });
   }
 }

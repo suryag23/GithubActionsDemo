@@ -18,6 +18,7 @@
  **/
 import ThunderJS from 'ThunderJS';
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk';
 
 let instance = null
 
@@ -45,6 +46,7 @@ export default class LISA {
         resolve(true)
       }).catch(err => {
         this.ERR("LISA: activate error: ", err)
+        Metrics.error(Metrics.ErrorType.OTHER,"LisaApiError", "Error while Thunder Controller LisaApi activate "+JSON.stringify(err), false, null)
         reject(err)
       });
     });
@@ -57,6 +59,7 @@ export default class LISA {
         resolve(true)
       }).catch(err => {
         this.ERR("LISA: deactivate error: ", err)
+        Metrics.error(Metrics.ErrorType.OTHER,"LisaApiError", "Error while Thunder Controller LisaApi deactivate "+JSON.stringify(err), false, null)
         reject(err)
       });
     });
@@ -65,9 +68,9 @@ export default class LISA {
   getMetadata() {
     return new Promise((resolve, reject) => {
       if ((this.metadata != null) &&
-        this.metadata.hasOwnProperty("dacBundlePlatformNameOverride") &&
-        this.metadata.hasOwnProperty("dacBundleFirmwareCompatibilityKey") &&
-        this.metadata.hasOwnProperty("configUrl")) {
+        Object.prototype.hasOwnProperty.call(this.metadata, "dacBundlePlatformNameOverride") &&
+        Object.prototype.hasOwnProperty.call(this.metadata, "dacBundleFirmwareCompatibilityKey") &&
+        Object.prototype.hasOwnProperty.call(this.metadata, "configUrl")) {
         this.INFO("LISA: getMetadata using cached value.");
         resolve(this.metadata)
       } else {
@@ -75,7 +78,7 @@ export default class LISA {
         let params = { "id": "lisa.dac.config", "type": "application/LISA", "versionAsParameter": "0" };
         this.thunder.call(this.callsign, 'getMetadata', params).then(result => {
           this.INFO("LISA: getMetadata result: ", result)
-          if (result.hasOwnProperty("auxMetadata")) {
+          if (Object.prototype.hasOwnProperty.call(result, "auxMetadata")) {
             let metadata = {}
             result.auxMetadata.forEach(item => {
               metadata[item.key] = item.value;
@@ -86,6 +89,7 @@ export default class LISA {
           reject(false)
         }).catch(err => {
           this.ERR("LISA: getMetadata error: ", err)
+          Metrics.error(Metrics.ErrorType.OTHER,"LisaApiError", "Error in Thunder LisaApi getMetaData "+JSON.stringify(err), false, null)
           this.metadata = null;
           reject(err)
         })
@@ -100,6 +104,7 @@ export default class LISA {
         this.INFO("LISA: install result: ", result)
         resolve(result)
       }).catch(err => {
+        Metrics.error(Metrics.ErrorType.OTHER,"LisaApiError", "Error in Thunder LisaApi install "+JSON.stringify(err), false, null)
         this.ERR("LISA: install error: ", err)
         reject(err)
       })
@@ -113,6 +118,7 @@ export default class LISA {
         this.INFO("LISA: uninstall result: ", result)
         resolve(result)
       }).catch(err => {
+        Metrics.error(Metrics.ErrorType.OTHER,"LisaApiError", "Error in Thunder LisaApi uninstall "+JSON.stringify(err), false, null)
         this.ERR("LISA: uninstall error: ", err)
         reject(err)
       })
@@ -126,6 +132,7 @@ export default class LISA {
         this.INFO("LISA: getStorageDetails result: ", result)
         resolve(result)
       }).catch(err => {
+        Metrics.error(Metrics.ErrorType.OTHER,"LisaApiError", "Error in Thunder LisaApi getStaorageDetails "+JSON.stringify(err), false, null)
         this.ERR("LISA: getStorageDetails error: ", err)
         reject(err)
       })
@@ -138,6 +145,7 @@ export default class LISA {
         this.INFO("LISA: getList result: ", result)
         resolve(result)
       }).catch(err => {
+        Metrics.error(Metrics.ErrorType.OTHER,"LisaApiError", "Error in Thunder LisaApi getList "+JSON.stringify(err), false, null)
         this.ERR("LISA: getList error: ", err)
         reject(err)
       })
@@ -150,6 +158,7 @@ export default class LISA {
         this.LOG("LISA: getProgress result: ", result)
         resolve(result)
       }).catch(err => {
+        Metrics.error(Metrics.ErrorType.OTHER,"LisaApiError", "Error in Thunder LisaApi getProgress "+JSON.stringify(err), false, null)
         this.ERR("LISA: getProgress error: ", err)
         reject(err)
       })

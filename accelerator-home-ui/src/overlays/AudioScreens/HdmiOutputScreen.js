@@ -16,120 +16,120 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- import { Lightning, Utils } from '@lightningjs/sdk'
- import VideoAndAudioItem from '../../items/VideoAndAudioItem'
- import AppApi from '../../api/AppApi.js';
+import { Lightning, Utils } from '@lightningjs/sdk'
+import VideoAndAudioItem from '../../items/VideoAndAudioItem'
+import AppApi from '../../api/AppApi.js';
 
- /**
-  * Class for HDMI Output Screen.
-  */
- var appApi = new AppApi();
- export default class HdmiOutputScreen extends Lightning.Component {
-     static _template() {
-         return {
-             HdmiOutputScreenContents: {
-                 x: 200,
-                 y: 275,
-                 List: {
-                     type: Lightning.components.ListComponent,
-                     w: 1920 - 300,
-                     itemSize: 90,
-                     horizontal: false,
-                     invertDirection: true,
-                     roll: true,
-                 },
-                 Loader: {
-                     x: 740,
-                     y: 340,
-                     w: 90,
-                     h: 90,
-                     mount: 0.5,
-                     zIndex: 4,
-                     src: Utils.asset("images/settings/Loading.png"),
-                     visible: true,
-                 },
-             }
-         }
-     }
+/**
+ * Class for HDMI Output Screen.
+ */
+var appApi = new AppApi();
+export default class HdmiOutputScreen extends Lightning.Component {
+    static _template() {
+        return {
+            HdmiOutputScreenContents: {
+                x: 200,
+                y: 275,
+                List: {
+                    type: Lightning.components.ListComponent,
+                    w: 1920 - 300,
+                    itemSize: 90,
+                    horizontal: false,
+                    invertDirection: true,
+                    roll: true,
+                },
+                Loader: {
+                    x: 740,
+                    y: 340,
+                    w: 90,
+                    h: 90,
+                    mount: 0.5,
+                    zIndex: 4,
+                    src: Utils.asset("images/settings/Loading.png"),
+                    visible: true,
+                },
+            }
+        }
+    }
 
-     $resetPrevTickObject(prevTicObject) {
-         if (!this.prevTicOb) {
-             this.prevTicOb = prevTicObject;
+    $resetPrevTickObject(prevTicObject) {
+        if (!this.prevTicOb) {
+            this.prevTicOb = prevTicObject;
 
-         }
-         else {
-             this.prevTicOb.tag("Item.Tick").visible = false;
+        }
+        else {
+            this.prevTicOb.tag("Item.Tick").visible = false;
 
-             this.prevTicOb = prevTicObject;
+            this.prevTicOb = prevTicObject;
 
-         }
-     }
+        }
+    }
 
-     _unfocus() {
-         if (this.loadingAnimation.isPlaying()) {
-             this.loadingAnimation.stop()
-         }
-     }
-     _init() {
-         this.loadingAnimation = this.tag('Loader').animation({
-             duration: 3, repeat: -1, stopMethod: 'immediate', stopDelay: 0.2,
-             actions: [{ p: 'rotation', v: { sm: 0, 0: 0, 1: 2 * Math.PI } }]
-         })
-     }
-
-
-
-     _focus() {
-         this.loadingAnimation.start()
-         let options = []
-         appApi.getSoundMode()
-             .then(result => {
-                 appApi.getSupportedAudioModes()
-                     .then(res => {
-                         options = [...res.supportedAudioModes]
-                         this.tag('HdmiOutputScreenContents').h = options.length * 90
-                         this.tag('HdmiOutputScreenContents.List').h = options.length * 90
-                         this.tag('HdmiOutputScreenContents.List').items = options.map((item, index) => {
-                             return {
-                                 ref: 'Option' + index,
-                                 w: 1920 - 300,
-                                 h: 90,
-                                 type: VideoAndAudioItem,
-                                 isTicked: (result.soundMode === item) ? true : false,
-                                 item: item,
-                                 videoElement: false
-                             }
-                         })
-                         this.loadingAnimation.stop()
-                         this.tag('Loader').visible = false
-                         this._setState("Options")
-                     })
-                     .catch(err => {
-                         console.log('error', err)
-                     })
-             })
-             .catch(err => {
-                 console.log('error', JSON.stringify(err))
-             })
-     }
+    _unfocus() {
+        if (this.loadingAnimation.isPlaying()) {
+            this.loadingAnimation.stop()
+        }
+    }
+    _init() {
+        this.loadingAnimation = this.tag('Loader').animation({
+            duration: 3, repeat: -1, stopMethod: 'immediate', stopDelay: 0.2,
+            actions: [{ p: 'rotation', v: { sm: 0, 0: 0, 1: 2 * Math.PI } }]
+        })
+    }
 
 
 
-     static _states() {
-         return [
-             class Options extends this{
-                 _getFocused() {
+    _focus() {
+        this.loadingAnimation.start()
+        let options = []
+        appApi.getSoundMode()
+            .then(result => {
+                appApi.getSupportedAudioModes()
+                    .then(res => {
+                        options = [...res.supportedAudioModes]
+                        this.tag('HdmiOutputScreenContents').h = options.length * 90
+                        this.tag('HdmiOutputScreenContents.List').h = options.length * 90
+                        this.tag('HdmiOutputScreenContents.List').items = options.map((item, index) => {
+                            return {
+                                ref: 'Option' + index,
+                                w: 1920 - 300,
+                                h: 90,
+                                type: VideoAndAudioItem,
+                                isTicked: (result.soundMode === item) ? true : false,
+                                item: item,
+                                videoElement: false
+                            }
+                        })
+                        this.loadingAnimation.stop()
+                        this.tag('Loader').visible = false
+                        this._setState("Options")
+                    })
+                    .catch(err => {
+                        console.log('error', err)
+                    })
+            })
+            .catch(err => {
+                console.log('error', JSON.stringify(err))
+            })
+    }
+
+
+
+    static _states() {
+        return [
+            class Options extends this{
+                _getFocused() {
                     console.log('focusedHDMI')
-                     return this.tag('HdmiOutputScreenContents.List').element
-                 }
-                 _handleDown() {
-                     this.tag('HdmiOutputScreenContents.List').setNext()
-                 }
-                 _handleUp() {
-                     this.tag('HdmiOutputScreenContents.List').setPrevious()
-                 }
+                    return this.tag('HdmiOutputScreenContents.List').element
+                }
+                _handleDown() {
+                    this.tag('HdmiOutputScreenContents.List').setNext()
+                }
+                _handleUp() {
+                    this.tag('HdmiOutputScreenContents.List').setPrevious()
+                }
 
-             },
-         ]
-     }
- }
+            },
+        ]
+    }
+}

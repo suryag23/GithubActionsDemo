@@ -18,113 +18,112 @@
  **/
 import { Language, Lightning, Registry, Router, Utils } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
-import AppApi from '../api/AppApi'
 import AlexaApi from '../api/AlexaApi.js';
 
 export default class SuccessScreen extends Lightning.Component {
     static _template() {
         return {
-            Wrapper:{
-            w: 1920,
-            h: 1080,
-            rect: true,
-            color: 0xff000000,
-            Alexa:{
-                x: 1050,
-                y: 250,
-                Logo: {
-                    h: 220,
-                    w: 442,
-                    x: 135,
-                    mountX: 1,
-                    y: 200,
-                    mountY: 0.5,
-                    src: Utils.asset('/images/apps/AlexaBadge.png'),
-                },
-                Description: {
-                    x: -70,
-                    y: 380,
-                    mount: 0.5,
-                    text: {
-                        text: Language.translate("You are ready to use alexa. Here are some things to try"),
-                        fontFace: CONFIG.language.font,
-                        fontSize: 32,
-                        textColor: 0xFFF9F9F9,
-                        fontStyle: 'normal',
-                        wordWrap: true,
-                        wordWrapWidth: 800,
+            Wrapper: {
+                w: 1920,
+                h: 1080,
+                rect: true,
+                color: 0xff000000,
+                Alexa: {
+                    x: 1050,
+                    y: 250,
+                    Logo: {
+                        h: 220,
+                        w: 442,
+                        x: 135,
+                        mountX: 1,
+                        y: 200,
+                        mountY: 0.5,
+                        src: Utils.asset('/images/apps/AlexaBadge.png'),
+                    },
+                    Description: {
+                        x: -70,
+                        y: 380,
+                        mount: 0.5,
+                        text: {
+                            text: Language.translate("You are ready to use alexa. Here are some things to try"),
+                            fontFace: CONFIG.language.font,
+                            fontSize: 32,
+                            textColor: 0xFFF9F9F9,
+                            fontStyle: 'normal',
+                            wordWrap: true,
+                            wordWrapWidth: 800,
+                        },
+                    },
+                    Box1: {
+                        x: -600, y: 500, mountX: 0.5, h: 60, w: 420, rect: true, color: 0xFF00CAFF,
+                        Title: {
+                            x: 200,
+                            y: 30,
+                            mount: 0.5,
+                            text: {
+                                text: Language.translate("Play some jazz music"),
+                                fontFace: CONFIG.language.font,
+                                fontSize: 28,
+                                textColor: 0xFF232F3E,
+                                fontStyle: 'italic',
+                                borderRadius: 100
+                            },
+                        },
+                        visible: true,
+                    },
+                    Box2: {
+                        x: -100, y: 500, mountX: 0.5, h: 60, w: 420, rect: true, color: 0xFF00CAFF,
+                        Title: {
+                            x: 200,
+                            y: 30,
+                            mount: 0.5,
+                            text: {
+                                text: Language.translate("Play my Flash Briefing"),
+                                fontFace: CONFIG.language.font,
+                                fontSize: 28,
+                                textColor: 0xFF232F3E,
+                                fontStyle: 'italic',
+                                borderRadius: 100
+                            },
+                        },
+                        visible: true,
+                    },
+                    Box3: {
+                        x: 440, y: 500, mountX: 0.5, h: 60, w: 500, rect: true, color: 0xFF00CAFF,
+                        Title: {
+                            x: 250,
+                            y: 30,
+                            mount: 0.5,
+                            text: {
+                                text: Language.translate("What's your favourite movie?"),
+                                fontFace: CONFIG.language.font,
+                                fontSize: 28,
+                                textColor: 0xFF232F3E,
+                                fontStyle: 'italic',
+                                borderRadius: 100
+                            },
+                        },
+                        visible: true,
                     },
                 },
-                Box1:{
-                    x: -600, y: 500, mountX: 0.5, h: 60, w: 420, rect: true, color: 0xFF00CAFF,
+                DoneButton: {
+                    x: 1700, y: 60, w: 150, mountX: 0.5, h: 60, rect: true, color: 0xFFFFFFFF,
                     Title: {
-                        x: 200,
+                        x: 75,
                         y: 30,
                         mount: 0.5,
                         text: {
-                            text: Language.translate("Play some jazz music"),
+                            text: Language.translate("Finished"),
                             fontFace: CONFIG.language.font,
-                            fontSize: 28,
-                            textColor: 0xFF232F3E,
-                            fontStyle: 'italic',
-                            borderRadius: 100
+                            fontSize: 22,
+                            textColor: 0xFF000000,
+                            fontStyle: 'bold'
                         },
                     },
                     visible: true,
+                    alpha: 1
                 },
-                Box2:{
-                    x: -100, y: 500, mountX: 0.5, h: 60, w: 420, rect: true, color: 0xFF00CAFF,
-                    Title: {
-                        x: 200,
-                        y: 30,
-                        mount: 0.5,
-                        text: {
-                            text: Language.translate("Play my Flash Briefing"),
-                            fontFace: CONFIG.language.font,
-                            fontSize: 28,
-                            textColor: 0xFF232F3E,
-                            fontStyle: 'italic',
-                            borderRadius: 100
-                        },
-                    },
-                    visible: true,
-                },
-                Box3:{
-                    x: 440, y: 500, mountX: 0.5, h: 60, w: 500, rect: true, color: 0xFF00CAFF,
-                    Title: {
-                        x: 250,
-                        y: 30,
-                        mount: 0.5,
-                        text: {
-                            text: Language.translate("What's your favourite movie?"),
-                            fontFace: CONFIG.language.font,
-                            fontSize: 28,
-                            textColor: 0xFF232F3E,
-                            fontStyle: 'italic',
-                            borderRadius: 100
-                        },
-                    },
-                    visible: true,
-                },
-            },
-            DoneButton: {
-                x: 1700, y: 60, w: 150, mountX: 0.5, h: 60, rect: true, color: 0xFFFFFFFF ,
-                Title: {
-                    x: 75,
-                    y: 30,
-                    mount: 0.5,
-                    text: {
-                        text: Language.translate("Finished"),
-                        fontFace: CONFIG.language.font,
-                        fontSize: 22,
-                        textColor: 0xFF000000,
-                        fontStyle: 'bold'
-                    },
-                },
-                visible: true,
-                alpha: 1
-            },
-        }
+            }
         }
     }
 
@@ -132,21 +131,21 @@ export default class SuccessScreen extends Lightning.Component {
         Registry.clear();
         this._setState('DoneButton')
     }
-    _active(){
+    _active() {
         this._setState('DoneButton')
     }
 
     static _states() {
-        return[
+        return [
             class DoneButton extends this{
                 $enter() {
-                  this.tag("DoneButton")
+                    this.tag("DoneButton")
                 }
-                _handleEnter(){
+                _handleEnter() {
                     AlexaApi.get().enableSmartScreen()
-                    Registry.setTimeout(()=>{
+                    Registry.setTimeout(() => {
                         Router.navigate('menu')
-                    },(Router.isNavigating()?20:0));
+                    }, (Router.isNavigating() ? 20 : 0));
                 }
                 _focus() {
                     this.tag('DoneButton').patch({
@@ -170,11 +169,10 @@ export default class SuccessScreen extends Lightning.Component {
                 }
 
                 $exit() {
-                  //this.show()
-                  this.tag('DoneButton')
+                    //this.show()
+                    this.tag('DoneButton')
                 }
             }
         ]
     }
 }
-

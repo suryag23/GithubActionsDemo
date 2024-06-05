@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Discovery } from '@firebolt-js/sdk'
+import { Discovery, Metrics } from '@firebolt-js/sdk'
 export default class FBTDiscovery {
     
     launch(appId,intent){
@@ -27,6 +27,7 @@ export default class FBTDiscovery {
             })
         .catch(err => {
             console.error('firebolt Discovery.launch error', err)
+            Metrics.error(Metrics.ErrorType.OTHER, "fireboltDiscoveryError", "Discovery.launch error"+ err, false, null)
             reject(err)
           })
         })}

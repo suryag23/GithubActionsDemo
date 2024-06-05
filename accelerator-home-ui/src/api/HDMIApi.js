@@ -19,6 +19,7 @@
 
 import ThunderJS from 'ThunderJS';
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk';
 
 /**
  * Class for HDMI thunder plugin apis.
@@ -73,13 +74,14 @@ export default class HDMIApi {
                 })
                 .catch(err => {
                     console.log('Failed to activate HdmiInput plugin', JSON.stringify(err))
+                    Metrics.error(Metrics.ErrorType.OTHER,"HdmiApiError", "Error while Thunder Controller HdmiApi activate "+JSON.stringify(err), false, null)
                     reject(false)
                 })
         })
     }
 
     getHDMIDevices() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             // resolve([{id: 0,locator: "hdmiin://localhost/deviceid/0",connected: true,},{id: 1,locator: "hdmiin://localhost/deviceid/1",connected: false,},{id: 2,locator: "hdmiin://localhost/deviceid/2",connected: true,}]) //#forTesting
             this._thunder
                 .call(this.callsign, 'getHDMIInputDevices')
@@ -89,6 +91,7 @@ export default class HDMIApi {
                 .catch(err => {
                     // reject(err) // #forTesting //make the api reject, instead of resolving empty array
                     console.log("getHDMIDevices Error: ", JSON.stringify(err), " resolving empty array")
+                    Metrics.error(Metrics.ErrorType.OTHER,"HdmiApiError", "Error in Thunder HdmiApi getHDMIInputDevices "+JSON.stringify(err), false, null)
                     resolve([])
                 })
         })
@@ -101,8 +104,9 @@ export default class HDMIApi {
                     console.log(JSON.stringify(res))
                     resolve(res)
                 })
-                .catch(err=>{
+                .catch(err => {
                     console.error(JSON.stringify(err))
+                    Metrics.error(Metrics.ErrorType.OTHER,"HdmiApiError", "Error while Thunder Controller.1 HdmiApi status "+JSON.stringify(err), false, null)
                     reject(err)
                 })
         })
@@ -115,11 +119,12 @@ export default class HDMIApi {
                 .call('PlayerInfo', 'resolution')
                 .then(result => {
                     // We need only the Width & Height for rectangle.
-                    let result1 = result.slice(0, result.indexOf(((result.indexOf('I') !== -1)?'I':'P')))
+                    let result1 = result.slice(0, result.indexOf(((result.indexOf('I') !== -1) ? 'I' : 'P')))
                     resolve(this.resolution[result1])
                 })
                 .catch(err => {
                     console.log('Failed to fetch dimensions', err)
+                    Metrics.error(Metrics.ErrorType.OTHER,"HdmiApiError", "Error in Thunder playerInfo resolution "+JSON.stringify(err), false, null)
                     resolve([1920, 1080])
                 })
         })
@@ -138,6 +143,7 @@ export default class HDMIApi {
                         resolve(result)
                     })
                     .catch(err => {
+                        Metrics.error(Metrics.ErrorType.OTHER,"HdmiApiError", "Error in Thunder HdmiApi startHdmiInput "+JSON.stringify(err), false, null)
                         reject(err)
                     })
             } else {
@@ -147,7 +153,7 @@ export default class HDMIApi {
     }
 
     stopHDMIInput() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             // resolve(true)//#forTesting
             this._thunder
                 .call(this.callsign, 'stopHdmiInput')

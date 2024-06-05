@@ -18,6 +18,7 @@
  **/
 import ThunderJS from 'ThunderJS'
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk'
 
 export const WiFiErrorMessages = {
   0: 'SSID_CHANGED - The SSID of the network changed',
@@ -81,16 +82,16 @@ let instance = null
 
 export default class Wifi {
   constructor() {
-    this.thunder = ThunderJS(CONFIG.thunderConfig)
-    this.callsign = 'org.rdk.Wifi'
-    this.INFO = console.info
-    this.LOG = console.log
-    this.ERR = console.error
+    this.thunder = ThunderJS(CONFIG.thunderConfig);
+    this.callsign = 'org.rdk.Wifi';
+    this.INFO = console.info;
+    this.LOG = console.log;
+    this.ERR = console.error;
   }
 
   static get() {
     if (instance == null) {
-      instance = new Wifi()
+      instance = new Wifi();
       // Vital plugins; always keep activated.
       instance.activate();
     }
@@ -104,6 +105,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + " activate error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder Controller wifi activate" + JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -116,6 +118,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + " deactivate error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder Controller wifi deactivate" +JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -128,6 +131,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + ": cancelWPSPairing error:" + JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi cancelWPSPairing"+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -140,6 +144,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + ": clearSSID error:" + JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi clearing SSID"+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -149,15 +154,17 @@ export default class Wifi {
     let params = {}
     if (!useSaved) { // saveSSID was never called earlier. Need proper params.
       params.ssid = networkInfo.ssid
-      if (networkInfo.hasOwnProperty("security")) params.securityMode = networkInfo.security
+      if (Object.prototype.hasOwnProperty.call(networkInfo, "security")) params.securityMode = networkInfo.security
       if (passphrase.length) params.passphrase = passphrase
     }
     return new Promise((resolve, reject) => {
       this.LOG(this.callsign + " connect with params: " + JSON.stringify(params))
       this.thunder.call(this.callsign, 'connect', params).then(result => {
-        resolve(result.success)
+        result.success ? resolve(result.success) : reject(result.success)
+
       }).catch(err => {
         this.ERR(this.callsign + ": connect error:" + JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi connect params "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -170,6 +177,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + ": disconnect error:" + JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi disconnect params "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -178,10 +186,11 @@ export default class Wifi {
   getConnectedSSID() {
     return new Promise((resolve, reject) => {
       this.thunder.call(this.callsign, 'getConnectedSSID').then(result => {
-        this.LOG(this.callsign + " getConnectedSSID result:" + JSON.stringify(result))
+        this.LOG(this.callsign + " getConnectedSSID result:" + "Error in Thunder wifi connect params"+JSON.stringify(result))
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + " getConnectedSSID error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi getConnectedSSID "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -194,6 +203,7 @@ export default class Wifi {
         resolve(result.success ? result.state : 0) // 0 is UNINSTALLED
       }).catch(err => {
         this.ERR(this.callsign + " getCurrentState error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi getCurrentState "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -207,6 +217,7 @@ export default class Wifi {
         reject(result)
       }).catch(err => {
         this.ERR(this.callsign + " getPairedSSID error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi getPairedSSID "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -220,6 +231,7 @@ export default class Wifi {
         reject(result)
       }).catch(err => {
         this.ERR(this.callsign + " getPairedSSIDInfo error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi getPairedSSIDInfo "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -232,6 +244,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + " getSupportedSecurityModes error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi getSupportedSecurityModes "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -248,6 +261,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + " initiateWPSPairing error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi initiateWPSPairing "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -261,6 +275,7 @@ export default class Wifi {
         reject(result)
       }).catch(err => {
         this.ERR(this.callsign + " isPaired error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi isPaired "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -273,6 +288,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + " isSignalThresholdChangeEnabled error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi isSignalThresholdChangeEnabled "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -289,6 +305,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + " saveSSID error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi saveSSID "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -301,6 +318,7 @@ export default class Wifi {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + " setEnabled error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi setEnabled "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -313,6 +331,7 @@ export default class Wifi {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + " setSignalThresholdChangeEnabled error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi setSignalThresholdChangeEnabled "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -329,6 +348,7 @@ export default class Wifi {
         resolve(result)
       }).catch(err => {
         this.ERR(this.callsign + " startScan error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi startScan "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -341,55 +361,9 @@ export default class Wifi {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + " stopScan error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"WifiApiError", "Error in Thunder wifi stopScan "+JSON.stringify(err), false, null)
         reject(err)
       })
-    })
-  }
-
-  /*************** TODO: Move to PersistentStore abstraction ***************/
-
-  SaveSSIDKey(value1, namespace = "wifi") {
-    return new Promise((resolve, reject) => {
-      this.thunder
-        .call('org.rdk.PersistentStore', 'setValue', {
-          namespace: namespace,
-          key: "SSID",
-          value: value1
-        })
-        .then(result => {
-          resolve(result.success)
-        })
-        .catch(err => {
-          console.error('storage SSID failed', err)
-          reject()
-        })
-    })
-  }
-
-  getSSIDKey(namespace = "wifi") {
-    return new Promise((resolve) => {
-      this.thunder
-        .call('org.rdk.PersistentStore', 'getValue', { namespace: namespace, key: 'SSID' })
-        .then(result => {
-          resolve(result.value)
-        })
-        .catch(err => {
-          resolve('')
-        })
-    })
-  }
-
-  deleteNameSpace(namespace = "wifi") {
-    return new Promise((resolve, reject) => {
-      this.thunder
-        .call('org.rdk.PersistentStore', 'deleteNamespace', { namespace: namespace })
-        .then(result => {
-          resolve(result.success)
-        })
-        .catch(err => {
-          console.error('delete namespace failed', err)
-          reject()
-        })
     })
   }
 }

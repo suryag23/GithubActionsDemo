@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lifecycle } from '@firebolt-js/sdk'
+import { Lifecycle, Metrics } from '@firebolt-js/sdk'
 
 
 export default class FBTLifecycle {
@@ -67,6 +67,7 @@ export default class FBTLifecycle {
                 })
                 .catch(err => {
                     console.error('firebolt Lifecycle.close error', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LifecycleError", err, false, null)
                     reject(err)
                 })
         })
@@ -80,6 +81,7 @@ export default class FBTLifecycle {
                 })
                 .catch(err => {
                     console.error('firebolt Lifecycle.finished error', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LifecycleError", err, false, null)
                     reject(err)
                 })
         })
@@ -95,16 +97,16 @@ export default class FBTLifecycle {
                 })
                 .catch(err => {
                     console.error('firebolt Lifecycle.ready error', err)
+                    Metrics.error(Metrics.ErrorType.OTHER, "LifecycleError", err, false, null)
                     reject(err)
                 })
         })
     }
     state() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const state = Lifecycle.state()
             console.log(state)
             resolve(state)
-
         })
     }
 }

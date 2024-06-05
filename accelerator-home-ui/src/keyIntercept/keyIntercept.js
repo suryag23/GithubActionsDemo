@@ -17,13 +17,14 @@
  * limitations under the License.
  **/
 import ThunderJS from "ThunderJS";
-import { Settings, Storage } from '@lightningjs/sdk';
+import { Storage } from '@lightningjs/sdk';
 import Keymap from "../Config/Keymap";
-import { CONFIG } from "../Config/Config";
+import { CONFIG, GLOBALS } from "../Config/Config";
+import {Metrics} from '@firebolt-js/sdk'
 
 const thunder = ThunderJS(CONFIG.thunderConfig);
 
-export function keyIntercept(clientName = Storage.get("selfClientName")) {
+export function keyIntercept(clientName = GLOBALS.selfClientName) {
     return new Promise((resolve, reject) => {
         thunder.call('org.rdk.RDKShell', 'addKeyIntercepts',
             {
@@ -49,6 +50,7 @@ export function keyIntercept(clientName = Storage.get("selfClientName")) {
             if (result.success) resolve(result.success);
             reject(result);
         }).catch(err => {
+            Metrics.error(Metrics.ErrorType.OTHER,"KeyInterceptError", "Thunder RDKShell addKeyIntercepts error "+JSON.stringify(err), false, null)
             reject(err);
         });
     });

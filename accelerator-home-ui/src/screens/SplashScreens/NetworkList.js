@@ -17,7 +17,7 @@
  * limitations under the License.
  **/
 
-import { Lightning, Utils, Router, Registry, Language } from '@lightningjs/sdk'
+import { Lightning, Utils, Router, Registry, Language, Storage } from '@lightningjs/sdk'
 import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
 import SettingsMainItem from '../../items/SettingsMainItem'
@@ -277,6 +277,19 @@ export default class NetworkList extends Lightning.Component {
 
   static _states() {
     return [
+      class PairedDevices extends this {
+        $enter() {
+        }
+        _getFocused() {
+          return this.tag('Networks.PairedNetworks').tag('List').element
+        }
+        _handleDown() {
+          this._navigate('MyDevices', 'down')
+        }
+        _handleUp() {
+          this._navigate('MyDevices', 'up')
+        }
+      },
       class AvailableDevices extends this {
         $enter() {
           if (this.wifiStatus === true) {
@@ -393,7 +406,7 @@ export default class NetworkList extends Lightning.Component {
     })
     WiFi.get().thunder.on(WiFi.get().callsign, 'onWIFIStateChanged', notification => {
       console.log(JSON.stringify(notification))
-      if (notification.state === WiFiState.CONNECTED && Router.getActiveRoute().includes('splash')) {
+      if (notification.state === WiFiState.CONNECTED && ! Storage.get("setup")) {
         this.tag('Info').text.text = Language.translate("Connection successful");
         Registry.setTimeout(() => {
           Router.navigate('menu')

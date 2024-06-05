@@ -23,7 +23,7 @@ import ConfirmAndCancel from '../../items/ConfirmAndCancel'
 import PasswordSwitch from '../../screens/PasswordSwitch'
 import { Keyboard } from '../../ui-components/index'
 import { KEYBOARD_FORMATS } from '../../ui-components/components/Keyboard'
-import WiFi, { WiFiState } from '../../api/WifiApi'
+import WiFi from '../../api/WifiApi'
 
 export default class WifiPairingScreen extends Lightning.Component {
   static _template() {

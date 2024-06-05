@@ -23,18 +23,18 @@ export default class AckChallengeProvider {
   challenge(challenge, session) {
     if (!challenge) return
     console.log("Got challenge req:" + JSON.stringify(challenge) + "challenge")
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.showChallengeUi(challenge, resolve)
       session.focus()
     })
   }
 
   showChallengeUi(challenge, responder) {
-    new Promise(async (resolve, reject) => {
-    let message= 'Do you give access to ' + challenge.requestor.name + ' to ' + challenge.capability + '?'
-    let params={message:message, responder}
-    Router.navigate('settings/other/AcknowledgeScreen',params)
-    resolve(true)
+    new Promise(async (resolve) => {
+      let message = 'Do you give access to ' + challenge.requestor.name + ' to ' + challenge.capability + '?'
+      let params = { message: message, responder }
+      Router.navigate('settings/other/AcknowledgeScreen', params)
+      resolve(true)
     })
   }
 }

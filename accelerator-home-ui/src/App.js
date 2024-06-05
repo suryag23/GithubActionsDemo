@@ -16,12 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Utils, Router, Storage, Settings } from '@lightningjs/sdk';
+import { Utils, Router, Storage, Settings, Language } from '@lightningjs/sdk';
 import ThunderJS from 'ThunderJS';
 import routes from './routes/routes';
 import AppApi from '../src/api/AppApi.js';
 import XcastApi from '../src/api/XcastApi';
-import { CONFIG, availableLanguages, availableLanguageCodes } from './Config/Config';
+import { CONFIG, GLOBALS, availableLanguageCodes } from './Config/Config';
 import Keymap from './Config/Keymap';
 import Menu from './views/Menu'
 import Failscreen from './screens/FailScreen';
@@ -32,7 +32,7 @@ import DTVApi from './api/DTVApi';
 import TvOverlayScreen from './tvOverlay/TvOverlayScreen';
 import ChannelOverlay from './MediaPlayer/ChannelOverlay';
 import SettingsOverlay from './overlays/SettingsOverlay';
-import { AlexaLauncherKeyMap, errorPayload, PlaybackStateReport, VolumePayload, ApplicationStateReporter } from './Config/AlexaConfig';
+import { AlexaLauncherKeyMap, PlaybackStateReport, VolumePayload } from './Config/AlexaConfig';
 import AppCarousel from './overlays/AppCarousel';
 import VideoScreen from './screens/Video';
 import VideoInfoChange from './overlays/VideoInfoChange/VideoInfoChange.js';
@@ -47,19 +47,22 @@ import PinChallengeProvider from './api/firebolt/provider/PinChallengeProvider';
 import AckChallengeProvider from './api/firebolt/provider/AckChallengeProvider';
 import KeyboardUIProvider from './api/firebolt/provider/KeyboardUIProvider';
 import { AcknowledgeChallenge, Keyboard, PinChallenge } from '@firebolt-js/manage-sdk'
+import PersistentStoreApi from './api/PersistentStore.js';
+import { Localization, Metrics } from '@firebolt-js/sdk';
+
+
 
 var powerState = 'ON';
 var AlexaAudioplayerActive = false;
 var thunder = ThunderJS(CONFIG.thunderConfig);
 var appApi = new AppApi();
 var dtvApi = new DTVApi();
-var hdmiApi = new HDMIApi()
 var cecApi = new CECApi();
 var xcastApi = new XcastApi();
 var voiceApi = new VoiceApi();
 
-
 export default class App extends Router.App {
+
   _handleAppClose() {
     console.error("_handleAppClose triggered.");
     this.toggleExitDialog().then((confirmed) => {
@@ -72,20 +75,15 @@ export default class App extends Router.App {
     });
   }
   static getFonts() {
-    return [{ family: CONFIG.language.font, url: Utils.asset('fonts/' + CONFIG.language.fontSrc) }];
+    return [{ family: 'Play', url: Utils.asset('fonts/Play/Play-Regular.ttf') }];
   }
+
+
   _setup() {
-    Storage.set("selfClientName", "ResidentApp");
-    console.log("accelerator-home-ui version: " + Settings.get("platform", "version"))
-    if (window.__firebolt.endpoint !== undefined) {
-      console.log("window.__firebolt.endpoint ", JSON.stringify(window.__firebolt.endpoint));
-      Storage.set("selfClientName", "FireboltMainApp-refui");
-    }
-    console.log("selfClientName:", Storage.get("selfClientName"));
-    Storage.set("applicationType", Storage.get("selfClientName"));
-    console.log("UI init tracked top most app:", Storage.get("applicationType"));
-    Router.startRouter(routes, this);
+    console.log("accelerator-home-ui version: " + Settings.get("platform", "version"));
+    console.log("UI setup selfClientName:" + GLOBALS.selfClientName + ", current topmostApp:", GLOBALS.topmostApp);
     Storage.set("ResolutionChangeInProgress", false);
+    Router.startRouter(routes, this);
     document.onkeydown = e => {
       if (e.keyCode == Keymap.Backspace) {
         e.preventDefault();
@@ -163,7 +161,7 @@ export default class App extends Router.App {
   static language() {
     return {
       file: Utils.asset('language/language-file.json'),
-      language: CONFIG.language.id
+      language: ("ResidentApp" === GLOBALS.selfClientName ? CONFIG.language :Localization.language()) || 'en'
     }
   }
 
@@ -176,7 +174,7 @@ export default class App extends Router.App {
     console.log("Got keycode : " + JSON.stringify(key.keyCode))
     this.$hideImage(0);
     if (key.keyCode == Keymap.Home && !Router.isNavigating()) {
-      if (Storage.get('applicationType').includes("dac.native")) {
+      if (GLOBALS.topmostApp.includes("dac.native")) {
         this.jumpToRoute("apps");
       } else {
         this.jumpToRoute("menu"); //method to exit the current app(if any) and route to home screen
@@ -184,7 +182,7 @@ export default class App extends Router.App {
       return true
     }
     else if (key.keyCode == Keymap.Inputs_Shortcut && !Router.isNavigating()) { //for inputs overlay
-      if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
+      if (GLOBALS.topmostApp !== GLOBALS.selfClientName) {
         if (Router.getActiveHash() === "tv-overlay/inputs") {
           Router.reload();
         } else {
@@ -192,19 +190,20 @@ export default class App extends Router.App {
         }
         // appApi.setVisibility('ResidentApp', true);
         thunder.call('org.rdk.RDKShell', 'moveToFront', {
-          client: Storage.get("selfClientName")
-        }).then(result => {
-          appApi.setVisibility(Storage.get("selfClientName"), true); //#requiredChange
+          client: GLOBALS.selfClientName
+        }).then(() => {
+          appApi.setVisibility(GLOBALS.selfClientName, true); //#requiredChange
           console.log('App: ResidentApp moveToFront Success');
           thunder
             .call("org.rdk.RDKShell", "setFocus", {
-              client: Storage.get("selfClientName")
+              client: GLOBALS.selfClientName
             })
-            .then((result) => {
+            .then(() => {
               console.log("App: residentApp setFocus Success");
             })
             .catch((err) => {
               console.log("App: Error", err);
+              Metrics.error(Metrics.ErrorType.OTHER, 'APPError', "RDKShell setFocus error"+ err, false, null)
             });
         });
       } else {
@@ -216,7 +215,7 @@ export default class App extends Router.App {
       return true
     }
     else if (key.keyCode == Keymap.Picture_Setting_Shortcut && !Router.isNavigating()) { //for video settings overlay
-      if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
+      if (GLOBALS.topmostApp !== GLOBALS.selfClientName) {
         if (Router.getActiveHash() === "tv-overlay/settings") {
           Router.reload();
         } else {
@@ -224,19 +223,20 @@ export default class App extends Router.App {
         }
         // appApi.setVisibility('ResidentApp', true);
         thunder.call('org.rdk.RDKShell', 'moveToFront', {
-          client: Storage.get("selfClientName")
-        }).then(result => {
-          appApi.setVisibility(Storage.get("selfClientName"), true); //#requiredChange
+          client: GLOBALS.selfClientName
+        }).then(() => {
+          appApi.setVisibility(GLOBALS.selfClientName, true); //#requiredChange
           console.log('App: ResidentApp moveToFront Success');
           thunder
             .call("org.rdk.RDKShell", "setFocus", {
-              client: Storage.get("selfClientName")
+              client: GLOBALS.selfClientName
             })
-            .then((result) => {
+            .then(() => {
               console.log("App: Resident App setFocus Success");
             })
             .catch((err) => {
               console.log("App: Error", err);
+              Metrics.error(Metrics.ErrorType.OTHER, 'AppError', "RDKShell setFocus error"+ err, false, null)
             });
         });
       } else {
@@ -249,7 +249,7 @@ export default class App extends Router.App {
     }
     else if (key.keyCode == Keymap.Settings_Shortcut && !Router.isNavigating()) {
       console.log(`settings shortcut`)
-      if (Storage.get("applicationType") === Storage.get("selfClientName")) { //launch settings overlay/page depending on the current route.
+      if (GLOBALS.topmostApp === GLOBALS.selfClientName) { //launch settings overlay/page depending on the current route.
         if (Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player") { //player supports settings overlay, so launch it as overlay
           if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "SettingsOverlay") { //currently focused on settings overlay, so hide it
             Router.focusPage();
@@ -264,21 +264,21 @@ export default class App extends Router.App {
         if (Router.getActiveHash() === "applauncher") { //if route is applauncher just focus the overlay widget
           if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "SettingsOverlay") { //currently focused on settings overlay, so hide it
             Router.focusPage();
-            let currentApp = Storage.get("applicationType")
+            let currentApp = GLOBALS.topmostApp
             appApi.zorder(currentApp)
             appApi.setFocus(currentApp)
             appApi.setVisibility(currentApp, true)
           }
           else { //launch the settings overlay
-            appApi.zorder(Storage.get("selfClientName"))
-            appApi.setFocus(Storage.get("selfClientName"))
-            appApi.setVisibility(Storage.get("selfClientName"), true)
+            appApi.zorder(GLOBALS.selfClientName)
+            appApi.setFocus(GLOBALS.selfClientName)
+            appApi.setVisibility(GLOBALS.selfClientName, true)
             Router.focusWidget('SettingsOverlay');
           }
         } else { //if on some other route while on an application, route to applauncher before launching the settings overlay
-          appApi.zorder(Storage.get("selfClientName"))
-          appApi.setFocus(Storage.get("selfClientName"))
-          appApi.setVisibility(Storage.get("selfClientName"), true)
+          appApi.zorder(GLOBALS.selfClientName)
+          appApi.setFocus(GLOBALS.selfClientName)
+          appApi.setVisibility(GLOBALS.selfClientName, true)
           Router.navigate("applauncher");
           Router.focusWidget('SettingsOverlay');
         }
@@ -320,7 +320,7 @@ export default class App extends Router.App {
       return true
     }
     else if (key.keyCode == Keymap.AppCarousel && !Router.isNavigating()) {
-      if (Storage.get("applicationType") === Storage.get("selfClientName")) { // if resident app is on focus
+      if (GLOBALS.topmostApp === GLOBALS.selfClientName) { // if resident app is on focus
         if (Router.getActiveHash() === "menu") {
           return true;
         }
@@ -334,20 +334,20 @@ export default class App extends Router.App {
         if (Router.getActiveHash() === "applauncher") { //if route is applauncher just focus the overlay widget
           if (Router.getActiveWidget() && Router.getActiveWidget().__ref === "AppCarousel") { //currently focused on settings overlay, so hide it
             Router.focusPage();
-            appApi.zorder(Storage.get("applicationType"))
-            appApi.setFocus(Storage.get("applicationType"))
-            appApi.setVisibility(Storage.get("applicationType"), true)
+            appApi.zorder(GLOBALS.topmostApp)
+            appApi.setFocus(GLOBALS.topmostApp)
+            appApi.setVisibility(GLOBALS.topmostApp, true)
           }
           else { //launch the settings overlay
-            appApi.zorder(Storage.get("selfClientName"))
-            appApi.setFocus(Storage.get("selfClientName"))
-            appApi.setVisibility(Storage.get("selfClientName"), true)
+            appApi.zorder(GLOBALS.selfClientName)
+            appApi.setFocus(GLOBALS.selfClientName)
+            appApi.setVisibility(GLOBALS.selfClientName, true)
             Router.focusWidget('AppCarousel');
           }
         } else { //if on some other route while on an application, route to applauncher before launching the settings overlay
-          appApi.zorder(Storage.get("selfClientName"))
-          appApi.setFocus(Storage.get("selfClientName"))
-          appApi.setVisibility(Storage.get("selfClientName"), true)
+          appApi.zorder(GLOBALS.selfClientName)
+          appApi.setFocus(GLOBALS.selfClientName)
+          appApi.setVisibility(GLOBALS.selfClientName, true)
           Router.navigate("applauncher");
           Router.focusWidget('AppCarousel');
         }
@@ -381,62 +381,62 @@ export default class App extends Router.App {
       })
     } else if (key.keyCode == 228) {
       console.log("___________DEEP_SLEEP_______________________F12")
-      appApi.setPowerState("DEEP_SLEEP").then(res => {
+      appApi.setPowerState("DEEP_SLEEP").then(() => {
         powerState = 'DEEP_SLEEP'
       })
       return true
     } else if (key.keyCode === Keymap.AudioVolumeMute && !Router.isNavigating()) {
-      if (Storage.get("applicationType") === Storage.get("selfClientName")) {
+      if (GLOBALS.topmostApp === GLOBALS.selfClientName) {
         this.tag("Volume").onVolumeMute();
       } else {
         console.log("muting on some app")
         if (Router.getActiveHash() === "applauncher") {
           console.log("muting on some app while route is app launcher")
-          appApi.zorder(Storage.get("selfClientName"))
-          appApi.visible(Storage.get("selfClientName"), true)
+          appApi.zorder(GLOBALS.selfClientName)
+          appApi.visible(GLOBALS.selfClientName, true)
           this.tag("Volume").onVolumeMute();
         } else {
           console.log("muting on some app while route is NOT app launcher")
-          appApi.zorder(Storage.get("selfClientName"))
-          appApi.visible(Storage.get("selfClientName"), true)
+          appApi.zorder(GLOBALS.selfClientName)
+          appApi.visible(GLOBALS.selfClientName, true)
           Router.navigate("applauncher");
           this.tag("Volume").onVolumeMute();
         }
       }
       return true
     } else if (key.keyCode == Keymap.AudioVolumeUp && !Router.isNavigating()) {
-      if (Storage.get("applicationType") === Storage.get("selfClientName")) {
+      if (GLOBALS.topmostApp === GLOBALS.selfClientName) {
         this.tag("Volume").onVolumeKeyUp();
       } else {
         console.log("muting on some app")
         if (Router.getActiveHash() === "applauncher") {
           console.log("muting on some app while route is app launcher")
-          appApi.zorder(Storage.get("selfClientName"))
-          appApi.visible(Storage.get("selfClientName"), true)
+          appApi.zorder(GLOBALS.selfClientName)
+          appApi.visible(GLOBALS.selfClientName, true)
           this.tag("Volume").onVolumeKeyUp();
         } else {
           console.log("muting on some app while route is NOT app launcher")
-          appApi.zorder(Storage.get("selfClientName"))
-          appApi.visible(Storage.get("selfClientName"), true)
+          appApi.zorder(GLOBALS.selfClientName)
+          appApi.visible(GLOBALS.selfClientName, true)
           Router.navigate("applauncher");
           this.tag("Volume").onVolumeKeyUp();
         }
       }
       return true
     } else if (key.keyCode == Keymap.AudioVolumeDown && !Router.isNavigating()) {
-      if (Storage.get("applicationType") === Storage.get("selfClientName")) {
+      if (GLOBALS.topmostApp === GLOBALS.selfClientName) {
         this.tag("Volume").onVolumeKeyDown();
       } else {
         console.log("muting on some app")
         if (Router.getActiveHash() === "applauncher") {
           console.log("muting on some app while route is app launcher")
-          appApi.zorder(Storage.get("selfClientName"))
-          appApi.visible(Storage.get("selfClientName"), true)
+          appApi.zorder(GLOBALS.selfClientName)
+          appApi.visible(GLOBALS.selfClientName, true)
           this.tag("Volume").onVolumeKeyDown();
         } else {
           console.log("muting on some app while route is NOT app launcher")
-          appApi.zorder(Storage.get("selfClientName"))
-          appApi.visible(Storage.get("selfClientName"), true)
+          appApi.zorder(GLOBALS.selfClientName)
+          appApi.visible(GLOBALS.selfClientName, true)
           Router.navigate("applauncher");
           this.tag("Volume").onVolumeKeyDown();
         }
@@ -447,8 +447,8 @@ export default class App extends Router.App {
   }
 
   _moveToFront() {
-    appApi.setVisibility(Storage.get("selfClientName"), true)
-    appApi.zorder(Storage.get("selfClientName"))
+    appApi.setVisibility(GLOBALS.selfClientName, true)
+    appApi.zorder(GLOBALS.selfClientName)
   }
 
   AvDecodernotificationcall() {
@@ -458,33 +458,39 @@ export default class App extends Router.App {
   }
 
   async userInactivity() {
-    let persisteneTimerValue = await appApi.getTimerValue();
-    console.log("persistenceTimer", persisteneTimerValue)
-    if (persisteneTimerValue === "undefined" || persisteneTimerValue === undefined || persisteneTimerValue === "Off") {
-      appApi.enabledisableinactivityReporting(false).then(resp => {
-        this.userInactivity.dispose();
-      })
-    }
-    else {
-      console.log("came else block")
-      this.setTimerValuethroughPersistence(parseInt(persisteneTimerValue))
-    }
-  }
-
-  setTimerValuethroughPersistence(persisteneTimerValue) {
-    appApi.enabledisableinactivityReporting(true).then(resp => {
-      console.log("enable", resp)
-      appApi.setInactivityInterval(persisteneTimerValue).then(resp => {
-        this.userInactivity = thunder.on('org.rdk.RDKShell', 'onUserInactivity', notification => {
-          console.log("UserInactivityStatusNotification: ", JSON.stringify(notification))
-          appApi.getAvCodeStatus().then(result => {
-            console.log("Avdecoder", result.avDecoderStatus);
-            if ((result.avDecoderStatus === "IDLE" || result.avDecoderStatus === "PAUSE") && Storage.get("applicationType") === "") {
-              this.$hideImage(1);
-            }
+    PersistentStoreApi.get().activate().then(() => {
+      PersistentStoreApi.get().getValue('ScreenSaverTime', 'timerValue').then(result => {
+        // check if result has value property and if it is not undefined^M
+        if (result && result.value && result.value !== undefined && result.value !== "Off") {
+          console.log("App PersistentStoreApi screensaver timer value is: " + result.value);
+          appApi.enabledisableinactivityReporting(true).then(() => {
+            appApi.setInactivityInterval(result.value).then(() => {
+              this.userInactivity = thunder.on('org.rdk.RDKShell', 'onUserInactivity', notification => {
+                console.log("UserInactivityStatusNotification: ", JSON.stringify(notification))
+                appApi.getAvCodeStatus().then(result => {
+                  console.log("Avdecoder", result.avDecoderStatus);
+                  if ((result.avDecoderStatus === "IDLE" || result.avDecoderStatus === "PAUSE") && GLOBALS.topmostApp === "") {
+                    this.$hideImage(1);
+                  }
+                })
+              })
+            })
+          });
+        } else {
+          console.warn("App PersistentStoreApi screensaver timer value is not set or is Off.")
+          appApi.enabledisableinactivityReporting(false).then(() => {
+            this.userInactivity.dispose();
           })
+        }
+      }).catch(err => {
+        console.error("App PersistentStoreApi getValue error: " + JSON.stringify(err));
+        appApi.enabledisableinactivityReporting(false).then(() => {
+          this.userInactivity.dispose();
         })
-      })
+      });
+    }).catch(err => {
+      console.error("App PersistentStoreApi activation error: " + JSON.stringify(err));
+      reject(err);
     });
   }
 
@@ -501,6 +507,7 @@ export default class App extends Router.App {
     // this.tag("ScreenSaver").alpha = alpha;
   }
   _init() {
+
     let self = this;
     self.appIdentifiers = {
       "YouTubeKids": "n:5",
@@ -511,10 +518,7 @@ export default class App extends Router.App {
       "Amazon": "n:2",
       "Prime": "n:2"
     }
-    if (!availableLanguages.includes(localStorage.getItem('Language'))) {
-      localStorage.setItem('Language', 'English')
-    }
-    keyIntercept(Storage.get("selfClientName")).catch(err => {
+    keyIntercept(GLOBALS.selfClientName).catch(err => {
       console.error("App _init keyIntercept err:", JSON.stringify(err));
     });
     this.userInactivity();
@@ -522,18 +526,17 @@ export default class App extends Router.App {
     FireBoltApi.get().lifecycle.ready()
 
     FireBoltApi.get().lifecycle.registerEvent('foreground', value => {
-      console.log("FireBoltApi[foreground] value:" + JSON.stringify(value) + ", launchResidentApp with:" + JSON.stringify(Storage.get("selfClientName")));
+      console.log("FireBoltApi[foreground] value:" + JSON.stringify(value) + ", launchResidentApp with:" + JSON.stringify(GLOBALS.selfClientName));
       // Ripple launches refui with this rdkshell client name.
-      appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
-        if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-          AlexaApi.get().reportApplicationState("menu", true);
-        }
-      });
+      GLOBALS.topmostApp = GLOBALS.selfClientName;
+      FireBoltApi.get().discovery.launch("refui",{ "action": "home", "context": { "source": "device" } } ).then(() => {
+        AlexaApi.get().reportApplicationState("menu", true);
+      })
     })
     FireBoltApi.get().lifecycle.registerEvent('background', value => {
       // Ripple changed app states; it will be a 'FireboltApp'
-      Storage.set("applicationType", "FireboltApp");
-      console.log("FireBoltApi[foreground] value:" + JSON.stringify(value) + ", Updating top app as:" + Storage.get("applicationType"));
+      GLOBALS.topmostApp = "FireboltApp";
+      console.log("FireBoltApi[foreground] value:" + JSON.stringify(value) + ", Updating top app as:" + GLOBALS.topmostApp);
     })
     FireBoltApi.get().lifecycle.state().then(res => {
       console.log("Lifecycle.state result:" + res)
@@ -553,15 +556,16 @@ export default class App extends Router.App {
     thunder.Controller.activate({ callsign: 'org.rdk.UserPreferences' }).then(result => {
       console.log("App UserPreferences plugin activation result: " + result)
     }).catch(err => {
-      reject(err)
+      console.error("App UserPreferences plugin activation error: " + JSON.stringify(err));
+      Metrics.error(Metrics.ErrorType.OTHER, 'PluginError', "Thunder Controller Activate error " + JSON.stringify(err), false, null)
     })
     thunder.Controller.activate({ callsign: 'org.rdk.System' }).then(result => {
       console.log("App System plugin activation result: " + result)
       let rfc = "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.XDial.WolWakeEnable"
       let rfcList = { rfcList: [rfc] }
       appApi.getRFCConfig(rfcList).then(rfcStatus => {
-        if (rfcStatus.hasOwnProperty("success") && rfcStatus.success) {
-          if ((rfcStatus.RFCConfig.hasOwnProperty(rfc)) && (rfcStatus.RFCConfig[rfc] === "true")) {
+        if ("success" in rfcStatus && rfcStatus.success) {
+          if ((rfc in rfcStatus.RFCConfig) && (rfcStatus.RFCConfig[rfc] === "true")) {
             appApi.setNetworkStandbyMode().then(result => {
               if (!result.success) {
                 console.warn("App RFC setNetworkStandbyMode returned false; trying updated API.")
@@ -586,15 +590,15 @@ export default class App extends Router.App {
         }
       })
     }).catch(err => {
-      reject(err)
+      console.error("App System plugin activation error: " + JSON.stringify(err));
     })
     appApi.getPluginStatus("org.rdk.DeviceDiagnostics").then(res => {
       console.log("App DeviceDiagnostics state:", res[0].state)
       if (res[0].state === "deactivated") {
-        thunder.Controller.activate({ callsign: 'org.rdk.DeviceDiagnostics' }).then(result => {
+        thunder.Controller.activate({ callsign: 'org.rdk.DeviceDiagnostics' }).then(() => {
           this.AvDecodernotificationcall();
         }).catch(err => {
-          reject(err)
+          console.error("App DeviceDiagnostics plugin activation error: " + JSON.stringify(err));
         })
       }
       else {
@@ -602,17 +606,17 @@ export default class App extends Router.App {
       }
     })
 
-
-
     appApi.getHDCPStatus().then(result => {
       Storage.set("UICacheonDisplayConnectionChanged", result.isConnected);
     })
 
-    if (Storage.get("applicationType") !== "HDMI") { //to default to hdmi, if previous input was hdmi
-      Storage.set('applicationType', '');//to set the application type to none
+    if (GLOBALS.topmostApp !== "HDMI") { //to default to hdmi, if previous input was hdmi
+      GLOBALS.topmostApp = GLOBALS.selfClientName;//to set the application type to none
     }
     Storage.set("lastVisitedRoute", "menu"); //setting to menu so that it will be always defaulted to #menu
-    appApi.enableDisplaySettings().then(res => { console.log(`results : ${JSON.stringify(res)}`) }).catch(err => { console.error("error while enabling displaysettings") })
+    appApi.enableDisplaySettings().then(res => { console.log(`results : ${JSON.stringify(res)}`) }).catch(err => {
+      console.error("error while enabling displaysettings:" + JSON.stringify(err));
+    })
     appApi.cobaltStateChangeEvent()
 
     this.xcastApi = new XcastApi()
@@ -646,10 +650,10 @@ export default class App extends Router.App {
     thunder.on('Controller.1', 'all', noti => {
       console.log("App controller notification:", noti)
       if ((noti.data.url && noti.data.url.slice(-5) === "#boot") || (noti.data.httpstatus && noti.data.httpstatus != 200 && noti.data.httpstatus != -1)) { // to exit metro apps by pressing back key & to auto exit webapp if httpstatus is not 200
-        appApi.exitApp(Storage.get('applicationType'));
+        appApi.exitApp(GLOBALS.topmostApp);
       }
       // TODO: make the check based on XcastApi.supportedApps() list
-      if (noti.hasOwnProperty("callsign") && (noti.callsign.startsWith("YouYube") || noti.callsign.startsWith("Amazon") || noti.callsign.startsWith("Netflix"))) {
+      if (Object.prototype.hasOwnProperty.call(noti, "callsign") && (noti.callsign.startsWith("YouYube") || noti.callsign.startsWith("Amazon") || noti.callsign.startsWith("Netflix"))) {
         let params = { applicationName: noti.callsign, state: 'stopped' };
         switch (noti.data.state) {
           case "activated":
@@ -663,6 +667,7 @@ export default class App extends Router.App {
             break;
           case "suspended":
             params.state = 'suspended';
+            break;
           case "Precondition":
             break;
         }
@@ -702,12 +707,10 @@ export default class App extends Router.App {
     thunder.on('org.rdk.RDKShell', 'onDestroyed', data => {
       console.warn("[RDKSHELLEVT] onDestroyed:", data);
       // No need to handle this when UI is in Firebolt compatible mode.
-      if ((Storage.get("applicationType") === data.client)
-        && (Storage.get("selfClientName") === "ResidentApp")) {
-        appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
-          if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-            AlexaApi.get().reportApplicationState("menu", true);
-          }
+      if ((GLOBALS.topmostApp === data.client)
+        && (GLOBALS.selfClientName === "ResidentApp"|| GLOBALS.selfClientName === "FireboltMainApp-refui")) {
+        appApi.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+          AlexaApi.get().reportApplicationState("menu", true);
         });
       }
     });
@@ -715,30 +718,26 @@ export default class App extends Router.App {
       console.warn("[RDKSHELLEVT] onLaunched:", data);
       if ((data.launchType === "activate") || (data.launchType === "resume")) {
         // Change (Tracked TopMost) UI's visibility to false only for other apps.
-        if ((data.client != Storage.get("selfClientName"))
-          && ((Storage.get("applicationType") === "ResidentApp")
-            || (Storage.get("applicationType") === Storage.get("selfClientName")))) {
-          appApi.setVisibility(Storage.get("selfClientName"), false);
+        if ((data.client != GLOBALS.selfClientName)
+          && ((GLOBALS.topmostApp === "ResidentApp")
+            || (GLOBALS.topmostApp === GLOBALS.selfClientName))) {
+          appApi.setVisibility(GLOBALS.selfClientName, false);
         }
-        if (((Storage.get("applicationType") != "ResidentApp")
-          || (Storage.get("applicationType") != Storage.get("selfClientName")))
-          && (Storage.get("applicationType") != data.client)) {
-          appApi.suspendPremiumApp(Storage.get("applicationType"));
+        if (((GLOBALS.topmostApp != "ResidentApp")
+          || (GLOBALS.topmostApp != GLOBALS.selfClientName))
+          && (GLOBALS.topmostApp != data.client)) {
+          appApi.suspendPremiumApp(GLOBALS.topmostApp);
         }
         // Assuming launch is followed by moveToFront & setFocus
-        Storage.set("applicationType", data.client);
-        if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-          AlexaApi.get().reportApplicationState(data.client);
-        }
+        GLOBALS.topmostApp = data.client;
+        AlexaApi.get().reportApplicationState(data.client);
       } else if (data.launchType === "suspend") {
         // No need to handle this here when UI is in Firebolt compatible mode.
         // It will be done at RefUI's 'foreground' event handler.
-        if ((Storage.get("applicationType") === data.client)
-          && (Storage.get("selfClientName") === "ResidentApp")) {
-          appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
-            if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-              AlexaApi.get().reportApplicationState("menu", true);
-            }
+        if ((GLOBALS.topmostApp === data.client)
+          && (GLOBALS.selfClientName === "ResidentApp")) {
+          appApi.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+            AlexaApi.get().reportApplicationState("menu", true);
           });
         }
       }
@@ -746,12 +745,10 @@ export default class App extends Router.App {
     thunder.on('org.rdk.RDKShell', 'onSuspended', data => {
       console.warn("[RDKSHELLEVT] onSuspended:", data);
       // No need to handle this here when UI is in Firebolt compatible mode.
-      if ((Storage.get("applicationType") === data.client)
-        && (Storage.get("selfClientName") === "ResidentApp")) {
-        appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
-          if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-            AlexaApi.get().reportApplicationState("menu", true);
-          }
+      if ((GLOBALS.topmostApp === data.client)
+        && (GLOBALS.selfClientName === "ResidentApp" || GLOBALS.selfClientName === "FireboltMainApp-refui")) {
+        appApi.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+          AlexaApi.get().reportApplicationState("menu", true);
         });
       }
     });
@@ -760,6 +757,12 @@ export default class App extends Router.App {
     });
     thunder.on('org.rdk.RDKShell', 'onPluginSuspended', data => {
       console.warn("[RDKSHELLEVT] onPluginSuspended:", data);
+      if ((GLOBALS.topmostApp === data.client)
+        && (GLOBALS.selfClientName === "ResidentApp" || GLOBALS.selfClientName === "FireboltMainApp-refui")) {
+        appApi.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+          AlexaApi.get().reportApplicationState("menu", true);
+        });
+      }
     });
     thunder.on('org.rdk.RDKShell', 'onBlur', data => {
       console.warn("[RDKSHELLEVT] onBlur:", data);
@@ -768,14 +771,15 @@ export default class App extends Router.App {
       console.warn("[RDKSHELLEVT] onFocus:", data);
     });
 
-    appApi.getPluginStatus("Cobalt").then(res => {
+    appApi.getPluginStatus("Cobalt").then(() => {
       /* Loop through YouTube variants and set respective urls. */
       JSON.parse(JSON.stringify(appListInfo)).forEach(appInfo => {
-        if (appInfo.hasOwnProperty("applicationType") && appInfo.applicationType.startsWith("YouTube") && appInfo.hasOwnProperty("uri") && appInfo.uri.length) {
+        if (Object.prototype.hasOwnProperty.call(appInfo, "applicationType") && appInfo.applicationType.startsWith("YouTube") && Object.prototype.hasOwnProperty.call(appInfo, "uri") && appInfo.uri.length) {
           thunder.Controller.clone({ callsign: "Cobalt", newcallsign: appInfo.applicationType }).then(result => {
             console.log("App Controller.clone Cobalt as " + appInfo.applicationType + " done.", result);
           }).catch(err => {
             console.error("App Controller clone Cobalt for " + appInfo.applicationType + " failed: ", err);
+            Metrics.error(Metrics.ErrorType.OTHER, "PluginError", `Controller clone Cobalt for ${appInfo.applicationType} failed: ${err}`, false, null)
             // TODO: hide YouTube Icon and listing from Menu, AppCarousel, Channel overlay and EPG page.
           })
 
@@ -783,7 +787,7 @@ export default class App extends Router.App {
             if (res[0].state !== "deactivated") {
               thunder.Controller.deactivate({ callsign: appInfo.applicationType }).catch(err => {
                 console.error("App Controller.deactivate " + appInfo.applicationType + " failed. It may not work.", err);
-                resolve(false);
+                Metrics.error(Metrics.ErrorType.OTHER, "pluginError",`App Controller.deactivate failed for ${appInfo.applicationType} with ${err}`, false, null)
               })
             }
             /* Do not change YouTube's configuration as Page-visibility test runs on that. */
@@ -791,23 +795,22 @@ export default class App extends Router.App {
               thunder.call('Controller', `configuration@${appInfo.applicationType}`).then(result => {
                 /* Ensure appending '?' so that later params can be directly appended. */
                 result.url = appInfo.uri + "?"; // Make sure that appListInfo.js has only base url.
-                thunder.call('Controller', `configuration@${appInfo.applicationType}`, result).then(result => {
+                thunder.call('Controller', `configuration@${appInfo.applicationType}`, result).then(() => {
                   Storage.set(appInfo.applicationType + "DefaultURL", appInfo.uri + "?"); // Make sure that appListInfo.js has only base url.
                 }).catch(err => {
-                  console.error("App Controller.configuration@" + appInfo.applicationType + " set failed. It may not work.", err);
-                  resolve(false);
+                  console.error("App Controller.configuration@" + appInfo.applicationType + " set failed. It may not work." + JSON.stringify(err));
+                  Metrics.error(Metrics.ErrorType.OTHER, "pluginError",`App Controller.configuration for ${appInfo.applicationType} set failed. It may not work. ${JSON.stringify(err)}`, false, null)
                 })
               }).catch(err => {
-                console.error("App Controller.configuration@" + appInfo.applicationType + " get failed. It may not work.", err);
-                resolve(false);
+                console.error("App Controller.configuration@" + appInfo.applicationType + " get failed. It may not work." + JSON.stringify(err));
+                Metrics.error(Metrics.ErrorType.OTHER, "pluginError",`App Controller.configuration@ for ${appInfo.applicationType} failed with ${JSON.stringify(err)}`, false, null)
               })
             } else {
               /* Just store the plugin configured url as default url and ensure '?' is appended. */
               Storage.set(appInfo.applicationType + "DefaultURL", (res[0].configuration.url.includes('?') ? res[0].configuration.url : res[0].configuration.url + "?"));
             }
           }).catch(err => {
-            console.error("App getPluginStatus " + appInfo.applicationType + " Error: " + err);
-            resolve(false);
+            console.error("App getPluginStatus " + appInfo.applicationType + " Error: " + JSON.stringify(err));
           })
         }
       });
@@ -854,17 +857,15 @@ export default class App extends Router.App {
       console.log("Controller statechange Notification : " + JSON.stringify(notification))
       if (notification && (notification.callsign.startsWith("YouTube") || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && (notification.state == 'Deactivation' || notification.state == 'Deactivated')) {
         console.log(`${notification.callsign} status = ${notification.state}`)
-        console.log(">>notification.callsign: ", notification.callsign, " applicationType: ", Storage.get("applicationType"));
+        console.log(">>notification.callsign: ", notification.callsign, " applicationType: ", GLOBALS.topmostApp);
         if (Router.getActiveHash().startsWith("tv-overlay") || Router.getActiveHash().startsWith("overlay") || Router.getActiveHash().startsWith("applauncher")) { //navigate to last visited route when exiting from any app
           console.log("navigating to lastVisitedRoute")
           Router.navigate(Storage.get("lastVisitedRoute"));
         }
-        if (notification.callsign === Storage.get("applicationType")) { //only launch residentApp iff notification is from currentApp
-          console.log(notification.callsign + " is in: " + notification.state + " state, and application type in Storage is still: " + Storage.get("applicationType") + " calling launchResidentApp")
-          appApi.launchResidentApp(Storage.get("selfClientName"), Storage.get("selfClientName")).then(() => {
-            if (AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") {
-              AlexaApi.get().reportApplicationState("menu", true);
-            }
+        if (notification.callsign === GLOBALS.topmostApp) { //only launch residentApp iff notification is from currentApp
+          console.log(notification.callsign + " is in: " + notification.state + " state, and application type in Storage is still: " + GLOBALS.topmostApp + " calling launchResidentApp")
+          appApi.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+            AlexaApi.get().reportApplicationState("menu", true);
           });
         }
       }
@@ -877,7 +878,7 @@ export default class App extends Router.App {
       }
 
       if (notification && (notification.callsign.startsWith("YouTube") || notification.callsign === 'Amazon' || notification.callsign === 'LightningApp' || notification.callsign === 'HtmlApp' || notification.callsign === 'Netflix') && notification.state == 'Activated') {
-        Storage.set('applicationType', notification.callsign) //required in case app launch happens using curl command.
+        GLOBALS.topmostApp = notification.callsign; //required in case app launch happens using curl command.
         if (notification.callsign === 'Netflix') {
           appApi.getNetflixESN()
             .then(res => {
@@ -901,7 +902,7 @@ export default class App extends Router.App {
                 })
               }
 
-              appApi.visible(Storage.get("selfClientName"), false);
+              appApi.visible(GLOBALS.selfClientName, false);
             }
             if (notification.EventName === "requestsuspend") {
               this.deactivateChildApp('Netflix')
@@ -942,7 +943,7 @@ export default class App extends Router.App {
     /********************   RDKUI-303 - PAGE VISIBILITY API **************************/
 
     //ACTIVATING HDMI CEC PLUGIN
-    cecApi.activate().then((res) => {
+    cecApi.activate().then(() => {
       let getfriendlyname, getosdname;
       setTimeout(() => {
         xcastApi.getFriendlyName().then(res => {
@@ -975,7 +976,7 @@ export default class App extends Router.App {
       let temp = notification.HDCPStatus
       if (!Storage.get("ResolutionChangeInProgress") && (temp.isConnected != Storage.get("UICacheonDisplayConnectionChanged"))) {
         if (temp.isConnected) {
-          let currentApp = Storage.get('applicationType')
+          let currentApp = GLOBALS.topmostApp
           let launchLocation = Storage.get(currentApp + "LaunchLocation")
           console.log("App HdcpProfile onDisplayConnectionChanged current app is:", currentApp)
           let params = {
@@ -996,7 +997,7 @@ export default class App extends Router.App {
           }
         }
         else {
-          let currentApp = Storage.get('applicationType')
+          let currentApp = GLOBALS.topmostApp
           if (currentApp.startsWith("YouTube")) {
             appApi.getPluginStatus(currentApp).then(result => {
               if (result[0].state !== (Settings.get("platform", "enableAppSuspended") ? "suspended" : "deactivated")) {
@@ -1020,7 +1021,7 @@ export default class App extends Router.App {
       console.log(new Date().toISOString() + " onActiveSourceStatusUpdated ", notification)
       if (notification.status != Storage.get("UICacheCECActiveSourceStatus")) {
         if (notification.status) {
-          let currentApp = Storage.get('applicationType')
+          let currentApp = GLOBALS.topmostApp
           let launchLocation = Storage.get(currentApp + "LaunchLocation")
           console.log("current app is ", currentApp)
           let params = {
@@ -1041,7 +1042,7 @@ export default class App extends Router.App {
           }
         }
         else {
-          let currentApp = Storage.get('applicationType')
+          let currentApp = GLOBALS.topmostApp
           if (currentApp.startsWith("YouTube")) {
             appApi.getPluginStatus(currentApp).then(result => {
               if (result[0].state !== (Settings.get("platform", "enableAppSuspended") ? "suspended" : "deactivated")) {
@@ -1058,9 +1059,19 @@ export default class App extends Router.App {
         console.warn("App HdmiCec_2 onActiveSourceStatusUpdated discarding.");
       }
     })
-    let currentLanguage = availableLanguageCodes[localStorage.getItem('Language')]
-    if (currentLanguage.length) {
-      appApi.setUILanguage(currentLanguage)
+    //need to verify
+    if ("ResidentApp" === GLOBALS.selfClientName) {
+      if(Language.get().length) {
+        appApi.setUILanguage(availableLanguageCodes[Language.get()])
+        localStorage.setItem('Language',Language.get())
+      }
+    } else {
+      FireBoltApi.get().localization.language().then(lang => {
+        if(lang) {
+          FireBoltApi.get().localization.language(lang).then(res => console.log(`language ${lang} set succesfully`))
+          localStorage.setItem('Language',lang)
+        }
+      })
     }
   }
 
@@ -1073,7 +1084,7 @@ export default class App extends Router.App {
         //TURNING OFF THE DEVICE
         Storage.set('SLEEPING', notification.powerState)
 
-        let currentApp = Storage.get('applicationType')
+        let currentApp = GLOBALS.topmostApp
         if (currentApp !== "") {
           appApi.exitApp(currentApp); //will suspend/destroy the app depending on the setting.
         }
@@ -1088,9 +1099,19 @@ export default class App extends Router.App {
 
     console.log("App Calling listenToVoiceControl method to activate VoiceControl Plugin")
     this.listenToVoiceControl();
-    let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
-    if (updatedLanguage.length) {
-      appApi.setUILanguage(updatedLanguage)
+    // need to verify
+    if ("ResidentApp" === GLOBALS.selfClientName) {
+      if(availableLanguageCodes[Language.get()].length) {
+        appApi.setUILanguage(availableLanguageCodes[Language.get()])
+        localStorage.setItem('Language',Language.get())
+      }
+    } else {
+      FireBoltApi.get().localization.language().then(lang => {
+        if(lang) {
+          FireBoltApi.get().localization.language(lang).then(res => console.log(`language ${lang} set succesfully`))
+          localStorage.setItem('Language',lang)
+        }
+      })
     }
     /* Subscribe to Volume status events to report to Alexa. */
     thunder.on('org.rdk.DisplaySettings', 'connectedAudioPortUpdated', notification => {
@@ -1133,8 +1154,8 @@ export default class App extends Router.App {
         }
       });
       if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaAuthPending") {
-        // Reset to trigger the OTP from stack.
-        // AlexaApi.get().resetAVSCredentials();
+        /* AVS SDK might be awaiting a ping packet to start. */
+        AlexaApi.get().pingAlexaSDK();
       } else if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") {
         console.log("App checkAlexaAuthStatus is AlexaHandleError; enableSmartScreen.");
         AlexaApi.get().enableSmartScreen();
@@ -1154,21 +1175,24 @@ export default class App extends Router.App {
         })
 
         /* Report device language */
-        if (availableLanguageCodes[localStorage.getItem('Language')].length) {
-          AlexaApi.get().updateDeviceLanguageInAlexa(availableLanguageCodes[localStorage.getItem('Language')]);
+        if (availableLanguageCodes[Language.get()].length) {
+          AlexaApi.get().updateDeviceLanguageInAlexa(availableLanguageCodes[Language.get()]);
         }
         /* Report device timeZone */
-        appApi.getZone().then(updatedTimeZone => {
-          if (updatedTimeZone.length) {
-            console.log("App updateDeviceTimeZoneInAlexa with zone:", updatedTimeZone)
-            AlexaApi.get().updateDeviceTimeZoneInAlexa(updatedTimeZone);
-          } else {
-            console.error("App getTimezoneDST returned:", updatedTimeZone)
-          }
-        });
+        if ("ResidentApp" === GLOBALS.selfClientName) {
+          appApi.getZone().then(timezone => {
+            this.updateAlexaTimeZone(timezone)
+          });
+        } else {
+          FireBoltApi.get().localization.getTimeZone().then(timezone=>{
+            this.updateAlexaTimeZone(timezone)
+          })
+        }
       }
 
-      console.log("App VoiceControl check if user has denied ALEXA:", AlexaApi.get().checkAlexaAuthStatus())
+
+
+      console.log("App VoiceControl check if user has denied ALEXA:" + JSON.stringify(AlexaApi.get().checkAlexaAuthStatus()))
 
       /* Handle VoiceControl Notifications */
       voiceApi.registerEvent('onServerMessage', notification => {
@@ -1184,8 +1208,7 @@ export default class App extends Router.App {
               console.log("App enableSmartScreen");
               AlexaApi.get().enableSmartScreen();
             }
-            if ((Router.getActiveHash() === "menu") && (Storage.get("applicationType") === Storage.get("selfClientName"))) {
-              console.log("Arun: check and route to alexa login page");
+            if ((Router.getActiveHash() === "menu") && (GLOBALS.topmostApp === GLOBALS.selfClientName)) {
               if (Router.getActiveHash() != "AlexaLoginScreen" && Router.getActiveHash() != "CodeScreen" && !Router.isNavigating()) {
                 console.log("Routing to Alexa login page")
                 Router.navigate("AlexaLoginScreen")
@@ -1199,7 +1222,7 @@ export default class App extends Router.App {
               Router.navigate("SuccessScreen")
             } else if ((notification.xr_speech_avs.state === "uninitialized") || (notification.xr_speech_avs.state === "authorizing")) {
               AlexaApi.get().setAlexaAuthStatus("AlexaAuthPending")
-            } else if ((notification.xr_speech_avs.state === "unrecoverable error") && (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+            } else if ((notification.xr_speech_avs.state === "unrecoverable error") && (GLOBALS.topmostApp === GLOBALS.selfClientName)) {
               // Could be AUTH token Timeout; refresh it.
               if (Storage.get("setup") === true) {
                 Router.navigate("FailureScreen");
@@ -1228,13 +1251,13 @@ export default class App extends Router.App {
         if ((AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") && notification.xr_speech_avs.state) {
           if (notification.xr_speech_avs.state.guiAPL === "ACTIVATED") {
             AlexaApi.get().displaySmartScreenOverlay();
-            appApi.setFocus(Storage.get("applicationType") === "" ? Storage.get("selfClientName") : Storage.get("applicationType"));
+            appApi.setFocus(GLOBALS.topmostApp === "" ? GLOBALS.selfClientName : GLOBALS.topmostApp);
           }
           if (notification.xr_speech_avs.state.dialogUX === "idle" && notification.xr_speech_avs.state.audio === "stopped") {
             console.log("App current AlexaAudioplayerActive state:" + AlexaAudioplayerActive);
             if (AlexaAudioplayerActive && notification.xr_speech_avs.state.guiManager === "DEACTIVATED" || !AlexaAudioplayerActive) {
               AlexaAudioplayerActive = false;
-              appApi.setFocus(Storage.get("applicationType") === "" ? Storage.get("selfClientName") : Storage.get("applicationType"));
+              appApi.setFocus(GLOBALS.topmostApp === "" ? GLOBALS.selfClientName : GLOBALS.topmostApp);
             }
           }
           if (notification.xr_speech_avs.state.dialogUX === "idle" && notification.xr_speech_avs.state.audio === "playing") {
@@ -1289,7 +1312,7 @@ export default class App extends Router.App {
                   // exits the app if any and navigates to the specific route.
                   Storage.set("appSwitchingInProgress", true);
                   this.jumpToRoute(targetRoute);
-                  Storage.set("applicationType", Storage.get("selfClientName"));
+                  GLOBALS.topmostApp = GLOBALS.selfClientName;
                   Storage.set("appSwitchingInProgress", false);
                 }
               } else {
@@ -1303,8 +1326,8 @@ export default class App extends Router.App {
             if (header.name === "SearchAndDisplayResults" || header.name === "SearchAndPlay") {
               console.log("Alexa.RemoteVideoPlayer: SearchAndDisplayResults || SearchAndPlay: " + JSON.stringify(header))
               /* Find if payload contains Destination App */
-              if (payload.hasOwnProperty("entities")) {
-                let entityId = payload.entities.filter(obj => Object.keys(obj).some(key => obj[key].hasOwnProperty("ENTITY_ID")));
+              if (Object.prototype.hasOwnProperty.call(payload, "entities")) {
+                let entityId = payload.entities.filter(obj => Object.keys(obj).some(key => Object.prototype.hasOwnProperty.call(obj[key], "ENTITY_ID")));
                 if (entityId.length && AlexaLauncherKeyMap[entityId[0].externalIds.ENTITY_ID]) {
                   /* ENTITY_ID or vsk key found; meaning Target App is there in response. */
                   let replacedText = payload.searchText.transcribed.replace(entityId[0].value.toLowerCase(), "").trim();
@@ -1329,10 +1352,10 @@ export default class App extends Router.App {
                   replacedText = null;
                   appCallsign = null;
                   launchParams = null;
-                } else if (!entityId.length && (Storage.get("applicationType") != Storage.get("selfClientName"))) {
+                } else if (!entityId.length && (GLOBALS.topmostApp != GLOBALS.selfClientName)) {
                   /* give it to current focused app */
-                  console.warn("Alexa.RemoteVideoPlayer: " + Storage.get("applicationType") + " is the focued app; need Voice search integration support to it.");
-                } else if (!entityId.length && (Storage.get("applicationType") == Storage.get("selfClientName"))) {
+                  console.warn("Alexa.RemoteVideoPlayer: " + GLOBALS.topmostApp + " is the focued app; need Voice search integration support to it.");
+                } else if (!entityId.length && (GLOBALS.topmostApp == GLOBALS.selfClientName)) {
                   /* Generic global search without a target app; redirect to Youtube as of now. */
                   let replacedText = payload.searchText.transcribed.trim();
                   let appCallsign = AlexaLauncherKeyMap["amzn1.alexa-ask-target.app.70045"].callsign
@@ -1361,7 +1384,7 @@ export default class App extends Router.App {
             }
           }
           else if (header.namespace === "Alexa.PlaybackController") {
-            appApi.deeplinkToApp(Storage.get("applicationType"), header.name, "alexa", header.namespace);
+            appApi.deeplinkToApp(GLOBALS.topmostApp, header.name, "alexa", header.namespace);
             AlexaApi.get().reportPlaybackState(header.name);
           }
           else if (header.namespace === "Alexa.SeekController") {
@@ -1370,16 +1393,16 @@ export default class App extends Router.App {
               this.tag("AAMPVideoPlayer").voiceSeek(time)
             }
             else {
-              appApi.deeplinkToApp(Storage.get("applicationType"), payload, "alexa", header.namespace);
+              appApi.deeplinkToApp(GLOBALS.topmostApp, payload, "alexa", header.namespace);
             }
           }
           else if (header.namespace === "AudioPlayer") {
             if (header.name === "Play") {
               AlexaApi.get().displaySmartScreenOverlay(true)
               AlexaAudioplayerActive = true;
-              console.log("App AudioPlayer: Suspending the current app:'" + Storage.get("applicationType") + "'");
-              if (Storage.get("applicationType") != Storage.get("selfClientName")) {
-                appApi.exitApp(Storage.get("applicationType"));
+              console.log("App AudioPlayer: Suspending the current app:'" + GLOBALS.topmostApp + "'");
+              if (GLOBALS.topmostApp != GLOBALS.selfClientName) {
+                appApi.exitApp(GLOBALS.topmostApp);
               }
             }
           }
@@ -1409,8 +1432,21 @@ export default class App extends Router.App {
                         }
                       }
                       VolumePayload.msgPayload.event.payload.muted = false
-                      appApi.setVolumeLevel(audioport.connectedAudioPorts[i], VolumePayload.msgPayload.event.payload.volume).then(res => {
-                        this.tag("Volume").onVolumeChanged()
+                      appApi.setVolumeLevel(audioport.connectedAudioPorts[i], VolumePayload.msgPayload.event.payload.volume).then(() => {
+                        if (GLOBALS.topmostApp === GLOBALS.selfClientName) {
+                          this.tag("Volume").onVolumeChanged();
+                        } else {
+                          if (Router.getActiveHash() === "applauncher") {
+                            appApi.zorder(GLOBALS.selfClientName)
+                            appApi.visible(GLOBALS.selfClientName, true)
+                            this.tag("Volume").onVolumeChanged();
+                          } else {
+                            appApi.zorder(GLOBALS.selfClientName)
+                            appApi.visible(GLOBALS.selfClientName, true)
+                            Router.navigate("applauncher");
+                            this.tag("Volume").onVolumeChanged();
+                          }
+                        }
                       });
                     });
                   }
@@ -1433,7 +1469,20 @@ export default class App extends Router.App {
                   if ((Storage.get("deviceType") == "tv" && audioport.connectedAudioPorts[i].startsWith("SPEAKER")) ||
                     (Storage.get("deviceType") != "tv" && audioport.connectedAudioPorts[i].startsWith("HDMI"))) {
                     appApi.setVolumeLevel(audioport.connectedAudioPorts[i], VolumePayload.msgPayload.event.payload.volume).then(() => {
-                      this.tag("Volume").onVolumeChanged()
+                      if (GLOBALS.topmostApp === GLOBALS.selfClientName) {
+                        this.tag("Volume").onVolumeChanged();
+                      } else {
+                        if (Router.getActiveHash() === "applauncher") {
+                          appApi.zorder(GLOBALS.selfClientName)
+                          appApi.visible(GLOBALS.selfClientName, true)
+                          this.tag("Volume").onVolumeChanged();
+                        } else {
+                          appApi.zorder(GLOBALS.selfClientName)
+                          appApi.visible(GLOBALS.selfClientName, true)
+                          Router.navigate("applauncher");
+                          this.tag("Volume").onVolumeChanged();
+                        }
+                      }
                     });
                   }
                 }
@@ -1443,15 +1492,28 @@ export default class App extends Router.App {
               VolumePayload.msgPayload.event.header.messageId = header.messageId
               VolumePayload.msgPayload.event.payload.volume = payload.volume
               VolumePayload.msgPayload.event.payload.muted = payload.mute
-              this.tag("Volume").onVolumeMute(payload.mute)
+              if (GLOBALS.topmostApp === GLOBALS.selfClientName) {
+                this.tag("Volume").onVolumeMute(payload.mute);
+              } else {
+                if (Router.getActiveHash() === "applauncher") {
+                  appApi.zorder(GLOBALS.selfClientName)
+                  appApi.visible(GLOBALS.selfClientName, true)
+                  this.tag("Volume").onVolumeMute(payload.mute);
+                } else {
+                  appApi.zorder(GLOBALS.selfClientName)
+                  appApi.visible(GLOBALS.selfClientName, true)
+                  Router.navigate("applauncher");
+                  this.tag("Volume").onVolumeMute(payload.mute);
+                }
+              }
             }
           }
           else if (header.namespace === "ExternalMediaPlayer") {
-            appApi.deeplinkToApp(Storage.get("applicationType"), payload, "alexa", header.namespace);
+            appApi.deeplinkToApp(GLOBALS.topmostApp, payload, "alexa", header.namespace);
           }
         }
         if ((AlexaApi.get().checkAlexaAuthStatus() != "AlexaUserDenied") && notification.xr_speech_avs.deviceSettings) {
-          let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
+          let updatedLanguage = availableLanguageCodes[Language.get()]
           if (notification.xr_speech_avs.deviceSettings.currentLocale.toString() != updatedLanguage) {
             /* Get Alexa matching Locale String */
             for (let i = 0; i < notification.xr_speech_avs.deviceSettings.supportedLocales.length; i++) {
@@ -1462,7 +1524,7 @@ export default class App extends Router.App {
           }
         }
       });
-      voiceApi.registerEvent('onSessionBegin', notification => {
+      voiceApi.registerEvent('onSessionBegin', () => {
         this.$hideImage(0);
       });
       voiceApi.registerEvent('onSessionEnd', notification => {
@@ -1477,27 +1539,36 @@ export default class App extends Router.App {
     })
   }
 
+  updateAlexaTimeZone(updatedTimeZone){
+    if (updatedTimeZone.length) {
+      console.log("App updateDeviceTimeZoneInAlexa with zone:", updatedTimeZone)
+      AlexaApi.get().updateDeviceTimeZoneInAlexa(updatedTimeZone);
+    } else {
+      console.error("App getTimezoneDST returned:", updatedTimeZone)
+    }
+  }
+
   deactivateChildApp(plugin) { //#needToBeRemoved
     switch (plugin) {
       case 'WebApp':
         appApi.deactivateWeb();
         break;
       case 'YouTube':
-        appApi.suspendPremiumApp("YouTube").then(res => {
+        appApi.suspendPremiumApp("YouTube").then(() => {
           console.log(`YouTube : suspend YouTube request`);
         }).catch((err) => {
           console.error(err)
         });
         break;
       case 'YouTubeTV':
-        appApi.suspendPremiumApp("YouTubeTV").then(res => {
+        appApi.suspendPremiumApp("YouTubeTV").then(() => {
           console.log(`YouTubeTV : suspend YouTubeTV request`);
         }).catch((err) => {
           console.error(err)
         });
         break;
       case 'YouTubeKids':
-        appApi.suspendPremiumApp("YouTubeKids").then(res => {
+        appApi.suspendPremiumApp("YouTubeKids").then(() => {
           console.log(`YouTubeKids : suspend YouTubeKids request`);
         }).catch((err) => {
           console.error(err)
@@ -1521,15 +1592,15 @@ export default class App extends Router.App {
         appApi.suspendPremiumApp("Netflix").then((res) => {
           Router.navigate(Storage.get("lastVisitedRoute"));
           thunder.call("org.rdk.RDKShell", "setFocus", {
-            client: Storage.get("selfClientName"),
+            client: GLOBALS.selfClientName,
           });
           thunder.call("org.rdk.RDKShell", "setVisibility", {
-            client: Storage.get("selfClientName"),
+            client: GLOBALS.selfClientName,
             visible: true,
           });
           thunder.call("org.rdk.RDKShell", "moveToFront", {
-            client: Storage.get("selfClientName"),
-            callsign: Storage.get("selfClientName"),
+            client: GLOBALS.selfClientName,
+            callsign: GLOBALS.selfClientName,
           });
           if (res) {
             let params = { applicationName: "NetflixApp", state: "suspended" };
@@ -1558,10 +1629,10 @@ export default class App extends Router.App {
             Router.navigate('image', { src: Utils.asset('images/apps/App_Netflix_Splash.png') })
             if (url) {
               appApi.configureApplication('Netflix', url).then(() => {
-                appApi.launchPremiumApp("Netflix").then(res => {
-                  appApi.setVisibility(Storage.get("selfClientName"), false);
+                appApi.launchPremiumApp("Netflix").then(() => {
+                  appApi.setVisibility(GLOBALS.selfClientName, false);
                   resolve(true)
-                }).catch(err => { reject(false) });// ie. org.rdk.RDKShell.launch
+                }).catch(() => { reject(false) });// ie. org.rdk.RDKShell.launch
               }).catch(err => {
                 console.error("Netflix : error while fetching configuration data : ", JSON.stringify(err))
                 reject(err)
@@ -1569,33 +1640,34 @@ export default class App extends Router.App {
               })// gets configuration object and sets configuration
             }
             else {
-              appApi.launchPremiumApp("Netflix").then(res => {
-                appApi.setVisibility(Storage.get("selfClientName"), false);
+              appApi.launchPremiumApp("Netflix").then(() => {
+                appApi.setVisibility(GLOBALS.selfClientName, false);
                 resolve(true)
-              }).catch(err => { reject(false) });// ie. org.rdk.RDKShell.launch
+              }).catch(() => { reject(false) });// ie. org.rdk.RDKShell.launch
             }
 
           }
           else {
             /* Not in deactivated; could be suspended */
             if (url) {
-              appApi.launchPremiumApp("Netflix").then(res => {
+              appApi.launchPremiumApp("Netflix").then(() => {
                 thunder.call("Netflix", "systemcommand",
                   { "command": url })
-                  .then(res => {
+                  .then(() => {
 
                   }).catch(err => {
                     console.error("Netflix : error while sending systemcommand : ", JSON.stringify(err))
+                    Metrics.error(Metrics.ErrorType.OTHER, 'AppError', `Netflix : error while sending systemcommand : ${JSON.stringify(err)}`, false, null)
                     reject(false);
                   });
-                appApi.setVisibility(Storage.get("selfClientName"), false);
+                appApi.setVisibility(GLOBALS.selfClientName, false);
                 resolve(true)
-              }).catch(err => { reject(false) });// ie. org.rdk.RDKShell.launch
+              }).catch(() => { reject(false) });// ie. org.rdk.RDKShell.launch
             }
             else {
               appApi.launchPremiumApp("Netflix").then(res => {
                 console.log(`Netflix : launch premium app resulted in `, JSON.stringify(res));
-                appApi.setVisibility(Storage.get("selfClientName"), false);
+                appApi.setVisibility(GLOBALS.selfClientName, false);
                 resolve(true)
               });
             }
@@ -1604,7 +1676,7 @@ export default class App extends Router.App {
         })
         .catch(err => {
           console.log('Netflix plugin error', err)
-          Storage.set('applicationType', '')
+          GLOBALS.topmostApp = GLOBALS.selfClientName;
           reject(false)
         })
     })
@@ -1629,7 +1701,7 @@ export default class App extends Router.App {
           }
           appApi.launchApp(applicationName, params).then(res => {
             console.log("App onApplicationLaunchRequest: launched " + applicationName + " : ", res);
-            Storage.set("applicationType", applicationName)
+            GLOBALS.topmostApp = applicationName;
             // TODO: move to Controller.statuschange event
             let params = { applicationName: notification.applicationName, state: 'running' };
             this.xcastApi.onApplicationStateChanged(params);
@@ -1649,8 +1721,8 @@ export default class App extends Router.App {
         if (applicationName.startsWith("YouTube")) {
           //second argument true means resident app won't be launched the required app will be exited in the background.
           //only bring up the resident app when the notification is from the current app(ie app in focus)
-          console.log("App onApplicationHideRequest: exitApp as " + applicationName + "!==" + Storage.get("applicationType"));
-          appApi.exitApp(applicationName, applicationName !== Storage.get("applicationType"));
+          console.log("App onApplicationHideRequest: exitApp as " + applicationName + "!==" + GLOBALS.topmostApp);
+          appApi.exitApp(applicationName, applicationName !== GLOBALS.topmostApp);
         }
       }
     });
@@ -1667,7 +1739,7 @@ export default class App extends Router.App {
 
         console.log('App onApplicationResumeRequest: launchApp ', applicationName, " with params: ", params);
         appApi.launchApp(applicationName, params).then(res => {
-          Storage.set("applicationType", applicationName)
+          GLOBALS.topmostApp = applicationName;
           console.log("App onApplicationResumeRequest: launched ", applicationName, " result: ", res);
         }).catch(err => {
           console.log("Error in launching ", applicationName, " on casting resume request: ", err);
@@ -1681,7 +1753,7 @@ export default class App extends Router.App {
         let applicationName = this.xcastApps(notification.applicationName);
         if (applicationName.startsWith("YouTube")) {
           appApi.deactivateCobalt(applicationName)
-          if (Storage.get("applicationType") === applicationName) {
+          if (GLOBALS.topmostApp === applicationName) {
             appApi.exitApp(applicationName);
           }
         }
@@ -1749,6 +1821,7 @@ export default class App extends Router.App {
   standby(value) {
     console.log(`standby call`);
     if (value == 'Back') {
+      // TODO: Identify what to do here.
     } else {
       if (powerState == 'ON') {
         console.log(`Power state was on trying to set it to standby`);
@@ -1757,8 +1830,8 @@ export default class App extends Router.App {
           if (res.success) {
             console.log(`successfully set to standby`);
             powerState = 'STANDBY'
-            if (Storage.get('applicationType') !== "") {
-              appApi.exitApp(Storage.get('applicationType'));
+            if (GLOBALS.topmostApp !== GLOBALS.selfClientName) {
+              appApi.exitApp(GLOBALS.topmostApp);
             } else {
               if (!Router.isNavigating()) {
                 Router.navigate('menu')
@@ -1786,8 +1859,8 @@ export default class App extends Router.App {
         .then(res => {
           console.log(`activated the rdk shell plugin trying to set the inactivity listener; res = ${JSON.stringify(res)}`);
           thunder.on("org.rdk.RDKShell.1", "onUserInactivity", notification => {
-            console.log(`user was inactive`);
-            if (powerState === "ON" && (Storage.get("applicationType") === Storage.get("selfClientName"))) {
+            console.log('onUserInactivity: ' + JSON.stringify(notification));
+            if (powerState === "ON" && (GLOBALS.topmostApp === GLOBALS.selfClientName)) {
               this.standby("STANDBY");
             }
           }, err => {
@@ -1795,6 +1868,7 @@ export default class App extends Router.App {
           })
           resolve(res)
         }).catch((err) => {
+          Metrics.error(Metrics.ErrorType.OTHER, 'AppError', `Controller.activate error with ${err}`, false, null)
           reject(err)
           console.error(`error while activating the displaysettings plugin; err = ${err}`)
         })
@@ -1810,20 +1884,20 @@ export default class App extends Router.App {
       var temp = arr[1].substring(0, 1);
       if (temp === 'H') {
         let temp1 = parseFloat(arr[0]) * 60;
-        appApi.setInactivityInterval(temp1).then(res => {
+        appApi.setInactivityInterval(temp1).then(() => {
           Storage.set('TimeoutInterval', t)
           console.log(`successfully set the timer to ${t} hours`)
         }).catch(err => {
-          console.error(`error while setting the timer`)
+          console.error('error while setting the timer' + JSON.stringify(err))
         });
       } else if (temp === 'M') {
         console.log(`minutes`);
         let temp1 = parseFloat(arr[0]);
-        appApi.setInactivityInterval(temp1).then(res => {
+        appApi.setInactivityInterval(temp1).then(() => {
           Storage.set('TimeoutInterval', t)
           console.log(`successfully set the timer to ${t} minutes`);
         }).catch(err => {
-          console.error(`error while setting the timer`)
+          console.error('error while setting the timer' + JSON.stringify(err))
         });
       }
     }
@@ -1845,13 +1919,13 @@ export default class App extends Router.App {
           // this.timerIsOff = false;
           setTimer();
         }
-      }).catch(err => { console.error(`error while enabling inactivity reporting`) });
+      }).catch(err => { console.error('error while enabling inactivity reporting' + JSON.stringify(err)) });
     }
   }
 
   jumpToRoute(route) {
-    if (Storage.get("applicationType") != Storage.get("selfClientName")) {
-      appApi.exitApp(Storage.get('applicationType')).catch(err => {
+    if (GLOBALS.topmostApp != GLOBALS.selfClientName) {
+      appApi.exitApp(GLOBALS.topmostApp).catch(err => {
         console.log("jumpToRoute err: " + err)
       });
       Storage.set("lastVisitedRoute", route);// incase any state change event tries to navigate, it need to be navigated to alexa requested route

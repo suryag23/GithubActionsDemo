@@ -16,16 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Language, Router, Settings } from '@lightningjs/sdk'
+import { Lightning, Language, Router } from '@lightningjs/sdk'
 import { COLORS } from './../colors/Colors'
 import { CONFIG } from '../Config/Config'
-import AppApi from '../api/AppApi.js';
-import BluetoothApi from '../api/BluetoothApi'
 import ThunderJS from 'ThunderJS'
 import RCApi from '../api/RemoteControl';
-
-var appApi = new AppApi();
-var bluetoothApi = new BluetoothApi();
 
 const _thunder = ThunderJS(CONFIG.thunderConfig)
 let onStatusCBhandle = null;
@@ -241,7 +236,7 @@ export default class RCInformationScreen extends Lightning.Component {
 
     onStatusCB(cbData) {
         // getStatus response has 'success' property; notification payload does not have that.
-        if ((cbData !== undefined) && (cbData.hasOwnProperty("success") ? cbData.success : true)) {
+        if ((cbData !== undefined) && ("success" in cbData ? cbData.success : true)) {
             if (cbData.status.remoteData.length) {
                 console.log("RCInformationScreen rcPairingApis RemoteData Length", cbData.status.remoteData.length)
                 let RemoteName = []; let connectedStatus = []; let MacAddress = [];

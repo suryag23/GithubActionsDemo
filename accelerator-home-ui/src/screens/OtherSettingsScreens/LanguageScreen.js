@@ -16,12 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Language, Lightning, Router, Storage, Settings } from '@lightningjs/sdk'
+import { Language, Lightning, Router } from '@lightningjs/sdk'
 import LanguageItem from '../../items/LanguageItem'
 import { availableLanguages, availableLanguageCodes, CONFIG } from '../../Config/Config'
 import AppApi from '../../api/AppApi';
 import AlexaApi from '../../api/AlexaApi';
 import thunderJS from 'ThunderJS';
+import { GLOBALS } from '../../Config/Config'
+import FireBoltApi from '../../api/firebolt/FireBoltApi';
+import { Metrics } from '@firebolt-js/manage-sdk';
 
 const appApi = new AppApi()
 const thunder = thunderJS(CONFIG.thunderConfig)
@@ -78,21 +81,22 @@ export default class LanguageScreen extends Lightning.Component {
       }
     })
     appApi.deactivateResidentApp(loader)
-    appApi.setVisibility(Storage.get("selfClientName"), true);
+    appApi.setVisibility(GLOBALS.selfClientName, true);
     thunder.call('org.rdk.RDKShell', 'moveToFront', {
-      client: Storage.get("selfClientName")
+      client: GLOBALS.selfClientName
     }).then(result => {
       console.log('LanguageScreen: ResidentApp moveToFront Success');
     });
     thunder
       .call('org.rdk.RDKShell', 'setFocus', {
-        client: Storage.get("selfClientName")
+        client: GLOBALS.selfClientName
       })
       .then(result => {
-        console.log('LanguageScreen: ResidentApp moveToFront Success');
+        console.log('LanguageScreen: ResidentApp setFocus Success');
       })
       .catch(err => {
         console.log('LanguageScreen: Error', err);
+        Metrics.error(Metrics.ErrorType.OTHER,"AppLangugaeError", 'Thunder RDKShell setFocus Error' + JSON.stringify(err), false, null)
       });
   }
 
@@ -121,9 +125,8 @@ export default class LanguageScreen extends Lightning.Component {
           this._navigate('up')
         }
         _handleEnter() {
-          if (localStorage.getItem('Language') !== availableLanguages[this._Languages.tag('List').index]) {
-            localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index])
-            let updatedLanguage = availableLanguageCodes[localStorage.getItem('Language')]
+          if (Language.get() !== availableLanguages[this._Languages.tag('List').index]) {
+            let updatedLanguage = availableLanguageCodes[availableLanguages[this._Languages.tag('List').index]]
             if (AlexaApi.get().checkAlexaAuthStatus() === "AlexaHandleError") {
               AlexaApi.get().getAlexaDeviceSettings();
               thunder.on('org.rdk.VoiceControl', 'onServerMessage', notification => {
@@ -136,13 +139,17 @@ export default class LanguageScreen extends Lightning.Component {
                 }
               })
             }
-            appApi.setUILanguage(updatedLanguage)
+            if ("ResidentApp" === GLOBALS.selfClientName) {
+              appApi.setUILanguage(updatedLanguage)
+            } else {
+              FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log("sucess language set ::::",res))
+            }
+            localStorage.setItem('Language',availableLanguages[this._Languages.tag('List').index])
             let path = location.pathname.split('index.html')[0]
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html"
             let notification_url = location.origin + path + url
-            console.log(notification_url)
-            appApi.launchResident(notification_url, loader).catch(err => { })
-            appApi.setVisibility(Storage.get("selfClientName"), false)
+            appApi.launchResident(notification_url, loader).catch(err => {console.error("error while launching loader url in resident app", err) })
+            appApi.setVisibility(GLOBALS.selfClientName, false)
             location.reload();
           }
         }

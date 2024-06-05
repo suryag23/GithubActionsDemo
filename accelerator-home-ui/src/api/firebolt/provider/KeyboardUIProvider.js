@@ -16,17 +16,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Router, Storage, Settings } from '@lightningjs/sdk'
-import KeyboardScreen from './KeyboardScreen'
+import { Router, Storage } from '@lightningjs/sdk'
 import ThunderJS from 'ThunderJS';
-import { CONFIG } from '../../../Config/Config'
+import { CONFIG, GLOBALS } from '../../../Config/Config'
 
 let thunder = ThunderJS(CONFIG.thunderConfig)
 
 export default class KeyboardUIProvider {
   constructor(app) {
     this._app = app
-    this.INFO = function(){};
+    this.INFO = function () { };
     this.LOG = console.log;
     this.ERR = console.error;
   }
@@ -34,7 +33,7 @@ export default class KeyboardUIProvider {
   standard(keyboardSession, providerSession) {
     this.LOG("Inside standard call")
     if (!keyboardSession) return
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.showKeyboardUi(keyboardSession, false, resolve)
       providerSession.focus()
     })
@@ -43,7 +42,7 @@ export default class KeyboardUIProvider {
   email(keyboardSession, providerSession) {
     this.LOG("Inside email call")
     if (!keyboardSession) return
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.showKeyboardUi(keyboardSession, false, resolve)
       providerSession.focus()
     })
@@ -52,7 +51,7 @@ export default class KeyboardUIProvider {
   password(keyboardSession, providerSession) {
     this.LOG("Inside password call")
     if (!keyboardSession) return
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.showKeyboardUi(keyboardSession, true, resolve)
       providerSession.focus()
     })
@@ -61,9 +60,9 @@ export default class KeyboardUIProvider {
   async showKeyboardUi(session, mask, responder) {
     if (!session) return
     this.LOG('Got session ' + JSON.stringify(session), "showKeyboardUi")
-    this.LOG("Displaying Keyboard overlay with: " + Storage.get("selfClientName"))
-    let params={message:session.message, type:session.type, responder}
-    thunder.call('org.rdk.RDKShell', 'setVisibility', {client: Storage.get("selfClientName"), visible:true}).then(() => {
+    this.LOG("Displaying Keyboard overlay with: " + GLOBALS.selfClientName)
+    let params = { message: session.message, type: session.type, responder }
+    thunder.call('org.rdk.RDKShell', 'setVisibility', { client: GLOBALS.selfClientName, visible: true }).then(() => {
       Router.navigate("settings/other/KeyboardScreen", params)
     })
   }

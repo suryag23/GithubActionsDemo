@@ -20,6 +20,7 @@ import { Lightning, Router, Utils, Language, Storage } from '@lightningjs/sdk'
 import { CONFIG } from '../Config/Config'
 import ThunderJS from 'ThunderJS'
 import AlexaApi from '../api/AlexaApi'
+import { Metrics } from '@firebolt-js/sdk'
 
 var thunder = ThunderJS(CONFIG.thunderConfig);
 
@@ -134,6 +135,7 @@ export default class CodeScreen extends Lightning.Component {
                 })
             }).catch(err => {
                 console.log("VoiceControl Plugin Activation ERROR!: ", err)
+                Metrics.error(Metrics.ErrorType.OTHER, 'PluginError', "Thunder Controller.activate Voice Error"+JSON.stringify(err), false, null)
             })
             this._setState('Description')
         }

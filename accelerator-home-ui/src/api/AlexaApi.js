@@ -22,6 +22,7 @@ import { AlexaLauncherKeyMap, errorPayload, PlaybackStateReport, VolumePayload, 
 import VoiceApi from './VoiceApi';
 import AppApi from './AppApi';
 import { CONFIG } from '../Config/Config';
+import { Metrics } from '@firebolt-js/sdk';
 
 const thunder = ThunderJS(CONFIG.thunderConfig)
 let instance = null
@@ -57,6 +58,7 @@ export default class AlexaApi extends VoiceApi {
       console.log("AlexaAPI: Activate SmartScreen result: " + res);
     }).catch(err => {
       console.error("AlexaAPI: Activate SmartScreen ERROR!: ", err)
+      Metrics.error(Metrics.ErrorType.OTHER, "AlexaAPIError", `Thunder Controller AlexaAPI: Activate SmartScreen error with ${err}`, false, null)
     })
   }
 
@@ -65,6 +67,7 @@ export default class AlexaApi extends VoiceApi {
       console.log("AlexaAPI: Deactivate SmartScreen result: " + res);
     }).catch(err => {
       console.error("AlexaAPI: Deactivate SmartScreen ERROR!: ", err)
+      Metrics.error(Metrics.ErrorType.OTHER, "AlexaAPIError", `Thunder Controller AlexaAPI: Deactivate SmartScreen error with ${err}`, false, null)
     })
   }
 
@@ -77,29 +80,34 @@ export default class AlexaApi extends VoiceApi {
   }
 
   reportApplicationState(app = "menu", isRoute = false) {
-    /* retrieve 'app' matching from AlexaLauncherKeyMap. */
-    let appStateReportPayload = ApplicationStateReporter;
-    let isListedApp = false;
-    for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
-      if (isRoute && value.hasOwnProperty("route") && (value.route === app.toLowerCase())) {
-        appStateReportPayload.msgPayload.event.header.value.foregroundApplication.id = key;
-        if (app.toLowerCase() === "menu")
-          appStateReportPayload.msgPayload.event.header.value.foregroundApplication.metadata.isHome = true;
-        isListedApp = true;
-        break;
-      } else if (!isRoute && (value.callsign === app || value.url === app)) {
-        appStateReportPayload.msgPayload.event.header.value.foregroundApplication.id = key;
-        appStateReportPayload.msgPayload.event.header.value.foregroundApplication.metadata.isHome = false;
-        isListedApp = true;
-        break;
+    if ((this.checkAlexaAuthStatus() != "AlexaUserDenied") && (this.checkAlexaAuthStatus() != "AlexaAuthPending")) {
+      /* retrieve 'app' matching from AlexaLauncherKeyMap. */
+      let appStateReportPayload = ApplicationStateReporter;
+      let isListedApp = false;
+      for (let [key, value] of Object.entries(AlexaLauncherKeyMap)) {
+        if (isRoute && Object.prototype.hasOwnProperty.call(value, "route") && (value.route === app.toLowerCase())) {
+          appStateReportPayload.msgPayload.event.header.value.foregroundApplication.id = key;
+          if (app.toLowerCase() === "menu")
+            appStateReportPayload.msgPayload.event.header.value.foregroundApplication.metadata.isHome = true;
+          isListedApp = true;
+          break;
+        } else if (!isRoute && (value.callsign === app || value.url === app)) {
+          appStateReportPayload.msgPayload.event.header.value.foregroundApplication.id = key;
+          appStateReportPayload.msgPayload.event.header.value.foregroundApplication.metadata.isHome = false;
+          isListedApp = true;
+          break;
+        }
       }
-    }
-    /* Send the new app state object if its a known app. */
-    if (isListedApp) {
-      console.warn("Sending app statereport to Alexa:" + JSON.stringify(appStateReportPayload));
-      this.sendVoiceMessage(appStateReportPayload);
+      /* Send the new app state object if its a known app. */
+      if (isListedApp) {
+        console.warn("Sending app statereport to Alexa:" + JSON.stringify(appStateReportPayload));
+        this.sendVoiceMessage(appStateReportPayload);
+      } else {
+        console.error("Alexa reportApplicationState; no match found, won't send state report.");
+        Metrics.error(Metrics.ErrorType.OTHER, "AlexaAPIError", 'Alexa reportApplicationState; no match found, wont send state report.', false, null)
+      }
     } else {
-      console.error("Alexa reportApplicationState; no match found, won't send state report.");
+      console.log("Alexa reportApplicationState: AlexaUserDenied/AlexaAuthPending, skip state reporting.");
     }
   }
 
@@ -150,20 +158,27 @@ export default class AlexaApi extends VoiceApi {
     this.sendVoiceMessage({ "msgPayload": { "DeviceSettings": "Get Device Settings" } });
   }
 
+  pingAlexaSDK() {
+    /* Temporary fix to wake AVS SDK socket connectivity; this logic will be moved to middleware */
+    this.sendVoiceMessage({ "msgPayload": { "KeepAlive": "ping to awake AVS SDK" } });
+  }
   /**
    * Function to send voice message.
    */
   resetAVSCredentials() {
     return new Promise((resolve) => {
       Storage.set("AlexaVoiceAssitantState", "AlexaAuthPending");
-      thunder.Controller.activate({ callsign: 'SmartScreen' }).then(res => {
+      thunder.Controller.activate({ callsign: 'SmartScreen' }).then(() => {
         console.log("AlexaAPI: resetAVSCredentials activating SmartScreen instance.")
       }).catch(err => {
         console.error("AlexaAPI: resetAVSCredentials activate SmartScreen ERROR!: ", err)
+        Metrics.error(Metrics.ErrorType.OTHER, "AlexaAPIError", `Thunder Controller AlexaAPI: resetAVSCredentials activating SmartScreen error with ${JSON.stringify(err)}`, false, null)
       })
       this.sendVoiceMessage({ "msgPayload": { "event": "ResetAVS" } }).then(result => {
         resolve(result)
       }).catch(err => {
+        console.error("AlexaAPI: resetAVSCredentials ERROR!: " + JSON.stringify(err))
+        Metrics.error(Metrics.ErrorType.OTHER, "AlexaAPIError",`Thunder Controller AlexaAPI: resetAVSCredentials Activate ERROR!: ${JSON.stringify(err)}` , false, null)
         resolve(false)
       })
     });
@@ -185,10 +200,11 @@ export default class AlexaApi extends VoiceApi {
     if (newState === "AlexaUserDenied") {
       this.configureVoice({ "enable": false });
       /* Free up Smartscreen resources */
-      thunder.Controller.deactivate({ callsign: 'SmartScreen' }).then(res => {
+      thunder.Controller.deactivate({ callsign: 'SmartScreen' }).then(() => {
         console.log("AlexaAPI: deactivated SmartScreen instance.")
       }).catch(err => {
         console.error("AlexaAPI: deactivate SmartScreen ERROR!: ", err)
+        Metrics.error(Metrics.ErrorType.OTHER, "AlexaAPIError", `Thunder Controller AlexaAPI: deactivate SmartScreen ERROR: ${JSON.stringify(err)}`, true, null)
       })
     } else {
       this.configureVoice({ "enable": true });

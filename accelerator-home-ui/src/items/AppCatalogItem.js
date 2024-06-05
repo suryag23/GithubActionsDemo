@@ -73,7 +73,7 @@ export default class AppCatalogItem extends Lightning.Component {
 
     set info(data) {
         this.data = data
-        if (!data.hasOwnProperty('icon'))
+        if (!Object.prototype.hasOwnProperty.call(data, 'icon'))
             data.icon = "/images/apps/DACApp_455_255.png";
         if (data.icon.startsWith('/images')) {
             this.tag('Image').patch({
@@ -99,8 +99,8 @@ export default class AppCatalogItem extends Lightning.Component {
         if (this._app.isInstalling) {
             this._app.isInstalled = success
             this._app.isInstalling = false
-            if (this._app.hasOwnProperty("handle")) delete this._app.handle;
-            if (this._app.hasOwnProperty("errorCode")) delete this._app.errorCode;
+            if (Object.prototype.hasOwnProperty.call(this._app, "handle")) delete this._app.handle;
+            if (Object.prototype.hasOwnProperty.call(this._app, "errorCode")) delete this._app.errorCode;
             this.updateStatus()
             if (!success) {
                 this.tag('StatusProgress').setProgress(1.0, 'Error: ' + msg)
@@ -126,16 +126,16 @@ export default class AppCatalogItem extends Lightning.Component {
                 this.tag('StatusProgress').reset()
             }
         }
-        if (this._app.hasOwnProperty("errorCode")) {
+        if (Object.prototype.hasOwnProperty.call(this._app, "errorCode")) {
             this.tag('Overlay.OverlayText').text.text = Language.translate('Error') + ':' + this._app.errorCode;
-            this.tag("OverlayText").text.text = result.code;
+            this.tag("OverlayText").text.text = this._app.code;
             this.tag("Overlay").alpha = 0.7
             this.tag("OverlayText").alpha = 1
         }
     }
     async myfireINSTALL() {
-        if ((this._app.hasOwnProperty("handle") && (this._app.handle.length))
-            || (this._app.hasOwnProperty("errorCode") && (this._app.errorCode))) {
+        if ((Object.prototype.hasOwnProperty.call(this._app, "handle") && (this._app.handle.length))
+            || (Object.prototype.hasOwnProperty.call(this._app, "errorCode") && (this._app.errorCode))) {
             let result = null
             if (this._app.handle) {
                 result = await LISAApi.get().getProgress(this._app.handle)
@@ -213,4 +213,3 @@ export default class AppCatalogItem extends Lightning.Component {
             console.error("App url undefined")
     }
 }
-

@@ -16,11 +16,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Router, Utils, Language, Storage, Settings } from '@lightningjs/sdk'
-import { CONFIG } from '../Config/Config'
+import { Lightning, Router, Utils, Language, Storage } from '@lightningjs/sdk'
+import { CONFIG, GLOBALS } from '../Config/Config'
 import AlexaApi from '../api/AlexaApi'
 import AppApi from '../api/AppApi';
 import ThunderJS from "ThunderJS";
+import { Metrics } from '@firebolt-js/sdk';
 
 var thunder = ThunderJS(CONFIG.thunderConfig);
 
@@ -84,7 +85,7 @@ export default class FailureScreen extends Lightning.Component {
     }
     _focus() {
         this.appApi = new AppApi();
-        if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
+        if (GLOBALS.topmostApp !== GLOBALS.selfClientName) {
             this.tag('RetryButton.Title').patch({
                 text: {
                     text: Language.translate("Dismiss")
@@ -106,23 +107,24 @@ export default class FailureScreen extends Lightning.Component {
                     this.tag('RetryButton.Title').text.textColor = CONFIG.theme.hex
                 }
                 _handleEnter() {
-                    if (Storage.get("applicationType") !== Storage.get("selfClientName")) {
+                    if (GLOBALS.topmostApp !== GLOBALS.selfClientName) {
                         AlexaApi.get().resetAVSCredentials().then(() => {
                             console.log("avs credentials reseted")
                         })
-                        console.log("Current app: " + Storage.get("applicationType") + ", moving the app to front")
-                        this.appApi.setVisibility(Storage.get("selfClientName"), false);
+                        console.log("Current app: " + GLOBALS.topmostApp + ", moving the app to front")
+                        this.appApi.setVisibility(GLOBALS.selfClientName, false);
                         thunder
                             .call("org.rdk.RDKShell", "moveToFront", {
-                                client: Storage.get("applicationType"),
+                                client: GLOBALS.topmostApp,
                             })
                             .then(() => {
                                 thunder
                                     .call("org.rdk.RDKShell", "setFocus", {
-                                        client: Storage.get("applicationType"),
+                                        client: GLOBALS.topmostApp,
                                     })
                                     .catch((err) => {
                                         console.log("Error", err);
+                                        Metrics.error(Metrics.ErrorType.OTHER, 'PluginError', "Thunder RDKshell set focus error"+JSON.stringify(err), false, null)
                                     });
                             });
                     }

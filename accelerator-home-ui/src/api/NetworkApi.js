@@ -18,6 +18,7 @@
  **/
 import ThunderJS from 'ThunderJS';
 import { CONFIG } from '../Config/Config'
+import { Metrics } from '@firebolt-js/sdk';
 
 let instance = null
 
@@ -46,6 +47,7 @@ export default class Network {
         resolve(true)
       }).catch(err => {
         this.ERR(this.callsign + " activate error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error while Thunder Controller Network activate "+JSON.stringify(err), false, null)
         reject(err)
       });
     });
@@ -58,6 +60,7 @@ export default class Network {
         resolve(true)
       }).catch(err => {
         this.ERR(this.callsign + " deactivate error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error while Thunder Controller Network deactivate "+JSON.stringify(err), false, null)
         reject(err)
       });
     });
@@ -71,6 +74,7 @@ export default class Network {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + " getDefaultInterface error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getDefaultInterface "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -86,6 +90,7 @@ export default class Network {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + " getInterfaces error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getInterfaces "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -101,6 +106,7 @@ export default class Network {
         reject(false);
       }).catch(err => {
         this.ERR(this.callsign + "[getIPSettings] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getIPSettings "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -114,6 +120,7 @@ export default class Network {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + "[getNamedEndpoints] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getNamedEndpoints "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -136,6 +143,7 @@ export default class Network {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + "[getStbIp] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getStbIp result "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -149,6 +157,7 @@ export default class Network {
         reject(false);
       }).catch(err => {
         this.ERR(this.callsign + "[getSTBIPFamily] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getSTBIPFamily "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -162,6 +171,7 @@ export default class Network {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + "[setConnectivityTestEndpoints] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network setConnectivityTestEndpoints "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -175,6 +185,7 @@ export default class Network {
         resolve(false)
       }).catch(err => {
         this.ERR(this.callsign + "[isConnectedToInternet] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network isConnectedToInternet "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -188,6 +199,7 @@ export default class Network {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + "[getinternetconnectionstate] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getInternetConnectionState "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -201,6 +213,7 @@ export default class Network {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + "[getCaptivePortalURI] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getCaptivePortalURI "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -213,6 +226,7 @@ export default class Network {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + "[startConnectivityMonitoring] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network startConnectivityMonitoring "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -225,6 +239,7 @@ export default class Network {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + "[stopConnectivityMonitoring] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network stopConnectivityMonitoring "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -238,6 +253,7 @@ export default class Network {
         resolve(false)
       }).catch(err => {
         this.ERR(this.callsign + "[isInterfaceEnabled] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network isInterfaceEnabled "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -251,6 +267,7 @@ export default class Network {
         resolve(false)
       }).catch(err => {
         this.ERR(this.callsign + "[ping] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network ping "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -264,6 +281,7 @@ export default class Network {
         resolve(false)
       }).catch(err => {
         this.ERR(this.callsign + "[pingNamedEndpoint] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network pingNamedEndpoint "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -276,6 +294,7 @@ export default class Network {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + "[setDefaultInterface] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network setDefaultInterface "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -288,6 +307,7 @@ export default class Network {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + "[setInterfaceEnabled] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network setInterfaceEnabled "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -300,6 +320,7 @@ export default class Network {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + "[setIPSettings] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network setIPSettings "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -313,6 +334,7 @@ export default class Network {
         resolve(false)
       }).catch(err => {
         this.ERR(this.callsign + "[getPublicIP] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network getPublicIP "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -331,6 +353,7 @@ export default class Network {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + "[setStunEndPoint] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network setStunEndPoint "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -343,6 +366,7 @@ export default class Network {
         resolve(result.success)
       }).catch(err => {
         this.ERR(this.callsign + "[configurePNI] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network configurePNI "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -350,12 +374,13 @@ export default class Network {
 
   trace(endpoint = "8.8.8.8", packets = 15) {
     return new Promise((resolve, reject) => {
-      this._thunder.call(this.callsign, 'trace', { "disableConnectivityTest": disableConnectivityTest }).then(result => {
+      this._thunder.call(this.callsign, 'trace', { endpoint: endpoint, packets: packets }).then(result => {
         this.INFO(this.callsign + "[trace] result: " + result)
         if (result.success) resolve(result)
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + "[trace] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network trace "+JSON.stringify(err), false, null)
         reject(err)
       })
     })
@@ -369,6 +394,7 @@ export default class Network {
         reject(false)
       }).catch(err => {
         this.ERR(this.callsign + "[traceNamedEndpoint] error: " + err)
+        Metrics.error(Metrics.ErrorType.NETWORK,"NetworkApiError", "Error in Thunder Network traceNamedEndpoint "+JSON.stringify(err), false, null)
         reject(err)
       })
     })

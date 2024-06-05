@@ -55,18 +55,18 @@ export const AlexaLauncherKeyMap = {
         "callsign": "Peacock",
         "url": "",
     },
-    // TODO: refactor
-    "amzn1.alexa-ask-target.app.73751": {
-        "name": "Amazon Alexa",
-        "callsign": "SmartScreen",
-        "url": "",
-    },
-    // TODO: refactor
-    "amzn1.alexa-ask-target.app.32470": {
-        "name": "Amazon Music",
-        "callsign": "SmartScreen",
-        "url": "",
-    },
+    // // TODO: refactor
+    // "amzn1.alexa-ask-target.app.73751": {
+    //     "name": "Amazon Alexa",
+    //     "callsign": "SmartScreen",
+    //     "url": "",
+    // },
+    // // TODO: refactor
+    // "amzn1.alexa-ask-target.app.32470": {
+    //     "name": "Amazon Music",
+    //     "callsign": "SmartScreen",
+    //     "url": "",
+    // },
     //shortcuts
     "amzn1.alexa-ask-target.shortcut.33122": {
         "name": "Home",

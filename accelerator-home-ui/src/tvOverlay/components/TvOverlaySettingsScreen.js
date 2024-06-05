@@ -57,7 +57,7 @@ export default class TvOverlaySettingsScreen extends Lightning.Component {
   }
 
   _firstEnable() {
-    this.customLock = false; //by default its unlocked | will get locked when user switches any preset value 
+    this.customLock = false; //by default its unlocked | will get locked when user switches any preset value
     this.pictureApi = new PictureSettingsApi();
     this.options = this.pictureApi.getOptions(); //#byDefault //not required //fetches the defaults dummy values //following api calls fetches the actual values from api here after
     this.pictureApi
@@ -93,7 +93,7 @@ export default class TvOverlaySettingsScreen extends Lightning.Component {
 
   refreshList() {
     console.log("this.refreshList got called");
-    this.tag("List").items = this.options.map((item, index) => {
+    this.tag("List").items = this.options.map((item) => {
       return {
         w: 500,
         h: 90,
@@ -123,9 +123,9 @@ export default class TvOverlaySettingsScreen extends Lightning.Component {
       //to prevent circular scrolling
       if (this.tag("List").index === 1) {
         //to check if user should be moving to third item
-        if(!this.customLock){ //customLock value is true means api call is happening wait before moving down
+        if (!this.customLock) { //customLock value is true means api call is happening wait before moving down
           this.moveDownOnCustom()
-        } else{
+        } else {
           console.log("changing the preset value cant moveDown now!!")
         }
       } else {
@@ -150,11 +150,11 @@ export default class TvOverlaySettingsScreen extends Lightning.Component {
   }
 
   async moveDownOnCustom() {
-    try{
+    try {
       const pictureMode = await this.pictureApi.getPictureMode();
       const colorTemp = await this.pictureApi.getColorTemperature();
       console.log("picture mode: ", pictureMode, " color temperature: ", colorTemp);
-      if(pictureMode === "custom" && colorTemp === "User Defined"){
+      if (pictureMode === "custom" && colorTemp === "User Defined") {
         this.tag("List").setNext();
       } else {
         this.tag("List").setIndex(1);
@@ -164,7 +164,7 @@ export default class TvOverlaySettingsScreen extends Lightning.Component {
     }
   }
 
-  $moveDownLock(lock){
+  $moveDownLock(lock) {
     this.customLock = lock //prevents user from moving down when a preset value change api call is happening
   }
 

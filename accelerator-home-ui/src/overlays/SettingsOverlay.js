@@ -16,10 +16,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import { Lightning, Utils, Language, Router, Storage, Settings } from "@lightningjs/sdk";
+import { Lightning, Utils, Language, Router, Storage } from "@lightningjs/sdk";
 import { COLORS } from "../colors/Colors";
 import SettingsMainItem from "../items/SettingsMainItem";
-import { CONFIG } from "../Config/Config";
+import { CONFIG, GLOBALS } from "../Config/Config";
 import DTVApi from "../api/DTVApi";
 import AppApi from "../api/AppApi";
 import AudioScreenOverlay from './AudioScreens/AudioScreenOverlay'
@@ -29,6 +29,7 @@ import BluetoothScreenOverlay from './NetworkScreens/BluetoothScreenOverlay'
 import LiveTvSettings from './LiveTvSettings/LiveTvSettingsOverlay'
 import ThunderJS from 'ThunderJS';
 import OtherSettingsScreen from "./OtherSettings/OtherSettingsOverlay";
+import { Metrics } from "@firebolt-js/sdk";
 
 var thunder = ThunderJS(CONFIG.thunderConfig);
 /**
@@ -278,7 +279,7 @@ export default class SettingsOverlay extends Lightning.Component {
     this.dtvApi = new DTVApi();
     this.dtvPlugin = false; //plugin availability
     if (Storage.get("deviceType") != "IpStb") {
-      this.dtvApi.activate().then((res) => {
+      this.dtvApi.activate().then(() => {
         this.dtvPlugin = true;
         this.tag("DTVSettings").alpha = 1;
       });
@@ -286,8 +287,8 @@ export default class SettingsOverlay extends Lightning.Component {
   }
 
   _handleBack() {
-    console.log("application Type = ", Storage.get("applicationType"));
-    if (Storage.get("applicationType") === Storage.get("selfClientName")) {
+    console.log("application Type = ", GLOBALS.topmostApp);
+    if (GLOBALS.topmostApp === GLOBALS.selfClientName) {
       if (Router.getActiveHash() === "player" || Router.getActiveHash() === "dtvplayer" || Router.getActiveHash() === "usb/player") {
         Router.focusPage();
       } else {
@@ -296,8 +297,8 @@ export default class SettingsOverlay extends Lightning.Component {
       }
     } else {
       Router.focusPage();
-      this.appApi.visible(Storage.get("selfClientName"), false);
-      this.appApi.setFocus(Storage.get("applicationType"));
+      this.appApi.visible(GLOBALS.selfClientName, false);
+      this.appApi.setFocus(GLOBALS.topmostApp);
     }
   }
 
@@ -452,6 +453,7 @@ export default class SettingsOverlay extends Lightning.Component {
               console.log(`Netflix : nfr disable updation results in ${nr}`)
             }).catch(nerr => {
               console.error(`Netflix : error while updating nfrstatus`)
+              Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Thunder Netflix.1 error disabling nfrstatus "+JSON.stringify(nerr), false, null)
               console.error(nerr)
             })
 
@@ -464,6 +466,7 @@ export default class SettingsOverlay extends Lightning.Component {
               console.log(`Netflix : nfr enable results in ${nr}`)
             }).catch(nerr => {
               console.error(`Netflix : error while updating nfrstatus `)
+              Metrics.error(Metrics.ErrorType.OTHER,"PluginError", "Thunder Netflix.1 error enabling nfrstatus "+JSON.stringify(nerr), false, null)
               console.error(nerr)
             })
 
@@ -487,7 +490,7 @@ export default class SettingsOverlay extends Lightning.Component {
           if (this.dtvPlugin) {
             this._setState("LiveTvSettings")
           }
-          dtvApi.activate().then(res => {
+          DTVApi.activate().then(res => {
             this.tag('DTVSettings.Title').text.text = 'DTV Settings: Activtion' + res
           })
         }

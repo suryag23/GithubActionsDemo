@@ -22,6 +22,7 @@ import { COLORS } from '../../colors/Colors'
 import { CONFIG } from '../../Config/Config'
 import Network from '../../api/NetworkApi'
 import { Language } from '@lightningjs/sdk';
+import { Metrics } from '@firebolt-js/sdk'
 
 export default class NetworkInterfaceScreen extends Lightning.Component {
     _construct() {
@@ -109,12 +110,14 @@ export default class NetworkInterfaceScreen extends Lightning.Component {
                 this.tag('Ethernet.Loader').visible = false
                 this.tag('Ethernet.Title').text.text = 'Ethernet'
             }
+            Metrics.action("user", "The user changed the network interface", null)
         });
         this.onConnectionStatusChangedCB = Network.get()._thunder.on(Network.get().callsign, 'onConnectionStatusChanged', (notification) => {
             console.log('onConnectionStatusChanged notification from networkInterfaceScreen: ', notification)
             if (notification.interface === "ETHERNET") {
                 this.tag('Ethernet.Title').text.text = 'Ethernet: ' + Language.translate(notification.status.toLowerCase())
             }
+            Metrics.action("App", "network connection of app changed", null)
         });
 
         this.loadingAnimation = this.tag('Ethernet.Loader').animation({
