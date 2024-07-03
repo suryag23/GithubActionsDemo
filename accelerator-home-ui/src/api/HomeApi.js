@@ -244,7 +244,7 @@ export default class HomeApi {
       let callsign = null
       if (items[i].dvburi === "OTT") {
         callsign = items[i].callsign
-        if (items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids") {
+        if (items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV") {
           callsign = "Cobalt"
         }
         await appApi.getPluginStatus(callsign).catch(err => {
@@ -264,7 +264,7 @@ export default class HomeApi {
         if ((items[i].applicationType === "FireboltApp") && (GLOBALS.selfClientName === "FireboltMainApp-refui")) {
           callsign = "HtmlApp";
         }
-        else if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
+        else if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV") {
           callsign = "Cobalt"
         }
         await appApi.getPluginStatus(callsign).catch(err => {

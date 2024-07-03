@@ -422,13 +422,13 @@ export default class AppApi {
 
     const launchLocationKeyMapping = {
       //currently supported launch locations by the UI and mapping to corresponding reason/keys for IID
-      "mainView": { "YouTube": "menu", "YouTubeTV": "menu", "YouTubeKids": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
-      "dedicatedButton": { "YouTube": "remote", "YouTubeTV": "remote", "YouTubeKids": "remote", "Netflix": "App_launched_via_Netflix_Button" },
-      "appsMenu": { "YouTube": "menu", "YouTubeTV": "menu", "YouTubeKids": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Section" },
-      "epgScreen": { "YouTube": "guide", "YouTubeTV": "guide", "YouTubeKids": "guide", "Netflix": "App_launched_from_EPG_Grid" },
-      "dial": { "YouTube": "dial", "YouTubeTV": "dial", "YouTubeKids": "dial", "Netflix": "App_launched_via_DIAL_request" },
-      "gracenote": { "YouTube": "launcher", "YouTubeTV": "launcher", "YouTubeKids": "launcher", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
-      "alexa": { "YouTube": "voice", "YouTubeTV": "voice", "YouTubeKids": "voice", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
+      "mainView": { "YouTube": "menu", "YouTubeTV": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
+      "dedicatedButton": { "YouTube": "remote", "YouTubeTV": "remote", "Netflix": "App_launched_via_Netflix_Button" },
+      "appsMenu": { "YouTube": "menu", "YouTubeTV": "menu", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Section" },
+      "epgScreen": { "YouTube": "guide", "YouTubeTV": "guide", "Netflix": "App_launched_from_EPG_Grid" },
+      "dial": { "YouTube": "dial", "YouTubeTV": "dial", "Netflix": "App_launched_via_DIAL_request" },
+      "gracenote": { "YouTube": "launcher", "YouTubeTV": "launcher", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
+      "alexa": { "YouTube": "voice", "YouTubeTV": "voice", "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page" },
     };
     if (launchLocation && launchLocationKeyMapping[launchLocation]) {
       if (callsign === "Netflix" || callsign.startsWith("YouTube")) {
@@ -488,6 +488,14 @@ export default class AppApi {
     }
     console.log("AppAPI " + callsign + " : pluginStatus: " + JSON.stringify(pluginStatus) + " pluginState: ", JSON.stringify(pluginState));
 
+    if(callsign.startsWith("Amazon") || callsign.startsWith("Netflix")||callsign.startsWith("YouTube")){
+      if(pluginState ==='hibernated')
+        {
+          thunder.call('org.rdk.RDKShell.1','restore',{"callsign":  callsign}).then(res =>{
+            console.log(JSON.stringify(res));
+          })
+        }
+    }
     if (callsign === "Netflix") {
       if (pluginState === "deactivated" || pluginState === "deactivation") { //netflix cold launch scenario
         console.log(`AppAPI Netflix : ColdLaunch`)

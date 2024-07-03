@@ -510,7 +510,6 @@ export default class App extends Router.App {
 
     let self = this;
     self.appIdentifiers = {
-      "YouTubeKids": "n:5",
       "YouTubeTV": "n:4",
       "YouTube": "n:3",
       "Netflix": "n:1",
@@ -665,6 +664,7 @@ export default class App extends Router.App {
           case "Deactivation":
             params.state = 'stopped';
             break;
+          case "hibernated":
           case "suspended":
             params.state = 'suspended';
             break;
@@ -703,6 +703,21 @@ export default class App extends Router.App {
     });
     thunder.on('org.rdk.RDKShell', 'onApplicationTerminated', data => {
       console.warn("[RDKSHELLEVT] onApplicationTerminated:", data);
+    });
+    thunder.on('org.rdk.RDKShell', 'onHibernated', data => {
+      console.warn("[RDKSHELLEVT] onHibernated:", data);
+      if(data.success)
+      {
+        if ((GLOBALS.topmostApp === data.client)
+        && (GLOBALS.selfClientName === "ResidentApp"|| GLOBALS.selfClientName === "FireboltMainApp-refui")) {
+        appApi.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+          AlexaApi.get().reportApplicationState("menu", true);
+        });
+      }
+      }
+    });
+    thunder.on('org.rdk.RDKShell', 'onRestored', data => {
+      console.warn("[RDKSHELLEVT] onRestored:", data);
     });
     thunder.on('org.rdk.RDKShell', 'onDestroyed', data => {
       console.warn("[RDKSHELLEVT] onDestroyed:", data);
@@ -1567,13 +1582,6 @@ export default class App extends Router.App {
           console.error(err)
         });
         break;
-      case 'YouTubeKids':
-        appApi.suspendPremiumApp("YouTubeKids").then(() => {
-          console.log(`YouTubeKids : suspend YouTubeKids request`);
-        }).catch((err) => {
-          console.error(err)
-        });
-        break;
       case 'Lightning':
         appApi.deactivateLightning();
         break;
@@ -1692,10 +1700,8 @@ export default class App extends Router.App {
 
       if (this.xcastApps(notification.applicationName)) {
         let applicationName = this.xcastApps(notification.applicationName);
-
-        if (applicationName.startsWith("YouTube")) {
           let params = {
-            url: notification.parameters.url,
+            url: applicationName.startsWith("YouTube") ? notification.parameters.url : notification.parameters.pluginUrl ,
             launchLocation: "dial",
             appIdentifier: self.appIdentifiers[applicationName]
           }
@@ -1708,22 +1714,22 @@ export default class App extends Router.App {
           }).catch(err => {
             console.log("App onApplicationLaunchRequest: error ", err)
           })
-        }
+      } else {
+        console.log("App onApplicationLaunchRequest: " + notification.applicationName + " is not supported.")
       }
     });
 
     this.xcastApi.registerEvent('onApplicationHideRequest', notification => {
       console.log('App onApplicationHideRequest: ' + JSON.stringify(notification));
-
       if (this.xcastApps(notification.applicationName)) {
         let applicationName = this.xcastApps(notification.applicationName);
         console.log('App onApplicationHideRequest: ' + this.xcastApps(notification.applicationName));
-        if (applicationName.startsWith("YouTube")) {
           //second argument true means resident app won't be launched the required app will be exited in the background.
           //only bring up the resident app when the notification is from the current app(ie app in focus)
           console.log("App onApplicationHideRequest: exitApp as " + applicationName + "!==" + GLOBALS.topmostApp);
           appApi.exitApp(applicationName, applicationName !== GLOBALS.topmostApp);
-        }
+      } else {
+        console.log("App onApplicationHideRequest: " + notification.applicationName + " is not supported.")
       }
     });
 
@@ -1744,19 +1750,21 @@ export default class App extends Router.App {
         }).catch(err => {
           console.log("Error in launching ", applicationName, " on casting resume request: ", err);
         })
+      } else {
+        console.log("App onApplicationResumeRequest: " + notification.applicationName + " is not supported.")
       }
     });
 
     this.xcastApi.registerEvent('onApplicationStopRequest', notification => {
       console.log('App onApplicationStopRequest: ' + JSON.stringify(notification));
+
       if (this.xcastApps(notification.applicationName)) {
         let applicationName = this.xcastApps(notification.applicationName);
-        if (applicationName.startsWith("YouTube")) {
-          appApi.deactivateCobalt(applicationName)
-          if (GLOBALS.topmostApp === applicationName) {
-            appApi.exitApp(applicationName);
-          }
+        if (GLOBALS.topmostApp === applicationName) {
+          appApi.exitApp(applicationName, true, true);
         }
+      } else {
+        console.log("App onApplicationStopRequest: " + notification.applicationName + " is not supported.")
       }
     });
 
@@ -1766,6 +1774,7 @@ export default class App extends Router.App {
         let applicationName = this.xcastApps(notification.applicationName);
         let appState = { "applicationName": notification.applicationName, "state": "stopped" };
         appApi.checkStatus(applicationName).then(result => {
+          console.log("result of xcast app status", result[0].state)
           switch (result[0].state) {
             case "activated":
             case "resumed":
@@ -1777,6 +1786,7 @@ export default class App extends Router.App {
             case "Precondition":
               appState.state = "stopped";
               break;
+            case "hibernated":
             case "suspended":
               appState.state = "suspended";
               break;
@@ -1785,6 +1795,8 @@ export default class App extends Router.App {
         }).catch(error => {
           console.error("App onApplicationStateRequest: checkStatus error ", error);
         })
+      } else {
+        console.log("App onApplicationStateRequest: " + notification.applicationName + " is not supported.")
       }
     });
   }

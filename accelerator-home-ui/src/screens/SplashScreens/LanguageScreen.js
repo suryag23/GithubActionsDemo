@@ -20,8 +20,9 @@
 import { Lightning, Router, Language, Storage } from '@lightningjs/sdk'
 import { CONFIG, GLOBALS } from '../../Config/Config'
 import LanguageItem from '../../items/LanguageItem'
-import { availableLanguages } from '../../Config/Config'
+import { availableLanguages, availableLanguageCodes } from '../../Config/Config'
 import AppApi from '../../api/AppApi'
+import FireBoltApi from '../../api/firebolt/FireBoltApi'
 
 const appApi = new AppApi()
 const loader = 'Loader'
@@ -148,9 +149,13 @@ export default class LanguageScreen extends Lightning.Component {
         _handleEnter() {
           //need to verify
           if (Language.get() !== availableLanguages[this._Languages.tag('List').index]) {
-            if ("ResidentApp" !== GLOBALS.selfClientName) {
-              FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log(`language set successfully`))
+            let updatedLanguage = availableLanguageCodes[availableLanguages[this._Languages.tag('List').index]]
+            if ("ResidentApp" === GLOBALS.selfClientName) {
+              appApi.setUILanguage(updatedLanguage)
+            } else {
+              FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log("sucess language set ::::",res))
             }
+            localStorage.setItem('Language',availableLanguages[this._Languages.tag('List').index])
             let path = location.pathname.split('index.html')[0]
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html"
             let notification_url = location.origin + path + url

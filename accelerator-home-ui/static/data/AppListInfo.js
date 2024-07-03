@@ -56,13 +56,6 @@ export var appListInfo =[
     appIdentifier: 'n:4'
   },
   {
-    displayName: 'YouTubeKids',
-    applicationType: 'YouTubeKids',
-    uri: 'https://www.youtube.com/tv_kids',
-    url: '/images/apps/App_YouTubeKids_454x255.png',
-    appIdentifier: 'n:5'
-  },
-  {
     displayName: 'Peacock',
     applicationType: 'Peacock',
     uri: '',

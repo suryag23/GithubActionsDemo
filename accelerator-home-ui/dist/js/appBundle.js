@@ -3,7 +3,7 @@
  * SDK version: 4.8.3
  * CLI version: 2.14.2
  * 
- * Generated: Thu, 30 May 2024 05:13:44 GMT
+ * Generated: Wed, 03 Jul 2024 12:36:59 GMT
  */
 
 var APP_accelerator_home_ui = (function () {
@@ -9591,11 +9591,6 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       "callsign": "YouTubeTV",
       "url": ""
     },
-    "amzn1.alexa-ask-target.app.09817": {
-      "name": "YouTubeKids",
-      "callsign": "YouTubeKids",
-      "url": ""
-    },
     "amzn1.alexa-ask-target.app.72095": {
       "name": "Prime Video",
       "callsign": "Amazon",
@@ -10614,43 +10609,36 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         "mainView": {
           "YouTube": "menu",
           "YouTubeTV": "menu",
-          "YouTubeKids": "menu",
           "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page"
         },
         "dedicatedButton": {
           "YouTube": "remote",
           "YouTubeTV": "remote",
-          "YouTubeKids": "remote",
           "Netflix": "App_launched_via_Netflix_Button"
         },
         "appsMenu": {
           "YouTube": "menu",
           "YouTubeTV": "menu",
-          "YouTubeKids": "menu",
           "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Section"
         },
         "epgScreen": {
           "YouTube": "guide",
           "YouTubeTV": "guide",
-          "YouTubeKids": "guide",
           "Netflix": "App_launched_from_EPG_Grid"
         },
         "dial": {
           "YouTube": "dial",
           "YouTubeTV": "dial",
-          "YouTubeKids": "dial",
           "Netflix": "App_launched_via_DIAL_request"
         },
         "gracenote": {
           "YouTube": "launcher",
           "YouTubeTV": "launcher",
-          "YouTubeKids": "launcher",
           "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page"
         },
         "alexa": {
           "YouTube": "voice",
           "YouTubeTV": "voice",
-          "YouTubeKids": "voice",
           "Netflix": "App_launched_via_Netflix_Icon_On_The_Apps_Row_On_The_Main_Home_Page"
         }
       };
@@ -10705,6 +10693,15 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         return Promise.reject("AppAPI PluginError: " + callsign + ": App not supported on this device | Error: " + JSON.stringify(err));
       }
       console.log("AppAPI " + callsign + " : pluginStatus: " + JSON.stringify(pluginStatus) + " pluginState: ", JSON.stringify(pluginState));
+      if (callsign.startsWith("Amazon") || callsign.startsWith("Netflix") || callsign.startsWith("YouTube")) {
+        if (pluginState === 'hibernated') {
+          thunder$m.call('org.rdk.RDKShell.1', 'restore', {
+            "callsign": callsign
+          }).then(res => {
+            console.log(JSON.stringify(res));
+          });
+        }
+      }
       if (callsign === "Netflix") {
         if (pluginState === "deactivated" || pluginState === "deactivation") {
           //netflix cold launch scenario
@@ -12436,12 +12433,6 @@ preferredAudioLanguages:   preferredAudioLanguages$1
     url: '/images/apps/App_YouTubeTV_454x255.png',
     appIdentifier: 'n:4'
   }, {
-    displayName: 'YouTubeKids',
-    applicationType: 'YouTubeKids',
-    uri: 'https://www.youtube.com/tv_kids',
-    url: '/images/apps/App_YouTubeKids_454x255.png',
-    appIdentifier: 'n:5'
-  }, {
     displayName: 'Peacock',
     applicationType: 'Peacock',
     uri: '',
@@ -13405,7 +13396,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         let callsign = null;
         if (items[i].dvburi === "OTT") {
           callsign = items[i].callsign;
-          if (items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV" || items[i].callsign === "YouTubeKids") {
+          if (items[i].callsign === "YouTube" || items[i].callsign === "YouTubeTV") {
             callsign = "Cobalt";
           }
           await appApi$c.getPluginStatus(callsign).catch(err => {
@@ -13423,7 +13414,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         if (items[i].applicationType !== '') {
           if (items[i].applicationType === "FireboltApp" && GLOBALS.selfClientName === "FireboltMainApp-refui") {
             callsign = "HtmlApp";
-          } else if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV" || items[i].applicationType === "YouTubeKids") {
+          } else if (items[i].applicationType === "YouTube" || items[i].applicationType === "YouTubeTV") {
             callsign = "Cobalt";
           }
           await appApi$c.getPluginStatus(callsign).catch(err => {
@@ -13741,12 +13732,6 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       }, {
         shortname: "YouTubeTV",
         callsign: "YouTubeTV",
-        url: "",
-        dvburi: "OTT",
-        lcn: 0
-      }, {
-        shortname: "YouTubeKids",
-        callsign: "YouTubeKids",
         url: "",
         dvburi: "OTT",
         lcn: 0
@@ -15139,7 +15124,6 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         AmazonInstantVideo: 'Amazon',
         YouTube: 'YouTube',
         NetflixApp: 'Netflix',
-        YouTubeKids: "YouTubeKids",
         YouTubeTV: "YouTubeTV"
       };
       return xcastApps;
@@ -22353,7 +22337,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
    * limitations under the License.
    **/
   let instance$4 = null;
-  class FireBoltApi$1 {
+  class FireBoltApi {
     constructor() {
       this.deviceinfo = new FBTDeviceInfo();
       this.lifecycle = new FBTLifecycle();
@@ -22366,7 +22350,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
     */
     static get() {
       if (instance$4 == null) {
-        instance$4 = new FireBoltApi$1();
+        instance$4 = new FireBoltApi();
       }
       return instance$4;
     }
@@ -23374,7 +23358,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
             appIdentifier: appIdentifier
           };
           if (applicationType == "FireboltApp") {
-            FireBoltApi$1.get().discovery.launch(appId, intent).then(res => {
+            FireBoltApi.get().discovery.launch(appId, intent).then(res => {
               console.log(res);
               GLOBALS.topmostApp = "FireboltApp";
             });
@@ -28735,7 +28719,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         this.refreshDetails();
       });
       if ("ResidentApp" !== GLOBALS.selfClientName) {
-        this.OnNetworkChangedfirebolt = FireBoltApi$1.get().deviceinfo.listen("networkChanged", value => {
+        this.OnNetworkChangedfirebolt = FireBoltApi.get().deviceinfo.listen("networkChanged", value => {
           this.refreshDetails();
         });
       }
@@ -28745,9 +28729,6 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       this.onConnectionStatusChangedCB.dispose();
       this.onIPAddressStatusChangedCB.dispose();
       this.onDefaultInterfaceChangedCB.dispose();
-      if ("ResidentApp" !== GLOBALS.selfClientName) {
-        this.OnNetworkChangedfirebolt.dispose();
-      }
     }
     async refreshDetails() {
       this.tag("ConnectionType.Value").text.text = "NA";
@@ -28794,7 +28775,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           }).catch(error => console.log(error));
         }).catch(error => console.log(error));
       } else {
-        await FireBoltApi$1.get().deviceinfo.getnetwork().then(res => {
+        await FireBoltApi.get().deviceinfo.getnetwork().then(res => {
           if (res.type === "wifi") {
             this.tag("ConnectionType.Value").text.text = Language$1.translate("Wireless");
             this.tag("SSID").alpha = 1;
@@ -32969,7 +32950,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
             if ("ResidentApp" === GLOBALS.selfClientName) {
               appApi$a.setUILanguage(updatedLanguage);
             } else {
-              FireBoltApi$1.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log("sucess language set ::::", res));
+              FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log("sucess language set ::::", res));
             }
             localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index]);
             let path = location.pathname.split('index.html')[0];
@@ -34401,13 +34382,13 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         });
       } else {
         // Firebolt mode
-        FireBoltApi$1.get().deviceinfo.getversion().then(res => {
+        FireBoltApi.get().deviceinfo.getversion().then(res => {
           console.log("build verion".concat(res.firmware.readable, " Firebolt API Version - ").concat(res.api.readable));
           this.tag('FirmwareVersions.Value').text.text = "UI Version - ".concat(Settings$2.get('platform', 'version'), " \nBuild Version - ").concat(res.firmware.readable, " \nFirebolt API Version - ").concat(res.api.readable, " ");
         }).catch(err => {
           console.error("error while getting the system versions from Firebolt.getversion API");
         });
-        FireBoltApi$1.get().localization.countryCode().then(res => {
+        FireBoltApi.get().localization.countryCode().then(res => {
           this.tag('Location.Value').text.text = "CountryCode: ".concat(res);
         });
       }
@@ -35199,7 +35180,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       if ("ResidentApp" === GLOBALS.selfClientName) {
         this.zone = await this.appApi.getZone();
       } else {
-        this.zone = await FireBoltApi$1.get().localization.getTimeZone();
+        this.zone = await FireBoltApi.get().localization.getTimeZone();
       }
       try {
         console.log(this.resp, this.zone);
@@ -35424,7 +35405,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
     }
     _active() {
       if ("ResidentApp" !== GLOBALS.selfClientName) {
-        FireBoltApi$1.get().localization.listen("timeZoneChanged", value => {
+        FireBoltApi.get().localization.listen("timeZoneChanged", value => {
           console.log('timezone changed successfully to ', JSON.stringify(value));
         });
       }
@@ -35441,7 +35422,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       if ("ResidentApp" === GLOBALS.selfClientName) {
         this.appApi.setZone("".concat(this._item.zone, "/").concat(this.tag('List').element._item[0]));
       } else {
-        FireBoltApi$1.get().localization.setTimeZone("".concat(this._item.zone, "/").concat(this.tag('List').element._item[0]));
+        FireBoltApi.get().localization.setTimeZone("".concat(this._item.zone, "/").concat(this.tag('List').element._item[0]));
       }
       Router.navigate('settings/advanced/device/timezone', {
         refresh: true
@@ -37957,10 +37938,10 @@ preferredAudioLanguages:   preferredAudioLanguages$1
     }
     _focus() {
       if ("ResidentApp" !== GLOBALS.selfClientName) {
-        FireBoltApi$1.get().deviceinfo.getscreenresolution().then(resolution => {
+        FireBoltApi.get().deviceinfo.getscreenresolution().then(resolution => {
           this.tag("Resolution.Title").text.text = Language$1.translate('Resolution: ') + "".concat(JSON.stringify(resolution[0]), " , ").concat(JSON.stringify(resolution[1]));
         });
-        FireBoltApi$1.get().deviceinfo.gethdcp().then(res => {
+        FireBoltApi.get().deviceinfo.gethdcp().then(res => {
           let hdcp = "";
           for (let key in res) {
             hdcp += "\t\t".concat(key, " : ").concat(res[key], " ");
@@ -37968,7 +37949,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           }
           this.tag("HDCP.Title").text.text = "".concat(Language$1.translate('HDCP Status: '), " ").concat(hdcp.substring(0, hdcp.length - 1));
         });
-        FireBoltApi$1.get().deviceinfo.gethdr().then(res => {
+        FireBoltApi.get().deviceinfo.gethdr().then(res => {
           let hdr = "";
           for (let key in res) {
             hdr += "\t\t".concat(key, " : ").concat(res[key]);
@@ -39748,9 +39729,13 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         _handleEnter() {
           //need to verify
           if (Language$1.get() !== availableLanguages[this._Languages.tag('List').index]) {
-            if ("ResidentApp" !== GLOBALS.selfClientName) {
-              FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log("language set successfully"));
+            let updatedLanguage = availableLanguageCodes[availableLanguages[this._Languages.tag('List').index]];
+            if ("ResidentApp" === GLOBALS.selfClientName) {
+              appApi$4.setUILanguage(updatedLanguage);
+            } else {
+              FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log("sucess language set ::::", res));
             }
+            localStorage.setItem('Language', availableLanguages[this._Languages.tag('List').index]);
             let path = location.pathname.split('index.html')[0];
             let url = path.slice(-1) === '/' ? "static/loaderApp/index.html" : "/static/loaderApp/index.html";
             let notification_url = location.origin + path + url;
@@ -43998,10 +43983,8 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       iconWidth: theme.spacer.xxl + theme.spacer.xs,
       iconHeight: theme.spacer.xxl + theme.spacer.xs,
       contentSpacing: theme.spacer.md,
-      marginBottom: theme.typography.body1.lineHeight / -10,
-      textStyle: _objectSpread(_objectSpread({}, theme.typography.body1), {}, {
-          verticalAlign: "bottom"
-      }),
+      marginBottom: 0,
+      textStyle: _objectSpread({}, theme.typography.body1),
       maxLines: 1,
       justify: "flex-start"
   });
@@ -54832,7 +54815,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           this.updateZone(res);
         });
       } else {
-        FireBoltApi$1.get().localization.getTimeZone().then(timezone => {
+        FireBoltApi.get().localization.getTimeZone().then(timezone => {
           this.updateZone(timezone);
         });
       }
@@ -56173,10 +56156,10 @@ preferredAudioLanguages:   preferredAudioLanguages$1
     }
     _focus() {
       if ("ResidentApp" !== GLOBALS.selfClientName) {
-        FireBoltApi$1.get().deviceinfo.getscreenresolution().then(resolution => {
+        FireBoltApi.get().deviceinfo.getscreenresolution().then(resolution => {
           this.tag("Resolution.Title").text.text = Language$1.translate('Resolution: ') + "".concat(JSON.stringify(resolution[0]), " , ").concat(JSON.stringify(resolution[1]));
         });
-        FireBoltApi$1.get().deviceinfo.gethdcp().then(res => {
+        FireBoltApi.get().deviceinfo.gethdcp().then(res => {
           let hdcp = "";
           for (let key in res) {
             hdcp += "\t\t".concat(key, " : ").concat(res[key], " ");
@@ -56184,7 +56167,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           }
           this.tag("HDCP.Title").text.text = "".concat(Language$1.translate('HDCP Status: '), " ").concat(hdcp.substring(0, hdcp.length - 1));
         });
-        FireBoltApi$1.get().deviceinfo.gethdr().then(res => {
+        FireBoltApi.get().deviceinfo.gethdr().then(res => {
           let hdr = "";
           for (let key in res) {
             hdr += "\t\t".concat(key, " : ").concat(res[key]);
@@ -61126,6 +61109,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         _handleEnter() {
           //need to verify
           if (Language$1.get() !== availableLanguages[this._Languages.tag('List').index]) {
+            let updatedLanguage = availableLanguageCodes[availableLanguages[this._Languages.tag('List').index]];
             if ("ResidentApp" !== GLOBALS.selfClientName) {
               FireBoltApi.get().localization.setlanguage(availableLanguages[this._Languages.tag('List').index]).then(res => console.log("language set successfully"));
             } else {
@@ -61832,13 +61816,13 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           }
         });
       } else {
-        FireBoltApi$1.get().deviceinfo.getversion().then(res => {
+        FireBoltApi.get().deviceinfo.getversion().then(res => {
           console.log("build verion".concat(res.firmware.readable, " Firebolt API Version - ").concat(res.api.readable));
           this.tag('FirmwareVersions.Value').text.text = "UI Version - ".concat(Settings$2.get('platform', 'version'), " \nBuild Version - ").concat(res.firmware.readable, " \nFirebolt API Version - ").concat(res.api.readable, " ");
         }).catch(err => {
           console.error("error while getting the system versions from Firebolt.getversion API" + JSON.stringify(err));
         });
-        FireBoltApi$1.get().localization.countryCode().then(res => {
+        FireBoltApi.get().localization.countryCode().then(res => {
           this.tag('Location.Value').text.text = "CountryCode: ".concat(res);
         });
       }
@@ -61978,7 +61962,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
     }
     _init() {
       if ("ResidentApp" !== GLOBALS.selfClientName) {
-        FireBoltApi$1.get().localization.listen("timeZoneChanged", value => {
+        FireBoltApi.get().localization.listen("timeZoneChanged", value => {
           console.log('timezone changed successfully to ', JSON.stringify(value));
         });
       }
@@ -61996,7 +61980,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       if ("ResidentApp" === GLOBALS.selfClientName) {
         this.appApi.setZone("".concat(this._item.zone, "/").concat(this.tag('List').element._item[0]));
       } else {
-        FireBoltApi$1.get().localization.setTimeZone("".concat(this._item.zone, "/").concat(this.tag('List').element._item[0]));
+        FireBoltApi.get().localization.setTimeZone("".concat(this._item.zone, "/").concat(this.tag('List').element._item[0]));
       }
       //  Router.navigate('settings/advanced/device/timezone', { refresh: true })
       return false; //to execute handle enter in parent component
@@ -62207,7 +62191,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       if ("ResidentApp" === GLOBALS.selfClientName) {
         this.zone = await this.appApi.getZone();
       } else {
-        this.zone = await FireBoltApi$1.get().localization.getTimeZone();
+        this.zone = await FireBoltApi.get().localization.getTimeZone();
       }
       try {
         console.log(this.resp, this.zone);
@@ -65338,7 +65322,6 @@ preferredAudioLanguages:   preferredAudioLanguages$1
     _init() {
       let self = this;
       self.appIdentifiers = {
-        "YouTubeKids": "n:5",
         "YouTubeTV": "n:4",
         "YouTube": "n:3",
         "Netflix": "n:1",
@@ -65350,13 +65333,13 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         console.error("App _init keyIntercept err:", JSON.stringify(err));
       });
       this.userInactivity();
-      FireBoltApi$1.get().deviceinfo.gettype();
-      FireBoltApi$1.get().lifecycle.ready();
-      FireBoltApi$1.get().lifecycle.registerEvent('foreground', value => {
+      FireBoltApi.get().deviceinfo.gettype();
+      FireBoltApi.get().lifecycle.ready();
+      FireBoltApi.get().lifecycle.registerEvent('foreground', value => {
         console.log("FireBoltApi[foreground] value:" + JSON.stringify(value) + ", launchResidentApp with:" + JSON.stringify(GLOBALS.selfClientName));
         // Ripple launches refui with this rdkshell client name.
         GLOBALS.topmostApp = GLOBALS.selfClientName;
-        FireBoltApi$1.get().discovery.launch("refui", {
+        FireBoltApi.get().discovery.launch("refui", {
           "action": "home",
           "context": {
             "source": "device"
@@ -65365,12 +65348,12 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           AlexaApi.get().reportApplicationState("menu", true);
         });
       });
-      FireBoltApi$1.get().lifecycle.registerEvent('background', value => {
+      FireBoltApi.get().lifecycle.registerEvent('background', value => {
         // Ripple changed app states; it will be a 'FireboltApp'
         GLOBALS.topmostApp = "FireboltApp";
         console.log("FireBoltApi[foreground] value:" + JSON.stringify(value) + ", Updating top app as:" + GLOBALS.topmostApp);
       });
-      FireBoltApi$1.get().lifecycle.state().then(res => {
+      FireBoltApi.get().lifecycle.state().then(res => {
         console.log("Lifecycle.state result:" + res);
       });
       Keyboard$1.provide('xrn:firebolt:capability:input:keyboard', new KeyboardUIProvider(this));
@@ -65503,6 +65486,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
             case "Deactivation":
               params.state = 'stopped';
               break;
+            case "hibernated":
             case "suspended":
               params.state = 'suspended';
               break;
@@ -65538,6 +65522,19 @@ preferredAudioLanguages:   preferredAudioLanguages$1
       });
       thunder.on('org.rdk.RDKShell', 'onApplicationTerminated', data => {
         console.warn("[RDKSHELLEVT] onApplicationTerminated:", data);
+      });
+      thunder.on('org.rdk.RDKShell', 'onHibernated', data => {
+        console.warn("[RDKSHELLEVT] onHibernated:", data);
+        if (data.success) {
+          if (GLOBALS.topmostApp === data.client && (GLOBALS.selfClientName === "ResidentApp" || GLOBALS.selfClientName === "FireboltMainApp-refui")) {
+            appApi.launchResidentApp(GLOBALS.selfClientName, GLOBALS.selfClientName).then(() => {
+              AlexaApi.get().reportApplicationState("menu", true);
+            });
+          }
+        }
+      });
+      thunder.on('org.rdk.RDKShell', 'onRestored', data => {
+        console.warn("[RDKSHELLEVT] onRestored:", data);
       });
       thunder.on('org.rdk.RDKShell', 'onDestroyed', data => {
         console.warn("[RDKSHELLEVT] onDestroyed:", data);
@@ -65888,9 +65885,9 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           localStorage.setItem('Language', Language$1.get());
         }
       } else {
-        FireBoltApi$1.get().localization.language().then(lang => {
+        FireBoltApi.get().localization.language().then(lang => {
           if (lang) {
-            FireBoltApi$1.get().localization.language(lang).then(res => console.log("language ".concat(lang, " set succesfully")));
+            FireBoltApi.get().localization.language(lang).then(res => console.log("language ".concat(lang, " set succesfully")));
             localStorage.setItem('Language', lang);
           }
         });
@@ -65923,9 +65920,9 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           localStorage.setItem('Language', Language$1.get());
         }
       } else {
-        FireBoltApi$1.get().localization.language().then(lang => {
+        FireBoltApi.get().localization.language().then(lang => {
           if (lang) {
-            FireBoltApi$1.get().localization.language(lang).then(res => console.log("language ".concat(lang, " set succesfully")));
+            FireBoltApi.get().localization.language(lang).then(res => console.log("language ".concat(lang, " set succesfully")));
             localStorage.setItem('Language', lang);
           }
         });
@@ -66001,7 +65998,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
               this.updateAlexaTimeZone(timezone);
             });
           } else {
-            FireBoltApi$1.get().localization.getTimeZone().then(timezone => {
+            FireBoltApi.get().localization.getTimeZone().then(timezone => {
               this.updateAlexaTimeZone(timezone);
             });
           }
@@ -66375,13 +66372,6 @@ preferredAudioLanguages:   preferredAudioLanguages$1
             console.error(err);
           });
           break;
-        case 'YouTubeKids':
-          appApi.suspendPremiumApp("YouTubeKids").then(() => {
-            console.log("YouTubeKids : suspend YouTubeKids request");
-          }).catch(err => {
-            console.error(err);
-          });
-          break;
         case 'Lightning':
           appApi.deactivateLightning();
           break;
@@ -66498,25 +66488,25 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         console.log('App onApplicationLaunchRequest: ' + JSON.stringify(notification));
         if (this.xcastApps(notification.applicationName)) {
           let applicationName = this.xcastApps(notification.applicationName);
-          if (applicationName.startsWith("YouTube")) {
+          let params = {
+            url: applicationName.startsWith("YouTube") ? notification.parameters.url : notification.parameters.pluginUrl,
+            launchLocation: "dial",
+            appIdentifier: self.appIdentifiers[applicationName]
+          };
+          appApi.launchApp(applicationName, params).then(res => {
+            console.log("App onApplicationLaunchRequest: launched " + applicationName + " : ", res);
+            GLOBALS.topmostApp = applicationName;
+            // TODO: move to Controller.statuschange event
             let params = {
-              url: notification.parameters.url,
-              launchLocation: "dial",
-              appIdentifier: self.appIdentifiers[applicationName]
+              applicationName: notification.applicationName,
+              state: 'running'
             };
-            appApi.launchApp(applicationName, params).then(res => {
-              console.log("App onApplicationLaunchRequest: launched " + applicationName + " : ", res);
-              GLOBALS.topmostApp = applicationName;
-              // TODO: move to Controller.statuschange event
-              let params = {
-                applicationName: notification.applicationName,
-                state: 'running'
-              };
-              this.xcastApi.onApplicationStateChanged(params);
-            }).catch(err => {
-              console.log("App onApplicationLaunchRequest: error ", err);
-            });
-          }
+            this.xcastApi.onApplicationStateChanged(params);
+          }).catch(err => {
+            console.log("App onApplicationLaunchRequest: error ", err);
+          });
+        } else {
+          console.log("App onApplicationLaunchRequest: " + notification.applicationName + " is not supported.");
         }
       });
       this.xcastApi.registerEvent('onApplicationHideRequest', notification => {
@@ -66524,12 +66514,12 @@ preferredAudioLanguages:   preferredAudioLanguages$1
         if (this.xcastApps(notification.applicationName)) {
           let applicationName = this.xcastApps(notification.applicationName);
           console.log('App onApplicationHideRequest: ' + this.xcastApps(notification.applicationName));
-          if (applicationName.startsWith("YouTube")) {
-            //second argument true means resident app won't be launched the required app will be exited in the background.
-            //only bring up the resident app when the notification is from the current app(ie app in focus)
-            console.log("App onApplicationHideRequest: exitApp as " + applicationName + "!==" + GLOBALS.topmostApp);
-            appApi.exitApp(applicationName, applicationName !== GLOBALS.topmostApp);
-          }
+          //second argument true means resident app won't be launched the required app will be exited in the background.
+          //only bring up the resident app when the notification is from the current app(ie app in focus)
+          console.log("App onApplicationHideRequest: exitApp as " + applicationName + "!==" + GLOBALS.topmostApp);
+          appApi.exitApp(applicationName, applicationName !== GLOBALS.topmostApp);
+        } else {
+          console.log("App onApplicationHideRequest: " + notification.applicationName + " is not supported.");
         }
       });
       this.xcastApi.registerEvent('onApplicationResumeRequest', notification => {
@@ -66548,18 +66538,19 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           }).catch(err => {
             console.log("Error in launching ", applicationName, " on casting resume request: ", err);
           });
+        } else {
+          console.log("App onApplicationResumeRequest: " + notification.applicationName + " is not supported.");
         }
       });
       this.xcastApi.registerEvent('onApplicationStopRequest', notification => {
         console.log('App onApplicationStopRequest: ' + JSON.stringify(notification));
         if (this.xcastApps(notification.applicationName)) {
           let applicationName = this.xcastApps(notification.applicationName);
-          if (applicationName.startsWith("YouTube")) {
-            appApi.deactivateCobalt(applicationName);
-            if (GLOBALS.topmostApp === applicationName) {
-              appApi.exitApp(applicationName);
-            }
+          if (GLOBALS.topmostApp === applicationName) {
+            appApi.exitApp(applicationName, true, true);
           }
+        } else {
+          console.log("App onApplicationStopRequest: " + notification.applicationName + " is not supported.");
         }
       });
       this.xcastApi.registerEvent('onApplicationStateRequest', notification => {
@@ -66571,6 +66562,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
             "state": "stopped"
           };
           appApi.checkStatus(applicationName).then(result => {
+            console.log("result of xcast app status", result[0].state);
             switch (result[0].state) {
               case "activated":
               case "resumed":
@@ -66582,6 +66574,7 @@ preferredAudioLanguages:   preferredAudioLanguages$1
               case "Precondition":
                 appState.state = "stopped";
                 break;
+              case "hibernated":
               case "suspended":
                 appState.state = "suspended";
                 break;
@@ -66590,6 +66583,8 @@ preferredAudioLanguages:   preferredAudioLanguages$1
           }).catch(error => {
             console.error("App onApplicationStateRequest: checkStatus error ", error);
           });
+        } else {
+          console.log("App onApplicationStateRequest: " + notification.applicationName + " is not supported.");
         }
       });
     }

@@ -109,7 +109,6 @@ export default class DTVApi {
       { shortname: "Netflix", callsign: "Netflix", url: "", dvburi: "OTT", lcn: 0 },
       { shortname: "YouTube", callsign: "YouTube", url: "", dvburi: "OTT", lcn: 0 },
       { shortname: "YouTubeTV", callsign: "YouTubeTV", url: "", dvburi: "OTT", lcn: 0 },
-      { shortname: "YouTubeKids", callsign: "YouTubeKids", url: "", dvburi: "OTT", lcn: 0 },
     ];
     if (customServiceList) {
       arr = arr.concat(JSON.parse(JSON.stringify(customServiceList)));

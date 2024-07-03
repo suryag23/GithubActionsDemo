@@ -295,9 +295,6 @@ export default class NetworkInfo extends Lightning.Component {
         this.onConnectionStatusChangedCB.dispose();
         this.onIPAddressStatusChangedCB.dispose();
         this.onDefaultInterfaceChangedCB.dispose();
-        if ("ResidentApp" !== GLOBALS.selfClientName){
-            this.OnNetworkChangedfirebolt.dispose();
-        }
     }
 
     async refreshDetails() {

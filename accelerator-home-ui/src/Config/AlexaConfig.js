@@ -30,11 +30,6 @@ export const AlexaLauncherKeyMap = {
         "callsign": "YouTubeTV",
         "url": "",
     },
-    "amzn1.alexa-ask-target.app.09817": {
-        "name": "YouTubeKids",
-        "callsign": "YouTubeKids",
-        "url": "",
-    },
     "amzn1.alexa-ask-target.app.72095": {
         "name": "Prime Video",
         "callsign": "Amazon",
