@@ -12,6 +12,7 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: ./accelerator-home-ui
       
 
     - name: Create dist
