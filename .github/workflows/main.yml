@@ -17,7 +17,7 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      working-directory: ./RDK_apps/accelerator-home-ui
+      working-directory: ./RDK_apps
 
     - name: Create dist
       run: lng dist
