@@ -10,14 +10,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       
-    - name: Install lng tool
-      run: |
-        npm install -g lng || echo "lng installation via npm failed"
-        if ! command -v lng &> /dev/null; then
-          echo "lng could not be installed via npm, please check installation method."
-          exit 1
-        fi
-      
     - name: Install dependencies
       run: npm install
       working-directory: ./accelerator-home-ui
