@@ -17,7 +17,7 @@ jobs:
 
     - name: Install lng tool
       run: |
-        npm install -g lng || echo "lng installation via npm failed"
+        npm install -g @lightningjs/cli || echo "lng installation via npm failed"
         if ! command -v lng &> /dev/null; then
           echo "lng could not be installed via npm, please check installation method."
           exit 1
