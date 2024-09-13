@@ -15,9 +15,10 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Install lng tool
+    - name: Install lng tool and TypeScript
       run: |
         npm install -g @lightningjs/cli || echo "lng installation via npm failed"
+        npm install -g typescript
         if ! command -v lng &> /dev/null; then
           echo "lng could not be installed via npm, please check installation method."
           exit 1
@@ -28,6 +29,18 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: ./accelerator-home-ui
+
+    - name: Check for outdated dependencies
+      run: npm outdated || echo "No outdated packages"
+      working-directory: ./accelerator-home-ui
+
+    - name: Update outdated dependencies
+      run: npm update || echo "Dependencies update completed"
+      working-directory: ./accelerator-home-ui
+
+    - name: Fix security vulnerabilities
+      run: npm audit fix || echo "No audit fixes needed"
       working-directory: ./accelerator-home-ui
 
     - name: Create dist
