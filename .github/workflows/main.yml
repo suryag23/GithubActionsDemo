@@ -9,12 +9,27 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install lng tool
+      run: |
+        npm install -g lng || echo "lng installation via npm failed"
+        if ! command -v lng &> /dev/null; then
+          echo "lng could not be installed via npm, please check installation method."
+          exit 1
+        fi
+
+    - name: Verify working directory
+      run: ls -la ./RDK_apps/accelerator-home-ui
+
     - name: Install dependencies
       run: npm install
-      working-directory: ./accelerator-home-ui
-      
+      working-directory: ./RDK_apps/accelerator-home-ui
 
     - name: Create dist
       run: lng dist
-      working-directory: ./accelerator-home-ui
+      working-directory: ./RDK_apps/accelerator-home-ui
