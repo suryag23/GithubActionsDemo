@@ -24,12 +24,12 @@ jobs:
         fi
 
     - name: Verify working directory
-      run: ls -la ./RDK_apps/accelerator-home-ui
+      run: ls -la ./accelerator-home-ui
 
     - name: Install dependencies
       run: npm install
-      working-directory: ./RDK_apps/accelerator-home-ui
+      working-directory: ./accelerator-home-ui
 
     - name: Create dist
       run: lng dist
-      working-directory: ./RDK_apps/accelerator-home-ui
+      working-directory: ./accelerator-home-ui
