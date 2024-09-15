@@ -10,11 +10,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-
     - name: Install lng tool and TypeScript
       run: |
         npm install -g @lightningjs/cli || echo "lng installation via npm failed"
@@ -26,10 +21,6 @@ jobs:
 
     - name: Verify working directory
       run: ls -la ./accelerator-home-ui
-
-    - name: Install dependencies
-      run: npm install
-      working-directory: ./accelerator-home-ui
 
     - name: Check for outdated dependencies
       run: npm outdated || echo "No outdated packages"
@@ -45,4 +36,8 @@ jobs:
 
     - name: Create dist
       run: lng dist
+      working-directory: ./accelerator-home-ui
+
+    - name: List contents of output directory
+      run: ls -la ./accelerator-home-ui/js && ls -la ./accelerator-home-ui/es6
       working-directory: ./accelerator-home-ui
