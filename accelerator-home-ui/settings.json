@@ -13,6 +13,6 @@
     "log": true,
     "enableAppSuspended": true,
     "showVersion": false,
-    "version": "4..50"
+    "version": "4.0"
   }
 }
