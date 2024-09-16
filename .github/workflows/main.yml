@@ -22,6 +22,8 @@ jobs:
         if ! command -v lng &> /dev/null; then
           echo "lng could not be installed via npm, please check installation method."
           exit 1
+        fi
+
     - name: Verify working directory
       run: ls -la ./accelerator-home-ui
 
