@@ -15,36 +15,42 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: npm-${{ hashFiles('accelerator-home-ui/package-lock.json') }}
-        restore-keys: |
-          npm-
-
-    - name: Install dependencies
-      run: npm install --ignore-scripts  # Switch to npm install
-      working-directory: ./accelerator-home-ui  # Ensure the correct working directory
-
-    - name: Install TypeScript globally
-      run: npm install -g typescript
-
-    - name: Install lng tool
+    - name: Install lng tool and TypeScript
       run: |
         npm install -g @lightningjs/cli || echo "lng installation via npm failed"
+        npm install -g typescript
         if ! command -v lng &> /dev/null; then
           echo "lng could not be installed via npm, please check installation method."
           exit 1
-        fi
-
     - name: Verify working directory
       run: ls -la ./accelerator-home-ui
 
-    - name: Create dist
-      run: lng dist
+    - name: Install dependencies
+      run: npm install
       working-directory: ./accelerator-home-ui
 
-    - name: List contents of output directory
-      run: ls -la ./accelerator-home-ui/dist
+    - name: Check for outdated dependencies
+      run: npm outdated || echo "No outdated packages"
       working-directory: ./accelerator-home-ui
+
+    - name: Update outdated dependencies
+      run: npm update || echo "Dependencies update completed"
+      working-directory: ./accelerator-home-ui
+
+    - name: Fix security vulnerabilities
+      run: npm audit fix || echo "No audit fixes needed"
+      working-directory: ./accelerator-home-ui
+
+    - name: Create dist
+      run: lng dist
+      working-directory: ./accelerator-home-ui  
+
+    - name: Commit and Push dist folder
+      run: |
+        git config --global user.email "surya_gunasekaran@comcast.com"
+        git config --global user.name "suryag23"
+        git add ./accelerator-home-ui/dist
+        git commit -m "Add dist folder"
+        git push origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
