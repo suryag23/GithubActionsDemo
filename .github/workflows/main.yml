@@ -1,58 +1,49 @@
-name: demo
+name: Build and Push Dist
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
 
-    - name: Install lng tool and TypeScript
-      run: |
-        npm install -g @lightningjs/cli || echo "lng installation via npm failed"
-        npm install -g typescript
-        if ! command -v lng &> /dev/null; then
-          echo "lng could not be installed via npm, please check installation method."
-          exit 1
-        fi
+      - name: Install global tools
+        run: |
+          npm install -g @lightningjs/cli typescript
+          lng --version
+      - name: Install project dependencies
+        run: npm install
+        working-directory: ./accelerator-home-ui
 
-    - name: Verify working directory
-      run: ls -la ./accelerator-home-ui
+      - name: Build project
+        run: lng dist
+        working-directory: ./accelerator-home-ui
 
-    - name: Install dependencies
-      run: npm install
-      working-directory: ./accelerator-home-ui
+      - name: Verify dist folder
+        run: ls -la ./accelerator-home-ui/dist
+      - name: Add script tag to index.html
+        run: 
+          # Define your script URL or file path
+          sed -i "/<\/head>/i <script type="text/javascript">
+          const fbEndpoint = new URLSearchParams(window.location.search).get('__firebolt_endpoint')
+          if (fbEndpoint) {
+              window.__firebolt = window.__firebolt || {}
+              window.__firebolt.endpoint = fbEndpoint
+          } </script> " ./accelerator-home-ui/dist/es6/index.html
 
-    - name: Check for outdated dependencies
-      run: npm outdated || echo "No outdated packages"
-      working-directory: ./accelerator-home-ui
-
-    - name: Update outdated dependencies
-      run: npm update || echo "Dependencies update completed"
-      working-directory: ./accelerator-home-ui
-
-    - name: Fix security vulnerabilities
-      run: npm audit fix || echo "No audit fixes needed"
-      working-directory: ./accelerator-home-ui
-
-    - name: Create dist
-      run: lng dist
-      working-directory: ./accelerator-home-ui  
-
-    - name: Commit and Push dist folder
-      run: |
-        git config --global user.email "surya_gunasekaran@comcast.com"
-        git config --global user.name "suryag23"
-        git add ./accelerator-home-ui/dist
-        git commit -m "Add dist folder"
-        git push origin main
-      env:
-        GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Replaced dist folder auto commit from trigger using stefanz
+          branch: main
